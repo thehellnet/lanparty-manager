@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.controller.api.v1;
+package org.thehellnet.lanparty.manager.api.v1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.thehellnet.lanparty.manager.controller.api.v1.aspect.CheckRoles;
-import org.thehellnet.lanparty.manager.controller.api.v1.aspect.CheckToken;
+import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
+import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.request.token.ServerListDTO;

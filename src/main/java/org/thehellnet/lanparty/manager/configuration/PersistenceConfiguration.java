@@ -16,7 +16,7 @@ import java.util.Properties;
 @Configuration
 @EnableJpaRepositories(basePackages = "org.thehellnet.lanparty.manager.repository")
 @EnableTransactionManagement
-public class PersistenceConfig {
+public class PersistenceConfiguration {
 
     @Bean(name = "dataSource")
     public DataSource getDataSource() {

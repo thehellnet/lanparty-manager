@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.controller.api.v1.aspect;
+package org.thehellnet.lanparty.manager.api.v1.controller.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

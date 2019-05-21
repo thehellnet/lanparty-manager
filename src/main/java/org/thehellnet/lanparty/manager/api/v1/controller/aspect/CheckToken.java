@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.controller.api.v1.aspect;
+package org.thehellnet.lanparty.manager.api.v1.controller.aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
