@@ -56,6 +56,8 @@ dependencies {
     compile group: "org.springframework", name: "spring-web", version: VERSIONS["spring"]
     compile group: "org.springframework", name: "spring-webmvc", version: VERSIONS["spring"]
     compile group: "org.springframework", name: "spring-aop", version: VERSIONS["spring"]
+    compile group: "org.springframework", name: "spring-messaging", version: VERSIONS["spring"]
+    compile group: "org.springframework", name: "spring-websocket", version: VERSIONS["spring"]
 
     compile group: "com.fasterxml.jackson.core", name: "jackson-core", version: VERSIONS["jackson"]
     compile group: "com.fasterxml.jackson.core", name: "jackson-databind", version: VERSIONS["jackson"]
