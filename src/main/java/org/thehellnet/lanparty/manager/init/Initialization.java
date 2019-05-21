@@ -3,6 +3,7 @@ package org.thehellnet.lanparty.manager.init;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -53,6 +54,7 @@ public class Initialization {
 
     private boolean alreadyRun = false;
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final GameRepository gameRepository;
     private final GametypeRepository gametypeRepository;
     private final GameGametypeRepository gameGametypeRepository;
@@ -60,7 +62,8 @@ public class Initialization {
     private final AppUserRepository appUserRepository;
 
     @Autowired
-    public Initialization(GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
+    public Initialization(ApplicationEventPublisher applicationEventPublisher, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.gameRepository = gameRepository;
         this.gametypeRepository = gametypeRepository;
         this.gameGametypeRepository = gameGametypeRepository;
@@ -87,6 +90,9 @@ public class Initialization {
         checkAppUserRoles();
 
         logger.info("Database data initialization complete");
+
+        InitializedEvent initializedEvent = new InitializedEvent(this);
+        applicationEventPublisher.publishEvent(initializedEvent);
     }
 
     private void checkGames() {
@@ -151,7 +157,6 @@ public class Initialization {
 
         Map<String, String> gametypeTags = new HashMap<>();
 
-        gametypeTags.clear();
         gametypeTags.put(GAMETYPE_DEATHMATCH, "0");
         gametypeTags.put(GAMETYPE_TOURNAMENT, "1");
         gametypeTags.put(GAMETYPE_SINGLE_PLAYER, "2");
