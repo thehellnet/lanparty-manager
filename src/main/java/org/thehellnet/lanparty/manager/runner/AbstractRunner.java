@@ -19,7 +19,7 @@ public abstract class AbstractRunner {
                 return;
             }
 
-            start();
+            startRunner();
             running = true;
         }
     }
@@ -27,12 +27,12 @@ public abstract class AbstractRunner {
     @EventListener(ContextClosedEvent.class)
     public void onContextStoppedEvent() {
         synchronized (SYNC) {
-            stop();
+            stopRunner();
             running = false;
         }
     }
 
-    protected abstract void start();
+    protected abstract void startRunner();
 
-    protected abstract void stop();
+    protected abstract void stopRunner();
 }
