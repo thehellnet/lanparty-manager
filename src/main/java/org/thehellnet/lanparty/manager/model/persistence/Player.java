@@ -7,25 +7,21 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tournament")
-public class Tournament implements Serializable {
+@Table(name = "player")
+public class Player implements Serializable {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tournament_id_seq")
-    @SequenceGenerator(name = "tournament_id_seq", sequenceName = "tournament_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_id_seq")
+    @SequenceGenerator(name = "team_id_seq", sequenceName = "team_id_seq")
     private Long id;
 
     @Basic
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "game_id", nullable = false)
-    private Game game;
-
-    @OneToMany(mappedBy = "tournament", fetch = FetchType.LAZY)
-    private List<Match> matches = new ArrayList<>();
+    @OneToMany(mappedBy = "player")
+    private List<PlayerTeam> teams = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -43,22 +39,20 @@ public class Tournament implements Serializable {
         this.name = name;
     }
 
-    public Game getGame() {
-        return game;
+    public List<PlayerTeam> getTeams() {
+        return teams;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setTeams(List<PlayerTeam> teams) {
+        this.teams = teams;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Tournament tournament = (Tournament) o;
-        return id.equals(tournament.id) &&
-                name.equals(tournament.name) &&
-                game.equals(tournament.game);
+        Player player = (Player) o;
+        return id.equals(player.id);
     }
 
     @Override
