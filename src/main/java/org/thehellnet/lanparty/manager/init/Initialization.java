@@ -26,6 +26,7 @@ public class Initialization {
     private static final String GAME_COD2 = "cod2";
     private static final String GAME_COD4 = "cod4";
     private static final String GAME_CODWAW = "codwaw";
+    private static final String GAME_LOL = "lol";
 
     private static final String GAMETYPE_DEATHMATCH = "Deathmatch";
     private static final String GAMETYPE_TEAM_DEATHMATCH = "Team Deathmatch";
@@ -105,6 +106,7 @@ public class Initialization {
         gameMap.put(GAME_COD2, "Call of Duty 2");
         gameMap.put(GAME_COD4, "Call of Duty 4: Modern Warfare");
         gameMap.put(GAME_CODWAW, "Call of Duty: World at War");
+        gameMap.put(GAME_LOL, "League of Legends");
 
         for (String tag : gameMap.keySet()) {
             Game game = gameRepository.findByTag(tag);

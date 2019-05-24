@@ -1,5 +1,7 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.thehellnet.lanparty.manager.model.constant.MatchStatus;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -14,25 +16,22 @@ public class Match implements Serializable {
     @SequenceGenerator(name = "match_id_seq", sequenceName = "match_id_seq")
     private Long id;
 
-    @Basic
-    @Column(name = "name")
-    private String name;
-
     @ManyToOne
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
 
-    @OneToOne
-    @JoinColumn(name = "server_match_id")
-    private ServerMatch serverMatch;
+    @Basic
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "first_team_id")
-    private Team firstTeam;
+    @Basic
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MatchStatus status = MatchStatus.SCHEDULED;
 
-    @ManyToOne
-    @JoinColumn(name = "second_team_id")
-    private Team secondTeam;
+    @Basic
+    @Column(name = "play_order", nullable = false)
+    private Integer playOrder = 0;
 
     public Long getId() {
         return id;
@@ -40,14 +39,6 @@ public class Match implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Tournament getTournament() {
@@ -58,28 +49,28 @@ public class Match implements Serializable {
         this.tournament = tournament;
     }
 
-    public ServerMatch getServerMatch() {
-        return serverMatch;
+    public String getName() {
+        return name;
     }
 
-    public void setServerMatch(ServerMatch serverMatch) {
-        this.serverMatch = serverMatch;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Team getFirstTeam() {
-        return firstTeam;
+    public MatchStatus getStatus() {
+        return status;
     }
 
-    public void setFirstTeam(Team firstTeam) {
-        this.firstTeam = firstTeam;
+    public void setStatus(MatchStatus status) {
+        this.status = status;
     }
 
-    public Team getSecondTeam() {
-        return secondTeam;
+    public Integer getPlayOrder() {
+        return playOrder;
     }
 
-    public void setSecondTeam(Team secondTeam) {
-        this.secondTeam = secondTeam;
+    public void setPlayOrder(Integer playOrder) {
+        this.playOrder = playOrder;
     }
 
     @Override
@@ -88,12 +79,15 @@ public class Match implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Match match = (Match) o;
         return id.equals(match.id) &&
-                Objects.equals(name, match.name);
+                tournament.equals(match.tournament) &&
+                name.equals(match.name) &&
+                status == match.status &&
+                playOrder.equals(match.playOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id);
     }
 
     @Override

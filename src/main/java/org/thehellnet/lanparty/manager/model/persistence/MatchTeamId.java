@@ -6,20 +6,20 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class PlayerTeamId implements Serializable {
+public class MatchTeamId implements Serializable {
 
-    @Column(name = "player_id", nullable = false)
-    private Long playerId;
+    @Column(name = "match_id", nullable = false)
+    private Long matchId;
 
     @Column(name = "team_id", nullable = false)
     private Long teamId;
 
-    public Long getPlayerId() {
-        return playerId;
+    public Long getMatchId() {
+        return matchId;
     }
 
-    public void setPlayerId(Long playerId) {
-        this.playerId = playerId;
+    public void setMatchId(Long matchId) {
+        this.matchId = matchId;
     }
 
     public Long getTeamId() {
@@ -34,13 +34,13 @@ public class PlayerTeamId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PlayerTeamId that = (PlayerTeamId) o;
-        return playerId.equals(that.playerId) &&
+        MatchTeamId that = (MatchTeamId) o;
+        return matchId.equals(that.matchId) &&
                 teamId.equals(that.teamId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(playerId, teamId);
+        return Objects.hash(matchId, teamId);
     }
 }

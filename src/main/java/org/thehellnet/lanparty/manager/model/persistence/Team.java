@@ -2,8 +2,6 @@ package org.thehellnet.lanparty.manager.model.persistence;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -18,11 +16,8 @@ public class Team implements Serializable {
     private Long id;
 
     @Basic
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
-
-    @OneToMany(mappedBy = "team")
-    private List<PlayerTeam> players = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -40,20 +35,13 @@ public class Team implements Serializable {
         this.name = name;
     }
 
-    public List<PlayerTeam> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(List<PlayerTeam> players) {
-        this.players = players;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Team team = (Team) o;
-        return id.equals(team.id);
+        return id.equals(team.id) &&
+                name.equals(team.name);
     }
 
     @Override

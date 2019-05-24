@@ -7,33 +7,25 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "player_team")
-public class PlayerTeam implements Serializable {
+public class TeamPlayer implements Serializable {
 
     @EmbeddedId
-    private PlayerTeamId id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("playerId")
-    private Player player;
+    private TeamPlayerId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("teamId")
     private Team team;
 
-    public PlayerTeamId getId() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("playerId")
+    private Player player;
+
+    public TeamPlayerId getId() {
         return id;
     }
 
-    public void setId(PlayerTeamId id) {
+    public void setId(TeamPlayerId id) {
         this.id = id;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public Team getTeam() {
@@ -44,18 +36,25 @@ public class PlayerTeam implements Serializable {
         this.team = team;
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PlayerTeam that = (PlayerTeam) o;
-        return player.equals(that.player) &&
-                team.equals(that.team);
+        TeamPlayer that = (TeamPlayer) o;
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(player, team);
+        return Objects.hash(id);
     }
 
     @Override

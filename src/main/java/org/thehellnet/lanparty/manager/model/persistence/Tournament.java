@@ -24,9 +24,6 @@ public class Tournament implements Serializable {
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
-    @OneToMany(mappedBy = "tournament", fetch = FetchType.LAZY)
-    private List<Match> matches = new ArrayList<>();
-
     public Long getId() {
         return id;
     }
