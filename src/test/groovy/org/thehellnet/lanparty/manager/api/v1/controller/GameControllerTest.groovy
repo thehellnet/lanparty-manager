@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.api.v1.controller
 
-import org.joda.time.DateTime
+
 import org.json.JSONArray
 import org.json.JSONObject
 import org.springframework.http.HttpStatus
@@ -10,45 +10,11 @@ import org.thehellnet.lanparty.manager.ContextTest
 
 class GameControllerTest extends ContextTest {
 
-    private String token
-
     def setup() {
-        if (token != null) {
-            return
-        }
-
-        def requestBody = new JSONObject([
-                "email"   : "admin",
-                "password": "admin"
-        ])
-
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser/login")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(requestBody.toString())
-                )
-                .andReturn()
-                .response
-
-        rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
-
-        JSONObject response = new JSONObject(rawResponse.contentAsString)
-        response.has("success")
-        response.getBoolean("success")
-
-        response.has("data")
-        JSONObject data = response.getJSONObject("data")
-
-        data.has("expiration")
-        new DateTime(data.getLong("expiration")).isAfterNow()
-
-        data.has("token")
-        token = data.getString("token")
+        'Do login for token retrieving'()
     }
 
-    def "game list retrieving"() {
+    def list() {
         given:
         def requestBody = new JSONObject([
                 "token": token
