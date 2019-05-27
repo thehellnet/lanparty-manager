@@ -3,7 +3,7 @@ dialect: "org.hibernate.dialect.PostgreSQL10Dialect"
 jdbcUrl: "jdbc:postgresql://127.0.0.1:5432/lanparty"
 username: "lanparty"
 password: "lanparty"
-hbm2ddl: update
+hbm2ddl: "update"
 maxPoolSize: 50
 maxIdleTime: 10
 showSql: false
