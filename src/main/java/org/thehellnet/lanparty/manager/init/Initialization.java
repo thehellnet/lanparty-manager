@@ -433,7 +433,7 @@ public class Initialization {
 
         for (String mapTag : gameMaps.keySet()) {
             if (gameMapRepository.findByTagAndGame(mapTag, game) == null) {
-                gameMapRepository.save(new GameMap(mapTag, gameMaps.get(mapTag), game));
+                gameMapRepository.save(new GameMap(mapTag, gameMaps.get(mapTag), game, true));
             }
         }
     }
