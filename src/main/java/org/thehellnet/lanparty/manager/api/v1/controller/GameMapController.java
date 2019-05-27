@@ -58,12 +58,13 @@ public class GameMapController {
             gameMaps.addAll(gameMapRepository.findAll());
         }
 
-        List<Map<String, String>> data = new ArrayList<>();
+        List<Map<String, Object>> data = new ArrayList<>();
         for (GameMap gameMap : gameMaps) {
-            Map<String, String> mapData = new HashMap<>();
+            Map<String, Object> mapData = new HashMap<>();
             mapData.put("tag", gameMap.getTag());
             mapData.put("name", gameMap.getName());
             mapData.put("gameTag", gameMap.getGame().getTag());
+            mapData.put("stock", gameMap.getStock());
             data.add(mapData);
         }
 
