@@ -77,6 +77,8 @@ dependencies {
     compile group: "com.mchange", name: "c3p0", version: "0.9.5.4"
 
     compile group: "org.json", name: "json", version: "20180813"
+    compile group: "org.yaml", name: "snakeyaml", version: "1.24"
+
     compile group: "com.maxmind.geoip2", name: "geoip2", version: "2.12.0"
 
     compile group: "commons-io", name: "commons-io", version: "2.6"
