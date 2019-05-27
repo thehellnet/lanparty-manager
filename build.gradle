@@ -35,7 +35,8 @@ def VERSIONS = [
         "jackson"   : "2.9.9",
         "spock"     : "1.3-groovy-2.5",
         "postgresql": "42.2.5",
-        "hibernate" : "5.4.2.Final"
+        "hibernate" : "5.4.2.Final",
+        "tomcat"    : "9.0.20"
 ]
 
 dependencies {
@@ -92,4 +93,10 @@ dependencies {
 
     testCompile group: "org.spockframework", name: "spock-core", version: VERSIONS["spock"]
     testCompile group: "org.spockframework", name: "spock-spring", version: VERSIONS["spock"]
+
+    testCompile group: "org.springframework", name: "spring-test", version: VERSIONS["spring"]
+
+    testCompile group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: VERSIONS["tomcat"]
+    testCompile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: VERSIONS["tomcat"]
+
 }
