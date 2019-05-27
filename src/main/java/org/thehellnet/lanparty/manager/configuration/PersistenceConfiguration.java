@@ -8,6 +8,8 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.thehellnet.lanparty.manager.configuration.params.PersistenceParams;
+import org.thehellnet.utility.YmlUtility;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -18,22 +20,24 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class PersistenceConfiguration {
 
+    private final PersistenceParams params = YmlUtility.loadFromResources("configuration/persistence.yml", PersistenceParams.class);
+
     @Bean(name = "dataSource")
     public DataSource getDataSource() {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
 
         try {
-            dataSource.setDriverClass(org.postgresql.Driver.class.getName());
+            dataSource.setDriverClass(params.getDriverClass());
         } catch (PropertyVetoException e) {
             e.printStackTrace();
             return null;
         }
 
-        dataSource.setJdbcUrl("jdbc:postgresql://127.0.0.1:5432/lanparty");
-        dataSource.setUser("lanparty");
-        dataSource.setPassword("lanparty");
-        dataSource.setMaxPoolSize(50);
-        dataSource.setMaxIdleTime(10);
+        dataSource.setJdbcUrl(params.getJdbcUrl());
+        dataSource.setUser(params.getUsername());
+        dataSource.setPassword(params.getPassword());
+        dataSource.setMaxPoolSize(params.getMaxPoolSize());
+        dataSource.setMaxIdleTime(params.getMaxIdleTime());
 
         return dataSource;
     }
@@ -62,9 +66,9 @@ public class PersistenceConfiguration {
 
     private Properties getHibernateProperties() {
         Properties properties = new Properties();
-        properties.put("hibernate.dialect", org.hibernate.dialect.PostgreSQL10Dialect.class.getName());
-        properties.put("hibernate.show_sql", false);
-        properties.put("hibernate.hbm2ddl.auto", "update");
+        properties.put("hibernate.dialect", params.getDialect());
+        properties.put("hibernate.show_sql", params.isShowSql());
+        properties.put("hibernate.hbm2ddl.auto", params.getHbm2ddl());
         properties.put("hibernate.c3p0.min_size", 2);
         properties.put("hibernate.c3p0.max_size", 20);
         properties.put("hibernate.c3p0.timeout", 30);
