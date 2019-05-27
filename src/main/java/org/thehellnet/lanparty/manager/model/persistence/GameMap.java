@@ -29,6 +29,10 @@ public class GameMap implements Serializable {
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
+    @Basic
+    @Column(name = "stock")
+    private Boolean stock = false;
+
     public GameMap() {
     }
 
@@ -45,6 +49,13 @@ public class GameMap implements Serializable {
         this.tag = tag;
         this.name = name;
         this.game = game;
+    }
+
+    public GameMap(String tag, String name, Game game, Boolean stock) {
+        this.tag = tag;
+        this.name = name;
+        this.game = game;
+        this.stock = stock;
     }
 
     public Long getId() {
@@ -79,6 +90,14 @@ public class GameMap implements Serializable {
         this.game = game;
     }
 
+    public Boolean getStock() {
+        return stock;
+    }
+
+    public void setStock(Boolean stock) {
+        this.stock = stock;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -87,12 +106,13 @@ public class GameMap implements Serializable {
         return id.equals(gameMap.id) &&
                 tag.equals(gameMap.tag) &&
                 Objects.equals(name, gameMap.name) &&
-                game.equals(gameMap.game);
+                game.equals(gameMap.game) &&
+                stock.equals(gameMap.stock);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, tag, game);
+        return Objects.hash(id);
     }
 
     @Override
