@@ -14,8 +14,10 @@ import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.request.token.GameListDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
-import org.thehellnet.lanparty.manager.repository.GameRepository;
+import org.thehellnet.lanparty.manager.model.persistence.GameMap;
+import org.thehellnet.lanparty.manager.service.GameService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +26,11 @@ import java.util.Map;
 @RequestMapping(path = "/api/v1/public/game")
 public class GameController {
 
-    private final GameRepository gameRepository;
+    private final GameService gameService;
 
     @Autowired
-    public GameController(GameRepository gameRepository) {
-        this.gameRepository = gameRepository;
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
     }
 
     @RequestMapping(
@@ -41,14 +43,17 @@ public class GameController {
     @CheckRoles(Role.READ_PUBLIC)
     @ResponseBody
     public JsonResponse list(AppUser appUser, @RequestBody GameListDTO dto) {
-        List<Game> games = gameRepository.findAll();
+        List<Game> games = gameService.getAllGames();
 
-        Map<String, String> gameMaps = new HashMap<>();
+
+        List<Map<String, String>> data = new ArrayList<>();
         for (Game game : games) {
-            gameMaps.put("tag", game.getTag());
-            gameMaps.put("name", game.getName());
+            Map<String, String> gameData = new HashMap<>();
+            gameData.put("tag", game.getTag());
+            gameData.put("name", game.getName());
+            data.add(gameData);
         }
 
-        return JsonResponse.getInstance(gameMaps);
+        return JsonResponse.getInstance(data);
     }
 }
