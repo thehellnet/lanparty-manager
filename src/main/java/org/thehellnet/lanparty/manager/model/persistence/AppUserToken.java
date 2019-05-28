@@ -8,13 +8,13 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "appusertoken")
+@Table(name = "appuser_token")
 public class AppUserToken implements Serializable {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appusertoken_id_seq")
-    @SequenceGenerator(name = "appusertoken_id_seq", sequenceName = "appusertoken_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appuser_token_id_seq")
+    @SequenceGenerator(name = "appuser_token_id_seq", sequenceName = "appuser_token_id_seq")
     private Long id;
 
     @Basic
