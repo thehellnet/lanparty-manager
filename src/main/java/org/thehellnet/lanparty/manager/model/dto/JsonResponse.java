@@ -22,6 +22,13 @@ public class JsonResponse {
         return jsonResponse;
     }
 
+    public static JsonResponse getInstance(String key, Object value) {
+        Map<String, Object> data = new HashMap<>();
+        data.put(key, value);
+
+        return JsonResponse.getInstance(data);
+    }
+
     public static JsonResponse getErrorInstance() {
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.success = false;
