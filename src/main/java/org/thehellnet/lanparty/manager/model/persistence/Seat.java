@@ -10,8 +10,8 @@ import java.util.Objects;
 @Table(
         name = "seat",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"name", "party_id"}),
-                @UniqueConstraint(columnNames = {"address"}),
+                @UniqueConstraint(columnNames = {"name", "tournament_id"}),
+                @UniqueConstraint(columnNames = {"ip_address"}),
         }
 )
 public class Seat implements Serializable {
@@ -27,29 +27,20 @@ public class Seat implements Serializable {
     private String name;
 
     @Basic
-    @Column(name = "address", nullable = false)
-    private String address;
+    @Column(name = "ip_address", nullable = false)
+    private String ipAddress;
 
     @ManyToOne
-    @JoinColumn(name = "party_id", nullable = false)
-    private Party party;
-
-    @ManyToOne
-    @JoinColumn(name = "player_id")
-    private Player player;
+    @JoinColumn(name = "tournament_id", nullable = false)
+    private Tournament tournament;
 
     @Basic
     @Column(name = "last_contact", nullable = false)
     private DateTime lastContact = new DateTime();
 
-    public Seat() {
-    }
-
-    public Seat(String name, String address, Party party) {
-        this.name = name;
-        this.address = address;
-        this.party = party;
-    }
+    @ManyToOne
+    @JoinColumn(name = "player_id")
+    private Player player;
 
     public Long getId() {
         return id;
@@ -67,28 +58,20 @@ public class Seat implements Serializable {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getIpAddress() {
+        return ipAddress;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
-    public Party getParty() {
-        return party;
+    public Tournament getTournament() {
+        return tournament;
     }
 
-    public void setParty(Party party) {
-        this.party = party;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
     }
 
     public DateTime getLastContact() {
@@ -97,6 +80,14 @@ public class Seat implements Serializable {
 
     public void setLastContact(DateTime lastContact) {
         this.lastContact = lastContact;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public void updateLastContact() {
@@ -110,10 +101,10 @@ public class Seat implements Serializable {
         Seat seat = (Seat) o;
         return id.equals(seat.id) &&
                 name.equals(seat.name) &&
-                address.equals(seat.address) &&
-                party.equals(seat.party) &&
-                Objects.equals(player, seat.player) &&
-                lastContact.equals(seat.lastContact);
+                ipAddress.equals(seat.ipAddress) &&
+                tournament.equals(seat.tournament) &&
+                lastContact.equals(seat.lastContact) &&
+                Objects.equals(player, seat.player);
     }
 
     @Override

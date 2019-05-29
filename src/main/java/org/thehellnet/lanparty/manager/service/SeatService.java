@@ -24,7 +24,7 @@ public class SeatService {
             return null;
         }
 
-        return seatRepository.findByAddress(address);
+        return seatRepository.findByIpAddress(address);
     }
 
     @Transactional

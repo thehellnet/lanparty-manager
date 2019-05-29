@@ -7,5 +7,5 @@ import org.thehellnet.lanparty.manager.model.persistence.Seat;
 @Repository
 public interface SeatRepository extends JpaRepository<Seat, Long> {
 
-    Seat findByAddress(String address);
+    Seat findByIpAddress(String ipAddress);
 }

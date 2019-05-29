@@ -2,7 +2,9 @@ package org.thehellnet.lanparty.manager.model.persistence;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 
 @Entity
@@ -18,6 +20,19 @@ public class Team implements Serializable {
     @Basic
     @Column(name = "name", nullable = false)
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "tournament_id", nullable = false)
+    private Tournament tournament;
+
+    @OneToMany(mappedBy = "team", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<Player> players = new HashSet<>();
+
+    @OneToMany(mappedBy = "localTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<Match> localMatches = new HashSet<>();
+
+    @OneToMany(mappedBy = "guestTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<Match> guestMatches = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -35,13 +50,49 @@ public class Team implements Serializable {
         this.name = name;
     }
 
+    public Tournament getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
+    }
+
+    public Set<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(Set<Player> players) {
+        this.players = players;
+    }
+
+    public Set<Match> getLocalMatches() {
+        return localMatches;
+    }
+
+    public void setLocalMatches(Set<Match> localMatches) {
+        this.localMatches = localMatches;
+    }
+
+    public Set<Match> getGuestMatches() {
+        return guestMatches;
+    }
+
+    public void setGuestMatches(Set<Match> guestMatches) {
+        this.guestMatches = guestMatches;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Team team = (Team) o;
         return id.equals(team.id) &&
-                name.equals(team.name);
+                name.equals(team.name) &&
+                tournament.equals(team.tournament) &&
+                players.equals(team.players) &&
+                localMatches.equals(team.localMatches) &&
+                guestMatches.equals(team.guestMatches);
     }
 
     @Override

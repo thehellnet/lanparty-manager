@@ -16,13 +16,13 @@ public class Match implements Serializable {
     @SequenceGenerator(name = "match_id_seq", sequenceName = "match_id_seq")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "tournament_id", nullable = false)
-    private Tournament tournament;
-
     @Basic
     @Column(name = "name", nullable = false)
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "tournament_id", nullable = false)
+    private Tournament tournament;
 
     @Basic
     @Column(name = "status", nullable = false)
@@ -33,6 +33,26 @@ public class Match implements Serializable {
     @Column(name = "play_order", nullable = false)
     private Integer playOrder = 0;
 
+    @ManyToOne
+    @JoinColumn(name = "server_id")
+    private Server server;
+
+    @ManyToOne
+    @JoinColumn(name = "gamemap_id")
+    private GameMap gameMap;
+
+    @ManyToOne
+    @JoinColumn(name = "gametype_id")
+    private Gametype gametype;
+
+    @ManyToOne
+    @JoinColumn(name = "local_team_id")
+    private Team localTeam;
+
+    @ManyToOne
+    @JoinColumn(name = "guest_team_id")
+    private Team guestTeam;
+
     public Long getId() {
         return id;
     }
@@ -41,20 +61,20 @@ public class Match implements Serializable {
         this.id = id;
     }
 
-    public Tournament getTournament() {
-        return tournament;
-    }
-
-    public void setTournament(Tournament tournament) {
-        this.tournament = tournament;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Tournament getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
     }
 
     public MatchStatus getStatus() {
@@ -73,16 +93,62 @@ public class Match implements Serializable {
         this.playOrder = playOrder;
     }
 
+    public Server getServer() {
+        return server;
+
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
+    }
+
+    public GameMap getGameMap() {
+        return gameMap;
+    }
+
+    public void setGameMap(GameMap gameMap) {
+        this.gameMap = gameMap;
+    }
+
+    public Gametype getGametype() {
+        return gametype;
+    }
+
+    public void setGametype(Gametype gametype) {
+        this.gametype = gametype;
+    }
+
+    public Team getLocalTeam() {
+        return localTeam;
+    }
+
+    public void setLocalTeam(Team localTeam) {
+        this.localTeam = localTeam;
+    }
+
+    public Team getGuestTeam() {
+        return guestTeam;
+    }
+
+    public void setGuestTeam(Team guestTeam) {
+        this.guestTeam = guestTeam;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Match match = (Match) o;
         return id.equals(match.id) &&
-                tournament.equals(match.tournament) &&
                 name.equals(match.name) &&
+                tournament.equals(match.tournament) &&
                 status == match.status &&
-                playOrder.equals(match.playOrder);
+                playOrder.equals(match.playOrder) &&
+                Objects.equals(server, match.server) &&
+                Objects.equals(gameMap, match.gameMap) &&
+                Objects.equals(gametype, match.gametype) &&
+                Objects.equals(localTeam, match.localTeam) &&
+                Objects.equals(guestTeam, match.guestTeam);
     }
 
     @Override

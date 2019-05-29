@@ -2,9 +2,9 @@ package org.thehellnet.lanparty.manager.model.persistence;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tournament")
@@ -17,12 +17,21 @@ public class Tournament implements Serializable {
     private Long id;
 
     @Basic
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
+
+    @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<Seat> seats = new HashSet<>();
+
+    @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<Match> matches = new HashSet<>();
+
+    @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<Team> teams = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -48,14 +57,41 @@ public class Tournament implements Serializable {
         this.game = game;
     }
 
+    public Set<Seat> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(Set<Seat> seats) {
+        this.seats = seats;
+    }
+
+    public Set<Match> getMatches() {
+        return matches;
+    }
+
+    public void setMatches(Set<Match> matches) {
+        this.matches = matches;
+    }
+
+    public Set<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(Set<Team> teams) {
+        this.teams = teams;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Tournament tournament = (Tournament) o;
-        return id.equals(tournament.id) &&
-                name.equals(tournament.name) &&
-                game.equals(tournament.game);
+        Tournament that = (Tournament) o;
+        return id.equals(that.id) &&
+                name.equals(that.name) &&
+                game.equals(that.game) &&
+                seats.equals(that.seats) &&
+                matches.equals(that.matches) &&
+                teams.equals(that.teams);
     }
 
     @Override
