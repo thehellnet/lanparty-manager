@@ -4,15 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
+import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.request.AppUserLoginRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.token.AppUserGetInfoRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.response.AppUserGetInfoResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.service.AppUserService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -50,5 +55,22 @@ public class AppUserController {
         data.put("expiration", appUserToken.getExpirationDateTime());
 
         return JsonResponse.getInstance(data);
+    }
+
+    @RequestMapping(
+            path = "/getInfo",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @CheckToken
+    @CheckRoles(Role.LOGIN)
+    @ResponseBody
+    public JsonResponse getInfo(AppUser appUser, @RequestBody AppUserGetInfoRequestDTO dto) {
+        AppUserGetInfoResponseDTO responseDTO = new AppUserGetInfoResponseDTO(
+                appUser.toString(),
+                appUser.getAppUserRoles()
+        );
+        return JsonResponse.getInstance(responseDTO);
     }
 }

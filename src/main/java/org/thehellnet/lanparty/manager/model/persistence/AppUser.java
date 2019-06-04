@@ -26,10 +26,14 @@ public class AppUser implements Serializable {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Basic
+    @Column(name = "name")
+    private String name;
+
     @OneToMany(mappedBy = "appUser", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<AppUserToken> appUserTokens = new HashSet<>();
 
-    @ElementCollection(targetClass = Role.class)
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @JoinTable(name = "appuser_role", joinColumns = @JoinColumn(name = "appuser_id"))
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -67,6 +71,14 @@ public class AppUser implements Serializable {
         this.password = password;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Set<AppUserToken> getAppUserTokens() {
         return appUserTokens;
     }
@@ -90,18 +102,19 @@ public class AppUser implements Serializable {
         AppUser appUser = (AppUser) o;
         return id.equals(appUser.id) &&
                 email.equals(appUser.email) &&
-                Objects.equals(password, appUser.password) &&
+                password.equals(appUser.password) &&
+                Objects.equals(name, appUser.name) &&
                 appUserTokens.equals(appUser.appUserTokens) &&
                 appUserRoles.equals(appUser.appUserRoles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return email;
+        return name != null && name.length() > 0 ? name : email;
     }
 }
