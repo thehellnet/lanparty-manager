@@ -95,7 +95,6 @@ public class Match implements Serializable {
 
     public Server getServer() {
         return server;
-
     }
 
     public void setServer(Server server) {
