@@ -1,5 +1,7 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.thehellnet.lanparty.manager.model.constant.TournamentStatus;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -23,6 +25,11 @@ public class Tournament implements Serializable {
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
+
+    @Basic
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TournamentStatus status = TournamentStatus.SCHEDULED;
 
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Seat> seats = new HashSet<>();
