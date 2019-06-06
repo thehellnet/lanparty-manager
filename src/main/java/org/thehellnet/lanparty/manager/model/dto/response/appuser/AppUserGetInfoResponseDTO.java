@@ -1,6 +1,7 @@
-package org.thehellnet.lanparty.manager.model.dto.response;
+package org.thehellnet.lanparty.manager.model.dto.response.appuser;
 
 import org.thehellnet.lanparty.manager.model.constant.Role;
+import org.thehellnet.lanparty.manager.model.dto.response.ResponseDTO;
 
 import java.util.Set;
 

@@ -37,8 +37,14 @@ public class RolesControllerAspect {
         Object[] params = joinPoint.getArgs();
         AppUser appUser = (AppUser) params[0];
 
-        if (!appUserService.hasRoles(appUser, annotation.value())) {
-            return JsonResponse.getErrorInstance("User doesn't have permissions");
+        if (annotation.mode == CheckRoles.Mode.ALL) {
+            if (!appUserService.hasAllRoles(appUser, annotation.value())) {
+                return JsonResponse.getErrorInstance("User doesn't have permissions");
+            }
+        } else if (annotation.mode == CheckRoles.Mode.ANY) {
+            if (!appUserService.hasAnyRoles(appUser, annotation.value())) {
+                return JsonResponse.getErrorInstance("User doesn't have permissions");
+            }
         }
 
         try {

@@ -10,6 +10,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CheckRoles {
+    enum Mode {
+        ALL,
+        ANY
+    }
 
     Role[] value() default {};
+
+    Mode mode = Mode.ALL;
 }

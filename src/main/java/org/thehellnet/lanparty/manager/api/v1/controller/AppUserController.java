@@ -9,15 +9,16 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.request.AppUserLoginRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.request.token.AppUserGetInfoRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.AppUserGetInfoResponseDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.token.appuser.AppUserChangePasswordRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.token.appuser.AppUserGetInfoRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserGetInfoResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.service.AppUserService;
+import org.thehellnet.utility.PasswordUtility;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -44,7 +45,7 @@ public class AppUserController {
             return JsonResponse.getErrorInstance("User not found");
         }
 
-        if (!appUserService.hasRoles(appUser, Role.LOGIN)) {
+        if (!appUserService.hasAllRoles(appUser, Role.LOGIN)) {
             return JsonResponse.getErrorInstance("User not enabled");
         }
 
@@ -64,7 +65,7 @@ public class AppUserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @CheckToken
-    @CheckRoles(Role.LOGIN)
+    @CheckRoles(Role.READ_PRIVATE)
     @ResponseBody
     public JsonResponse getInfo(AppUser appUser, @RequestBody AppUserGetInfoRequestDTO dto) {
         AppUserGetInfoResponseDTO responseDTO = new AppUserGetInfoResponseDTO(
@@ -72,5 +73,26 @@ public class AppUserController {
                 appUser.getAppUserRoles()
         );
         return JsonResponse.getInstance(responseDTO);
+    }
+
+    @RequestMapping(
+            path = "/changePassword",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @CheckToken
+    @CheckRoles(Role.CHANGE_PASSWORD)
+    @ResponseBody
+    public JsonResponse changePassword(AppUser appUser, @RequestBody AppUserChangePasswordRequestDTO dto) {
+        if (!PasswordUtility.verify(appUser.getPassword(), dto.getOldPassword())) {
+            return JsonResponse.getErrorInstance("Invalid Password");
+        }
+
+        if (!appUserService.changePassword(appUser, dto.getNewPassword())) {
+            return JsonResponse.getErrorInstance("Password change failed");
+        }
+
+        return JsonResponse.getInstance();
     }
 }

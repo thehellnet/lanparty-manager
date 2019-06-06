@@ -55,9 +55,39 @@ public class AppUserService {
     }
 
     @Transactional(readOnly = true)
-    public boolean hasRoles(AppUser appUser, Role... roles) {
+    public boolean hasAllRoles(AppUser appUser, Role... roles) {
         appUser = appUserRepository.getOne(appUser.getId());
         return appUser.getAppUserRoles().containsAll(Arrays.asList(roles));
     }
 
+    @Transactional(readOnly = true)
+    public boolean hasAnyRoles(AppUser appUser, Role... roles) {
+        appUser = appUserRepository.getOne(appUser.getId());
+
+        for (Role role : roles) {
+            if (appUser.getAppUserRoles().contains(role)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Transactional
+    public boolean changePassword(AppUser appUser, String password) {
+        if (appUser == null) {
+            return false;
+        }
+
+        appUser = appUserRepository.findById(appUser.getId()).orElse(null);
+        if (appUser == null) {
+            return false;
+        }
+
+        String encryptedPassword = PasswordUtility.hash(password);
+        appUser.setPassword(encryptedPassword);
+        appUserRepository.save(appUser);
+
+        return true;
+    }
 }
