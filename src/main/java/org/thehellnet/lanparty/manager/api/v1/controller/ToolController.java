@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
+import org.thehellnet.lanparty.manager.model.dto.request.tool.GetCfgToolRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.PingToolRequestDTO;
 import org.thehellnet.lanparty.manager.model.persistence.Seat;
 import org.thehellnet.lanparty.manager.service.SeatService;
@@ -16,10 +17,11 @@ import org.thehellnet.lanparty.manager.service.SeatService;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-@RequestMapping(path = "/api/v1/public/tool")
+@RequestMapping(path = "/api/v1/tool")
 public class ToolController {
 
     private static final Logger logger = LoggerFactory.getLogger(ToolController.class);
+
     private final SeatService seatService;
 
     public ToolController(SeatService seatService) {
@@ -47,5 +49,16 @@ public class ToolController {
         seatService.updateLastContact(seat);
 
         return JsonResponse.getInstance("name", seat.getName());
+    }
+
+    @RequestMapping(
+            path = "/getCfg",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public JsonResponse getCfg(@RequestBody GetCfgToolRequestDTO dto, HttpServletRequest request) {
+        return JsonResponse.getInstance();
     }
 }
