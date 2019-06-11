@@ -20,6 +20,10 @@ public class Player implements Serializable {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
+    @Basic
+    @Column(name = "barcode")
+    private String barcode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appuser_id")
     private AppUser appUser;
@@ -78,6 +82,7 @@ public class Player implements Serializable {
         Player player = (Player) o;
         return id.equals(player.id) &&
                 nickname.equals(player.nickname) &&
+                Objects.equals(barcode, player.barcode) &&
                 Objects.equals(appUser, player.appUser) &&
                 cfgs.equals(player.cfgs) &&
                 team.equals(player.team);
