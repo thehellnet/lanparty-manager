@@ -1,23 +1,32 @@
 package org.thehellnet.lanparty.manager.api.v1.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
+import org.thehellnet.lanparty.manager.api.v1.error.ErrorCode;
+import org.thehellnet.lanparty.manager.exception.LanPartyManagerException;
+import org.thehellnet.lanparty.manager.exception.appuser.*;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
+import org.thehellnet.lanparty.manager.model.dto.light.AppUserLight;
 import org.thehellnet.lanparty.manager.model.dto.request.AppUserLoginRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.request.token.appuser.AppUserChangePasswordRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.request.token.appuser.AppUserGetInfoRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.token.appuser.*;
+import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserCreateResponseDTO;
+import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserGetAllResponseDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserGetInfoResponseDTO;
+import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserGetResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.service.AppUserService;
 import org.thehellnet.utility.PasswordUtility;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -25,11 +34,118 @@ import java.util.Map;
 @RequestMapping(path = "/api/v1/public/appUser")
 public class AppUserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AppUserController.class);
+
     private final AppUserService appUserService;
 
     @Autowired
     public AppUserController(AppUserService appUserService) {
         this.appUserService = appUserService;
+    }
+
+    @RequestMapping(
+            path = "/getAll",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @CheckToken
+    @CheckRoles(Role.APPUSER_VIEW)
+    @ResponseBody
+    public JsonResponse getAll(AppUser appUser, @RequestBody AppUserGetAllRequestDTO dto) {
+        List<AppUserLight> appUserLightList = appUserService.getAll();
+        AppUserGetAllResponseDTO responseDTO = new AppUserGetAllResponseDTO(appUserLightList);
+        return JsonResponse.getInstance(responseDTO);
+    }
+
+    @RequestMapping(
+            path = "/get",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @CheckToken
+    @CheckRoles(Role.APPUSER_VIEW)
+    @ResponseBody
+    public JsonResponse get(AppUser appUser, @RequestBody AppUserGetRequestDTO dto) {
+        AppUser user = appUserService.get(dto.getId());
+        if (user == null) {
+            return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
+        }
+
+        AppUserGetResponseDTO responseDTO = new AppUserGetResponseDTO(user);
+        return JsonResponse.getInstance(responseDTO);
+    }
+
+    @RequestMapping(
+            path = "/create",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @CheckToken
+    @CheckRoles(Role.APPUSER_ADMIN)
+    @ResponseBody
+    public JsonResponse create(AppUser appUser, @RequestBody AppUserCreateRequestDTO dto) {
+        AppUser user;
+        try {
+            user = appUserService.create(dto.getEmail(), dto.getPassword(), dto.getName());
+        } catch (AppUserException e) {
+            logger.error(e.getMessage());
+
+            if (e instanceof AppUserInvalidMailException) {
+                return ErrorCode.prepareResponse(ErrorCode.APPUSER_INVALID_MAIL);
+            } else if (e instanceof AppUserAlreadyPresentException) {
+                return ErrorCode.prepareResponse(ErrorCode.APPUSER_ALREADY_PRESENT);
+            } else if (e instanceof AppUserInvalidPasswordException) {
+                return ErrorCode.prepareResponse(ErrorCode.APPUSER_INVALID_PASSWORD);
+            }
+
+            return ErrorCode.prepareResponse(ErrorCode.GENERIC);
+        }
+
+        AppUserCreateResponseDTO responseDTO = new AppUserCreateResponseDTO(user);
+        return JsonResponse.getInstance(responseDTO);
+    }
+
+    @RequestMapping(
+            path = "/save",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @CheckToken
+    @CheckRoles(Role.APPUSER_ADMIN)
+    @ResponseBody
+    public JsonResponse save(AppUser appUser, @RequestBody AppUserSaveRequestDTO dto) {
+        try {
+            appUserService.save(dto.getId(), dto.getName(), dto.getEmail());
+        } catch (LanPartyManagerException e) {
+            logger.error(e.getMessage());
+            return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
+        }
+
+        return JsonResponse.getInstance();
+    }
+
+    @RequestMapping(
+            path = "/delete",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @CheckToken
+    @CheckRoles(Role.APPUSER_ADMIN)
+    @ResponseBody
+    public JsonResponse delete(AppUser appUser, @RequestBody AppUserDeleteRequestDTO dto) {
+        try {
+            appUserService.delete(dto.getId());
+        } catch (AppUserNotFoundException e) {
+            logger.error(e.getMessage());
+            return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
+        }
+
+        return JsonResponse.getInstance();
     }
 
     @RequestMapping(
@@ -42,11 +158,11 @@ public class AppUserController {
     public JsonResponse login(@RequestBody AppUserLoginRequestDTO dto) {
         AppUser appUser = appUserService.findByEmailAndPassword(dto.email, dto.password);
         if (appUser == null) {
-            return JsonResponse.getErrorInstance("User not found");
+            return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
         }
 
         if (!appUserService.hasAllRoles(appUser, Role.LOGIN)) {
-            return JsonResponse.getErrorInstance("User not enabled");
+            return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_ENABLED);
         }
 
         AppUserToken appUserToken = appUserService.newToken(appUser);
@@ -82,15 +198,15 @@ public class AppUserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @CheckToken
-    @CheckRoles(Role.CHANGE_PASSWORD)
+    @CheckRoles(Role.APPUSER_CHANGE_PASSWORD)
     @ResponseBody
     public JsonResponse changePassword(AppUser appUser, @RequestBody AppUserChangePasswordRequestDTO dto) {
         if (!PasswordUtility.verify(appUser.getPassword(), dto.getOldPassword())) {
-            return JsonResponse.getErrorInstance("Invalid Password");
+            return ErrorCode.prepareResponse(ErrorCode.APPUSER_INVALID_PASSWORD);
         }
 
         if (!appUserService.changePassword(appUser, dto.getNewPassword())) {
-            return JsonResponse.getErrorInstance("Password change failed");
+            return ErrorCode.prepareResponse(ErrorCode.APPUSER_PASSWORD_CHANGE_FAILED);
         }
 
         return JsonResponse.getInstance();
