@@ -1,26 +1,30 @@
 package org.thehellnet.lanparty.manager.api.v1.controller
 
-import org.joda.time.DateTime
+
+import org.json.JSONArray
 import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.thehellnet.lanparty.manager.ContextTest
+import org.thehellnet.lanparty.manager.ContextSpecification
 
-class AppUserControllerTest extends ContextTest {
+class GameControllerSpecification extends ContextSpecification {
 
-    def "login"() {
+    def setup() {
+        'Do login for token retrieving'()
+    }
+
+    def list() {
         given:
         def requestBody = new JSONObject([
-                "email"   : "admin",
-                "password": "admin"
+                "token": token
         ])
 
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser/login")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .post("/api/v1/public/game/list")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content(requestBody.toString())
                 )
                 .andReturn()
@@ -31,18 +35,19 @@ class AppUserControllerTest extends ContextTest {
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
 
         JSONObject response = new JSONObject(rawResponse.contentAsString)
-
         response.has("success")
         response.getBoolean("success")
 
         response.has("data")
+        JSONArray data = response.getJSONArray("data")
+        data.length() > 0
 
-        JSONObject data = response.getJSONObject("data")
-
-        data.has("expiration")
-        new DateTime(data.getLong("expiration")).isAfterNow()
-
-        data.has("token")
-        data.getString("token").length() > 0
+        data.toList().each { item ->
+            JSONObject gameJson = (JSONObject) item
+            gameJson.has("tag")
+            ((String) gameJson.get("tag")).length() > 0
+            gameJson.has("name")
+            ((String) gameJson.get("name")).length() > 0
+        }
     }
 }

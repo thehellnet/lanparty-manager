@@ -10,7 +10,7 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
-import org.thehellnet.lanparty.manager.model.dto.request.token.tournament.TournamentListRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.tournament.TournamentListRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentListResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;

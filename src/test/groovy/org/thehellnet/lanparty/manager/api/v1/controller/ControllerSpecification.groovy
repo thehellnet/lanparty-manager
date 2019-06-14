@@ -1,36 +1,35 @@
 package org.thehellnet.lanparty.manager.api.v1.controller
 
-import org.json.JSONArray
+import org.joda.time.DateTime
 import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.thehellnet.lanparty.manager.ContextTest
+import org.thehellnet.lanparty.manager.ContextSpecification
 
-class GameMapControllerTest extends ContextTest {
+abstract class ControllerSpecification extends ContextSpecification {
 
-    def setup() {
-        'Do login for token retrieving'()
-    }
+    protected String token
 
-    def list() {
-        given:
+    protected void "Do login for token retrieving"() {
+        if (token != null) {
+            return
+        }
+
         def requestBody = new JSONObject([
-                "token"  : token,
-                "gameTag": "cod4"
+                "email"   : "admin",
+                "password": "admin"
         ])
 
-        when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/gameMap/list")
+                        .post("/api/v1/public/appUser/login")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content(requestBody.toString())
                 )
                 .andReturn()
                 .response
 
-        then:
         rawResponse.status == HttpStatus.OK.value()
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
 
@@ -39,19 +38,13 @@ class GameMapControllerTest extends ContextTest {
         response.getBoolean("success")
 
         response.has("data")
-        JSONArray data = response.getJSONArray("data")
-        data.length() > 0
+        JSONObject data = response.getJSONObject("data")
 
-        data.toList().each { item ->
-            JSONObject gameJson = (JSONObject) item
-            gameJson.has("tag")
-            ((String) gameJson.get("tag")).length() > 0
-            gameJson.has("name")
-            ((String) gameJson.get("name")).length() > 0
-            gameJson.has("gameTag")
-            ((String) gameJson.get("gameTag")) == "cod4"
-            gameJson.has("stock")
-            ((boolean) gameJson.get("gameTag"))
-        }
+        data.has("expiration")
+        new DateTime(data.getLong("expiration")).isAfterNow()
+
+        data.has("token")
+        token = data.getString("token")
     }
+
 }

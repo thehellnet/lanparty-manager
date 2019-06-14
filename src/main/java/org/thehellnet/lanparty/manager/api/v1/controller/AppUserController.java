@@ -14,8 +14,7 @@ import org.thehellnet.lanparty.manager.exception.appuser.*;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.light.AppUserLight;
-import org.thehellnet.lanparty.manager.model.dto.request.AppUserLoginRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.request.token.appuser.*;
+import org.thehellnet.lanparty.manager.model.dto.request.appuser.*;
 import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserCreateResponseDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserGetAllResponseDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserGetInfoResponseDTO;
@@ -25,6 +24,7 @@ import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.service.AppUserService;
 import org.thehellnet.utility.PasswordUtility;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_VIEW)
     @ResponseBody
-    public JsonResponse getAll(AppUser appUser, @RequestBody AppUserGetAllRequestDTO dto) {
+    public JsonResponse getAll(HttpServletRequest request, AppUser appUser, @RequestBody AppUserGetAllRequestDTO dto) {
         List<AppUserLight> appUserLightList = appUserService.getAll();
         AppUserGetAllResponseDTO responseDTO = new AppUserGetAllResponseDTO(appUserLightList);
         return JsonResponse.getInstance(responseDTO);
@@ -67,7 +67,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_VIEW)
     @ResponseBody
-    public JsonResponse get(AppUser appUser, @RequestBody AppUserGetRequestDTO dto) {
+    public JsonResponse get(HttpServletRequest request, AppUser appUser, @RequestBody AppUserGetRequestDTO dto) {
         AppUser user = appUserService.get(dto.getId());
         if (user == null) {
             return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
@@ -86,7 +86,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
     @ResponseBody
-    public JsonResponse create(AppUser appUser, @RequestBody AppUserCreateRequestDTO dto) {
+    public JsonResponse create(HttpServletRequest request, AppUser appUser, @RequestBody AppUserCreateRequestDTO dto) {
         AppUser user;
         try {
             user = appUserService.create(dto.getEmail(), dto.getPassword(), dto.getName());
@@ -117,7 +117,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
     @ResponseBody
-    public JsonResponse save(AppUser appUser, @RequestBody AppUserSaveRequestDTO dto) {
+    public JsonResponse save(HttpServletRequest request, AppUser appUser, @RequestBody AppUserSaveRequestDTO dto) {
         try {
             appUserService.save(dto.getId(), dto.getName(), dto.getEmail());
         } catch (LanPartyManagerException e) {
@@ -137,7 +137,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
     @ResponseBody
-    public JsonResponse delete(AppUser appUser, @RequestBody AppUserDeleteRequestDTO dto) {
+    public JsonResponse delete(HttpServletRequest request, AppUser appUser, @RequestBody AppUserDeleteRequestDTO dto) {
         try {
             appUserService.delete(dto.getId());
         } catch (AppUserNotFoundException e) {
@@ -183,7 +183,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.READ_PRIVATE)
     @ResponseBody
-    public JsonResponse getInfo(AppUser appUser, @RequestBody AppUserGetInfoRequestDTO dto) {
+    public JsonResponse getInfo(HttpServletRequest request, AppUser appUser, @RequestBody AppUserGetInfoRequestDTO dto) {
         AppUserGetInfoResponseDTO responseDTO = new AppUserGetInfoResponseDTO(
                 appUser.toString(),
                 appUser.getAppUserRoles()
@@ -200,7 +200,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_CHANGE_PASSWORD)
     @ResponseBody
-    public JsonResponse changePassword(AppUser appUser, @RequestBody AppUserChangePasswordRequestDTO dto) {
+    public JsonResponse changePassword(HttpServletRequest request, AppUser appUser, @RequestBody AppUserChangePasswordRequestDTO dto) {
         if (!PasswordUtility.verify(appUser.getPassword(), dto.getOldPassword())) {
             return ErrorCode.prepareResponse(ErrorCode.APPUSER_INVALID_PASSWORD);
         }

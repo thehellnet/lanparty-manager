@@ -1,8 +1,8 @@
-package org.thehellnet.lanparty.manager.model.dto.request.token.appuser;
+package org.thehellnet.lanparty.manager.model.dto.request.appuser;
 
-import org.thehellnet.lanparty.manager.model.dto.request.token.TokenRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.RequestDTO;
 
-public class AppUserCreateRequestDTO extends TokenRequestDTO {
+public class AppUserCreateRequestDTO extends RequestDTO {
 
     private String email;
     private String password;

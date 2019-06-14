@@ -35,7 +35,7 @@ public class RolesControllerAspect {
         CheckRoles annotation = method.getAnnotation(CheckRoles.class);
 
         Object[] params = joinPoint.getArgs();
-        AppUser appUser = (AppUser) params[0];
+        AppUser appUser = (AppUser) params[1];
 
         if (annotation.mode == CheckRoles.Mode.ALL) {
             if (!appUserService.hasAllRoles(appUser, annotation.value())) {

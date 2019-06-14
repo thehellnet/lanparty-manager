@@ -11,7 +11,7 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
-import org.thehellnet.lanparty.manager.model.dto.request.token.ServerListDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.ServerListDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
 import org.thehellnet.lanparty.manager.repository.ServerRepository;

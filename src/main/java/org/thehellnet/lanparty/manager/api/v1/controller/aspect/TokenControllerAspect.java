@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
-import org.thehellnet.lanparty.manager.model.dto.request.token.TokenRequestDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.service.AppUserTokenService;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Aspect
 @Order(0)
@@ -30,19 +31,25 @@ public class TokenControllerAspect {
     @Around("@annotation(CheckToken)")
     public Object checkToken(ProceedingJoinPoint joinPoint) {
         Object[] params = joinPoint.getArgs();
+        logger.debug(joinPoint.getTarget().toString());
 
-        TokenRequestDTO dto = (TokenRequestDTO) params[1];
+        HttpServletRequest servletRequest = (HttpServletRequest) params[0];
+        String token = servletRequest.getHeader("X-Auth-Token");
+        if (token == null) {
+            return JsonResponse.getErrorInstance("No Token");
+        }
 
-        AppUser appUser = appUserTokenService.getAppUserByToken(dto.token);
+        AppUser appUser = appUserTokenService.getAppUserByToken(token);
         if (appUser == null) {
             return JsonResponse.getErrorInstance("Token not enabled");
         }
 
-        params[0] = appUser;
+        params[1] = appUser;
 
         try {
             return joinPoint.proceed(params);
         } catch (Throwable throwable) {
+            throwable.printStackTrace();
             logger.error(throwable.getMessage());
             return JsonResponse.getErrorInstance(throwable.getMessage());
         }

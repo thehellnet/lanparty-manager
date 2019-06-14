@@ -1,8 +1,8 @@
-package org.thehellnet.lanparty.manager.model.dto.request.token.appuser;
+package org.thehellnet.lanparty.manager.model.dto.request.appuser;
 
-import org.thehellnet.lanparty.manager.model.dto.request.token.TokenRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.RequestDTO;
 
-public class AppUserChangePasswordRequestDTO extends TokenRequestDTO {
+public class AppUserChangePasswordRequestDTO extends RequestDTO {
 
     private String oldPassword;
     private String newPassword;

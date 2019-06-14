@@ -33,7 +33,7 @@ public class ToolController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public JsonResponse ping(@RequestBody PingToolRequestDTO dto, HttpServletRequest request) {
+    public JsonResponse ping(HttpServletRequest request, @RequestBody PingToolRequestDTO dto) {
         String remoteAddress = request.getRemoteAddr();
         logger.info("Ping from tool at {}", remoteAddress);
 
