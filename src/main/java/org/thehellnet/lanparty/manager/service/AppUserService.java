@@ -14,9 +14,7 @@ import org.thehellnet.utility.EmailUtility;
 import org.thehellnet.utility.PasswordUtility;
 import org.thehellnet.utility.TokenUtility;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AppUserService {
@@ -76,7 +74,7 @@ public class AppUserService {
     }
 
     @Transactional
-    public void save(Long id, String name, String email) throws AppUserNotFoundException {
+    public AppUser save(Long id, String name, String[] appUserRoles) throws AppUserNotFoundException {
         AppUser appUser = appUserRepository.findById(id).orElse(null);
         if (appUser == null) {
             throw new AppUserNotFoundException();
@@ -86,11 +84,15 @@ public class AppUserService {
             appUser.setName(name);
         }
 
-        if (EmailUtility.validate(email)) {
-            appUser.setEmail(email);
+        if (appUserRoles != null) {
+            Set<Role> roles = new HashSet<>();
+            for (String roleName : appUserRoles) {
+                roles.add(Role.valueOf(roleName));
+            }
+            appUser.setAppUserRoles(roles);
         }
 
-        appUserRepository.save(appUser);
+        return appUserRepository.save(appUser);
     }
 
     @Transactional
@@ -104,12 +106,17 @@ public class AppUserService {
     }
 
     @Transactional(readOnly = true)
-    public AppUser findByEmailAndPassword(String email, String password) {
+    public AppUser findByEmail(String email) {
         if (!EmailUtility.validateForLogin(email)) {
             return null;
         }
 
-        AppUser appUser = appUserRepository.findByEmail(email);
+        return appUserRepository.findByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public AppUser findByEmailAndPassword(String email, String password) {
+        AppUser appUser = findByEmail(email);
         if (appUser == null) {
             return null;
         }
