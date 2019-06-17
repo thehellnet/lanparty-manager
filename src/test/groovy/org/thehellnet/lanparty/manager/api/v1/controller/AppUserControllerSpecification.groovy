@@ -3,10 +3,13 @@ package org.thehellnet.lanparty.manager.api.v1.controller
 import org.joda.time.DateTime
 import org.json.JSONArray
 import org.json.JSONObject
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.model.constant.Role
+import org.thehellnet.lanparty.manager.model.persistence.AppUser
+import org.thehellnet.lanparty.manager.service.AppUserService
 import org.thehellnet.utility.TokenUtility
 
 class AppUserControllerSpecification extends ControllerSpecification {
@@ -14,6 +17,12 @@ class AppUserControllerSpecification extends ControllerSpecification {
     private static final String APPUSER_EMAIL = "email@email.com"
     private static final String APPUSER_PASSWORD = "password"
     private static final String APPUSER_NAME = "Name"
+
+    private static final String APPUSER_NAME_NEW = "Name2"
+    private static final String APPUSER_ROLES_NEW = Role.LOGIN.name
+
+    @Autowired
+    private AppUserService appUserService
 
     def setup() {
         "Do login for token retrieving"()
@@ -204,10 +213,108 @@ class AppUserControllerSpecification extends ControllerSpecification {
 
         appUserRoles.length() == 0
 
-        checkAppUserNumber() == 2
+        "check number of appUsers in database"() == 2
     }
 
-    private int checkAppUserNumber() {
+    def "save"() {
+        setup:
+        "create test appUser if not exists"()
+
+        def requestBody = new JSONObject()
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .post("/api/v1/public/appUser/getAll")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Auth-Token", token)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        JSONObject response = new JSONObject(rawResponse.contentAsString)
+        response.getBoolean("success")
+
+        JSONObject data = response.getJSONObject("data")
+        JSONArray appUsers = data.getJSONArray("appUsers")
+
+        when:
+        int appUserId = 0
+        for (int i = 0; i < appUsers.length(); i++) {
+            JSONObject appUser = appUsers.getJSONObject(i)
+            if (appUser.get("name") != JSONObject.NULL
+                    && appUser.getString("name") == APPUSER_NAME) {
+                appUserId = appUser.getInt("id")
+                break
+            }
+        }
+
+        then:
+        appUserId != 0
+
+        when:
+        requestBody = new JSONObject()
+        requestBody.put("id", appUserId)
+        requestBody.put("name", APPUSER_NAME_NEW)
+        requestBody.put("appUserRoles", new JSONArray([APPUSER_ROLES_NEW]))
+
+        rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .post("/api/v1/public/appUser/save")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Auth-Token", token)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+
+        when:
+        response = new JSONObject(rawResponse.contentAsString)
+
+        then:
+        response.has("success")
+        response.getBoolean("success")
+
+        response.has("data")
+
+        when:
+        data = response.getJSONObject("data")
+
+        then:
+        data.has("appUser")
+        JSONObject appUser = data.getJSONObject("appUser")
+
+        !appUser.has("password")
+
+        appUser.has("id")
+        appUser.get("id") instanceof Integer
+        appUser.getInt("id") == appUserId
+
+        appUser.has("email")
+        appUser.get("email") instanceof String
+        appUser.getString("email") == APPUSER_EMAIL
+
+        appUser.has("name")
+        appUser.get("name") instanceof String
+        appUser.getString("name") == APPUSER_NAME_NEW
+
+        appUser.has("appUserRoles")
+        JSONArray appUserRoles = appUser.getJSONArray("appUserRoles")
+
+        appUserRoles.length() == 1
+        appUserRoles.getString(0) == APPUSER_ROLES_NEW
+
+        "check number of appUsers in database"() == 2
+    }
+
+    private int "check number of appUsers in database"() {
         JSONObject requestBody = new JSONObject()
 
         def rawResponse = mockMvc
@@ -233,4 +340,12 @@ class AppUserControllerSpecification extends ControllerSpecification {
         return appUsers.length()
     }
 
+    private void "create test appUser if not exists"() {
+        AppUser appUser = appUserService.findByEmail(APPUSER_EMAIL)
+        if (appUser != null) {
+            return
+        }
+
+        appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)
+    }
 }

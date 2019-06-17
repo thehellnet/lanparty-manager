@@ -5,8 +5,8 @@ import org.thehellnet.lanparty.manager.model.dto.request.RequestDTO;
 public class AppUserSaveRequestDTO extends RequestDTO {
 
     private Long id;
-    private String email;
     private String name;
+    private String[] appUserRoles;
 
     public Long getId() {
         return id;
@@ -16,12 +16,12 @@ public class AppUserSaveRequestDTO extends RequestDTO {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public String[] getAppUserRoles() {
+        return appUserRoles;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setAppUserRoles(String[] appUserRoles) {
+        this.appUserRoles = appUserRoles;
     }
 
     public String getName() {
