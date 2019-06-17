@@ -218,50 +218,18 @@ class AppUserControllerSpecification extends ControllerSpecification {
 
     def "save"() {
         setup:
-        "create test appUser if not exists"()
+        Long appUserId = "Retrieve test appUser ID and creates if not exists"()
 
-        def requestBody = new JSONObject()
-
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser/getAll")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Auth-Token", token)
-                        .content(requestBody.toString())
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.OK.value()
-        JSONObject response = new JSONObject(rawResponse.contentAsString)
-        response.getBoolean("success")
-
-        JSONObject data = response.getJSONObject("data")
-        JSONArray appUsers = data.getJSONArray("appUsers")
+        expect:
+        appUserId != null
 
         when:
-        int appUserId = 0
-        for (int i = 0; i < appUsers.length(); i++) {
-            JSONObject appUser = appUsers.getJSONObject(i)
-            if (appUser.get("name") != JSONObject.NULL
-                    && appUser.getString("name") == APPUSER_NAME) {
-                appUserId = appUser.getInt("id")
-                break
-            }
-        }
-
-        then:
-        appUserId != 0
-
-        when:
-        requestBody = new JSONObject()
+        JSONObject requestBody = new JSONObject()
         requestBody.put("id", appUserId)
         requestBody.put("name", APPUSER_NAME_NEW)
         requestBody.put("appUserRoles", new JSONArray([APPUSER_ROLES_NEW]))
 
-        rawResponse = mockMvc
+        def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
                         .post("/api/v1/public/appUser/save")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -276,7 +244,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
 
         when:
-        response = new JSONObject(rawResponse.contentAsString)
+        JSONObject response = new JSONObject(rawResponse.contentAsString)
 
         then:
         response.has("success")
@@ -285,7 +253,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
         response.has("data")
 
         when:
-        data = response.getJSONObject("data")
+        JSONObject data = response.getJSONObject("data")
 
         then:
         data.has("appUser")
@@ -314,12 +282,22 @@ class AppUserControllerSpecification extends ControllerSpecification {
         "check number of appUsers in database"() == 2
     }
 
-    private int "check number of appUsers in database"() {
+    def "delete"() {
+        setup:
+        Long appUserId = "Retrieve test appUser ID and creates if not exists"()
+
+        expect:
+        appUserId != null
+
+        when:
         JSONObject requestBody = new JSONObject()
+        requestBody.put("id", appUserId)
+        requestBody.put("name", APPUSER_NAME_NEW)
+        requestBody.put("appUserRoles", new JSONArray([APPUSER_ROLES_NEW]))
 
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser/getAll")
+                        .post("/api/v1/public/appUser/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Auth-Token", token)
                         .content(requestBody.toString())
@@ -327,25 +305,60 @@ class AppUserControllerSpecification extends ControllerSpecification {
                 .andReturn()
                 .response
 
+        then:
         rawResponse.status == HttpStatus.OK.value()
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
 
+        when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
+        then:
         response.has("success")
-        assert response.getBoolean("success")
+        response.getBoolean("success")
 
+        response.has("data")
+
+        when:
         JSONObject data = response.getJSONObject("data")
-        JSONArray appUsers = data.getJSONArray("appUsers")
-        return appUsers.length()
+
+        then:
+        data.has("appUser")
+        JSONObject appUser = data.getJSONObject("appUser")
+
+        !appUser.has("password")
+
+        appUser.has("id")
+        appUser.get("id") instanceof Integer
+        appUser.getLong("id") == appUserId
+
+        appUser.has("email")
+        appUser.get("email") instanceof String
+        appUser.getString("email") == APPUSER_EMAIL
+
+        appUser.has("name")
+        appUser.get("name") instanceof String
+        appUser.getString("name") == APPUSER_NAME_NEW
+
+        appUser.has("appUserRoles")
+        JSONArray appUserRoles = appUser.getJSONArray("appUserRoles")
+
+        appUserRoles.length() == 1
+        appUserRoles.getString(0) == APPUSER_ROLES_NEW
+
+        "check number of appUsers in database"() == 2
     }
 
-    private void "create test appUser if not exists"() {
+    private int "check number of appUsers in database"() {
+        return appUserService.getAll().size()
+    }
+
+    private Long "Retrieve test appUser ID and creates if not exists"() {
         AppUser appUser = appUserService.findByEmail(APPUSER_EMAIL)
-        if (appUser != null) {
-            return
+
+        if (appUser == null) {
+            appUser = appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)
         }
 
-        appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)
+        return appUser.id
     }
 }
