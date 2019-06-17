@@ -15,10 +15,7 @@ import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.light.AppUserLight;
 import org.thehellnet.lanparty.manager.model.dto.request.appuser.*;
-import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserCreateResponseDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserGetAllResponseDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserGetInfoResponseDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserGetResponseDTO;
+import org.thehellnet.lanparty.manager.model.dto.response.appuser.*;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.service.AppUserService;
@@ -118,14 +115,16 @@ public class AppUserController {
     @CheckRoles(Role.APPUSER_ADMIN)
     @ResponseBody
     public JsonResponse save(HttpServletRequest request, AppUser appUser, @RequestBody AppUserSaveRequestDTO dto) {
+        AppUser user;
         try {
-            appUserService.save(dto.getId(), dto.getName(), dto.getEmail());
+            user = appUserService.save(dto.getId(), dto.getName(), dto.getAppUserRoles());
         } catch (LanPartyManagerException e) {
             logger.error(e.getMessage());
             return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
         }
 
-        return JsonResponse.getInstance();
+        AppUserSaveResponseDTO responseDTO = new AppUserSaveResponseDTO(user);
+        return JsonResponse.getInstance(responseDTO);
     }
 
     @RequestMapping(
