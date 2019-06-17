@@ -173,6 +173,7 @@ public class AppUserController {
         return JsonResponse.getInstance(data);
     }
 
+    @Deprecated
     @RequestMapping(
             path = "/getInfo",
             method = RequestMethod.POST,
