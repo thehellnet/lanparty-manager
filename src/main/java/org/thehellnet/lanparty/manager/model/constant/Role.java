@@ -1,5 +1,7 @@
 package org.thehellnet.lanparty.manager.model.constant;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Role {
     LOGIN("Can login for get tokens"),
 
@@ -15,6 +17,11 @@ public enum Role {
 
     Role(String description, Role... impliedRoles) {
         this.description = description;
+    }
+
+    @JsonValue
+    public String getName() {
+        return name();
     }
 
     public Role[] getImpliedRoles() {
