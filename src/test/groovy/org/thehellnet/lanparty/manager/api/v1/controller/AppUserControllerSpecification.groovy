@@ -292,12 +292,10 @@ class AppUserControllerSpecification extends ControllerSpecification {
         when:
         JSONObject requestBody = new JSONObject()
         requestBody.put("id", appUserId)
-        requestBody.put("name", APPUSER_NAME_NEW)
-        requestBody.put("appUserRoles", new JSONArray([APPUSER_ROLES_NEW]))
 
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser/save")
+                        .post("/api/v1/public/appUser/delete")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Auth-Token", token)
                         .content(requestBody.toString())
@@ -316,36 +314,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
         response.has("success")
         response.getBoolean("success")
 
-        response.has("data")
-
-        when:
-        JSONObject data = response.getJSONObject("data")
-
-        then:
-        data.has("appUser")
-        JSONObject appUser = data.getJSONObject("appUser")
-
-        !appUser.has("password")
-
-        appUser.has("id")
-        appUser.get("id") instanceof Integer
-        appUser.getLong("id") == appUserId
-
-        appUser.has("email")
-        appUser.get("email") instanceof String
-        appUser.getString("email") == APPUSER_EMAIL
-
-        appUser.has("name")
-        appUser.get("name") instanceof String
-        appUser.getString("name") == APPUSER_NAME_NEW
-
-        appUser.has("appUserRoles")
-        JSONArray appUserRoles = appUser.getJSONArray("appUserRoles")
-
-        appUserRoles.length() == 1
-        appUserRoles.getString(0) == APPUSER_ROLES_NEW
-
-        "check number of appUsers in database"() == 2
+        "check number of appUsers in database"() == 1
     }
 
     private int "check number of appUsers in database"() {
