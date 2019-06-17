@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class AppUser implements Serializable {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @Basic
     @Column(name = "password", nullable = false)
     private String password;
@@ -30,6 +32,7 @@ public class AppUser implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "appUser", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<AppUserToken> appUserTokens = new HashSet<>();
 

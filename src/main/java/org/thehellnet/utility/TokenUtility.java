@@ -11,8 +11,9 @@ import java.security.SecureRandom;
 
 public final class TokenUtility {
 
+    public static final int LENGTH = 16;
+
     private static final int OFFSET = 19;
-    private static final int LENGTH = 16;
 
     private static final int EXIPRATION_DAYS = 1;
 

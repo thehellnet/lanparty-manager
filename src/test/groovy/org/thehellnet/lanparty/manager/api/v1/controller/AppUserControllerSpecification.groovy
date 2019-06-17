@@ -6,6 +6,8 @@ import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.thehellnet.lanparty.manager.model.constant.Role
+import org.thehellnet.utility.TokenUtility
 
 class AppUserControllerSpecification extends ControllerSpecification {
 
@@ -47,7 +49,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
         new DateTime(data.getLong("expiration")).isAfterNow()
 
         data.has("token")
-        data.getString("token").length() > 0
+        data.getString("token").length() == TokenUtility.LENGTH
     }
 
     def "getAll"() {
@@ -81,5 +83,69 @@ class AppUserControllerSpecification extends ControllerSpecification {
         JSONArray appUsers = data.getJSONArray("appUsers")
 
         appUsers.length() == 1
+
+        JSONObject appUser = appUsers.getJSONObject(0)
+
+        appUser.has("id")
+        appUser.get("id") instanceof Integer
+
+        appUser.has("email")
+        appUser.get("email") instanceof String
+
+        appUser.has("name")
+        appUser.get("name") == JSONObject.NULL
+    }
+
+    def "get"() {
+        given:
+        def requestBody = new JSONObject()
+        requestBody.put("id", 1)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .post("/api/v1/public/appUser/get")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Auth-Token", token)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+
+        JSONObject response = new JSONObject(rawResponse.contentAsString)
+
+        response.has("success")
+        response.getBoolean("success")
+
+        response.has("data")
+        JSONObject data = response.getJSONObject("data")
+
+        data.has("appUser")
+        JSONObject appUser = data.getJSONObject("appUser")
+
+        !appUser.has("password")
+
+        appUser.has("id")
+        appUser.get("id") instanceof Integer
+
+        appUser.has("email")
+        appUser.get("email") instanceof String
+
+        appUser.has("name")
+        appUser.get("name") == JSONObject.NULL
+
+        appUser.has("appUserRoles")
+        JSONArray appUserRoles = appUser.getJSONArray("appUserRoles")
+
+        appUserRoles.length() == Role.values().length
+
+        for (int i = 0; i < appUserRoles.length(); i++) {
+            Role role = Role.valueOf(appUserRoles.getString(i))
+            assert Role.values().contains(role)
+        }
     }
 }
