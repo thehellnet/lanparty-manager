@@ -22,6 +22,7 @@ import org.thehellnet.lanparty.manager.service.AppUserService;
 import org.thehellnet.utility.PasswordUtility;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +51,16 @@ public class AppUserController {
     @CheckRoles(Role.APPUSER_VIEW)
     @ResponseBody
     public JsonResponse getAll(HttpServletRequest request, AppUser appUser, @RequestBody AppUserGetAllRequestDTO dto) {
-        List<AppUserLight> appUserLightList = appUserService.getAll();
-        AppUserGetAllResponseDTO responseDTO = new AppUserGetAllResponseDTO(appUserLightList);
+        List<AppUser> appUserList = appUserService.getAll();
+
+        List<AppUserLight> appUserLights = new ArrayList<>();
+
+        for (AppUser appUser1 : appUserList) {
+            AppUserLight appUserLight = new AppUserLight(appUser1);
+            appUserLights.add(appUserLight);
+        }
+
+        AppUserGetAllResponseDTO responseDTO = new AppUserGetAllResponseDTO(appUserLights);
         return JsonResponse.getInstance(responseDTO);
     }
 

@@ -29,16 +29,8 @@ public class AppUserService {
     }
 
     @Transactional(readOnly = true)
-    public List<AppUserLight> getAll() {
-        List<AppUserLight> appUserLights = new ArrayList<>();
-
-        List<AppUser> appUsers = appUserRepository.findAll();
-        for (AppUser appUser : appUsers) {
-            AppUserLight appUserLight = new AppUserLight(appUser);
-            appUserLights.add(appUserLight);
-        }
-
-        return appUserLights;
+    public List<AppUser> getAll() {
+        return appUserRepository.findAll();
     }
 
     @Transactional(readOnly = true)
