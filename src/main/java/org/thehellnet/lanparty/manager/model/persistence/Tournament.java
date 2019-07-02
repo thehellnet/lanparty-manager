@@ -40,6 +40,14 @@ public class Tournament implements Serializable {
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Team> teams = new HashSet<>();
 
+    public Tournament() {
+    }
+
+    public Tournament(String name, Game game) {
+        this.name = name;
+        this.game = game;
+    }
+
     public Long getId() {
         return id;
     }
@@ -86,6 +94,14 @@ public class Tournament implements Serializable {
 
     public void setTeams(Set<Team> teams) {
         this.teams = teams;
+    }
+
+    public TournamentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TournamentStatus status) {
+        this.status = status;
     }
 
     @Override
