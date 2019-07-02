@@ -27,32 +27,32 @@ public class CfgService {
         this.cfgRepository = cfgRepository;
     }
 
-    @Transactional(readOnly = true)
-    public String getCfgContentFromRemoteAddressAndBarcode(String remoteAddress, String barcode) throws CfgException {
-        if (remoteAddress == null
-                || remoteAddress.length() == 0
-                || barcode == null
-                || barcode.length() == 0) {
-            throw new CfgException("Invalid remote address or barcode");
-        }
-
-        Seat seat = seatService.findByAddress(remoteAddress);
-        if (seat == null) {
-            throw new CfgException("Seat not found");
-        }
-
-        Player player = playerRepository.findByBarcode(barcode);
-        if (player == null) {
-            throw new CfgException("Player not found");
-        }
-
-        Game game = seat.getTournament().getGame();
-
-        Cfg playerCfg = cfgRepository.findByPlayerAndGame(player, game);
-        if (playerCfg == null) {
-            throw new CfgException("Cfg not found");
-        }
-
-        return playerCfg.getCfg();
-    }
+//    @Transactional(readOnly = true)
+//    public String getCfgContentFromRemoteAddressAndBarcode(String remoteAddress, String barcode) throws CfgException {
+//        if (remoteAddress == null
+//                || remoteAddress.length() == 0
+//                || barcode == null
+//                || barcode.length() == 0) {
+//            throw new CfgException("Invalid remote address or barcode");
+//        }
+//
+//        Seat seat = seatService.findByAddress(remoteAddress);
+//        if (seat == null) {
+//            throw new CfgException("Seat not found");
+//        }
+//
+//        Player player = playerRepository.findByBarcode(barcode);
+//        if (player == null) {
+//            throw new CfgException("Player not found");
+//        }
+//
+//        Game game = seat.getTournament().getGame();
+//
+//        Cfg playerCfg = cfgRepository.findByPlayerAndGame(player, game);
+//        if (playerCfg == null) {
+//            throw new CfgException("Cfg not found");
+//        }
+//
+//        return playerCfg.getCfg();
+//    }
 }

@@ -57,28 +57,28 @@ public class ToolController {
         return JsonResponse.getInstance("name", seat.getName());
     }
 
-    @RequestMapping(
-            path = "/getCfg",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @ResponseBody
-    public JsonResponse getCfg(@RequestBody GetCfgToolRequestDTO dto, HttpServletRequest request) {
-        String remoteAddress = request.getRemoteAddr();
-        logger.info("getCfg from tool at {}", remoteAddress);
-
-        String cfgContent;
-
-        try {
-            cfgContent = cfgService.getCfgContentFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode());
-        } catch (CfgException e) {
-            logger.warn(e.getMessage());
-            return JsonResponse.getErrorInstance(e.getMessage());
-        }
-
-        List<String> cfgLines = StringUtility.splitLines(cfgContent);
-        GetCfgToolResponseDTO responseDTO = new GetCfgToolResponseDTO(cfgLines);
-        return JsonResponse.getInstance(responseDTO);
-    }
+//    @RequestMapping(
+//            path = "/getCfg",
+//            method = RequestMethod.POST,
+//            consumes = MediaType.APPLICATION_JSON_VALUE,
+//            produces = MediaType.APPLICATION_JSON_VALUE
+//    )
+//    @ResponseBody
+//    public JsonResponse getCfg(@RequestBody GetCfgToolRequestDTO dto, HttpServletRequest request) {
+//        String remoteAddress = request.getRemoteAddr();
+//        logger.info("getCfg from tool at {}", remoteAddress);
+//
+//        String cfgContent;
+//
+//        try {
+//            cfgContent = cfgService.getCfgContentFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode());
+//        } catch (CfgException e) {
+//            logger.warn(e.getMessage());
+//            return JsonResponse.getErrorInstance(e.getMessage());
+//        }
+//
+//        List<String> cfgLines = StringUtility.splitLines(cfgContent);
+//        GetCfgToolResponseDTO responseDTO = new GetCfgToolResponseDTO(cfgLines);
+//        return JsonResponse.getInstance(responseDTO);
+//    }
 }

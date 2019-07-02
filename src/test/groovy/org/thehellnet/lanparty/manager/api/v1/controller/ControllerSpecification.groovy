@@ -2,14 +2,22 @@ package org.thehellnet.lanparty.manager.api.v1.controller
 
 import org.joda.time.DateTime
 import org.json.JSONObject
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.ContextSpecification
+import org.thehellnet.lanparty.manager.model.persistence.Tournament
+import org.thehellnet.lanparty.manager.service.TournamentService
 
 abstract class ControllerSpecification extends ContextSpecification {
 
+    protected final static String TOURNAMENT_NAME = "Test Tournament"
+
     protected String token
+
+    @Autowired
+    protected TournamentService tournamentService
 
     protected void "Do login for token retrieving"() {
         if (token != null) {
@@ -47,4 +55,10 @@ abstract class ControllerSpecification extends ContextSpecification {
         token = data.getString("token")
     }
 
+    protected void createTournament() {
+        Tournament tournament = tournamentService.findByName(TOURNAMENT_NAME)
+        if(tournament == null){
+
+        }
+    }
 }

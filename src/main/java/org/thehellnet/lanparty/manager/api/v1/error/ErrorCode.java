@@ -10,7 +10,9 @@ public enum ErrorCode {
     APPUSER_INVALID_MAIL,
     APPUSER_INVALID_PASSWORD,
     APPUSER_ALREADY_PRESENT,
-    APPUSER_PASSWORD_CHANGE_FAILED;
+    APPUSER_PASSWORD_CHANGE_FAILED,
+
+    TOURNAMENT_NOT_FOUND;
 
     public static JsonResponse prepareResponse(ErrorCode errorCode) {
         JsonResponse jsonResponse = JsonResponse.getErrorInstance();

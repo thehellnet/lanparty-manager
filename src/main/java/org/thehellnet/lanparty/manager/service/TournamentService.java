@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.service;
 
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,11 @@ public class TournamentService {
 
     @Transactional(readOnly = true)
     public List<Tournament> getAll() {
-        return tournamentRepository.findAll();
+        List<Tournament> tournamentList = tournamentRepository.findAll();
+        for (Tournament tournament : tournamentList) {
+            tournament.getGame();
+        }
+        return tournamentList;
     }
 
     @Transactional(readOnly = true)
