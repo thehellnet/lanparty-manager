@@ -9,11 +9,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.api.v1.error.ErrorCode;
+import org.thehellnet.lanparty.manager.exception.game.GameNotFoundException;
+import org.thehellnet.lanparty.manager.exception.tournament.TournamentAlreadyExistsException;
+import org.thehellnet.lanparty.manager.exception.tournament.TournamentInvalidNameException;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.light.TournamentLight;
+import org.thehellnet.lanparty.manager.model.dto.request.tournament.TournamentCreateRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.tournament.TournamentGetAllRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.tournament.TournamentGetRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentCreateResponseDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentGetAllResponseDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentGetResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
@@ -76,38 +81,33 @@ public class TournamentController {
         return JsonResponse.getInstance(responseDTO);
     }
 
-//    @RequestMapping(
-//            path = "/create",
-//            method = RequestMethod.POST,
-//            consumes = MediaType.APPLICATION_JSON_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    @CheckToken
-//    @CheckRoles(Role.APPUSER_ADMIN)
-//    @ResponseBody
-//    public JsonResponse create(HttpServletRequest request, AppUser appUser, @RequestBody AppUserCreateRequestDTO dto) {
-//        AppUser user;
-//        try {
-//            user = appUserService.create(dto.getEmail(), dto.getPassword(), dto.getName());
-//        } catch (AppUserException e) {
-//            logger.error(e.getMessage());
-//
-//            if (e instanceof AppUserInvalidMailException) {
-//                return ErrorCode.prepareResponse(ErrorCode.APPUSER_INVALID_MAIL);
-//            } else if (e instanceof AppUserAlreadyPresentException) {
-//                return ErrorCode.prepareResponse(ErrorCode.APPUSER_ALREADY_PRESENT);
-//            } else if (e instanceof AppUserInvalidPasswordException) {
-//                return ErrorCode.prepareResponse(ErrorCode.APPUSER_INVALID_PASSWORD);
-//            }
-//
-//            return ErrorCode.prepareResponse(ErrorCode.GENERIC);
-//        }
-//
-//        AppUserCreateResponseDTO responseDTO = new AppUserCreateResponseDTO(user);
-//        return JsonResponse.getInstance(responseDTO);
-//    }
-//
-//    @RequestMapping(
+    @RequestMapping(
+            path = "/create",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @CheckToken
+    @CheckRoles(Role.TOURNAMENT_ADMIN)
+    @ResponseBody
+    public JsonResponse create(HttpServletRequest request, AppUser appUser, @RequestBody TournamentCreateRequestDTO dto) {
+        Tournament tournament;
+
+        try {
+            tournament = tournamentService.create(dto.getName(), dto.getGameTag());
+        } catch (GameNotFoundException e) {
+            return ErrorCode.prepareResponse(ErrorCode.GAME_NOT_FOUND);
+        } catch (TournamentInvalidNameException e) {
+            return ErrorCode.prepareResponse(ErrorCode.TOURNAMENT_INVALID_NAME);
+        } catch (TournamentAlreadyExistsException e) {
+            return ErrorCode.prepareResponse(ErrorCode.TOURNAMENT_ALREADY_EXISTS);
+        }
+
+        TournamentCreateResponseDTO responseDTO = new TournamentCreateResponseDTO(tournament);
+        return JsonResponse.getInstance(responseDTO);
+    }
+
+    //    @RequestMapping(
 //            path = "/save",
 //            method = RequestMethod.POST,
 //            consumes = MediaType.APPLICATION_JSON_VALUE,

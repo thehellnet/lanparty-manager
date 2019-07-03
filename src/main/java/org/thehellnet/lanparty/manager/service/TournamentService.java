@@ -46,7 +46,7 @@ public class TournamentService {
     }
 
     @Transactional
-    public Tournament create(String name, String gameTag) throws TournamentException, GameNotFoundException {
+    public Tournament create(String name, String gameTag) throws GameNotFoundException, TournamentInvalidNameException, TournamentAlreadyExistsException {
         if (name == null || name.length() == 0) {
             throw new TournamentInvalidNameException();
         }

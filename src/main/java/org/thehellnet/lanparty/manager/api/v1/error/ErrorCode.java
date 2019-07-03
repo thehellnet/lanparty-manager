@@ -12,7 +12,11 @@ public enum ErrorCode {
     APPUSER_ALREADY_PRESENT,
     APPUSER_PASSWORD_CHANGE_FAILED,
 
-    TOURNAMENT_NOT_FOUND;
+    TOURNAMENT_NOT_FOUND,
+    TOURNAMENT_INVALID_NAME,
+    TOURNAMENT_ALREADY_EXISTS,
+
+    GAME_NOT_FOUND;
 
     public static JsonResponse prepareResponse(ErrorCode errorCode) {
         JsonResponse jsonResponse = JsonResponse.getErrorInstance();
