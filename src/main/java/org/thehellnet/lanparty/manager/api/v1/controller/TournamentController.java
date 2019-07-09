@@ -12,12 +12,14 @@ import org.thehellnet.lanparty.manager.api.v1.error.ErrorCode;
 import org.thehellnet.lanparty.manager.exception.game.GameNotFoundException;
 import org.thehellnet.lanparty.manager.exception.tournament.TournamentAlreadyExistsException;
 import org.thehellnet.lanparty.manager.exception.tournament.TournamentInvalidNameException;
+import org.thehellnet.lanparty.manager.exception.tournament.TournamentNotFoundException;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.light.TournamentLight;
 import org.thehellnet.lanparty.manager.model.dto.request.crud.GetAllCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.crud.GetCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.crud.create.TournamentCreateCrudRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.crud.save.TournamentSaveCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentCreateResponseDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentGetAllResponseDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentGetResponseDTO;
@@ -58,8 +60,7 @@ public class TournamentController {
             tournamentLights.add(appUserLight);
         }
 
-        TournamentGetAllResponseDTO responseDTO = new TournamentGetAllResponseDTO(tournamentLights);
-        return JsonResponse.getInstance(responseDTO);
+        return JsonResponse.getInstance(tournamentLights);
     }
 
     @RequestMapping(
@@ -77,8 +78,7 @@ public class TournamentController {
             return ErrorCode.prepareResponse(ErrorCode.TOURNAMENT_NOT_FOUND);
         }
 
-        TournamentGetResponseDTO responseDTO = new TournamentGetResponseDTO(tournament);
-        return JsonResponse.getInstance(responseDTO);
+        return JsonResponse.getInstance(tournament);
     }
 
     @RequestMapping(
@@ -103,32 +103,31 @@ public class TournamentController {
             return ErrorCode.prepareResponse(ErrorCode.TOURNAMENT_ALREADY_EXISTS);
         }
 
-        TournamentCreateResponseDTO responseDTO = new TournamentCreateResponseDTO(tournament);
-        return JsonResponse.getInstance(responseDTO);
+        return JsonResponse.getInstance(tournament);
     }
 
-    //    @RequestMapping(
-//            path = "/save",
-//            method = RequestMethod.POST,
-//            consumes = MediaType.APPLICATION_JSON_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    @CheckToken
-//    @CheckRoles(Role.APPUSER_ADMIN)
-//    @ResponseBody
-//    public JsonResponse save(HttpServletRequest request, AppUser appUser, @RequestBody AppUserSaveCrudRequestDTO dto) {
-//        AppUser user;
-//        try {
-//            user = appUserService.save(dto.getId(), dto.getName(), dto.getAppUserRoles());
-//        } catch (LanPartyManagerException e) {
-//            logger.error(e.getMessage());
-//            return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
-//        }
-//
-//        AppUserSaveResponseDTO responseDTO = new AppUserSaveResponseDTO(user);
-//        return JsonResponse.getInstance(responseDTO);
-//    }
-//
+    @RequestMapping(
+            path = "/save",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @CheckToken
+    @CheckRoles(Role.TOURNAMENT_ADMIN)
+    @ResponseBody
+    public JsonResponse save(HttpServletRequest request, AppUser appUser, @RequestBody TournamentSaveCrudRequestDTO dto) {
+        Tournament tournament;
+        try {
+            tournament = tournamentService.save(dto.getId(), dto.getName(), dto.getGameId(), dto.getStatusName());
+        } catch (GameNotFoundException e) {
+            return ErrorCode.prepareResponse(ErrorCode.GAME_NOT_FOUND);
+        } catch (TournamentNotFoundException e) {
+            return ErrorCode.prepareResponse(ErrorCode.TOURNAMENT_NOT_FOUND);
+        }
+
+        return JsonResponse.getInstance(tournament);
+    }
+
 //    @RequestMapping(
 //            path = "/delete",
 //            method = RequestMethod.POST,

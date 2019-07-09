@@ -67,8 +67,7 @@ public class AppUserController {
             appUserLights.add(appUserLight);
         }
 
-        AppUserGetAllResponseDTO responseDTO = new AppUserGetAllResponseDTO(appUserLights);
-        return JsonResponse.getInstance(responseDTO);
+        return JsonResponse.getInstance(appUserLights);
     }
 
     @RequestMapping(
@@ -86,8 +85,7 @@ public class AppUserController {
             return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
         }
 
-        AppUserGetResponseDTO responseDTO = new AppUserGetResponseDTO(user);
-        return JsonResponse.getInstance(responseDTO);
+        return JsonResponse.getInstance(user);
     }
 
     @RequestMapping(
@@ -117,8 +115,7 @@ public class AppUserController {
             return ErrorCode.prepareResponse(ErrorCode.GENERIC);
         }
 
-        AppUserCreateResponseDTO responseDTO = new AppUserCreateResponseDTO(user);
-        return JsonResponse.getInstance(responseDTO);
+        return JsonResponse.getInstance(user);
     }
 
     @RequestMapping(
@@ -139,8 +136,7 @@ public class AppUserController {
             return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
         }
 
-        AppUserSaveResponseDTO responseDTO = new AppUserSaveResponseDTO(user);
-        return JsonResponse.getInstance(responseDTO);
+        return JsonResponse.getInstance(user);
     }
 
     @RequestMapping(
