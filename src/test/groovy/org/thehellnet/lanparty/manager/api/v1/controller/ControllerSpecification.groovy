@@ -7,17 +7,23 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.ContextSpecification
-import org.thehellnet.lanparty.manager.model.persistence.Tournament
+import org.thehellnet.lanparty.manager.model.persistence.Game
+import org.thehellnet.lanparty.manager.service.GameService
 import org.thehellnet.lanparty.manager.service.TournamentService
 
 abstract class ControllerSpecification extends ContextSpecification {
 
     protected final static String TOURNAMENT_NAME = "Test Tournament"
 
+    protected final static String GAME_TAG = "cod4"
+
     protected String token
 
     @Autowired
     protected TournamentService tournamentService
+
+    @Autowired
+    protected GameService gameService
 
     protected void "Do login for token retrieving"() {
         if (token != null) {
@@ -56,9 +62,9 @@ abstract class ControllerSpecification extends ContextSpecification {
     }
 
     protected void createTournament() {
-        Tournament tournament = tournamentService.findByName(TOURNAMENT_NAME)
-        if(tournament == null){
-
+        if (tournamentService.findByName(TOURNAMENT_NAME) == null) {
+            Game game = gameService.findByTag(GAME_TAG)
+            tournamentService.create(TOURNAMENT_NAME, game.id)
         }
     }
 }

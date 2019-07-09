@@ -20,4 +20,9 @@ public class GameService {
     public List<Game> getAllGames() {
         return gameRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    public Game findByTag(String gameTag) {
+        return gameRepository.findByTag(gameTag);
+    }
 }
