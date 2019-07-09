@@ -91,6 +91,8 @@ dependencies {
 
     compile group: "de.mkammerer", name: "argon2-jvm", version: "2.5"
 
+    compile group: "com.google.code.findbugs", name: "annotations", version: "3.0.1"
+
     testCompile group: "org.spockframework", name: "spock-core", version: VERSIONS["spock"]
     testCompile group: "org.spockframework", name: "spock-spring", version: VERSIONS["spock"]
 
