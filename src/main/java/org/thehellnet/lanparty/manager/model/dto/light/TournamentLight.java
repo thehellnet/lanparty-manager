@@ -4,23 +4,27 @@ import org.thehellnet.lanparty.manager.model.persistence.Tournament;
 
 public class TournamentLight {
 
+    private Long id;
     private String name;
-    private String gameTag;
+    private Long gameId;
     private String statusName;
 
     public TournamentLight() {
     }
 
-    public TournamentLight(String name, String gameTag, String statusName) {
-        this.name = name;
-        this.gameTag = gameTag;
-        this.statusName = statusName;
+    public TournamentLight(Tournament tournament) {
+        this.id = tournament.getId();
+        this.name = tournament.getName();
+        this.gameId = tournament.getGame().getId();
+        this.statusName = tournament.getStatus().name();
     }
 
-    public TournamentLight(Tournament tournament) {
-        this.name = tournament.getName();
-        this.gameTag = tournament.getGame().getTag();
-        this.statusName = tournament.getStatus().name();
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -31,12 +35,12 @@ public class TournamentLight {
         this.name = name;
     }
 
-    public String getGameTag() {
-        return gameTag;
+    public Long getGameId() {
+        return gameId;
     }
 
-    public void setGameTag(String gameTag) {
-        this.gameTag = gameTag;
+    public void setGameId(Long gameId) {
+        this.gameId = gameId;
     }
 
     public String getStatusName() {
