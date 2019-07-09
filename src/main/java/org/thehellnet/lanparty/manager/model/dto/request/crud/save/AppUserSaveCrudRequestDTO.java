@@ -1,20 +1,9 @@
-package org.thehellnet.lanparty.manager.model.dto.request.appuser;
+package org.thehellnet.lanparty.manager.model.dto.request.crud.save;
 
-import org.thehellnet.lanparty.manager.model.dto.request.RequestDTO;
+public class AppUserSaveCrudRequestDTO extends SaveCrudRequestDTO {
 
-public class AppUserSaveRequestDTO extends RequestDTO {
-
-    private Long id;
     private String name;
     private String[] appUserRoles;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String[] getAppUserRoles() {
         return appUserRoles;

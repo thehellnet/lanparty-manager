@@ -15,9 +15,9 @@ import org.thehellnet.lanparty.manager.exception.tournament.TournamentInvalidNam
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.light.TournamentLight;
-import org.thehellnet.lanparty.manager.model.dto.request.tournament.TournamentCreateRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.request.tournament.TournamentGetAllRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.request.tournament.TournamentGetRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.crud.GetAllCrudRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.crud.GetCrudRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.crud.create.TournamentCreateCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentCreateResponseDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentGetAllResponseDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentGetResponseDTO;
@@ -48,7 +48,7 @@ public class TournamentController {
     @CheckToken
     @CheckRoles(Role.TOURNAMENT_VIEW)
     @ResponseBody
-    public JsonResponse getAll(HttpServletRequest request, AppUser appUser, @RequestBody TournamentGetAllRequestDTO dto) {
+    public JsonResponse getAll(HttpServletRequest request, AppUser appUser, @RequestBody GetAllCrudRequestDTO dto) {
         List<Tournament> tournamentList = tournamentService.getAll();
 
         List<TournamentLight> tournamentLights = new ArrayList<>();
@@ -71,7 +71,7 @@ public class TournamentController {
     @CheckToken
     @CheckRoles(Role.TOURNAMENT_VIEW)
     @ResponseBody
-    public JsonResponse get(HttpServletRequest request, AppUser appUser, @RequestBody TournamentGetRequestDTO dto) {
+    public JsonResponse get(HttpServletRequest request, AppUser appUser, @RequestBody GetCrudRequestDTO dto) {
         Tournament tournament = tournamentService.get(dto.getId());
         if (tournament == null) {
             return ErrorCode.prepareResponse(ErrorCode.TOURNAMENT_NOT_FOUND);
@@ -90,11 +90,11 @@ public class TournamentController {
     @CheckToken
     @CheckRoles(Role.TOURNAMENT_ADMIN)
     @ResponseBody
-    public JsonResponse create(HttpServletRequest request, AppUser appUser, @RequestBody TournamentCreateRequestDTO dto) {
+    public JsonResponse create(HttpServletRequest request, AppUser appUser, @RequestBody TournamentCreateCrudRequestDTO dto) {
         Tournament tournament;
 
         try {
-            tournament = tournamentService.create(dto.getName(), dto.getGameTag());
+            tournament = tournamentService.create(dto.getName(), dto.getGameId());
         } catch (GameNotFoundException e) {
             return ErrorCode.prepareResponse(ErrorCode.GAME_NOT_FOUND);
         } catch (TournamentInvalidNameException e) {
@@ -116,7 +116,7 @@ public class TournamentController {
 //    @CheckToken
 //    @CheckRoles(Role.APPUSER_ADMIN)
 //    @ResponseBody
-//    public JsonResponse save(HttpServletRequest request, AppUser appUser, @RequestBody AppUserSaveRequestDTO dto) {
+//    public JsonResponse save(HttpServletRequest request, AppUser appUser, @RequestBody AppUserSaveCrudRequestDTO dto) {
 //        AppUser user;
 //        try {
 //            user = appUserService.save(dto.getId(), dto.getName(), dto.getAppUserRoles());
@@ -138,7 +138,7 @@ public class TournamentController {
 //    @CheckToken
 //    @CheckRoles(Role.APPUSER_ADMIN)
 //    @ResponseBody
-//    public JsonResponse delete(HttpServletRequest request, AppUser appUser, @RequestBody AppUserDeleteRequestDTO dto) {
+//    public JsonResponse delete(HttpServletRequest request, AppUser appUser, @RequestBody DeleteCrudRequestDTO dto) {
 //        try {
 //            appUserService.delete(dto.getId());
 //        } catch (AppUserNotFoundException e) {

@@ -1,8 +1,8 @@
-package org.thehellnet.lanparty.manager.model.dto.request.appuser;
+package org.thehellnet.lanparty.manager.model.dto.request.crud;
 
 import org.thehellnet.lanparty.manager.model.dto.request.RequestDTO;
 
-public class AppUserDeleteRequestDTO extends RequestDTO {
+public class DeleteCrudRequestDTO extends RequestDTO {
 
     private Long id;
 

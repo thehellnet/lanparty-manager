@@ -14,7 +14,14 @@ import org.thehellnet.lanparty.manager.exception.appuser.*;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.light.AppUserLight;
-import org.thehellnet.lanparty.manager.model.dto.request.appuser.*;
+import org.thehellnet.lanparty.manager.model.dto.request.appuser.AppUserChangePasswordRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.appuser.AppUserGetInfoRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.appuser.AppUserLoginRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.crud.DeleteCrudRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.crud.GetAllCrudRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.crud.GetCrudRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.crud.create.AppUserCreateCrudRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.crud.save.AppUserSaveCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.appuser.*;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
@@ -50,7 +57,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_VIEW)
     @ResponseBody
-    public JsonResponse getAll(HttpServletRequest request, AppUser appUser, @RequestBody AppUserGetAllRequestDTO dto) {
+    public JsonResponse getAll(HttpServletRequest request, AppUser appUser, @RequestBody GetAllCrudRequestDTO dto) {
         List<AppUser> appUserList = appUserService.getAll();
 
         List<AppUserLight> appUserLights = new ArrayList<>();
@@ -73,7 +80,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_VIEW)
     @ResponseBody
-    public JsonResponse get(HttpServletRequest request, AppUser appUser, @RequestBody AppUserGetRequestDTO dto) {
+    public JsonResponse get(HttpServletRequest request, AppUser appUser, @RequestBody GetCrudRequestDTO dto) {
         AppUser user = appUserService.get(dto.getId());
         if (user == null) {
             return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
@@ -92,7 +99,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
     @ResponseBody
-    public JsonResponse create(HttpServletRequest request, AppUser appUser, @RequestBody AppUserCreateRequestDTO dto) {
+    public JsonResponse create(HttpServletRequest request, AppUser appUser, @RequestBody AppUserCreateCrudRequestDTO dto) {
         AppUser user;
         try {
             user = appUserService.create(dto.getEmail(), dto.getPassword(), dto.getName());
@@ -123,7 +130,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
     @ResponseBody
-    public JsonResponse save(HttpServletRequest request, AppUser appUser, @RequestBody AppUserSaveRequestDTO dto) {
+    public JsonResponse save(HttpServletRequest request, AppUser appUser, @RequestBody AppUserSaveCrudRequestDTO dto) {
         AppUser user;
         try {
             user = appUserService.save(dto.getId(), dto.getName(), dto.getAppUserRoles());
@@ -145,7 +152,7 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
     @ResponseBody
-    public JsonResponse delete(HttpServletRequest request, AppUser appUser, @RequestBody AppUserDeleteRequestDTO dto) {
+    public JsonResponse delete(HttpServletRequest request, AppUser appUser, @RequestBody DeleteCrudRequestDTO dto) {
         try {
             appUserService.delete(dto.getId());
         } catch (AppUserNotFoundException e) {

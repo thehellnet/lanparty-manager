@@ -1,13 +1,11 @@
 package org.thehellnet.lanparty.manager.service;
 
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.game.GameNotFoundException;
 import org.thehellnet.lanparty.manager.exception.tournament.TournamentAlreadyExistsException;
-import org.thehellnet.lanparty.manager.exception.tournament.TournamentException;
 import org.thehellnet.lanparty.manager.exception.tournament.TournamentInvalidNameException;
 import org.thehellnet.lanparty.manager.exception.tournament.TournamentNotFoundException;
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus;
@@ -46,12 +44,12 @@ public class TournamentService {
     }
 
     @Transactional
-    public Tournament create(String name, String gameTag) throws GameNotFoundException, TournamentInvalidNameException, TournamentAlreadyExistsException {
+    public Tournament create(String name, Long gameId) throws GameNotFoundException, TournamentInvalidNameException, TournamentAlreadyExistsException {
         if (name == null || name.length() == 0) {
             throw new TournamentInvalidNameException();
         }
 
-        Game game = gameRepository.findByTag(gameTag);
+        Game game = gameRepository.findById(gameId).orElse(null);
         if (game == null) {
             throw new GameNotFoundException();
         }

@@ -1,8 +1,6 @@
-package org.thehellnet.lanparty.manager.model.dto.request.appuser;
+package org.thehellnet.lanparty.manager.model.dto.request.crud.create;
 
-import org.thehellnet.lanparty.manager.model.dto.request.RequestDTO;
-
-public class AppUserCreateRequestDTO extends RequestDTO {
+public class AppUserCreateCrudRequestDTO extends CreateCrudRequestDTO {
 
     private String email;
     private String password;
