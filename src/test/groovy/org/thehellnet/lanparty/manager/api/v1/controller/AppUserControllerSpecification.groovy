@@ -54,10 +54,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
         response.getBoolean("success")
 
         response.has("data")
-        JSONObject data = response.getJSONObject("data")
-
-        data.has("appUsers")
-        JSONArray appUsers = data.getJSONArray("appUsers")
+        JSONArray appUsers = response.getJSONArray("data")
 
         appUsers.length() == 1
 
@@ -99,10 +96,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
         response.getBoolean("success")
 
         response.has("data")
-        JSONObject data = response.getJSONObject("data")
-
-        data.has("appUser")
-        JSONObject appUser = data.getJSONObject("appUser")
+        JSONObject appUser = response.getJSONObject("data")
 
         !appUser.has("password")
 
@@ -154,10 +148,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
         response.getBoolean("success")
 
         response.has("data")
-        JSONObject data = response.getJSONObject("data")
-
-        data.has("appUser")
-        JSONObject appUser = data.getJSONObject("appUser")
+        JSONObject appUser = response.getJSONObject("data")
 
         !appUser.has("password")
 
@@ -217,17 +208,14 @@ class AppUserControllerSpecification extends ControllerSpecification {
         response.has("data")
 
         when:
-        JSONObject data = response.getJSONObject("data")
+        JSONObject appUser = response.getJSONObject("data")
 
         then:
-        data.has("appUser")
-        JSONObject appUser = data.getJSONObject("appUser")
-
         !appUser.has("password")
 
         appUser.has("id")
         appUser.get("id") instanceof Integer
-        appUser.getInt("id") == appUserId
+        appUser.getLong("id") == appUserId
 
         appUser.has("email")
         appUser.get("email") instanceof String
