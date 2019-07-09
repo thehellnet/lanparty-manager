@@ -16,13 +16,11 @@ import org.thehellnet.lanparty.manager.exception.tournament.TournamentNotFoundEx
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.light.TournamentLight;
+import org.thehellnet.lanparty.manager.model.dto.request.crud.DeleteCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.crud.GetAllCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.crud.GetCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.crud.create.TournamentCreateCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.crud.save.TournamentSaveCrudRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentCreateResponseDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentGetAllResponseDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.tournament.TournamentGetResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;
 import org.thehellnet.lanparty.manager.service.TournamentService;
@@ -128,23 +126,22 @@ public class TournamentController {
         return JsonResponse.getInstance(tournament);
     }
 
-//    @RequestMapping(
-//            path = "/delete",
-//            method = RequestMethod.POST,
-//            consumes = MediaType.APPLICATION_JSON_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    @CheckToken
-//    @CheckRoles(Role.APPUSER_ADMIN)
-//    @ResponseBody
-//    public JsonResponse delete(HttpServletRequest request, AppUser appUser, @RequestBody DeleteCrudRequestDTO dto) {
-//        try {
-//            appUserService.delete(dto.getId());
-//        } catch (AppUserNotFoundException e) {
-//            logger.error(e.getMessage());
-//            return ErrorCode.prepareResponse(ErrorCode.APPUSER_NOT_FOUND);
-//        }
-//
-//        return JsonResponse.getInstance();
-//    }
+    @RequestMapping(
+            path = "/delete",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @CheckToken
+    @CheckRoles(Role.TOURNAMENT_ADMIN)
+    @ResponseBody
+    public JsonResponse delete(HttpServletRequest request, AppUser appUser, @RequestBody DeleteCrudRequestDTO dto) {
+        try {
+            tournamentService.delete(dto.getId());
+        } catch (TournamentNotFoundException e) {
+            return ErrorCode.prepareResponse(ErrorCode.TOURNAMENT_NOT_FOUND);
+        }
+
+        return JsonResponse.getInstance();
+    }
 }
