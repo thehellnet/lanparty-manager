@@ -30,4 +30,4 @@ root(WARN, ["STDOUT"])
 
 logger("org.thehellnet.lanparty.manager", DEBUG, ["FILE_GENERIC"])
 
-//logger("org.hibernate", DEBUG)
+logger("org.hibernate", ERROR)
