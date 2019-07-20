@@ -8,6 +8,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.ContextSpecification
 import org.thehellnet.lanparty.manager.model.persistence.Game
+import org.thehellnet.lanparty.manager.model.persistence.Tournament
 import org.thehellnet.lanparty.manager.service.GameService
 import org.thehellnet.lanparty.manager.service.TournamentService
 
@@ -61,10 +62,12 @@ abstract class ControllerSpecification extends ContextSpecification {
         token = data.getString("token")
     }
 
-    protected void createTournament() {
-        if (tournamentService.findByName(TOURNAMENT_NAME) == null) {
+    protected Tournament createTournament() {
+        Tournament tournament = tournamentService.findByName(TOURNAMENT_NAME)
+        if (tournament == null) {
             Game game = gameService.findByTag(GAME_TAG)
-            tournamentService.create(TOURNAMENT_NAME, game.id)
+            tournament = tournamentService.create(TOURNAMENT_NAME, game.id)
         }
+        return tournament
     }
 }

@@ -1,16 +1,17 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.thehellnet.lanparty.manager.model.CustomJSONSerializable;
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "tournament")
-public class Tournament implements Serializable {
+public class Tournament implements Serializable, CustomJSONSerializable {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -31,12 +32,15 @@ public class Tournament implements Serializable {
     @Enumerated(EnumType.STRING)
     private TournamentStatus status = TournamentStatus.SCHEDULED;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Seat> seats = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Match> matches = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Team> teams = new HashSet<>();
 
@@ -102,6 +106,16 @@ public class Tournament implements Serializable {
 
     public void setStatus(TournamentStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public @NotNull Map<String, Object> toJSON() {
+        Map<String, Object> json = new HashMap<>();
+        json.put("id", id);
+        json.put("name", name);
+        json.put("game", game.getId());
+        json.put("status", status);
+        return json;
     }
 
     @Override

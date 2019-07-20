@@ -40,7 +40,9 @@ public class TournamentService {
 
     @Transactional(readOnly = true)
     public Tournament get(Long id) {
-        return tournamentRepository.findById(id).orElse(null);
+        Tournament tournament = tournamentRepository.findById(id).orElse(null);
+        tournament.getGame();
+        return tournament;
     }
 
     @Transactional
