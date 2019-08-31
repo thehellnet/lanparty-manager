@@ -8,18 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.thehellnet.lanparty.manager.exception.cfg.CfgException;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
-import org.thehellnet.lanparty.manager.model.dto.request.tool.GetCfgToolRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.request.tool.PingToolRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.tool.GetCfgToolResponseDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.tool.EmptyToolRequestDTO;
 import org.thehellnet.lanparty.manager.model.persistence.Seat;
 import org.thehellnet.lanparty.manager.service.CfgService;
 import org.thehellnet.lanparty.manager.service.SeatService;
-import org.thehellnet.utility.StringUtility;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @Controller
 @RequestMapping(path = "/api/v1/tool")
@@ -42,9 +37,20 @@ public class ToolController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public JsonResponse ping(HttpServletRequest request, @RequestBody PingToolRequestDTO dto) {
+    public JsonResponse ping(@RequestBody EmptyToolRequestDTO dto) {
+        return JsonResponse.getInstance();
+    }
+
+    @RequestMapping(
+            path = "/welcome",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public JsonResponse welcome(HttpServletRequest request, @RequestBody EmptyToolRequestDTO dto) {
         String remoteAddress = request.getRemoteAddr();
-        logger.info("Ping from tool at {}", remoteAddress);
+        logger.info("Welcome from tool at {}", remoteAddress);
 
         Seat seat = seatService.findByAddress(remoteAddress);
         if (seat == null) {

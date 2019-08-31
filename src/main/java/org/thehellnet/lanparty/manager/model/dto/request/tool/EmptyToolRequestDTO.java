@@ -1,4 +1,4 @@
 package org.thehellnet.lanparty.manager.model.dto.request.tool;
 
-public class PingToolRequestDTO extends ToolRequestDTO {
+public class EmptyToolRequestDTO extends ToolRequestDTO {
 }
