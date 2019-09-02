@@ -15,6 +15,7 @@ import org.thehellnet.lanparty.manager.service.TournamentService
 abstract class ControllerSpecification extends ContextSpecification {
 
     protected final static String TOURNAMENT_NAME = "Test Tournament"
+    protected final static String TOURNAMENT_NAME_2 = "Test Tournament 2"
 
     protected final static String GAME_TAG = "cod4"
 

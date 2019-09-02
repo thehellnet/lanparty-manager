@@ -3,7 +3,7 @@ package org.thehellnet.lanparty.manager.model.dto.request.crud.create;
 public class TournamentCreateCrudRequestDTO extends CreateCrudRequestDTO {
 
     private String name;
-    private Long gameId;
+    private Long game;
 
     public TournamentCreateCrudRequestDTO() {
     }
@@ -16,11 +16,11 @@ public class TournamentCreateCrudRequestDTO extends CreateCrudRequestDTO {
         this.name = name;
     }
 
-    public Long getGameId() {
-        return gameId;
+    public Long getGame() {
+        return game;
     }
 
-    public void setGameId(Long gameId) {
-        this.gameId = gameId;
+    public void setGame(Long game) {
+        this.game = game;
     }
 }

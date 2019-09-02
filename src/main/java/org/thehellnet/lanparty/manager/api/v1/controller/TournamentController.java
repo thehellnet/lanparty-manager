@@ -92,7 +92,7 @@ public class TournamentController {
         Tournament tournament;
 
         try {
-            tournament = tournamentService.create(dto.getName(), dto.getGameId());
+            tournament = tournamentService.create(dto.getName(), dto.getGame());
         } catch (GameNotFoundException e) {
             return ErrorCode.prepareResponse(ErrorCode.GAME_NOT_FOUND);
         } catch (TournamentInvalidNameException e) {
