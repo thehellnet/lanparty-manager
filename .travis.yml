@@ -2,9 +2,13 @@ language: java
 
 os: linux
 
+services:
+  - postgresql
+
 jdk:
   - oraclejdk8
   - openjdk8
 
-script:
-  - ./gradlew test
+before_script:
+  - psql -c "CREATE ROLE test NOSUPERUSER NOCREATEROLE NOCREATEDB LOGIN INHERIT NOREPLICATION ENCRYPTED PASSWORD 'test';" -U postgres
+  - psql -c "CREATE DATABASE test OWNER test;" -U postgres
