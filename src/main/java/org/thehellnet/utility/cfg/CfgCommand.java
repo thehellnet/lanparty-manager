@@ -49,6 +49,12 @@ public class CfgCommand {
         this.args = args != null ? args.trim() : "";
     }
 
+    public boolean same(CfgCommand o) {
+        return o != null
+                && o.getAction().equals(action)
+                && o.getParam().equals(param);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
