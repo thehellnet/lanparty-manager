@@ -19,6 +19,11 @@ class StringUtilityTest extends Specification {
                 " \n \n"            : [],
                 " \n \n "           : [],
                 " \n  \n "          : [],
+                "\n\r"              : [],
+                "\n \r"             : [],
+                " \n \r"            : [],
+                " \n \r "           : [],
+                " \n  \r "          : [],
                 "test"              : ["test"],
                 " test"             : ["test"],
                 "test "             : ["test"],
@@ -30,7 +35,9 @@ class StringUtilityTest extends Specification {
                 " test    test "    : ["test    test"],
                 " test   \n test "  : ["test", "test"],
                 " test   \n test\n ": ["test", "test"],
-                "test\nTEST\ntest"  : ["test", "TEST", "test"]
+                "test\nTEST\ntest"  : ["test", "TEST", "test"],
+                " test   \n test\r ": ["test", "test"],
+                "test\nTEST\rtest"  : ["test", "TEST", "test"]
         ]
 
         expect:

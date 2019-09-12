@@ -11,7 +11,7 @@ public final class StringUtility {
             return null;
         }
 
-        String[] rawLines = rawText.trim().split("\n");
+        String[] rawLines = rawText.trim().split("\\R");
 
         List<String> lines = new ArrayList<>();
 
