@@ -121,4 +121,28 @@ class StringUtilityTest extends Specification {
         }
     }
 
+    def "joinSpaces"() {
+        given:
+        def DATA = [
+                []                      : "",
+                ["test"]                : "test",
+                ["test test"]           : "test test",
+                ["test", "test"]        : "test test",
+                ["test", " test"]       : "test test",
+                ["test ", "test"]       : "test test",
+                ["test ", " test"]      : "test test",
+                ["test ", " test "]     : "test test",
+                [" test ", " test "]    : "test test",
+                ["test", "TEST", "test"]: "test TEST test"
+        ]
+
+        expect:
+        assert StringUtility.joinSpaces(null) == null
+
+        DATA.each {
+            if (StringUtility.joinSpaces(it.key) != it.value) {
+                assert false
+            }
+        }
+    }
 }

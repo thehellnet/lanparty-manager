@@ -11,21 +11,7 @@ public final class StringUtility {
     }
 
     public static String joinLines(List<String> lines) {
-        if (lines == null) {
-            return null;
-        }
-
-        if (lines.size() == 0) {
-            return "";
-        }
-
-        StringJoiner stringJoiner = new StringJoiner("\n");
-
-        for (String line : lines) {
-            stringJoiner.add(line.trim());
-        }
-
-        return stringJoiner.toString();
+        return getString(lines, "\n");
     }
 
     public static List<String> splitSpaces(String rawText) {
@@ -34,6 +20,10 @@ public final class StringUtility {
         }
 
         return getStrings(rawText.replaceAll("\\R", ""), "\\s+");
+    }
+
+    public static String joinSpaces(List<String> items) {
+        return getString(items, " ");
     }
 
     private static List<String> getStrings(String rawText, String regex) {
@@ -52,5 +42,23 @@ public final class StringUtility {
         }
 
         return lines;
+    }
+
+    private static String getString(List<String> lines, String delimiter) {
+        if (lines == null) {
+            return null;
+        }
+
+        if (lines.size() == 0) {
+            return "";
+        }
+
+        StringJoiner stringJoiner = new StringJoiner(delimiter);
+
+        for (String line : lines) {
+            stringJoiner.add(line.trim());
+        }
+
+        return stringJoiner.toString();
     }
 }
