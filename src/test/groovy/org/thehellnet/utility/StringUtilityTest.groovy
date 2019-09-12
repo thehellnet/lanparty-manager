@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class StringUtilityTest extends Specification {
 
-    def "SplitLines"() {
+    def "splitLines"() {
         given:
         def DATA = [
                 ""                  : [],
@@ -74,4 +74,51 @@ class StringUtilityTest extends Specification {
             }
         }
     }
+
+    def "splitSpaces"() {
+        given:
+        def DATA = [
+                ""                  : [],
+                " "                 : [],
+                "  "                : [],
+                "\n"                : [],
+                " \n"               : [],
+                "\n "               : [],
+                " \n "              : [],
+                "\n\n"              : [],
+                "\n \n"             : [],
+                " \n \n"            : [],
+                " \n \n "           : [],
+                " \n  \n "          : [],
+                "\n\r"              : [],
+                "\n \r"             : [],
+                " \n \r"            : [],
+                " \n \r "           : [],
+                " \n  \r "          : [],
+                "test"              : ["test"],
+                " test"             : ["test"],
+                "test "             : ["test"],
+                " test "            : ["test"],
+                "test test"         : ["test", "test"],
+                "test test "        : ["test", "test"],
+                " test test"        : ["test", "test"],
+                " test test "       : ["test", "test"],
+                " test    test "    : ["test", "test"],
+                " test   \n test "  : ["test", "test"],
+                " test   \n test\n ": ["test", "test"],
+                "test\nTEST\ntest"  : ["testTESTtest"],
+                " test   \n test\r ": ["test", "test"],
+                "test\nTEST\rtest"  : ["testTESTtest"]
+        ]
+
+        expect:
+        assert StringUtility.splitSpaces(null) == null
+
+        DATA.each {
+            if (StringUtility.splitSpaces(it.key) != it.value) {
+                assert false
+            }
+        }
+    }
+
 }
