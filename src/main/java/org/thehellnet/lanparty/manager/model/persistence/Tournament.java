@@ -35,7 +35,7 @@ public class Tournament implements Serializable, CustomJSONSerializable {
     @Basic
     @Lob
     @Column(name = "cfg", nullable = false, length = 1048576)
-    private String cfg;
+    private String cfg = "";
 
     @JsonIgnore
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
