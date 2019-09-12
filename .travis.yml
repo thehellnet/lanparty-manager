@@ -8,6 +8,9 @@ services:
 jdk:
   - openjdk8
 
+env:
+  - CODECOV_TOKEN="80594b6a-9601-4b0d-8a53-3ccc30495b54"
+
 before_script:
   - psql -c "CREATE ROLE test NOSUPERUSER NOCREATEROLE NOCREATEDB LOGIN INHERIT NOREPLICATION ENCRYPTED PASSWORD 'test';" -U postgres
   - psql -c "CREATE DATABASE test OWNER test;" -U postgres
