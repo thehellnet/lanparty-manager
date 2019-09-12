@@ -9,6 +9,8 @@ import org.thehellnet.lanparty.manager.model.persistence.Tournament;
 import org.thehellnet.lanparty.manager.repository.CfgRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.repository.TournamentRepository;
+import org.thehellnet.utility.StringUtility;
+import org.thehellnet.utility.cfg.CfgUtility;
 
 @Service
 public class CfgService {
@@ -41,7 +43,8 @@ public class CfgService {
         String tournamentCfg = tournament.getCfg();
         String playerCfg = player.getCfg();
 
-        return null;
+        String cfg = CfgUtility.sanitize(tournamentCfg, playerCfg);
+        return StringUtility.splitLines(cfg).toArray(new String[0]);
     }
 
 //    @Transactional(readOnly = true)

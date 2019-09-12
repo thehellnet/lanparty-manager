@@ -18,10 +18,20 @@ public final class CfgUtility {
         List<String> cfg = new ArrayList<>();
 
         for (String line : tournamentLines) {
+            CfgCommand command = parseCommand(line);
 
+            for (String playerLine : playerLines) {
+                CfgCommand playerCommand = parseCommand(playerLine);
+
+                if (playerCommand.same(command)) {
+                    command.setArgs(playerCommand.getArgs());
+                }
+            }
+
+            cfg.add(command.toString());
         }
 
-        return null;
+        return StringUtility.joinLines(cfg);
     }
 
     public static CfgCommand parseCommand(String command) {
