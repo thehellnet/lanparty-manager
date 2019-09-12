@@ -24,6 +24,11 @@ public class Player implements Serializable {
     @Column(name = "barcode")
     private String barcode;
 
+    @Basic
+    @Lob
+    @Column(name = "cfg", nullable = false, length = 1048576)
+    private String cfg;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appuser_id")
     private AppUser appUser;
@@ -49,6 +54,22 @@ public class Player implements Serializable {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public String getCfg() {
+        return cfg;
+    }
+
+    public void setCfg(String cfg) {
+        this.cfg = cfg;
     }
 
     public AppUser getAppUser() {
@@ -83,6 +104,7 @@ public class Player implements Serializable {
         return id.equals(player.id) &&
                 nickname.equals(player.nickname) &&
                 Objects.equals(barcode, player.barcode) &&
+                cfg.equals(player.cfg) &&
                 Objects.equals(appUser, player.appUser) &&
                 cfgs.equals(player.cfgs) &&
                 team.equals(player.team);

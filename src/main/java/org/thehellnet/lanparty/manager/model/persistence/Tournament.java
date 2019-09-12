@@ -32,6 +32,11 @@ public class Tournament implements Serializable, CustomJSONSerializable {
     @Enumerated(EnumType.STRING)
     private TournamentStatus status = TournamentStatus.SCHEDULED;
 
+    @Basic
+    @Lob
+    @Column(name = "cfg", nullable = false, length = 1048576)
+    private String cfg;
+
     @JsonIgnore
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Seat> seats = new HashSet<>();
@@ -76,6 +81,22 @@ public class Tournament implements Serializable, CustomJSONSerializable {
         this.game = game;
     }
 
+    public TournamentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TournamentStatus status) {
+        this.status = status;
+    }
+
+    public String getCfg() {
+        return cfg;
+    }
+
+    public void setCfg(String cfg) {
+        this.cfg = cfg;
+    }
+
     public Set<Seat> getSeats() {
         return seats;
     }
@@ -100,14 +121,6 @@ public class Tournament implements Serializable, CustomJSONSerializable {
         this.teams = teams;
     }
 
-    public TournamentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TournamentStatus status) {
-        this.status = status;
-    }
-
     @Override
     public @NotNull Map<String, Object> toJSON() {
         Map<String, Object> json = new HashMap<>();
@@ -126,6 +139,8 @@ public class Tournament implements Serializable, CustomJSONSerializable {
         return id.equals(that.id) &&
                 name.equals(that.name) &&
                 game.equals(that.game) &&
+                status == that.status &&
+                cfg.equals(that.cfg) &&
                 seats.equals(that.seats) &&
                 matches.equals(that.matches) &&
                 teams.equals(that.teams);
