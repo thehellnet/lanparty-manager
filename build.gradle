@@ -13,6 +13,7 @@ apply plugin: "java"
 apply plugin: "groovy"
 apply plugin: "idea"
 apply plugin: "war"
+apply plugin: "jacoco"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -26,6 +27,15 @@ repositories {
     mavenCentral()
     maven { url "http://repository.atricore.org/m2-release-repository/" }
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}
+
+check.dependsOn jacocoTestReport
 
 def VERSIONS = [
         "groovy"             : "2.5.8",
