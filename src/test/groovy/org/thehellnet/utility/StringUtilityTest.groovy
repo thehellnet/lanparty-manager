@@ -49,4 +49,29 @@ class StringUtilityTest extends Specification {
             }
         }
     }
+
+    def "joinLines"() {
+        given:
+        def DATA = [
+                []                      : "",
+                ["test"]                : "test",
+                ["test test"]           : "test test",
+                ["test", "test"]        : "test\ntest",
+                ["test", " test"]       : "test\ntest",
+                ["test ", "test"]       : "test\ntest",
+                ["test ", " test"]      : "test\ntest",
+                ["test ", " test "]     : "test\ntest",
+                [" test ", " test "]    : "test\ntest",
+                ["test", "TEST", "test"]: "test\nTEST\ntest"
+        ]
+
+        expect:
+        assert StringUtility.joinLines(null) == null
+
+        DATA.each {
+            if (StringUtility.joinLines(it.key) != it.value) {
+                assert false
+            }
+        }
+    }
 }

@@ -1,8 +1,8 @@
 package org.thehellnet.utility;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 public final class StringUtility {
 
@@ -23,5 +23,23 @@ public final class StringUtility {
         }
 
         return lines;
+    }
+
+    public static String joinLines(List<String> lines) {
+        if (lines == null) {
+            return null;
+        }
+
+        if (lines.size() == 0) {
+            return "";
+        }
+
+        StringJoiner stringJoiner = new StringJoiner("\n");
+
+        for (String line : lines) {
+            stringJoiner.add(line.trim());
+        }
+
+        return stringJoiner.toString();
     }
 }
