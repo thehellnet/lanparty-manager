@@ -77,6 +77,6 @@ public class CfgCommand {
             string += String.format(" \"%s\"", args);
         }
 
-        return string;
+        return string.trim();
     }
 }

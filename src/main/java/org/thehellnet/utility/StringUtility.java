@@ -19,7 +19,10 @@ public final class StringUtility {
             return null;
         }
 
-        return getStrings(rawText.replaceAll("\\R", ""), "\\s+");
+        String cleanRawText = rawText;
+        cleanRawText = cleanRawText.replaceAll("\\R", "");
+        cleanRawText = cleanRawText.replaceAll("\"", "");
+        return getStrings(cleanRawText, "\\s+");
     }
 
     public static String joinSpaces(List<String> items) {

@@ -9,7 +9,7 @@ public final class CfgUtility {
 
     public static String sanitize(String tournamentCfg, String playerCfg) {
         if (tournamentCfg == null || playerCfg == null) {
-            return null;
+            return "";
         }
 
         List<String> tournamentLines = StringUtility.splitLines(tournamentCfg);
@@ -40,15 +40,19 @@ public final class CfgUtility {
             return null;
         }
 
+        if (command.contains("\n") || command.contains("\r")) {
+            return null;
+        }
+
         List<String> items = StringUtility.splitSpaces(command);
         if (items.size() == 0) {
             return null;
         }
 
-        CfgCommand cfgCommand = new CfgCommand(items.get(0));
+        CfgCommand cfgCommand = new CfgCommand(items.get(0).trim());
 
         if (items.size() > 1) {
-            cfgCommand.setParam(items.get(1));
+            cfgCommand.setParam(items.get(1).trim());
 
             if (items.size() > 2) {
                 String args = StringUtility.joinSpaces(items.subList(2, items.size()));
