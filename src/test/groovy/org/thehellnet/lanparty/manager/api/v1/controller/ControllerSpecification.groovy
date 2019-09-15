@@ -8,8 +8,10 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.ContextSpecification
 import org.thehellnet.lanparty.manager.model.persistence.Game
+import org.thehellnet.lanparty.manager.model.persistence.Seat
 import org.thehellnet.lanparty.manager.model.persistence.Tournament
 import org.thehellnet.lanparty.manager.service.GameService
+import org.thehellnet.lanparty.manager.service.SeatService
 import org.thehellnet.lanparty.manager.service.TournamentService
 
 abstract class ControllerSpecification extends ContextSpecification {
@@ -19,10 +21,16 @@ abstract class ControllerSpecification extends ContextSpecification {
 
     protected final static String GAME_TAG = "cod4"
 
+    protected final static String SEAT_ADDRESS = "1.2.3.4"
+    protected final static String SEAT_NAME = "Test seat"
+
     protected String token
 
     @Autowired
     protected TournamentService tournamentService
+
+    @Autowired
+    protected SeatService seatService
 
     @Autowired
     protected GameService gameService
@@ -72,7 +80,16 @@ abstract class ControllerSpecification extends ContextSpecification {
         return tournament
     }
 
-    protected void validateResponseAsJsonResponse(JSONObject response) {
+    protected Seat createSeat() {
+        Seat seat = seatService.findByAddress(SEAT_ADDRESS)
+        if (seat == null) {
+            Tournament tournament = tournamentService.findByName(TOURNAMENT_NAME)
+            seat = seatService.create(SEAT_NAME, SEAT_ADDRESS, tournament.id)
+        }
+        return seat
+    }
+
+    protected static void validateResponseAsJsonResponse(JSONObject response) {
         assert response.has("success")
         assert response.has("data")
         assert response.has("errors")
