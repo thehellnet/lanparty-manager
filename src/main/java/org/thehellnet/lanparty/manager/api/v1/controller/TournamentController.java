@@ -116,7 +116,7 @@ public class TournamentController {
     public JsonResponse save(HttpServletRequest request, AppUser appUser, @RequestBody TournamentSaveCrudRequestDTO dto) {
         Tournament tournament;
         try {
-            tournament = tournamentService.save(dto.getId(), dto.getName(), dto.getGameId(), dto.getStatusName());
+            tournament = tournamentService.save(dto.getId(), dto.getName(), dto.getGameId(), dto.getStatusName(), dto.getCfg());
         } catch (GameNotFoundException e) {
             return ErrorCode.prepareResponse(ErrorCode.GAME_NOT_FOUND);
         } catch (TournamentNotFoundException e) {
