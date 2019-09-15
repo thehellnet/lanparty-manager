@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.cfg.CfgNotFoundException;
 import org.thehellnet.lanparty.manager.exception.cfg.InvalidDataCfgException;
+import org.thehellnet.lanparty.manager.exception.game.GameNotFoundException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
 import org.thehellnet.lanparty.manager.exception.seat.SeatNotFoundException;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.CfgRepository;
+import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.utility.cfg.CfgUtility;
 
@@ -21,11 +23,13 @@ public class CfgService {
     private final SeatService seatService;
 
     private final PlayerRepository playerRepository;
+    private final GameRepository gameRepository;
     private final CfgRepository cfgRepository;
 
-    public CfgService(SeatService seatService, PlayerRepository playerRepository, CfgRepository cfgRepository) {
+    public CfgService(SeatService seatService, PlayerRepository playerRepository, GameRepository gameRepository, CfgRepository cfgRepository) {
         this.seatService = seatService;
         this.playerRepository = playerRepository;
+        this.gameRepository = gameRepository;
         this.cfgRepository = cfgRepository;
     }
 
@@ -52,9 +56,7 @@ public class CfgService {
         String tournamentCfg = tournament.getCfg();
 
         String playerCfg = getPlayerCfgInGame(player, tournament.getGame());
-        String sanitizedCfg = CfgUtility.sanitize(tournamentCfg, playerCfg);
-
-        return sanitizedCfg;
+        return CfgUtility.sanitize(tournamentCfg, playerCfg);
     }
 
     @Transactional(readOnly = true)
@@ -68,8 +70,30 @@ public class CfgService {
         return playerCfg;
     }
 
-//    @Transactional
-//    public String saveCfg(Player player, String cfg) {
-//
-//    }
+    @Transactional
+    public Cfg save(Long playerId, Long gameId, String newCfg) throws InvalidDataCfgException, PlayerNotFoundException, GameNotFoundException {
+        if (playerId == null || gameId == null) {
+            throw new InvalidDataCfgException("Invalid playerId or gameId");
+        }
+
+        Player player = playerRepository.findById(playerId).orElse(null);
+        if (player == null) {
+            throw new PlayerNotFoundException();
+        }
+
+        Game game = gameRepository.findById(gameId).orElse(null);
+        if (game == null) {
+            throw new GameNotFoundException();
+        }
+
+        Cfg cfg = cfgRepository.findByPlayerAndGame(player, game);
+        if (cfg == null) {
+            cfg = new Cfg(player, game, newCfg);
+        }
+
+        cfg.setCfg(newCfg);
+        cfg = cfgRepository.save(cfg);
+
+        return cfg;
+    }
 }
