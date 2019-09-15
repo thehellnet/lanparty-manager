@@ -27,20 +27,18 @@ public class Cfg implements Serializable {
     @Column(name = "cfg", nullable = false, length = 1048576)
     private String cfg = "";
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Cfg cfg1 = (Cfg) o;
-        return id.equals(cfg1.id) &&
-                player.equals(cfg1.player) &&
-                game.equals(cfg1.game) &&
-                cfg.equals(cfg1.cfg);
+    public Cfg() {
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public Cfg(Player player, Game game) {
+        this.player = player;
+        this.game = game;
+    }
+
+    public Cfg(Player player, Game game, String cfg) {
+        this.player = player;
+        this.game = game;
+        this.cfg = cfg;
     }
 
     public Long getId() {
@@ -73,6 +71,22 @@ public class Cfg implements Serializable {
 
     public void setCfg(String cfg) {
         this.cfg = cfg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cfg cfg1 = (Cfg) o;
+        return id.equals(cfg1.id) &&
+                player.equals(cfg1.player) &&
+                game.equals(cfg1.game) &&
+                cfg.equals(cfg1.cfg);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
