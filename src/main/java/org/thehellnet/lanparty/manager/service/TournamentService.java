@@ -67,7 +67,7 @@ public class TournamentService {
     }
 
     @Transactional
-    public Tournament save(Long id, String name, Long gameId, String statusName) throws TournamentNotFoundException, GameNotFoundException {
+    public Tournament save(Long id, String name, Long gameId, String statusName, String cfg) throws TournamentNotFoundException, GameNotFoundException {
         Tournament tournament = tournamentRepository.findById(id).orElse(null);
         if (tournament == null) {
             throw new TournamentNotFoundException();
@@ -88,6 +88,10 @@ public class TournamentService {
 
         if (statusName != null && statusName.length() > 0) {
             tournament.setStatus(TournamentStatus.valueOf(statusName));
+        }
+
+        if (cfg != null) {
+            tournament.setCfg(cfg);
         }
 
         return tournamentRepository.save(tournament);
