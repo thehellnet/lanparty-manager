@@ -48,18 +48,24 @@ class AppUserControllerSpecification extends ControllerSpecification {
         rawResponse.status == HttpStatus.OK.value()
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
 
+        when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
-        response.has("success")
+        then:
+        validateResponseAsJsonResponse(response)
+
         response.getBoolean("success")
 
-        response.has("data")
+        when:
         JSONArray appUsers = response.getJSONArray("data")
 
+        then:
         appUsers.length() == 1
 
+        when:
         JSONObject appUser = appUsers.getJSONObject(0)
 
+        then:
         appUser.has("id")
         appUser.get("id") instanceof Integer
 
@@ -90,14 +96,18 @@ class AppUserControllerSpecification extends ControllerSpecification {
         rawResponse.status == HttpStatus.OK.value()
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
 
+        when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
-        response.has("success")
+        then:
+        validateResponseAsJsonResponse(response)
+
         response.getBoolean("success")
 
-        response.has("data")
+        when:
         JSONObject appUser = response.getJSONObject("data")
 
+        then:
         !appUser.has("password")
 
         appUser.has("id")
@@ -110,8 +120,11 @@ class AppUserControllerSpecification extends ControllerSpecification {
         appUser.get("name") == JSONObject.NULL
 
         appUser.has("appUserRoles")
+
+        when:
         JSONArray appUserRoles = appUser.getJSONArray("appUserRoles")
 
+        then:
         appUserRoles.length() == Role.values().length
 
         for (int i = 0; i < appUserRoles.length(); i++) {
@@ -142,14 +155,18 @@ class AppUserControllerSpecification extends ControllerSpecification {
         rawResponse.status == HttpStatus.OK.value()
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
 
+        when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
-        response.has("success")
+        then:
+        validateResponseAsJsonResponse(response)
+
         response.getBoolean("success")
 
-        response.has("data")
+        when:
         JSONObject appUser = response.getJSONObject("data")
 
+        then:
         !appUser.has("password")
 
         appUser.has("id")
@@ -164,8 +181,11 @@ class AppUserControllerSpecification extends ControllerSpecification {
         appUser.getString("name") == APPUSER_NAME
 
         appUser.has("appUserRoles")
+
+        when:
         JSONArray appUserRoles = appUser.getJSONArray("appUserRoles")
 
+        then:
         appUserRoles.length() == 0
 
         "check number of appUsers in database"() == 2
@@ -202,10 +222,9 @@ class AppUserControllerSpecification extends ControllerSpecification {
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
         then:
-        response.has("success")
-        response.getBoolean("success")
+        validateResponseAsJsonResponse(response)
 
-        response.has("data")
+        response.getBoolean("success")
 
         when:
         JSONObject appUser = response.getJSONObject("data")
@@ -226,8 +245,11 @@ class AppUserControllerSpecification extends ControllerSpecification {
         appUser.getString("name") == APPUSER_NAME_NEW
 
         appUser.has("appUserRoles")
+
+        when:
         JSONArray appUserRoles = appUser.getJSONArray("appUserRoles")
 
+        then:
         appUserRoles.length() == APPUSER_ROLES_NEW.length
 
         "check number of appUsers in database"() == 2
@@ -262,7 +284,8 @@ class AppUserControllerSpecification extends ControllerSpecification {
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
         then:
-        response.has("success")
+        validateResponseAsJsonResponse(response)
+
         response.getBoolean("success")
 
         "check number of appUsers in database"() == 1
@@ -288,15 +311,18 @@ class AppUserControllerSpecification extends ControllerSpecification {
         rawResponse.status == HttpStatus.OK.value()
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
 
+        when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
-        response.has("success")
+        then:
+        validateResponseAsJsonResponse(response)
+
         response.getBoolean("success")
 
-        response.has("data")
-
+        when:
         JSONObject data = response.getJSONObject("data")
 
+        then:
         data.has("expiration")
         new DateTime(data.getLong("expiration")).isAfterNow()
 
@@ -306,7 +332,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
 
     def "changePassword"() {
         setup:
-        Long appUserId = 'retrieve test appUser ID and creates if not exists'()
+        Long appUserId = "retrieve test appUser ID and creates if not exists"()
         String appUserToken = "get appUser token via login"()
 
         expect:
@@ -336,7 +362,8 @@ class AppUserControllerSpecification extends ControllerSpecification {
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
         then:
-        response.has("success")
+        validateResponseAsJsonResponse(response)
+
         !response.getBoolean("success")
 
         when:
@@ -363,7 +390,8 @@ class AppUserControllerSpecification extends ControllerSpecification {
         response = new JSONObject(rawResponse.contentAsString)
 
         then:
-        response.has("success")
+        validateResponseAsJsonResponse(response)
+
         response.getBoolean("success")
     }
 

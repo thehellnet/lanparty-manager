@@ -71,4 +71,10 @@ abstract class ControllerSpecification extends ContextSpecification {
         }
         return tournament
     }
+
+    protected void validateResponseAsJsonResponse(JSONObject response) {
+        assert response.has("success")
+        assert response.has("data")
+        assert response.has("errors")
+    }
 }

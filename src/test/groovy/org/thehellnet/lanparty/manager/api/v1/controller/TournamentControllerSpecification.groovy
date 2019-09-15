@@ -87,11 +87,9 @@ class TournamentControllerSpecification extends ControllerSpecification {
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
 
         JSONObject response = new JSONObject(rawResponse.contentAsString)
+        validateResponseAsJsonResponse(response)
 
-        response.has("success")
         response.getBoolean("success")
-
-        response.has("data")
         JSONObject tournamentObj = response.getJSONObject("data")
 
         tournamentObj.has("id")
@@ -131,11 +129,9 @@ class TournamentControllerSpecification extends ControllerSpecification {
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
 
         JSONObject response = new JSONObject(rawResponse.contentAsString)
+        validateResponseAsJsonResponse(response)
 
-        response.has("success")
         response.getBoolean("success")
-
-        response.has("data")
         JSONObject tournament = response.getJSONObject("data")
 
         tournament.has("name")
