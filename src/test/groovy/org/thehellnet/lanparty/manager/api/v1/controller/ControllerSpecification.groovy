@@ -7,10 +7,14 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.ContextSpecification
+import org.thehellnet.lanparty.manager.model.persistence.Cfg
 import org.thehellnet.lanparty.manager.model.persistence.Game
+import org.thehellnet.lanparty.manager.model.persistence.Player
 import org.thehellnet.lanparty.manager.model.persistence.Seat
 import org.thehellnet.lanparty.manager.model.persistence.Tournament
+import org.thehellnet.lanparty.manager.service.CfgService
 import org.thehellnet.lanparty.manager.service.GameService
+import org.thehellnet.lanparty.manager.service.PlayerService
 import org.thehellnet.lanparty.manager.service.SeatService
 import org.thehellnet.lanparty.manager.service.TournamentService
 
@@ -24,6 +28,9 @@ abstract class ControllerSpecification extends ContextSpecification {
     protected final static String SEAT_ADDRESS = "1.2.3.4"
     protected final static String SEAT_NAME = "Test seat"
 
+    protected final static String PLAYER_NICKNAME = "Test player"
+    protected final static String PLAYER_BARCODE = "0123456789"
+
     protected String token
 
     @Autowired
@@ -34,6 +41,12 @@ abstract class ControllerSpecification extends ContextSpecification {
 
     @Autowired
     protected GameService gameService
+
+    @Autowired
+    protected PlayerService playerService
+
+    @Autowired
+    protected CfgService cfgService
 
     protected void "Do login for token retrieving"() {
         if (token != null) {
@@ -87,6 +100,20 @@ abstract class ControllerSpecification extends ContextSpecification {
             seat = seatService.create(SEAT_NAME, SEAT_ADDRESS, tournament.id)
         }
         return seat
+    }
+
+    protected Player createPlayer() {
+        Player player = playerService.findByBarcode(PLAYER_BARCODE)
+        if (player == null) {
+            Tournament tournament = tournamentService.findByName(TOURNAMENT_NAME)
+            player = playerService.create(PLAYER_NICKNAME)
+            player = playerService.save(player.id, null, PLAYER_BARCODE, null)
+        }
+        return player
+    }
+
+    protected Cfg createCfg() {
+        Cfg cfg = cfgService.saveCfg()
     }
 
     protected static void validateResponseAsJsonResponse(JSONObject response) {
