@@ -42,6 +42,15 @@ public class Seat implements Serializable {
     @JoinColumn(name = "player_id")
     private Player player;
 
+    public Seat() {
+    }
+
+    public Seat(String name, String ipAddress, Tournament tournament) {
+        this.name = name;
+        this.ipAddress = ipAddress;
+        this.tournament = tournament;
+    }
+
     public Long getId() {
         return id;
     }
