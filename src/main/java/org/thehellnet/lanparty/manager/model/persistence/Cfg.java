@@ -23,6 +23,7 @@ public class Cfg implements Serializable {
     private Game game;
 
     @Basic
+    @Lob
     @Column(name = "cfg", nullable = false, length = 1048576)
     private String cfg = "";
 
