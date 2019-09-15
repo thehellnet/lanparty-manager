@@ -8,7 +8,10 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "team")
+@Table(name = "team",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"name"})
+        })
 public class Team implements Serializable {
 
     @Id
@@ -33,6 +36,14 @@ public class Team implements Serializable {
 
     @OneToMany(mappedBy = "guestTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Match> guestMatches = new HashSet<>();
+
+    public Team() {
+    }
+
+    public Team(String name, Tournament tournament) {
+        this.name = name;
+        this.tournament = tournament;
+    }
 
     public Long getId() {
         return id;
