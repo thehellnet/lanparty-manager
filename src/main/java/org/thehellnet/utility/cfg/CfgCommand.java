@@ -4,6 +4,10 @@ import java.util.Objects;
 
 public class CfgCommand {
 
+    public static final CfgCommand UNBINDALL = new CfgCommand("unbindall");
+    public static final CfgCommand BIND_EXEC = new CfgCommand("bind", ".", "exec lanpartytool");
+    public static final CfgCommand BIND_DUMP = new CfgCommand("bind", ",", "writeconfig lanpartydump");
+
     private String action = "";
     private String param = "";
     private String args = "";
