@@ -7,5 +7,7 @@ import org.thehellnet.lanparty.manager.model.persistence.Player;
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Long> {
 
+    Player findByNickname(String nickname);
+
     Player findByBarcode(String barcode);
 }
