@@ -7,12 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.appuser.AppUserNotFoundException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerAlreadyExistsException;
-import org.thehellnet.lanparty.manager.exception.player.PlayerInvalidNickameException;
+import org.thehellnet.lanparty.manager.exception.player.PlayerInvalidNickameOrTeamIDException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
+import org.thehellnet.lanparty.manager.exception.team.TeamNotFoundException;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Player;
+import org.thehellnet.lanparty.manager.model.persistence.Team;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
+import org.thehellnet.lanparty.manager.repository.TeamRepository;
 
 @Service
 public class PlayerService {
@@ -21,11 +24,13 @@ public class PlayerService {
 
     private final PlayerRepository playerRepository;
     private final AppUserRepository appUserRepository;
+    private final TeamRepository teamRepository;
 
     @Autowired
-    public PlayerService(PlayerRepository playerRepository, AppUserRepository appUserRepository) {
+    public PlayerService(PlayerRepository playerRepository, AppUserRepository appUserRepository, TeamRepository teamRepository) {
         this.playerRepository = playerRepository;
         this.appUserRepository = appUserRepository;
+        this.teamRepository = teamRepository;
     }
 
     @Transactional(readOnly = true)
@@ -38,9 +43,10 @@ public class PlayerService {
     }
 
     @Transactional
-    public Player create(String nickname) throws PlayerInvalidNickameException, PlayerAlreadyExistsException {
-        if (nickname == null || nickname.length() == 0) {
-            throw new PlayerInvalidNickameException();
+    public Player create(String nickname, Long teamId) throws PlayerInvalidNickameOrTeamIDException, PlayerAlreadyExistsException, TeamNotFoundException {
+        if (nickname == null || nickname.length() == 0
+                || teamId == null) {
+            throw new PlayerInvalidNickameOrTeamIDException();
         }
 
         Player player = playerRepository.findByNickname(nickname);
@@ -48,7 +54,12 @@ public class PlayerService {
             throw new PlayerAlreadyExistsException();
         }
 
-        player = new Player(nickname);
+        Team team = teamRepository.findById(teamId).orElse(null);
+        if (team == null) {
+            throw new TeamNotFoundException();
+        }
+
+        player = new Player(nickname, team);
         player = playerRepository.save(player);
         return player;
     }

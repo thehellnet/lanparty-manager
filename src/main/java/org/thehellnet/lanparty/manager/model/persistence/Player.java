@@ -38,13 +38,15 @@ public class Player implements Serializable {
     public Player() {
     }
 
-    public Player(String nickname) {
+    public Player(String nickname, Team team) {
         this.nickname = nickname;
+        this.team = team;
     }
 
-    public Player(String nickname, String barcode) {
+    public Player(String nickname, String barcode, Team team) {
         this.nickname = nickname;
         this.barcode = barcode;
+        this.team = team;
     }
 
     public Long getId() {
