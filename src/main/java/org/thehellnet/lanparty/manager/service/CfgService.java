@@ -4,7 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thehellnet.lanparty.manager.exception.cfg.InvalidDataCfgException;
+import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
+import org.thehellnet.lanparty.manager.exception.seat.SeatNotFoundException;
 import org.thehellnet.lanparty.manager.model.persistence.Player;
+import org.thehellnet.lanparty.manager.model.persistence.Seat;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;
 import org.thehellnet.lanparty.manager.repository.CfgRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
@@ -47,32 +51,27 @@ public class CfgService {
         return StringUtility.splitLines(cfg).toArray(new String[0]);
     }
 
-//    @Transactional(readOnly = true)
-//    public String getCfgContentFromRemoteAddressAndBarcode(String remoteAddress, String barcode) throws CfgException {
-//        if (remoteAddress == null
-//                || remoteAddress.length() == 0
-//                || barcode == null
-//                || barcode.length() == 0) {
-//            throw new CfgException("Invalid remote address or barcode");
-//        }
-//
-//        Seat seat = seatService.findByAddress(remoteAddress);
-//        if (seat == null) {
-//            throw new CfgException("Seat not found");
-//        }
-//
-//        Player player = playerRepository.findByBarcode(barcode);
-//        if (player == null) {
-//            throw new CfgException("Player not found");
-//        }
-//
-//        Game game = seat.getTournament().getGame();
-//
-//        Cfg playerCfg = cfgRepository.findByPlayerAndGame(player, game);
-//        if (playerCfg == null) {
-//            throw new CfgException("Cfg not found");
-//        }
-//
-//        return playerCfg.getCfg();
-//    }
+    @Transactional(readOnly = true)
+    public String getCfgFromRemoteAddressAndBarcode(String remoteAddress, String barcode) throws InvalidDataCfgException, SeatNotFoundException, PlayerNotFoundException {
+        if (remoteAddress == null
+                || remoteAddress.length() == 0
+                || barcode == null
+                || barcode.length() == 0) {
+            throw new InvalidDataCfgException("Invalid remote address or barcode");
+        }
+
+        Seat seat = seatService.findByAddress(remoteAddress);
+        if (seat == null) {
+            throw new SeatNotFoundException("Seat not found");
+        }
+
+        Player player = playerRepository.findByBarcode(barcode);
+        if (player == null) {
+            throw new PlayerNotFoundException("Player not found");
+        }
+
+        Tournament tournament = seat.getTournament();
+
+        return CfgUtility.sanitize(tournament.getCfg(), player.getCfg());
+    }
 }
