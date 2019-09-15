@@ -7,29 +7,42 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.ContextSpecification
-import org.thehellnet.lanparty.manager.model.persistence.Cfg
-import org.thehellnet.lanparty.manager.model.persistence.Game
-import org.thehellnet.lanparty.manager.model.persistence.Player
-import org.thehellnet.lanparty.manager.model.persistence.Seat
-import org.thehellnet.lanparty.manager.model.persistence.Tournament
-import org.thehellnet.lanparty.manager.service.CfgService
-import org.thehellnet.lanparty.manager.service.GameService
-import org.thehellnet.lanparty.manager.service.PlayerService
-import org.thehellnet.lanparty.manager.service.SeatService
-import org.thehellnet.lanparty.manager.service.TournamentService
+import org.thehellnet.lanparty.manager.model.persistence.*
+import org.thehellnet.lanparty.manager.service.*
 
 abstract class ControllerSpecification extends ContextSpecification {
 
     protected final static String TOURNAMENT_NAME = "Test Tournament"
     protected final static String TOURNAMENT_NAME_2 = "Test Tournament 2"
+    protected final static String TOURNAMENT_CFG = "unbindall\n" +
+            "bind TAB \"+scores\"\n" +
+            "bind ESCAPE \"togglemenu\"\n" +
+            "bind SPACE \"+gostand\"\n" +
+            "bind 4 \"+smoke\"\n" +
+            "bind H \"say Google\"\n" +
+            "bind . \"exec lanpartytool\"\n" +
+            "bind , \"writeconfig lanpartydump\""
 
     protected final static String GAME_TAG = "cod4"
 
     protected final static String SEAT_ADDRESS = "1.2.3.4"
     protected final static String SEAT_NAME = "Test seat"
 
+    protected final static String TEAM_NAME = "Test team"
+
     protected final static String PLAYER_NICKNAME = "Test player"
     protected final static String PLAYER_BARCODE = "0123456789"
+
+    protected final static String PLAYER_CFG = "bind H \"say Ciao\""
+
+    protected final static String PLAYER_CFG_SANITIZED = "unbindall\n" +
+            "bind TAB \"+scores\"\n" +
+            "bind ESCAPE \"togglemenu\"\n" +
+            "bind SPACE \"+gostand\"\n" +
+            "bind 4 \"+smoke\"\n" +
+            "bind H \"say Ciao\"\n" +
+            "bind . \"exec lanpartytool\"\n" +
+            "bind , \"writeconfig lanpartydump\""
 
     protected String token
 
@@ -44,6 +57,9 @@ abstract class ControllerSpecification extends ContextSpecification {
 
     @Autowired
     protected PlayerService playerService
+
+    @Autowired
+    protected TeamService teamService
 
     @Autowired
     protected CfgService cfgService
@@ -89,6 +105,7 @@ abstract class ControllerSpecification extends ContextSpecification {
         if (tournament == null) {
             Game game = gameService.findByTag(GAME_TAG)
             tournament = tournamentService.create(TOURNAMENT_NAME, game.id)
+            tournament = tournamentService.save(tournament.id, null, null, null, TOURNAMENT_CFG)
         }
         return tournament
     }
@@ -96,24 +113,36 @@ abstract class ControllerSpecification extends ContextSpecification {
     protected Seat createSeat() {
         Seat seat = seatService.findByAddress(SEAT_ADDRESS)
         if (seat == null) {
-            Tournament tournament = tournamentService.findByName(TOURNAMENT_NAME)
+            Tournament tournament = createTournament()
             seat = seatService.create(SEAT_NAME, SEAT_ADDRESS, tournament.id)
         }
         return seat
     }
 
+    protected Team createTeam() {
+        Team team = teamService.findByName(TEAM_NAME)
+        if (team == null) {
+            Tournament tournament = createTournament()
+            team = teamService.create(TEAM_NAME, tournament.id)
+        }
+        return team
+    }
+
     protected Player createPlayer() {
         Player player = playerService.findByBarcode(PLAYER_BARCODE)
         if (player == null) {
-            Tournament tournament = tournamentService.findByName(TOURNAMENT_NAME)
-            player = playerService.create(PLAYER_NICKNAME)
+            Team team = createTeam()
+            player = playerService.create(PLAYER_NICKNAME, team.id)
             player = playerService.save(player.id, null, PLAYER_BARCODE, null)
         }
         return player
     }
 
     protected Cfg createCfg() {
-        Cfg cfg = cfgService.saveCfg()
+        Player player = createPlayer()
+        Game game = gameService.findByTag(GAME_TAG)
+        Cfg cfg = cfgService.save(player.id, game.id, PLAYER_CFG)
+        return cfg
     }
 
     protected static void validateResponseAsJsonResponse(JSONObject response) {
