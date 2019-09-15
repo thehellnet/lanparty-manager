@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thehellnet.lanparty.manager.exception.cfg.CfgNotFoundException;
 import org.thehellnet.lanparty.manager.exception.cfg.InvalidDataCfgException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
 import org.thehellnet.lanparty.manager.exception.seat.SeatNotFoundException;
@@ -85,7 +86,7 @@ public class ToolController {
 
         try {
             cfgContent = cfgService.getCfgFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode());
-        } catch (SeatNotFoundException | InvalidDataCfgException | PlayerNotFoundException e) {
+        } catch (SeatNotFoundException | InvalidDataCfgException | PlayerNotFoundException | CfgNotFoundException e) {
             logger.warn(e.getMessage());
             return JsonResponse.getErrorInstance(e.getMessage());
         }
