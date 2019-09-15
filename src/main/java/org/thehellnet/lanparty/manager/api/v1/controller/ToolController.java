@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thehellnet.lanparty.manager.exception.cfg.InvalidDataCfgException;
+import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
+import org.thehellnet.lanparty.manager.exception.seat.SeatNotFoundException;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.EmptyToolRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.barcode.BarcodeToolRequestDTO;
@@ -80,12 +83,12 @@ public class ToolController {
 
         String cfgContent = "";
 
-//        try {
-//            cfgContent = cfgService.getCfgContentFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode());
-//        } catch (CfgException e) {
-//            logger.warn(e.getMessage());
-//            return JsonResponse.getErrorInstance(e.getMessage());
-//        }
+        try {
+            cfgContent = cfgService.getCfgFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode());
+        } catch (SeatNotFoundException | InvalidDataCfgException | PlayerNotFoundException e) {
+            logger.warn(e.getMessage());
+            return JsonResponse.getErrorInstance(e.getMessage());
+        }
 
         List<String> cfgLines = StringUtility.splitLines(cfgContent);
         return JsonResponse.getInstance(cfgLines);
