@@ -5,13 +5,16 @@ import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.CustomMockMvcRequestBuilders
+import org.thehellnet.utility.StringUtility
 
 class ToolControllerTest extends ControllerSpecification {
 
     def setup() {
         createTournament()
         createSeat()
+        createTeam()
         createPlayer()
+        createCfg()
     }
 
     def "ping with not existing seat"() {
@@ -164,8 +167,9 @@ class ToolControllerTest extends ControllerSpecification {
 
         when:
         JSONArray data = response.getJSONArray("data")
+        String cfg = StringUtility.joinLines(data.toList() as List<String>);
 
         then:
-        data.length() > 0
+        cfg == PLAYER_CFG_SANITIZED
     }
 }
