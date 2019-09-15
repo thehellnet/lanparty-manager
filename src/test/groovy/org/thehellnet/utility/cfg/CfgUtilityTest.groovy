@@ -1,5 +1,6 @@
 package org.thehellnet.utility.cfg
 
+
 import spock.lang.Specification
 
 class CfgUtilityTest extends Specification {
@@ -209,6 +210,187 @@ class CfgUtilityTest extends Specification {
 
         when:
         String actual = CfgUtility.sanitize(tournamentCfg, playerCfg)
+
+        then:
+        actual == expected
+    }
+
+    def "ensureRequired with empty cfg"() {
+        given:
+        def DATA = [
+                null,
+                "",
+                " ",
+                "  ",
+                "   ",
+                "\n",
+                "\r",
+                "\n\r",
+                "\n \r",
+                "\n\r ",
+                " \n\r",
+                " \n \r",
+                " \n\r ",
+                " \n \r ",
+        ]
+
+        expect:
+        DATA.each {
+            if (CfgUtility.ensureRequired(it) != CfgUtility.CFG_MINIMAL) {
+                assert false
+            }
+        }
+    }
+
+    def "ensureRequired with normal cfg"() {
+        given:
+        String input = "unbindall\n" +
+                "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind . \"exec lanpartytool\"\n" +
+                "bind , \"writeconfig lanpartydump\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\""
+
+        String expected = "unbindall\n" +
+                "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\"\n" +
+                "bind . \"exec lanpartytool\"\n" +
+                "bind , \"writeconfig lanpartydump\""
+
+        when:
+        String actual = CfgUtility.ensureRequired(input)
+
+        then:
+        actual == expected
+    }
+
+    def "ensureRequired without unbindall"() {
+        given:
+        String input = "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind . \"exec lanpartytool\"\n" +
+                "bind , \"writeconfig lanpartydump\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\""
+
+        String expected = "unbindall\n" +
+                "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\"\n" +
+                "bind . \"exec lanpartytool\"\n" +
+                "bind , \"writeconfig lanpartydump\""
+
+        when:
+        String actual = CfgUtility.ensureRequired(input)
+
+        then:
+        actual == expected
+    }
+
+    def "ensureRequired without bindings"() {
+        given:
+        String input = "unbindall\n" +
+                "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\""
+
+        String expected = "unbindall\n" +
+                "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\"\n" +
+                "bind . \"exec lanpartytool\"\n" +
+                "bind , \"writeconfig lanpartydump\""
+
+        when:
+        String actual = CfgUtility.ensureRequired(input)
+
+        then:
+        actual == expected
+    }
+
+    def "ensureRequired without bindings and unbinding"() {
+        given:
+        String input = "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\""
+
+        String expected = "unbindall\n" +
+                "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\"\n" +
+                "bind . \"exec lanpartytool\"\n" +
+                "bind , \"writeconfig lanpartydump\""
+
+        when:
+        String actual = CfgUtility.ensureRequired(input)
+
+        then:
+        actual == expected
+    }
+
+    def "ensureRequired without unbinding"() {
+        given:
+        String input = "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\"\n" +
+                "bind . \"exec lanpartytool\"\n" +
+                "bind , \"writeconfig lanpartydump\""
+
+        String expected = "unbindall\n" +
+                "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\"\n" +
+                "bind . \"exec lanpartytool\"\n" +
+                "bind , \"writeconfig lanpartydump\""
+
+        when:
+        String actual = CfgUtility.ensureRequired(input)
+
+        then:
+        actual == expected
+    }
+
+    def "ensureRequired with inverter order"() {
+        given:
+        String input = "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\"\n" +
+                "bind , \"writeconfig lanpartydump\"\n" +
+                "bind . \"exec lanpartytool\"\n"
+
+        String expected = "unbindall\n" +
+                "bind TAB \"+scores\"\n" +
+                "bind ESCAPE \"togglemenu\"\n" +
+                "bind SPACE \"+gostand\"\n" +
+                "bind 4 \"+smoke\"\n" +
+                "bind H \"say Google\"\n" +
+                "bind . \"exec lanpartytool\"\n" +
+                "bind , \"writeconfig lanpartydump\""
+
+        when:
+        String actual = CfgUtility.ensureRequired(input)
 
         then:
         actual == expected

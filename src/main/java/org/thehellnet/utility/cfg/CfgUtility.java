@@ -3,9 +3,21 @@ package org.thehellnet.utility.cfg;
 import org.thehellnet.utility.StringUtility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class CfgUtility {
+
+    public static final String CFG_MINIMAL = StringUtility.joinLines(
+            new ArrayList<>(
+                    Arrays.asList(
+                            CfgCommand.UNBINDALL.toString(),
+                            CfgCommand.BIND_EXEC.toString(),
+                            CfgCommand.BIND_DUMP.toString()
+                    )
+            )
+    );
 
     public static String sanitize(String tournamentCfg, String playerCfg) {
         if (tournamentCfg == null || playerCfg == null) {
@@ -61,5 +73,38 @@ public final class CfgUtility {
         }
 
         return cfgCommand;
+    }
+
+    public static String ensureRequired(String inputCfg) {
+        if (inputCfg == null || inputCfg.length() == 0) {
+            return CFG_MINIMAL;
+        }
+
+        List<String> lines = StringUtility.splitLines(inputCfg);
+        if (lines.size() == 0) {
+            return CFG_MINIMAL;
+        }
+
+        List<CfgCommand> cfgCommands = new ArrayList<>();
+
+        cfgCommands.add(CfgCommand.UNBINDALL);
+
+        for (String line : lines) {
+            CfgCommand cfgCommand = parseCommand(line);
+
+            if (cfgCommand.equals(CfgCommand.UNBINDALL)
+                    || cfgCommand.equals(CfgCommand.BIND_EXEC)
+                    || cfgCommand.equals(CfgCommand.BIND_DUMP)) {
+                continue;
+            }
+
+            cfgCommands.add(cfgCommand);
+        }
+
+        cfgCommands.add(CfgCommand.BIND_EXEC);
+        cfgCommands.add(CfgCommand.BIND_DUMP);
+
+        List<String> stringList = cfgCommands.stream().map(CfgCommand::toString).collect(Collectors.toList());
+        return StringUtility.joinLines(stringList);
     }
 }
