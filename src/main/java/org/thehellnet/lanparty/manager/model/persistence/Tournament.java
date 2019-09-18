@@ -33,7 +33,6 @@ public class Tournament implements Serializable, CustomJSONSerializable {
     private TournamentStatus status = TournamentStatus.SCHEDULED;
 
     @Basic
-    @Lob
     @Column(name = "cfg", nullable = false, length = 1048576)
     private String cfg = "";
 
