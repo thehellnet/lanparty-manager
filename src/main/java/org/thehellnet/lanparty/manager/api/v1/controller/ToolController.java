@@ -82,7 +82,7 @@ public class ToolController {
         String remoteAddress = request.getRemoteAddr();
         logger.info("getCfg from tool at {} with barcode {}", remoteAddress, dto.getBarcode());
 
-        String cfgContent = "";
+        String cfgContent;
 
         try {
             cfgContent = cfgService.getCfgFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode());
@@ -105,6 +105,14 @@ public class ToolController {
     public JsonResponse saveCfg(HttpServletRequest request, @RequestBody SaveCfgToolRequestDTO dto) {
         String remoteAddress = request.getRemoteAddr();
         logger.info("saveCfg from tool at {} with barcode {} and {} lines in cfg", remoteAddress, dto.getBarcode(), dto.getCfgLines().size());
+
+        String newCfg = StringUtility.joinLines(dto.getCfgLines());
+        try {
+            cfgService.saveCfgFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode(), newCfg);
+        } catch (InvalidDataCfgException | CfgNotFoundException | SeatNotFoundException | PlayerNotFoundException e) {
+            logger.warn(e.getMessage());
+            return JsonResponse.getErrorInstance(e.getMessage());
+        }
 
         return JsonResponse.getInstance();
     }
