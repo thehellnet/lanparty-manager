@@ -55,8 +55,46 @@ public class CfgService {
         Tournament tournament = seat.getTournament();
         String tournamentCfg = tournament.getCfg();
 
-        String playerCfg = getPlayerCfgInGame(player, tournament.getGame());
-        return CfgUtility.sanitize(tournamentCfg, playerCfg);
+        String cfg = getPlayerCfgInGame(player, tournament.getGame());
+        cfg = CfgUtility.sanitize(tournamentCfg, cfg);
+        cfg = CfgUtility.addPlayerName(player.getNickname(), cfg);
+        return CfgUtility.ensureRequired(cfg);
+    }
+
+    @Transactional
+    public String saveCfgFromRemoteAddressAndBarcode(String remoteAddress, String barcode, String newCfg) throws InvalidDataCfgException, SeatNotFoundException, PlayerNotFoundException, CfgNotFoundException {
+        if (remoteAddress == null
+                || remoteAddress.length() == 0
+                || barcode == null
+                || barcode.length() == 0
+                || newCfg == null) {
+            throw new InvalidDataCfgException("Invalid remote address, barcode or newCfg");
+        }
+
+        Seat seat = seatService.findByAddress(remoteAddress);
+        if (seat == null) {
+            throw new SeatNotFoundException("Seat not found");
+        }
+
+        Player player = playerRepository.findByBarcode(barcode);
+        if (player == null) {
+            throw new PlayerNotFoundException("Player not found");
+        }
+
+        Tournament tournament = seat.getTournament();
+        String tournamentCfg = tournament.getCfg();
+
+        String sanitizedCfg = CfgUtility.sanitize(tournamentCfg, newCfg);
+
+        Cfg cfg = cfgRepository.findByPlayerAndGame(player, tournament.getGame());
+        if (cfg == null) {
+            cfg = new Cfg(player, tournament.getGame());
+        }
+
+        cfg.setCfg(sanitizedCfg);
+        cfg = cfgRepository.save(cfg);
+
+        return cfg.getCfg();
     }
 
     @Transactional(readOnly = true)
@@ -88,7 +126,7 @@ public class CfgService {
 
         Cfg cfg = cfgRepository.findByPlayerAndGame(player, game);
         if (cfg == null) {
-            cfg = new Cfg(player, game, newCfg);
+            cfg = new Cfg(player, game);
         }
 
         cfg.setCfg(newCfg);
