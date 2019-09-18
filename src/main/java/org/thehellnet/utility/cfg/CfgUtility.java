@@ -19,6 +19,11 @@ public final class CfgUtility {
             )
     );
 
+    public static String addPlayerName(String playerName, String cfg) {
+        String nameCmd = new CfgCommand("name", playerName).toString();
+        return nameCmd + "\n" + cfg;
+    }
+
     public static String sanitize(String tournamentCfg, String playerCfg) {
         if (tournamentCfg == null || playerCfg == null) {
             return "";
