@@ -1,30 +1,30 @@
-package org.thehellnet.utility.cfg;
+package org.thehellnet.lanparty.manager.utility.cfg;
 
 import java.util.Objects;
 
-public class CfgCommand {
+public class ParsedCfgCommand {
 
-    public static final CfgCommand UNBINDALL = new CfgCommand("unbindall");
-    public static final CfgCommand BIND_EXEC = new CfgCommand("bind", ".", "exec lanpartytool");
-    public static final CfgCommand BIND_DUMP = new CfgCommand("bind", ",", "writeconfig lanpartydump");
+    public static final ParsedCfgCommand UNBINDALL = new ParsedCfgCommand("unbindall");
+    public static final ParsedCfgCommand BIND_EXEC = new ParsedCfgCommand("bind", ".", "exec lanpartytool");
+    public static final ParsedCfgCommand BIND_DUMP = new ParsedCfgCommand("bind", ",", "writeconfig lanpartydump");
 
     private String action = "";
     private String param = "";
     private String args = "";
 
-    public CfgCommand() {
+    public ParsedCfgCommand() {
     }
 
-    public CfgCommand(String action) {
+    public ParsedCfgCommand(String action) {
         setAction(action);
     }
 
-    public CfgCommand(String action, String param) {
+    public ParsedCfgCommand(String action, String param) {
         this(action);
         setParam(param);
     }
 
-    public CfgCommand(String action, String param, String args) {
+    public ParsedCfgCommand(String action, String param, String args) {
         this(action, param);
         setArgs(args);
     }
@@ -53,17 +53,25 @@ public class CfgCommand {
         this.args = args != null ? args.trim() : "";
     }
 
-    public boolean same(CfgCommand o) {
+    public boolean same(ParsedCfgCommand o) {
         return o != null
                 && o.getAction().equals(action)
                 && o.getParam().equals(param);
+    }
+
+    public static ParsedCfgCommand prepareName(String name) {
+        return new ParsedCfgCommand("name", name);
+    }
+
+    public static ParsedCfgCommand prepareSay(String message) {
+        return new ParsedCfgCommand("say", message);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CfgCommand that = (CfgCommand) o;
+        ParsedCfgCommand that = (ParsedCfgCommand) o;
         return action.equals(that.action) &&
                 param.equals(that.param) &&
                 args.equals(that.args);
@@ -71,7 +79,7 @@ public class CfgCommand {
 
     @Override
     public int hashCode() {
-        return Objects.hash(action, param, args);
+        return Objects.hash(action, param);
     }
 
     @Override

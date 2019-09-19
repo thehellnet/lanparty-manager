@@ -4,16 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thehellnet.lanparty.manager.exception.cfg.CfgNotFoundException;
-import org.thehellnet.lanparty.manager.exception.cfg.InvalidDataCfgException;
+import org.thehellnet.lanparty.manager.exception.cfg.InvalidInputDataCfgException;
 import org.thehellnet.lanparty.manager.exception.game.GameNotFoundException;
+import org.thehellnet.lanparty.manager.exception.player.InvalidNamePlayerException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
 import org.thehellnet.lanparty.manager.exception.seat.SeatNotFoundException;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.CfgRepository;
 import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
-import org.thehellnet.utility.cfg.CfgUtility;
+import org.thehellnet.lanparty.manager.utility.cfg.CfgUtility;
+import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfg;
+import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommand;
+
+import java.util.List;
 
 @Service
 public class CfgService {
@@ -34,84 +38,44 @@ public class CfgService {
     }
 
     @Transactional(readOnly = true)
-    public String getCfgFromRemoteAddressAndBarcode(String remoteAddress, String barcode) throws InvalidDataCfgException, SeatNotFoundException, PlayerNotFoundException, CfgNotFoundException {
+    public String computeCfg(String remoteAddress, String barcode) throws InvalidInputDataCfgException, SeatNotFoundException, PlayerNotFoundException, InvalidNamePlayerException {
         if (remoteAddress == null
                 || remoteAddress.length() == 0
                 || barcode == null
                 || barcode.length() == 0) {
-            throw new InvalidDataCfgException("Invalid remote address or barcode");
+            throw new InvalidInputDataCfgException("Invalid remote address or barcode");
         }
 
         Seat seat = seatService.findByAddress(remoteAddress);
         if (seat == null) {
-            throw new SeatNotFoundException("Seat not found");
+            throw new SeatNotFoundException();
         }
 
         Player player = playerRepository.findByBarcode(barcode);
         if (player == null) {
-            throw new PlayerNotFoundException("Player not found");
+            throw new PlayerNotFoundException();
         }
 
         Tournament tournament = seat.getTournament();
         String tournamentCfg = tournament.getCfg();
-
-        String cfg = getPlayerCfgInGame(player, tournament.getGame());
-        cfg = CfgUtility.sanitize(tournamentCfg, cfg);
-        cfg = CfgUtility.addPlayerName(player.getNickname(), cfg);
-        return CfgUtility.ensureRequired(cfg);
-    }
-
-    @Transactional
-    public String saveCfgFromRemoteAddressAndBarcode(String remoteAddress, String barcode, String newCfg) throws InvalidDataCfgException, SeatNotFoundException, PlayerNotFoundException, CfgNotFoundException {
-        if (remoteAddress == null
-                || remoteAddress.length() == 0
-                || barcode == null
-                || barcode.length() == 0
-                || newCfg == null) {
-            throw new InvalidDataCfgException("Invalid remote address, barcode or newCfg");
-        }
-
-        Seat seat = seatService.findByAddress(remoteAddress);
-        if (seat == null) {
-            throw new SeatNotFoundException("Seat not found");
-        }
-
-        Player player = playerRepository.findByBarcode(barcode);
-        if (player == null) {
-            throw new PlayerNotFoundException("Player not found");
-        }
-
-        Tournament tournament = seat.getTournament();
-        String tournamentCfg = tournament.getCfg();
-
-        String sanitizedCfg = CfgUtility.sanitize(tournamentCfg, newCfg);
+        List<ParsedCfgCommand> tournamentCfgCommands = CfgUtility.parseCfgFromString(tournamentCfg);
+        tournamentCfgCommands = CfgUtility.removeSpecialCommands(tournamentCfgCommands);
 
         Cfg cfg = cfgRepository.findByPlayerAndGame(player, tournament.getGame());
-        if (cfg == null) {
-            cfg = new Cfg(player, tournament.getGame());
-        }
+        String playerCfg = cfg != null ? cfg.getCfg() : null;
+        List<ParsedCfgCommand> playerCfgCommands = CfgUtility.parseCfgFromString(playerCfg);
+        playerCfgCommands = CfgUtility.removeSpecialCommands(playerCfgCommands);
 
-        cfg.setCfg(sanitizedCfg);
-        cfg = cfgRepository.save(cfg);
+        List<ParsedCfgCommand> commands = CfgUtility.mergeTournamentWithPlayer(tournamentCfgCommands, playerCfgCommands);
 
-        return cfg.getCfg();
-    }
-
-    @Transactional(readOnly = true)
-    public String getPlayerCfgInGame(Player player, Game game) {
-        String playerCfg = "";
-
-        Cfg cfg = cfgRepository.findByPlayerAndGame(player, game);
-        if (cfg != null) {
-            playerCfg = cfg.getCfg();
-        }
-        return playerCfg;
+        ParsedCfg parsedCfg = new ParsedCfg(commands, player.getNickname());
+        return parsedCfg.toString();
     }
 
     @Transactional
-    public Cfg save(Long playerId, Long gameId, String newCfg) throws InvalidDataCfgException, PlayerNotFoundException, GameNotFoundException {
+    public Cfg save(Long playerId, Long gameId, String newCfg) throws InvalidInputDataCfgException, PlayerNotFoundException, GameNotFoundException {
         if (playerId == null || gameId == null) {
-            throw new InvalidDataCfgException("Invalid playerId or gameId");
+            throw new InvalidInputDataCfgException("Invalid playerId or gameId");
         }
 
         Player player = playerRepository.findById(playerId).orElse(null);

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.thehellnet.lanparty.manager.exception.cfg.CfgNotFoundException;
-import org.thehellnet.lanparty.manager.exception.cfg.InvalidDataCfgException;
+import org.thehellnet.lanparty.manager.exception.cfg.InvalidInputDataCfgException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
 import org.thehellnet.lanparty.manager.exception.seat.SeatNotFoundException;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
@@ -86,7 +86,7 @@ public class ToolController {
 
         try {
             cfgContent = cfgService.getCfgFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode());
-        } catch (SeatNotFoundException | InvalidDataCfgException | PlayerNotFoundException | CfgNotFoundException e) {
+        } catch (SeatNotFoundException | InvalidInputDataCfgException | PlayerNotFoundException | CfgNotFoundException e) {
             logger.warn(e.getMessage());
             return JsonResponse.getErrorInstance(e.getMessage());
         }
@@ -109,7 +109,7 @@ public class ToolController {
         String newCfg = StringUtility.joinLines(dto.getCfgLines());
         try {
             cfgService.saveCfgFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode(), newCfg);
-        } catch (InvalidDataCfgException | CfgNotFoundException | SeatNotFoundException | PlayerNotFoundException e) {
+        } catch (InvalidInputDataCfgException | CfgNotFoundException | SeatNotFoundException | PlayerNotFoundException e) {
             logger.warn(e.getMessage());
             return JsonResponse.getErrorInstance(e.getMessage());
         }
