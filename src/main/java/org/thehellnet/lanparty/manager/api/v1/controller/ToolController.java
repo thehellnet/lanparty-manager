@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.thehellnet.lanparty.manager.exception.cfg.CfgNotFoundException;
 import org.thehellnet.lanparty.manager.exception.cfg.InvalidInputDataCfgException;
+import org.thehellnet.lanparty.manager.exception.player.InvalidNamePlayerException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
 import org.thehellnet.lanparty.manager.exception.seat.SeatNotFoundException;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
@@ -82,17 +82,16 @@ public class ToolController {
         String remoteAddress = request.getRemoteAddr();
         logger.info("getCfg from tool at {} with barcode {}", remoteAddress, dto.getBarcode());
 
-        String cfgContent;
+        List<String> cfg;
 
         try {
-            cfgContent = cfgService.getCfgFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode());
-        } catch (SeatNotFoundException | InvalidInputDataCfgException | PlayerNotFoundException | CfgNotFoundException e) {
+            cfg = cfgService.computeCfg(remoteAddress, dto.getBarcode());
+        } catch (SeatNotFoundException | InvalidInputDataCfgException | PlayerNotFoundException | InvalidNamePlayerException e) {
             logger.warn(e.getMessage());
             return JsonResponse.getErrorInstance(e.getMessage());
         }
 
-        List<String> cfgLines = StringUtility.splitLines(cfgContent);
-        return JsonResponse.getInstance(cfgLines);
+        return JsonResponse.getInstance(cfg);
     }
 
     @RequestMapping(
@@ -107,12 +106,12 @@ public class ToolController {
         logger.info("saveCfg from tool at {} with barcode {} and {} lines in cfg", remoteAddress, dto.getBarcode(), dto.getCfgLines().size());
 
         String newCfg = StringUtility.joinLines(dto.getCfgLines());
-        try {
-            cfgService.saveCfgFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode(), newCfg);
-        } catch (InvalidInputDataCfgException | CfgNotFoundException | SeatNotFoundException | PlayerNotFoundException e) {
-            logger.warn(e.getMessage());
-            return JsonResponse.getErrorInstance(e.getMessage());
-        }
+//        try {
+//            cfgService.saveCfgFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode(), newCfg);
+//        } catch (InvalidInputDataCfgException | CfgNotFoundException | SeatNotFoundException | PlayerNotFoundException e) {
+//            logger.warn(e.getMessage());
+//            return JsonResponse.getErrorInstance(e.getMessage());
+//        }
 
         return JsonResponse.getInstance();
     }

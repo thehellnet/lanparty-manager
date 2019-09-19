@@ -38,7 +38,7 @@ public class CfgService {
     }
 
     @Transactional(readOnly = true)
-    public String computeCfg(String remoteAddress, String barcode) throws InvalidInputDataCfgException, SeatNotFoundException, PlayerNotFoundException, InvalidNamePlayerException {
+    public List<String> computeCfg(String remoteAddress, String barcode) throws InvalidInputDataCfgException, SeatNotFoundException, PlayerNotFoundException, InvalidNamePlayerException {
         if (remoteAddress == null
                 || remoteAddress.length() == 0
                 || barcode == null
@@ -69,7 +69,7 @@ public class CfgService {
         List<ParsedCfgCommand> commands = CfgUtility.mergeTournamentWithPlayer(tournamentCfgCommands, playerCfgCommands);
 
         ParsedCfg parsedCfg = new ParsedCfg(commands, player.getNickname());
-        return parsedCfg.toString();
+        return parsedCfg.toStringList();
     }
 
     @Transactional

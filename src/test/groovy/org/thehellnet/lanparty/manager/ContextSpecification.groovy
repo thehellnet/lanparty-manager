@@ -27,14 +27,11 @@ abstract class ContextSpecification extends Specification {
 
     protected final static String TOURNAMENT_NAME = "Test Tournament"
     protected final static String TOURNAMENT_NAME_2 = "Test Tournament 2"
-    protected final static String TOURNAMENT_CFG = "unbindall\n" +
-            "bind TAB \"+scores\"\n" +
+    protected final static String TOURNAMENT_CFG = "bind TAB \"+scores\"\n" +
             "bind ESCAPE \"togglemenu\"\n" +
             "bind SPACE \"+gostand\"\n" +
             "bind 4 \"+smoke\"\n" +
-            "bind H \"say Google\"\n" +
-            "bind . \"exec lanpartytool\"\n" +
-            "bind , \"writeconfig lanpartydump\""
+            "bind H \"say Google\""
 
     protected final static String GAME_TAG = "cod4"
 
@@ -43,19 +40,10 @@ abstract class ContextSpecification extends Specification {
 
     protected final static String TEAM_NAME = "Test team"
 
-    protected final static String PLAYER_NICKNAME = "Test player"
+    protected final static String PLAYER_NICKNAME = "Testplayer"
     protected final static String PLAYER_BARCODE = "0123456789"
 
     protected final static String PLAYER_CFG = "bind H \"say Ciao\""
-
-    protected final static String PLAYER_CFG_SANITIZED = "unbindall\n" +
-            "bind TAB \"+scores\"\n" +
-            "bind ESCAPE \"togglemenu\"\n" +
-            "bind SPACE \"+gostand\"\n" +
-            "bind 4 \"+smoke\"\n" +
-            "bind H \"say Ciao\"\n" +
-            "bind . \"exec lanpartytool\"\n" +
-            "bind , \"writeconfig lanpartydump\""
 
     @Autowired
     protected WebApplicationContext webApplicationContext

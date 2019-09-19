@@ -9,6 +9,16 @@ import org.thehellnet.utility.StringUtility
 
 class ToolControllerTest extends ControllerSpecification {
 
+    private static final String PLAYER_CFG_SANITIZED = "unbindall\n" +
+            "bind TAB \"+scores\"\n" +
+            "bind ESCAPE \"togglemenu\"\n" +
+            "bind SPACE \"+gostand\"\n" +
+            "bind 4 \"+smoke\"\n" +
+            "bind H \"say Ciao\"\n" +
+            "bind . \"exec lanpartytool\"\n" +
+            "bind , \"writeconfig lanpartydump\"\n" +
+            "name Testplayer"
+
     def setup() {
         createTournament()
         createSeat()
