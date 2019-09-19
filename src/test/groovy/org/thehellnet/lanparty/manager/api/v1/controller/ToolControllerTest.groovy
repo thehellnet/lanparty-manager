@@ -182,4 +182,32 @@ class ToolControllerTest extends ControllerSpecification {
         then:
         cfg == PLAYER_CFG_SANITIZED
     }
+
+    def "saveCfg with existing seat and existing barcode"() {
+        given:
+        JSONObject requestBody = new JSONObject()
+        requestBody.put("barcode", PLAYER_BARCODE)
+        requestBody.put("cfgLines", StringUtility.splitLines(PLAYER_CFG_SANITIZED))
+
+        when:
+        def rawResponse = mockMvc
+                .perform(CustomMockMvcRequestBuilders
+                        .post("/api/v1/tool/saveCfg", SEAT_ADDRESS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString()))
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+
+        when:
+        JSONObject response = new JSONObject(rawResponse.contentAsString)
+
+        then:
+        validateResponseAsJsonResponse(response)
+
+        response.getBoolean("success")
+    }
 }

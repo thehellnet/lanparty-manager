@@ -19,7 +19,6 @@ import org.thehellnet.lanparty.manager.model.dto.request.tool.barcode.SaveCfgToo
 import org.thehellnet.lanparty.manager.model.persistence.Seat;
 import org.thehellnet.lanparty.manager.service.CfgService;
 import org.thehellnet.lanparty.manager.service.SeatService;
-import org.thehellnet.utility.StringUtility;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -105,13 +104,12 @@ public class ToolController {
         String remoteAddress = request.getRemoteAddr();
         logger.info("saveCfg from tool at {} with barcode {} and {} lines in cfg", remoteAddress, dto.getBarcode(), dto.getCfgLines().size());
 
-        String newCfg = StringUtility.joinLines(dto.getCfgLines());
-//        try {
-//            cfgService.saveCfgFromRemoteAddressAndBarcode(remoteAddress, dto.getBarcode(), newCfg);
-//        } catch (InvalidInputDataCfgException | CfgNotFoundException | SeatNotFoundException | PlayerNotFoundException e) {
-//            logger.warn(e.getMessage());
-//            return JsonResponse.getErrorInstance(e.getMessage());
-//        }
+        try {
+            cfgService.saveCfg(remoteAddress, dto.getBarcode(), dto.getCfgLines());
+        } catch (InvalidInputDataCfgException | SeatNotFoundException | PlayerNotFoundException e) {
+            logger.warn(e.getMessage());
+            return JsonResponse.getErrorInstance(e.getMessage());
+        }
 
         return JsonResponse.getInstance();
     }

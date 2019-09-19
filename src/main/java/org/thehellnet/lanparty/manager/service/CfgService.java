@@ -16,6 +16,7 @@ import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.utility.cfg.CfgUtility;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfg;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommand;
+import org.thehellnet.utility.StringUtility;
 
 import java.util.List;
 
@@ -39,10 +40,8 @@ public class CfgService {
 
     @Transactional(readOnly = true)
     public List<String> computeCfg(String remoteAddress, String barcode) throws InvalidInputDataCfgException, SeatNotFoundException, PlayerNotFoundException, InvalidNamePlayerException {
-        if (remoteAddress == null
-                || remoteAddress.length() == 0
-                || barcode == null
-                || barcode.length() == 0) {
+        if (remoteAddress == null || remoteAddress.length() == 0
+                || barcode == null || barcode.length() == 0) {
             throw new InvalidInputDataCfgException("Invalid remote address or barcode");
         }
 
@@ -70,6 +69,35 @@ public class CfgService {
 
         ParsedCfg parsedCfg = new ParsedCfg(commands, player.getNickname());
         return parsedCfg.toStringList();
+    }
+
+    @Transactional
+    public void saveCfg(String remoteAddress, String barcode, List<String> newCfg) throws InvalidInputDataCfgException, SeatNotFoundException, PlayerNotFoundException {
+        if (remoteAddress == null || remoteAddress.length() == 0
+                || barcode == null || barcode.length() == 0
+                || newCfg == null) {
+            throw new InvalidInputDataCfgException("Invalid remote address or barcode");
+        }
+
+        Seat seat = seatService.findByAddress(remoteAddress);
+        if (seat == null) {
+            throw new SeatNotFoundException();
+        }
+
+        Player player = playerRepository.findByBarcode(barcode);
+        if (player == null) {
+            throw new PlayerNotFoundException();
+        }
+
+        Tournament tournament = seat.getTournament();
+
+        Cfg cfg = cfgRepository.findByPlayerAndGame(player, tournament.getGame());
+        if (cfg == null) {
+            cfg = new Cfg(player, tournament.getGame());
+        }
+
+        cfg.setCfg(StringUtility.joinLines(newCfg));
+        cfgRepository.save(cfg);
     }
 
     @Transactional
