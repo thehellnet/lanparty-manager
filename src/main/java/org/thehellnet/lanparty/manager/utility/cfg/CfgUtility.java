@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.utility.cfg;
 
+import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.utility.StringUtility;
 
 import java.util.*;

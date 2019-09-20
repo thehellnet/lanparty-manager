@@ -1,6 +1,7 @@
 package org.thehellnet.lanparty.manager.utility.cfg
 
 import org.thehellnet.lanparty.manager.exception.player.InvalidNamePlayerException
+import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand
 import org.thehellnet.lanparty.manager.utility.UtilitySpecification
 import org.thehellnet.utility.StringUtility
 

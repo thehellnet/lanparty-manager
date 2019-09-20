@@ -15,7 +15,7 @@ import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.utility.cfg.CfgUtility;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfg;
-import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommand;
+import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.utility.StringUtility;
 
 import java.util.List;

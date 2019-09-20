@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.utility.cfg;
+package org.thehellnet.lanparty.manager.model.helper;
 
 import java.util.Objects;
 
@@ -33,30 +33,31 @@ public class ParsedCfgCommand {
         return action;
     }
 
-    public void setAction(String action) {
+    public ParsedCfgCommand setAction(String action) {
         this.action = action != null ? action.trim() : "";
+        return this;
     }
 
     public String getParam() {
         return param;
     }
 
-    public void setParam(String param) {
+    public ParsedCfgCommand setParam(String param) {
         this.param = param != null ? param.trim() : "";
+        return this;
     }
 
     public String getArgs() {
         return args;
     }
 
-    public void setArgs(String args) {
+    public ParsedCfgCommand setArgs(String args) {
         this.args = args != null ? args.trim() : "";
+        return this;
     }
 
     public boolean same(ParsedCfgCommand o) {
-        return o != null
-                && o.getAction().equals(action)
-                && o.getParam().equals(param);
+        return o != null && o.hashCode() == this.hashCode();
     }
 
     public static ParsedCfgCommand prepareName(String name) {
@@ -79,7 +80,17 @@ public class ParsedCfgCommand {
 
     @Override
     public int hashCode() {
-        return Objects.hash(action, param);
+        switch (action) {
+            case "unbindall":
+            case "name":
+            case "sensitivity":
+            case "say":
+                return Objects.hash(action);
+
+            default:
+                return Objects.hash(action, param);
+        }
+
     }
 
     @Override

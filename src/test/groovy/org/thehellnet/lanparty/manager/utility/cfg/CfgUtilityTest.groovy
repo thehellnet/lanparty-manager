@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.utility.cfg
 
+import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand
 import spock.lang.Specification
 import spock.lang.Unroll
 
