@@ -1,9 +1,11 @@
 package org.thehellnet.lanparty.manager
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.web.AnnotationConfigWebContextLoader
 import org.springframework.test.context.web.WebAppConfiguration
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 import org.thehellnet.lanparty.manager.configuration.JacksonConfiguration
 import org.thehellnet.lanparty.manager.configuration.PersistenceConfiguration
@@ -23,6 +25,8 @@ import spock.lang.Specification
                 WebSocketConfiguration
         ]
 )
+@Transactional
+@Rollback
 abstract class ContextSpecification extends Specification {
 
     protected final static String TOURNAMENT_NAME = "Test Tournament"
