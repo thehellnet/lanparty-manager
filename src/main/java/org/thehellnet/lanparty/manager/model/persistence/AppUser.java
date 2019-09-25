@@ -50,6 +50,11 @@ public class AppUser implements Serializable {
         this.password = password;
     }
 
+    public AppUser(String email, String password, String name) {
+        this(email, password);
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
