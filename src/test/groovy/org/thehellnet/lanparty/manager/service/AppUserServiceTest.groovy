@@ -8,6 +8,8 @@ import org.thehellnet.lanparty.manager.exception.appuser.AppUserNotFoundExceptio
 import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.lanparty.manager.repository.AppUserRepository
+import org.thehellnet.utility.PasswordUtility
+import spock.lang.Unroll
 
 class AppUserServiceTest extends ContextSpecification {
 
@@ -40,7 +42,7 @@ class AppUserServiceTest extends ContextSpecification {
 
     def "getAll with two users"() {
         given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD))
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
 
         when:
         List<AppUser> appUsers = appUserService.getAll()
@@ -70,7 +72,7 @@ class AppUserServiceTest extends ContextSpecification {
 
     def "get with existing id"() {
         given:
-        Long userId = appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD)).id
+        Long userId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD))).id
 
         when:
         AppUser appUser = appUserService.get(userId)
@@ -148,9 +150,7 @@ class AppUserServiceTest extends ContextSpecification {
 
     def "save with null values"() {
         given:
-        AppUser createdAppUser = new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)
-        createdAppUser = appUserRepository.save(createdAppUser)
-        Long appUserId = createdAppUser.id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
 
         when:
         appUserService.save(appUserId, null, null)
@@ -168,7 +168,7 @@ class AppUserServiceTest extends ContextSpecification {
 
     def "save with empty name and null appUserRoles"() {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
 
         when:
         appUserService.save(appUserId, "", null)
@@ -186,7 +186,7 @@ class AppUserServiceTest extends ContextSpecification {
 
     def "save with new name"() {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
 
         when:
         appUserService.save(appUserId, APPUSER_NAME_NEW, null)
@@ -206,7 +206,7 @@ class AppUserServiceTest extends ContextSpecification {
 
     def "save with new appUserRoles"() {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
 
         when:
         appUserService.save(appUserId, null, [Role.LOGIN.name] as String[])
@@ -227,7 +227,7 @@ class AppUserServiceTest extends ContextSpecification {
 
     def "save with both new name and new appUserRoles"() {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
 
         when:
         appUserService.save(appUserId, APPUSER_NAME_NEW, [Role.LOGIN.name] as String[])
@@ -259,7 +259,7 @@ class AppUserServiceTest extends ContextSpecification {
 
     def "delete"() {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
 
         when:
         appUserService.delete(appUserId)
@@ -293,7 +293,7 @@ class AppUserServiceTest extends ContextSpecification {
 
     def "findByEmail with exiting email"() {
         given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD))
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         when:
         AppUser appUser = appUserService.findByEmail(APPUSER_EMAIL)
@@ -325,8 +325,112 @@ class AppUserServiceTest extends ContextSpecification {
         appUser == null
     }
 
-    def "FindByEmailAndPassword"() {
+    def "findByEmailAndPassword with admin user"() {
+        given:
+        String email = "admin"
+        String password = "admin"
+
+        when:
+        AppUser appUser = appUserService.findByEmailAndPassword(email, password)
+
+        then:
+        appUser != null
+        appUser.email == "admin"
     }
+
+    def "findByEmailAndPassword with exiting user"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+
+        when:
+        AppUser appUser = appUserService.findByEmailAndPassword(APPUSER_EMAIL, APPUSER_PASSWORD)
+
+        then:
+        appUser != null
+        appUser.email == APPUSER_EMAIL
+        appUser.name == APPUSER_NAME
+    }
+
+    def "findByEmailAndPassword with not exiting user"() {
+        given:
+        String email = APPUSER_EMAIL
+        String password = APPUSER_PASSWORD
+
+        when:
+        AppUser appUser = appUserService.findByEmailAndPassword(email, password)
+
+        then:
+        appUser == null
+    }
+
+    @Unroll
+    def "findByEmailAndPassword with email #input_email and password #input_password and not exiting user"(String input_email, String input_password) {
+        when:
+        AppUser appUser = appUserService.findByEmailAndPassword(input_email, input_password)
+
+        then:
+        appUser == null
+
+        where:
+        input_email   | input_password
+        null          | null
+        null          | ""
+        null          | APPUSER_PASSWORD
+        ""            | null
+        ""            | ""
+        ""            | APPUSER_PASSWORD
+        APPUSER_EMAIL | null
+        APPUSER_EMAIL | ""
+        APPUSER_EMAIL | APPUSER_PASSWORD
+    }
+
+    def "findByEmailAndPassword with not exiting user but wrong email"() {
+        given:
+        appUserRepository.save(new AppUser("not_email", PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+
+        and:
+        String email = "not_email"
+        String password = APPUSER_PASSWORD
+
+        when:
+        AppUser appUser = appUserService.findByEmailAndPassword(email, password)
+
+        then:
+        appUser == null
+    }
+
+    def "findByEmailAndPassword with not exiting user but wrong password"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+
+        and:
+        String email = APPUSER_EMAIL
+        String password = "wrong_password"
+
+        when:
+        AppUser appUser = appUserService.findByEmailAndPassword(email, password)
+
+        then:
+        appUser == null
+    }
+
+    @Unroll
+    def "findByEmailAndPassword with email #input_email and password #input_password and exiting user"(String input_email, String input_password) {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+
+        when:
+        AppUser appUser = appUserService.findByEmailAndPassword(input_email, input_password)
+
+        then:
+        appUser == null
+
+        where:
+        input_email   | input_password
+        APPUSER_EMAIL | null
+        APPUSER_EMAIL | ""
+    }
+
 
     def "NewToken"() {
     }

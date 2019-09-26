@@ -14,7 +14,7 @@ public final class PasswordUtility {
     private static final Logger logger = LoggerFactory.getLogger(PasswordUtility.class);
 
     public static String hash(String password) {
-        if (password == null) {
+        if (password == null || password.length() == 0) {
             return null;
         }
 
@@ -28,6 +28,11 @@ public final class PasswordUtility {
     }
 
     public static boolean verify(String hash, String password) {
+        if (hash == null || hash.length() == 0
+                || password == null || password.length() == 0) {
+            return false;
+        }
+
         return Argon2Factory.create().verify(hash, password);
     }
 }
