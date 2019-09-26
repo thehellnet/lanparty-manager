@@ -257,10 +257,72 @@ class AppUserServiceTest extends ContextSpecification {
         thrown AppUserNotFoundException
     }
 
-    def "Delete"() {
+    def "delete"() {
+        given:
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)).id
+
+        when:
+        appUserService.delete(appUserId)
+
+        then:
+        noExceptionThrown()
     }
 
-    def "FindByEmail"() {
+    def "delete with not existing ID"() {
+        given:
+        Long appUserId = 12345678
+
+        when:
+        appUserService.delete(appUserId)
+
+        then:
+        thrown AppUserNotFoundException
+    }
+
+    def "findByEmail with admin"() {
+        given:
+        String email = "admin"
+
+        when:
+        AppUser appUser = appUserService.findByEmail(email)
+
+        then:
+        appUser != null
+        appUser.email == "admin"
+    }
+
+    def "findByEmail with exiting email"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD))
+
+        when:
+        AppUser appUser = appUserService.findByEmail(APPUSER_EMAIL)
+
+        then:
+        appUser != null
+        appUser.email == APPUSER_EMAIL
+    }
+
+    def "findByEmail with not exiting email"() {
+        given:
+        String email = APPUSER_EMAIL
+
+        when:
+        AppUser appUser = appUserService.findByEmail(email)
+
+        then:
+        appUser == null
+    }
+
+    def "findByEmail with not valid email"() {
+        given:
+        String email = "not_valid_email"
+
+        when:
+        AppUser appUser = appUserService.findByEmail(email)
+
+        then:
+        appUser == null
     }
 
     def "FindByEmailAndPassword"() {
