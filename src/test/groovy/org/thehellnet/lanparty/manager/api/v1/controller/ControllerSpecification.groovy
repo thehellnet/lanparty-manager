@@ -42,17 +42,12 @@ abstract class ControllerSpecification extends ContextSpecification {
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         JSONObject response = new JSONObject(rawResponse.contentAsString)
-        response.has("success")
-        response.getBoolean("success")
 
-        response.has("data")
-        JSONObject data = response.getJSONObject("data")
+        response.has("expiration")
+        new DateTime(response.getLong("expiration")).isAfterNow()
 
-        data.has("expiration")
-        new DateTime(data.getLong("expiration")).isAfterNow()
-
-        data.has("token")
-        token = data.getString("token")
+        response.has("token")
+        token = response.getString("token")
     }
 
     protected static void validateResponseAsJsonResponse(JSONObject response) {
