@@ -15,8 +15,8 @@ apply plugin: "idea"
 apply plugin: "war"
 apply plugin: "jacoco"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
 
 war {
     archiveFileName = "lanparty-manager.war"

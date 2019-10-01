@@ -6,7 +6,7 @@ services:
   - postgresql
 
 jdk:
-  - openjdk8
+  - openjdk11
 
 before_script:
   - psql -c "CREATE ROLE test NOSUPERUSER NOCREATEROLE NOCREATEDB LOGIN INHERIT NOREPLICATION ENCRYPTED PASSWORD 'test';" -U postgres
