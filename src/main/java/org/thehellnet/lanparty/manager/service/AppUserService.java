@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.appuser.*;
 import org.thehellnet.lanparty.manager.model.constant.Role;
-import org.thehellnet.lanparty.manager.model.dto.light.AppUserLight;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
@@ -120,6 +119,60 @@ public class AppUserService {
         return appUser;
     }
 
+    @Transactional(readOnly = true)
+    public boolean hasAllRoles(AppUser appUser, Role... roles) {
+        if (roles == null) {
+            return false;
+        }
+
+        appUser = appUserRepository.getOne(appUser.getId());
+
+        if (roles.length == 0) {
+            return appUser.getAppUserRoles().size() == 0;
+        }
+
+        Map<Role, Boolean> roleBooleanMap = new HashMap<>();
+
+        for (Role role : roles) {
+            roleBooleanMap.put(role, appUser.getAppUserRoles().contains(role));
+        }
+
+        for (Boolean item : roleBooleanMap.values()) {
+            if (!item) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasAnyRoles(AppUser appUser, Role... roles) {
+        if (roles == null) {
+            return false;
+        }
+
+        appUser = appUserRepository.getOne(appUser.getId());
+
+        if (roles.length == 0) {
+            return appUser.getAppUserRoles().size() == 0;
+        }
+
+        Map<Role, Boolean> roleBooleanMap = new HashMap<>();
+
+        for (Role role : roles) {
+            roleBooleanMap.put(role, appUser.getAppUserRoles().contains(role));
+        }
+
+        for (Boolean item : roleBooleanMap.values()) {
+            if (item) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @Transactional
     public AppUserToken newToken(AppUser appUser) {
         if (appUser == null) {
@@ -130,34 +183,20 @@ public class AppUserService {
         return appUserTokenRepository.save(new AppUserToken(token, appUser));
     }
 
-    @Transactional(readOnly = true)
-    public boolean hasAllRoles(AppUser appUser, Role... roles) {
-        appUser = appUserRepository.getOne(appUser.getId());
-        return appUser.getAppUserRoles().containsAll(Arrays.asList(roles));
-    }
-
-    @Transactional(readOnly = true)
-    public boolean hasAnyRoles(AppUser appUser, Role... roles) {
-        appUser = appUserRepository.getOne(appUser.getId());
-
-        for (Role role : roles) {
-            if (appUser.getAppUserRoles().contains(role)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     @Transactional
-    public boolean changePassword(AppUser appUser, String password) {
+    public boolean changePassword(AppUser appUser, String password) throws AppUserNotFoundException {
         if (appUser == null) {
             return false;
         }
+
+        if (password == null || password.length() == 0) {
+            return false;
+        }
+
 
         appUser = appUserRepository.findById(appUser.getId()).orElse(null);
         if (appUser == null) {
-            return false;
+            throw new AppUserNotFoundException();
         }
 
         String encryptedPassword = PasswordUtility.hash(password);

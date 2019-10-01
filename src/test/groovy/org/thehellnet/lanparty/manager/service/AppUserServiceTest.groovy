@@ -1,26 +1,30 @@
 package org.thehellnet.lanparty.manager.service
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.thehellnet.lanparty.manager.ContextSpecification
 import org.thehellnet.lanparty.manager.exception.appuser.AppUserAlreadyPresentException
 import org.thehellnet.lanparty.manager.exception.appuser.AppUserInvalidMailException
 import org.thehellnet.lanparty.manager.exception.appuser.AppUserNotFoundException
 import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.lanparty.manager.repository.AppUserRepository
+import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository
 import org.thehellnet.utility.PasswordUtility
 import spock.lang.Unroll
 
-class AppUserServiceTest extends ContextSpecification {
+class AppUserServiceTest extends ServiceSpecification {
 
     private static final String APPUSER_EMAIL = "user@domain.tdl"
     private static final String APPUSER_NAME = "User"
     private static final String APPUSER_PASSWORD = "password"
 
     private static final String APPUSER_NAME_NEW = "New name"
+    private static final String APPUSER_PASSWORD_NEW = "passwordnew"
 
     @Autowired
     private AppUserRepository appUserRepository
+
+    @Autowired
+    private AppUserTokenRepository appUserTokenRepository
 
     @Autowired
     private AppUserService appUserService
@@ -102,6 +106,7 @@ class AppUserServiceTest extends ContextSpecification {
 
         then:
         appUser != null
+        appUser.id != null
         appUser.email == APPUSER_EMAIL
         appUser.name == APPUSER_NAME
         appUser.appUserRoles.size() == 0
@@ -113,6 +118,7 @@ class AppUserServiceTest extends ContextSpecification {
 
         then:
         appUser != null
+        appUser.id != null
         appUser.email == APPUSER_EMAIL
         appUser.name == null
         appUser.appUserRoles.size() == 0
@@ -124,6 +130,7 @@ class AppUserServiceTest extends ContextSpecification {
 
         then:
         appUser != null
+        appUser.id != null
         appUser.email == APPUSER_EMAIL
         appUser.name == null
         appUser.appUserRoles.size() == 0
@@ -431,16 +438,247 @@ class AppUserServiceTest extends ContextSpecification {
         APPUSER_EMAIL | ""
     }
 
+    @Unroll
+    def "hasAllRoles with no roles in user: #roles | #result"(roles, result) {
+        given:
+        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        appUser = appUserRepository.save(appUser)
 
-    def "NewToken"() {
+        expect:
+        appUserService.hasAllRoles(appUser, roles as Role[]) == result
+
+        where:
+        roles                                                                 | result
+        null                                                                  | false
+        []                                                                    | true
+        [Role.APPUSER_VIEW]                                                   | false
+        [Role.APPUSER_ADMIN]                                                  | false
+        [Role.APPUSER_CHANGE_PASSWORD]                                        | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN]                               | false
+        [Role.APPUSER_VIEW, Role.APPUSER_CHANGE_PASSWORD]                     | false
+        [Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD]                    | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD] | false
     }
 
-    def "HasAllRoles"() {
+    @Unroll
+    def "hasAllRoles with one role in user: #roles | #result"(roles, result) {
+        given:
+        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        appUser.appUserRoles.add(Role.APPUSER_VIEW)
+        appUser = appUserRepository.save(appUser)
+
+        expect:
+        appUserService.hasAllRoles(appUser, roles as Role[]) == result
+
+        where:
+        roles                                                                 | result
+        null                                                                  | false
+        []                                                                    | false
+        [Role.APPUSER_VIEW]                                                   | true
+        [Role.APPUSER_ADMIN]                                                  | false
+        [Role.APPUSER_CHANGE_PASSWORD]                                        | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN]                               | false
+        [Role.APPUSER_VIEW, Role.APPUSER_CHANGE_PASSWORD]                     | false
+        [Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD]                    | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD] | false
     }
 
-    def "HasAnyRoles"() {
+    @Unroll
+    def "hasAllRoles with two roles in user: #roles | #result"(roles, result) {
+        given:
+        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        appUser.appUserRoles.add(Role.APPUSER_VIEW)
+        appUser.appUserRoles.add(Role.APPUSER_ADMIN)
+        appUser = appUserRepository.save(appUser)
+
+        expect:
+        appUserService.hasAllRoles(appUser, roles as Role[]) == result
+
+        where:
+        roles                                                                 | result
+        null                                                                  | false
+        []                                                                    | false
+        [Role.APPUSER_VIEW]                                                   | true
+        [Role.APPUSER_ADMIN]                                                  | true
+        [Role.APPUSER_CHANGE_PASSWORD]                                        | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN]                               | true
+        [Role.APPUSER_VIEW, Role.APPUSER_CHANGE_PASSWORD]                     | false
+        [Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD]                    | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD] | false
     }
 
-    def "ChangePassword"() {
+    @Unroll
+    def "hasAnyRoles with no roles in user: #roles | #result"(roles, result) {
+        given:
+        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        appUser = appUserRepository.save(appUser)
+
+        expect:
+        appUserService.hasAnyRoles(appUser, roles as Role[]) == result
+
+        where:
+        roles                                                                 | result
+        null                                                                  | false
+        []                                                                    | true
+        [Role.APPUSER_VIEW]                                                   | false
+        [Role.APPUSER_ADMIN]                                                  | false
+        [Role.APPUSER_CHANGE_PASSWORD]                                        | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN]                               | false
+        [Role.APPUSER_VIEW, Role.APPUSER_CHANGE_PASSWORD]                     | false
+        [Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD]                    | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD] | false
+    }
+
+    @Unroll
+    def "hasAnyRoles with one role in user: #roles | #result"(roles, result) {
+        given:
+        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        appUser.appUserRoles.add(Role.APPUSER_VIEW)
+        appUser = appUserRepository.save(appUser)
+
+        expect:
+        appUserService.hasAnyRoles(appUser, roles as Role[]) == result
+
+        where:
+        roles                                                                 | result
+        null                                                                  | false
+        []                                                                    | false
+        [Role.APPUSER_VIEW]                                                   | true
+        [Role.APPUSER_ADMIN]                                                  | false
+        [Role.APPUSER_CHANGE_PASSWORD]                                        | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN]                               | true
+        [Role.APPUSER_VIEW, Role.APPUSER_CHANGE_PASSWORD]                     | true
+        [Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD]                    | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD] | true
+    }
+
+    @Unroll
+    def "hasAnyRoles with two roles in user: #roles | #result"(roles, result) {
+        given:
+        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        appUser.appUserRoles.add(Role.APPUSER_VIEW)
+        appUser.appUserRoles.add(Role.APPUSER_ADMIN)
+        appUser = appUserRepository.save(appUser)
+
+        expect:
+        appUserService.hasAnyRoles(appUser, roles as Role[]) == result
+
+        where:
+        roles                                                                 | result
+        null                                                                  | false
+        []                                                                    | false
+        [Role.APPUSER_VIEW]                                                   | true
+        [Role.APPUSER_ADMIN]                                                  | true
+        [Role.APPUSER_CHANGE_PASSWORD]                                        | false
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN]                               | true
+        [Role.APPUSER_VIEW, Role.APPUSER_CHANGE_PASSWORD]                     | true
+        [Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD]                    | true
+        [Role.APPUSER_VIEW, Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD] | true
+    }
+
+    def "newToken"() {
+        given:
+        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        appUser = appUserRepository.save(appUser)
+
+        when:
+        int count = appUserTokenRepository.findByAppUser(appUser).size()
+
+        then:
+        count == 0
+
+        when:
+        appUserService.newToken(appUser)
+
+        and:
+        count = appUserTokenRepository.findByAppUser(appUser).size()
+
+        then:
+        count == 1
+    }
+
+    def "changePassword with null appUser and null password"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
+
+        when:
+        boolean result = appUserService.changePassword(null, null)
+
+        then:
+        !result
+    }
+
+    def "changePassword with null appUser and empty password"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
+
+        when:
+        boolean result = appUserService.changePassword(null, "")
+
+        then:
+        !result
+    }
+
+    def "changePassword with null appUser and valid password"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
+
+        when:
+        boolean result = appUserService.changePassword(null, APPUSER_PASSWORD_NEW)
+
+        then:
+        !result
+    }
+
+    def "changePassword with valid appUser and null password"() {
+        given:
+        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
+
+        when:
+        boolean result = appUserService.changePassword(appUser, null)
+
+        then:
+        !result
+    }
+
+    def "changePassword with valid appUser and empty password"() {
+        given:
+        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
+
+        when:
+        boolean result = appUserService.changePassword(appUser, "")
+
+        then:
+        !result
+    }
+
+    def "changePassword with valid appUser and same password"() {
+        given:
+        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
+
+        when:
+        appUserService.changePassword(appUser, APPUSER_PASSWORD)
+
+        and:
+        appUser = appUserService.findByEmailAndPassword(APPUSER_EMAIL, APPUSER_PASSWORD)
+
+        then:
+        appUser != null
+        appUser.email == APPUSER_EMAIL
+    }
+
+    def "changePassword with valid appUser and valid password"() {
+        given:
+        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
+
+        when:
+        appUserService.changePassword(appUser, APPUSER_PASSWORD_NEW)
+
+        and:
+        appUser = appUserService.findByEmailAndPassword(APPUSER_EMAIL, APPUSER_PASSWORD_NEW)
+
+        then:
+        appUser != null
+        appUser.email == APPUSER_EMAIL
     }
 }

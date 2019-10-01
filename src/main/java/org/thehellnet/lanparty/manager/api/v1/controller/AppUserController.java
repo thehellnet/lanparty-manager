@@ -22,7 +22,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.crud.GetAllCrudRequestD
 import org.thehellnet.lanparty.manager.model.dto.request.crud.GetCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.crud.create.AppUserCreateCrudRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.crud.save.AppUserSaveCrudRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.appuser.*;
+import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserGetInfoResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.service.AppUserService;
@@ -217,7 +217,15 @@ public class AppUserController {
             return ErrorCode.prepareResponse(ErrorCode.APPUSER_INVALID_PASSWORD);
         }
 
-        if (!appUserService.changePassword(appUser, dto.getNewPassword())) {
+        boolean result = false;
+
+        try {
+            result = appUserService.changePassword(appUser, dto.getNewPassword());
+        } catch (AppUserNotFoundException e) {
+            logger.error(e.getMessage());
+        }
+
+        if (!result) {
             return ErrorCode.prepareResponse(ErrorCode.APPUSER_PASSWORD_CHANGE_FAILED);
         }
 
