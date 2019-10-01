@@ -65,14 +65,19 @@ public class AppUserService extends AbstractService {
     }
 
     @Transactional
-    public AppUser save(Long id, String name, String[] appUserRoles) throws AppUserNotFoundException {
+    public AppUser update(Long id, String name, String password, String[] appUserRoles) throws AppUserNotFoundException {
         AppUser appUser = appUserRepository.findById(id).orElse(null);
         if (appUser == null) {
             throw new AppUserNotFoundException();
         }
 
-        if (name != null && name.length() > 0) {
+        if (name != null && name.strip().length() > 0) {
             appUser.setName(name);
+        }
+
+        if (password != null && password.strip().length() > 0) {
+            String encryptedPassword = PasswordUtility.hash(password);
+            appUser.setPassword(encryptedPassword);
         }
 
         if (appUserRoles != null) {
@@ -181,28 +186,5 @@ public class AppUserService extends AbstractService {
 
         String token = TokenUtility.generate();
         return appUserTokenRepository.save(new AppUserToken(token, appUser));
-    }
-
-    @Transactional
-    public boolean changePassword(AppUser appUser, String password) throws AppUserNotFoundException {
-        if (appUser == null) {
-            return false;
-        }
-
-        if (password == null || password.length() == 0) {
-            return false;
-        }
-
-
-        appUser = appUserRepository.findById(appUser.getId()).orElse(null);
-        if (appUser == null) {
-            throw new AppUserNotFoundException();
-        }
-
-        String encryptedPassword = PasswordUtility.hash(password);
-        appUser.setPassword(encryptedPassword);
-        appUserRepository.save(appUser);
-
-        return true;
     }
 }
