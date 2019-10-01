@@ -12,6 +12,7 @@ import org.thehellnet.lanparty.manager.exception.appuser.AppUserException;
 import org.thehellnet.lanparty.manager.exception.appuser.AppUserNotFoundException;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.appuser.AppUserLoginRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.appuser.CreateAppUserRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserLoginResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
@@ -42,17 +43,14 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity create(HttpServletRequest request, AppUser appUser,
-                                 @RequestParam String email,
-                                 @RequestParam String password,
-                                 @RequestParam String name) {
+    public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateAppUserRequestDTO dto) {
         AppUser user;
 
         try {
-            user = appUserService.create(email, password, name);
+            user = appUserService.create(dto.email, dto.password, dto.name);
         } catch (AppUserException e) {
             logger.error(e.getMessage());
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.unprocessableEntity().build();
         }
 
         return ResponseEntity.created(URI.create("")).body(user);
