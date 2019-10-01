@@ -27,16 +27,6 @@ public class AppUserService extends AbstractService {
         this.appUserTokenRepository = appUserTokenRepository;
     }
 
-    @Transactional(readOnly = true)
-    public List<AppUser> getAll() {
-        return appUserRepository.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    public AppUser get(Long id) {
-        return appUserRepository.findById(id).orElse(null);
-    }
-
     @Transactional
     public AppUser create(String email, String password, String name) throws AppUserException {
         if (!EmailUtility.validate(email)) {
@@ -62,6 +52,16 @@ public class AppUserService extends AbstractService {
         appUser = appUserRepository.save(appUser);
 
         return appUser;
+    }
+
+    @Transactional(readOnly = true)
+    public AppUser get(Long id) {
+        return appUserRepository.findById(id).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AppUser> getAll() {
+        return appUserRepository.findAll();
     }
 
     @Transactional
