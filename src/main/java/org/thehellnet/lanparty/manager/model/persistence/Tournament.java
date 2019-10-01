@@ -1,17 +1,17 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.thehellnet.lanparty.manager.model.CustomJSONSerializable;
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tournament")
-public class Tournament implements Serializable, CustomJSONSerializable {
+public class Tournament implements Serializable {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -118,16 +118,6 @@ public class Tournament implements Serializable, CustomJSONSerializable {
 
     public void setTeams(Set<Team> teams) {
         this.teams = teams;
-    }
-
-    @Override
-    public @NotNull Map<String, Object> toJSON() {
-        Map<String, Object> json = new HashMap<>();
-        json.put("id", id);
-        json.put("name", name);
-        json.put("game", game.getId());
-        json.put("status", status);
-        return json;
     }
 
     @Override
