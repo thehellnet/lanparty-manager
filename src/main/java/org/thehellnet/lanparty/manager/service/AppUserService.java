@@ -16,7 +16,7 @@ import org.thehellnet.utility.TokenUtility;
 import java.util.*;
 
 @Service
-public class AppUserService {
+public class AppUserService extends AbstractService {
 
     private final AppUserRepository appUserRepository;
     private final AppUserTokenRepository appUserTokenRepository;

@@ -12,7 +12,12 @@ import org.thehellnet.lanparty.manager.configuration.PersistenceConfiguration
 import org.thehellnet.lanparty.manager.configuration.SpringConfiguration
 import org.thehellnet.lanparty.manager.configuration.WebSocketConfiguration
 import org.thehellnet.lanparty.manager.model.persistence.*
-import org.thehellnet.lanparty.manager.service.*
+import org.thehellnet.lanparty.manager.service.CfgService
+import org.thehellnet.lanparty.manager.service.GameService
+import org.thehellnet.lanparty.manager.service.PlayerService
+import org.thehellnet.lanparty.manager.service.SeatService
+import org.thehellnet.lanparty.manager.service.TeamService
+import org.thehellnet.lanparty.manager.service.TournamentService
 import spock.lang.Specification
 
 @WebAppConfiguration

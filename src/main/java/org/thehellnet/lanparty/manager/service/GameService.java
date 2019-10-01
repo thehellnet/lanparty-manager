@@ -8,7 +8,7 @@ import org.thehellnet.lanparty.manager.repository.GameRepository;
 import java.util.List;
 
 @Service
-public class GameService {
+public class GameService extends AbstractService {
 
     private final GameRepository gameRepository;
 

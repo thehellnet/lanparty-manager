@@ -9,7 +9,7 @@ import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository;
 import org.thehellnet.utility.TokenUtility;
 
 @Service
-public class AppUserTokenService {
+public class AppUserTokenService extends AbstractService {
 
     private final AppUserTokenRepository appUserTokenRepository;
 

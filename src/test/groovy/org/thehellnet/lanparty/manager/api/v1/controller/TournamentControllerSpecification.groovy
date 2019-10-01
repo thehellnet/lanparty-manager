@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus
 import org.thehellnet.lanparty.manager.model.persistence.Game
 import org.thehellnet.lanparty.manager.model.persistence.Tournament

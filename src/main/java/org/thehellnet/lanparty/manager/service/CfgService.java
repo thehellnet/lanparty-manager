@@ -9,19 +9,19 @@ import org.thehellnet.lanparty.manager.exception.game.GameNotFoundException;
 import org.thehellnet.lanparty.manager.exception.player.InvalidNamePlayerException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
 import org.thehellnet.lanparty.manager.exception.seat.SeatNotFoundException;
+import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.CfgRepository;
 import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.utility.cfg.CfgUtility;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfg;
-import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.utility.StringUtility;
 
 import java.util.List;
 
 @Service
-public class CfgService {
+public class CfgService extends AbstractService {
 
     private static final Logger logger = LoggerFactory.getLogger(CfgService.class);
 

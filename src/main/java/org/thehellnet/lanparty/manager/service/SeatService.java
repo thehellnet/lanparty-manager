@@ -13,7 +13,7 @@ import org.thehellnet.lanparty.manager.repository.SeatRepository;
 import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 @Service
-public class SeatService {
+public class SeatService extends AbstractService {
 
     private static final Logger logger = LoggerFactory.getLogger(SeatService.class);
 

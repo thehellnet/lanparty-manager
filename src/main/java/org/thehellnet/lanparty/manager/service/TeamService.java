@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.repository.TeamRepository;
 import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 @Service
-public class TeamService {
+public class TeamService extends AbstractService {
 
     private static final Logger logger = LoggerFactory.getLogger(TeamService.class);
 
