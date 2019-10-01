@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.api.v1.error;
+package org.thehellnet.lanparty.manager.model.error;
 
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 

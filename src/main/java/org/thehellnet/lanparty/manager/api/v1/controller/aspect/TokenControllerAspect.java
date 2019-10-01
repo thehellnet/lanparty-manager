@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.service.AppUserTokenService;
 
@@ -29,19 +30,23 @@ public class TokenControllerAspect {
     }
 
     @Around("@annotation(CheckToken)")
-    public Object checkToken(ProceedingJoinPoint joinPoint) {
+    public Object checkToken(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] params = joinPoint.getArgs();
         logger.debug(joinPoint.getTarget().toString());
 
         HttpServletRequest servletRequest = (HttpServletRequest) params[0];
         String token = servletRequest.getHeader("X-Auth-Token");
         if (token == null) {
-            return JsonResponse.getErrorInstance("No Token");
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
         }
 
         AppUser appUser = appUserTokenService.getAppUserByToken(token);
         if (appUser == null) {
-            return JsonResponse.getErrorInstance("Token not enabled");
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
         }
 
         params[1] = appUser;
@@ -51,7 +56,7 @@ public class TokenControllerAspect {
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             logger.error(throwable.getMessage());
-            return JsonResponse.getErrorInstance(throwable.getMessage());
+            throw throwable;
         }
     }
 }

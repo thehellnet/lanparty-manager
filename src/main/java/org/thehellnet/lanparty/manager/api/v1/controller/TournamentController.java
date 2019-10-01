@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
-import org.thehellnet.lanparty.manager.api.v1.error.ErrorCode;
+import org.thehellnet.lanparty.manager.model.error.ErrorCode;
 import org.thehellnet.lanparty.manager.exception.game.GameNotFoundException;
 import org.thehellnet.lanparty.manager.exception.tournament.TournamentAlreadyExistsException;
 import org.thehellnet.lanparty.manager.exception.tournament.TournamentInvalidNameException;

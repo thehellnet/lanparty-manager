@@ -8,8 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.service.AppUserService;
 
@@ -29,7 +30,7 @@ public class RolesControllerAspect {
     }
 
     @Around("@annotation(CheckRoles)")
-    public Object checkRoles(ProceedingJoinPoint joinPoint) {
+    public Object checkRoles(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         CheckRoles annotation = method.getAnnotation(CheckRoles.class);
@@ -39,11 +40,15 @@ public class RolesControllerAspect {
 
         if (annotation.mode == CheckRoles.Mode.ALL) {
             if (!appUserService.hasAllRoles(appUser, annotation.value())) {
-                return JsonResponse.getErrorInstance("User doesn't have permissions");
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .build();
             }
         } else if (annotation.mode == CheckRoles.Mode.ANY) {
             if (!appUserService.hasAnyRoles(appUser, annotation.value())) {
-                return JsonResponse.getErrorInstance("User doesn't have permissions");
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .build();
             }
         }
 
@@ -51,7 +56,7 @@ public class RolesControllerAspect {
             return joinPoint.proceed(params);
         } catch (Throwable throwable) {
             logger.error(throwable.getMessage());
-            return JsonResponse.getErrorInstance(throwable.getMessage());
+            throw throwable;
         }
     }
 }
