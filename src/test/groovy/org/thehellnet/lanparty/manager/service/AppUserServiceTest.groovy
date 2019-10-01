@@ -29,77 +29,6 @@ class AppUserServiceTest extends ServiceSpecification {
     @Autowired
     private AppUserService appUserService
 
-    def "getAll with admin user only"() {
-        when:
-        List<AppUser> appUsers = appUserService.getAll()
-
-        then:
-        appUsers.size() == 1
-
-        when:
-        AppUser appUser = appUsers.get(0)
-
-        then:
-        appUser != null
-        appUser.email == "admin"
-    }
-
-    def "getAll with two users"() {
-        given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
-
-        when:
-        List<AppUser> appUsers = appUserService.getAll()
-
-        then:
-        appUsers.size() == 2
-
-        when:
-        AppUser appUser = appUsers.get(1)
-
-        then:
-        appUser != null
-        appUser.email == APPUSER_EMAIL
-        appUser.appUserRoles.size() == 0
-    }
-
-    def "getAll with no users"() {
-        given:
-        appUserRepository.deleteAll()
-
-        when:
-        List<AppUser> appUsers = appUserService.getAll()
-
-        then:
-        appUsers.size() == 0
-    }
-
-    def "get with existing id"() {
-        given:
-        Long userId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD))).id
-
-        when:
-        AppUser appUser = appUserService.get(userId)
-
-        then:
-        appUser != null
-        appUser.id == userId
-        appUser.email == APPUSER_EMAIL
-        appUser.name == null
-        appUser.appUserRoles.size() == 0
-    }
-
-    def "get with not existing id"() {
-        given:
-        Long appUserId = 12345678
-
-        when:
-        AppUser appUser = appUserService.get(appUserId)
-
-        then:
-        appUser == null
-    }
-
     def "create normal user"() {
         when:
         AppUser appUser = appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)
@@ -155,110 +84,133 @@ class AppUserServiceTest extends ServiceSpecification {
         thrown AppUserAlreadyPresentException
     }
 
-    def "save with null values"() {
+    def "get with existing id"() {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
+        Long userId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD))).id
 
         when:
-        appUserService.save(appUserId, null, null)
-
-        and:
-        AppUser appUser = appUserRepository.getOne(appUserId)
+        AppUser appUser = appUserService.get(userId)
 
         then:
         appUser != null
-        appUser.id == appUserId
+        appUser.id == userId
         appUser.email == APPUSER_EMAIL
-        appUser.name == APPUSER_NAME
+        appUser.name == null
         appUser.appUserRoles.size() == 0
     }
 
-    def "save with empty name and null appUserRoles"() {
-        given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
-
-        when:
-        appUserService.save(appUserId, "", null)
-
-        and:
-        AppUser appUser = appUserRepository.getOne(appUserId)
-
-        then:
-        appUser != null
-        appUser.id == appUserId
-        appUser.email == APPUSER_EMAIL
-        appUser.name == APPUSER_NAME
-        appUser.appUserRoles.size() == 0
-    }
-
-    def "save with new name"() {
-        given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
-
-        when:
-        appUserService.save(appUserId, APPUSER_NAME_NEW, null)
-
-        and:
-        AppUser appUser = appUserRepository.getOne(appUserId)
-
-        then:
-        appUser != null
-        appUser.id == appUserId
-        appUser.email == APPUSER_EMAIL
-        appUser.appUserRoles.size() == 0
-
-        and:
-        appUser.name == APPUSER_NAME_NEW
-    }
-
-    def "save with new appUserRoles"() {
-        given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
-
-        when:
-        appUserService.save(appUserId, null, [Role.LOGIN.name] as String[])
-
-        and:
-        AppUser appUser = appUserRepository.getOne(appUserId)
-
-        then:
-        appUser != null
-        appUser.id == appUserId
-        appUser.name == APPUSER_NAME
-        appUser.email == APPUSER_EMAIL
-
-        and:
-        appUser.appUserRoles.size() == 1
-        appUser.appUserRoles.contains(Role.LOGIN)
-    }
-
-    def "save with both new name and new appUserRoles"() {
-        given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
-
-        when:
-        appUserService.save(appUserId, APPUSER_NAME_NEW, [Role.LOGIN.name] as String[])
-
-        and:
-        AppUser appUser = appUserRepository.getOne(appUserId)
-
-        then:
-        appUser != null
-        appUser.id == appUserId
-        appUser.email == APPUSER_EMAIL
-
-        and:
-        appUser.name == APPUSER_NAME_NEW
-        appUser.appUserRoles.size() == 1
-        appUser.appUserRoles.contains(Role.LOGIN)
-    }
-
-    def "save with invalid id"() {
+    def "get with not existing id"() {
         given:
         Long appUserId = 12345678
 
         when:
-        appUserService.save(appUserId, APPUSER_NAME_NEW, [Role.LOGIN.name] as String[])
+        AppUser appUser = appUserService.get(appUserId)
+
+        then:
+        appUser == null
+    }
+
+    def "getAll with admin user only"() {
+        when:
+        List<AppUser> appUsers = appUserService.getAll()
+
+        then:
+        appUsers.size() == 1
+
+        when:
+        AppUser appUser = appUsers.get(0)
+
+        then:
+        appUser != null
+        appUser.email == "admin"
+    }
+
+    def "getAll with two users"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
+
+        when:
+        List<AppUser> appUsers = appUserService.getAll()
+
+        then:
+        appUsers.size() == 2
+
+        when:
+        AppUser appUser = appUsers.get(1)
+
+        then:
+        appUser != null
+        appUser.email == APPUSER_EMAIL
+        appUser.appUserRoles.size() == 0
+    }
+
+    def "getAll with no users"() {
+        given:
+        appUserRepository.deleteAll()
+
+        when:
+        List<AppUser> appUsers = appUserService.getAll()
+
+        then:
+        appUsers.size() == 0
+    }
+
+    @Unroll
+    def "update with #name name, #password password and #appUserRoles appUserRoles"(String name, String password, String[] appUserRoles) {
+        given:
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
+
+        when:
+        appUserService.update(appUserId, name, password, appUserRoles)
+
+        and:
+        AppUser appUser = appUserRepository.getOne(appUserId)
+
+        then:
+        appUser != null
+        appUser.id == appUserId
+        appUser.email == APPUSER_EMAIL
+        PasswordUtility.verify(appUser.password, (password != null && password.length() > 0 ? password : APPUSER_PASSWORD))
+        appUser.name == (name != null && name.length() > 0 ? name : APPUSER_NAME)
+        appUser.appUserRoles.size() == ((appUserRoles != null && appUserRoles.length > 0) ? appUserRoles.length : 0)
+
+        where:
+        name             | password             | appUserRoles
+        null             | null                 | null
+        null             | null                 | [] as String[]
+        null             | null                 | [Role.LOGIN.name] as String[]
+        null             | ""                   | null
+        null             | ""                   | [] as String[]
+        null             | ""                   | [Role.LOGIN.name] as String[]
+        null             | APPUSER_PASSWORD_NEW | null
+        null             | APPUSER_PASSWORD_NEW | [] as String[]
+        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[]
+        ""               | null                 | null
+        ""               | null                 | [] as String[]
+        ""               | null                 | [Role.LOGIN.name] as String[]
+        ""               | ""                   | null
+        ""               | ""                   | [] as String[]
+        ""               | ""                   | [Role.LOGIN.name] as String[]
+        ""               | APPUSER_PASSWORD_NEW | null
+        ""               | APPUSER_PASSWORD_NEW | [] as String[]
+        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[]
+        APPUSER_NAME_NEW | null                 | null
+        APPUSER_NAME_NEW | null                 | [] as String[]
+        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[]
+        APPUSER_NAME_NEW | ""                   | null
+        APPUSER_NAME_NEW | ""                   | [] as String[]
+        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[]
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[]
+    }
+
+    def "update with invalid id"() {
+        given:
+        Long appUserId = 12345678
+
+        when:
+        appUserService.update(appUserId, APPUSER_NAME_NEW, APPUSER_PASSWORD_NEW, [Role.LOGIN.name] as String[])
 
         then:
         thrown AppUserNotFoundException
@@ -595,90 +547,5 @@ class AppUserServiceTest extends ServiceSpecification {
 
         then:
         count == 1
-    }
-
-    def "changePassword with null appUser and null password"() {
-        given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
-
-        when:
-        boolean result = appUserService.changePassword(null, null)
-
-        then:
-        !result
-    }
-
-    def "changePassword with null appUser and empty password"() {
-        given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
-
-        when:
-        boolean result = appUserService.changePassword(null, "")
-
-        then:
-        !result
-    }
-
-    def "changePassword with null appUser and valid password"() {
-        given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
-
-        when:
-        boolean result = appUserService.changePassword(null, APPUSER_PASSWORD_NEW)
-
-        then:
-        !result
-    }
-
-    def "changePassword with valid appUser and null password"() {
-        given:
-        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
-
-        when:
-        boolean result = appUserService.changePassword(appUser, null)
-
-        then:
-        !result
-    }
-
-    def "changePassword with valid appUser and empty password"() {
-        given:
-        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
-
-        when:
-        boolean result = appUserService.changePassword(appUser, "")
-
-        then:
-        !result
-    }
-
-    def "changePassword with valid appUser and same password"() {
-        given:
-        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
-
-        when:
-        appUserService.changePassword(appUser, APPUSER_PASSWORD)
-
-        and:
-        appUser = appUserService.findByEmailAndPassword(APPUSER_EMAIL, APPUSER_PASSWORD)
-
-        then:
-        appUser != null
-        appUser.email == APPUSER_EMAIL
-    }
-
-    def "changePassword with valid appUser and valid password"() {
-        given:
-        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
-
-        when:
-        appUserService.changePassword(appUser, APPUSER_PASSWORD_NEW)
-
-        and:
-        appUser = appUserService.findByEmailAndPassword(APPUSER_EMAIL, APPUSER_PASSWORD_NEW)
-
-        then:
-        appUser != null
-        appUser.email == APPUSER_EMAIL
     }
 }
