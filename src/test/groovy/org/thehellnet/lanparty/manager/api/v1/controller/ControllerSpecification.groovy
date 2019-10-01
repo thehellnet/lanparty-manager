@@ -11,7 +11,6 @@ import org.thehellnet.lanparty.manager.ContextSpecification
 
 abstract class ControllerSpecification extends ContextSpecification {
 
-
     protected String token
 
     protected MockMvc mockMvc
