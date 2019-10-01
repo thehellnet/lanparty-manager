@@ -41,7 +41,7 @@ class TournamentControllerSpecification extends ControllerSpecification {
 
         then:
         rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
@@ -83,7 +83,7 @@ class TournamentControllerSpecification extends ControllerSpecification {
 
         then:
         rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         JSONObject response = new JSONObject(rawResponse.contentAsString)
         validateResponseAsJsonResponse(response)
@@ -125,7 +125,7 @@ class TournamentControllerSpecification extends ControllerSpecification {
 
         then:
         rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         JSONObject response = new JSONObject(rawResponse.contentAsString)
         validateResponseAsJsonResponse(response)
@@ -168,7 +168,7 @@ class TournamentControllerSpecification extends ControllerSpecification {
 //
 //        then:
 //        rawResponse.status == HttpStatus.OK.value()
-//        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+//        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 //
 //        when:
 //        JSONObject response = new JSONObject(rawResponse.contentAsString)
@@ -228,7 +228,7 @@ class TournamentControllerSpecification extends ControllerSpecification {
 //
 //        then:
 //        rawResponse.status == HttpStatus.OK.value()
-//        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+//        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 //
 //        when:
 //        JSONObject response = new JSONObject(rawResponse.contentAsString)

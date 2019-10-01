@@ -12,8 +12,8 @@ class ParsedCfgCommandTest extends Specification {
 
     def "same with empty values"() {
         given:
-        ParsedCfgCommand first = new ParsedCfgCommand();
-        ParsedCfgCommand second = new ParsedCfgCommand();
+        ParsedCfgCommand first = new ParsedCfgCommand()
+        ParsedCfgCommand second = new ParsedCfgCommand()
 
         when:
         boolean isSame = first.same(second)

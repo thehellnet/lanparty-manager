@@ -52,15 +52,13 @@ public class Initialization {
     private static final String GAMETYPE_HARVESTER = "Harvester";
 
     private static final Logger logger = LoggerFactory.getLogger(Initialization.class);
-
-    private boolean alreadyRun = false;
-
     private final ApplicationEventPublisher applicationEventPublisher;
     private final GameRepository gameRepository;
     private final GametypeRepository gametypeRepository;
     private final GameGametypeRepository gameGametypeRepository;
     private final GameMapRepository gameMapRepository;
     private final AppUserRepository appUserRepository;
+    private boolean alreadyRun = false;
 
     @Autowired
     public Initialization(ApplicationEventPublisher applicationEventPublisher, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {

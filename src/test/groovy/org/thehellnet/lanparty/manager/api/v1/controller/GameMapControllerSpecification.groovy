@@ -1,11 +1,5 @@
 package org.thehellnet.lanparty.manager.api.v1.controller
 
-import org.json.JSONArray
-import org.json.JSONObject
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-
 class GameMapControllerSpecification extends ControllerSpecification {
 
     def setup() {
@@ -23,7 +17,7 @@ class GameMapControllerSpecification extends ControllerSpecification {
 //        def rawResponse = mockMvc
 //                .perform(MockMvcRequestBuilders
 //                        .post("/api/v1/public/gameMap/list")
-//                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+//                        .contentType(MediaType.APPLICATION_JSON)
 //                        .content(requestBody.toString())
 //                )
 //                .andReturn()
@@ -31,7 +25,7 @@ class GameMapControllerSpecification extends ControllerSpecification {
 //
 //        then:
 //        rawResponse.status == HttpStatus.OK.value()
-//        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+//        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 //
 //        JSONObject response = new JSONObject(rawResponse.contentAsString)
 //        response.has("success")

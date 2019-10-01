@@ -29,6 +29,14 @@ public class ParsedCfgCommand {
         setArgs(args);
     }
 
+    public static ParsedCfgCommand prepareName(String name) {
+        return new ParsedCfgCommand("name", name);
+    }
+
+    public static ParsedCfgCommand prepareSay(String message) {
+        return new ParsedCfgCommand("say", message);
+    }
+
     public String getAction() {
         return action;
     }
@@ -58,14 +66,6 @@ public class ParsedCfgCommand {
 
     public boolean same(ParsedCfgCommand o) {
         return o != null && o.hashCode() == this.hashCode();
-    }
-
-    public static ParsedCfgCommand prepareName(String name) {
-        return new ParsedCfgCommand("name", name);
-    }
-
-    public static ParsedCfgCommand prepareSay(String message) {
-        return new ParsedCfgCommand("say", message);
     }
 
     @Override

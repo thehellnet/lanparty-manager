@@ -33,14 +33,14 @@ abstract class ControllerSpecification extends ContextSpecification {
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
                         .post("/api/v1/public/appUser/login")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
                 )
                 .andReturn()
                 .response
 
         rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         JSONObject response = new JSONObject(rawResponse.contentAsString)
         response.has("success")

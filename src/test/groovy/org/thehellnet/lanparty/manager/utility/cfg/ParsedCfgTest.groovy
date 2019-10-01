@@ -19,7 +19,7 @@ class ParsedCfgTest extends UtilitySpecification {
         String inputNickname = null
 
         when:
-        new ParsedCfg(inputCommands, inputNickname);
+        new ParsedCfg(inputCommands, inputNickname)
 
         then:
         thrown InvalidNamePlayerException
@@ -31,7 +31,7 @@ class ParsedCfgTest extends UtilitySpecification {
         String inputNickname = null
 
         when:
-        new ParsedCfg(inputCommands, inputNickname);
+        new ParsedCfg(inputCommands, inputNickname)
 
         then:
         thrown InvalidNamePlayerException
@@ -43,7 +43,7 @@ class ParsedCfgTest extends UtilitySpecification {
         String inputNickname = null
 
         when:
-        new ParsedCfg(inputCommands, inputNickname);
+        new ParsedCfg(inputCommands, inputNickname)
 
         then:
         thrown InvalidNamePlayerException
@@ -55,7 +55,7 @@ class ParsedCfgTest extends UtilitySpecification {
         String inputNickname = ""
 
         when:
-        new ParsedCfg(inputCommands, inputNickname);
+        new ParsedCfg(inputCommands, inputNickname)
 
         then:
         thrown InvalidNamePlayerException
@@ -67,7 +67,7 @@ class ParsedCfgTest extends UtilitySpecification {
         String inputNickname = " "
 
         when:
-        new ParsedCfg(inputCommands, inputNickname);
+        new ParsedCfg(inputCommands, inputNickname)
 
         then:
         thrown InvalidNamePlayerException
@@ -79,7 +79,7 @@ class ParsedCfgTest extends UtilitySpecification {
         String inputNickname = " "
 
         when:
-        new ParsedCfg(inputCommands, inputNickname);
+        new ParsedCfg(inputCommands, inputNickname)
 
         then:
         thrown InvalidNamePlayerException
@@ -97,7 +97,7 @@ class ParsedCfgTest extends UtilitySpecification {
         ]
 
         when:
-        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname);
+        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname)
         List<ParsedCfgCommand> actual = parsedCfg.toCommandList()
 
         then:
@@ -116,7 +116,7 @@ class ParsedCfgTest extends UtilitySpecification {
         ]
 
         when:
-        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname);
+        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname)
         List<ParsedCfgCommand> actual = parsedCfg.toCommandList()
 
         then:
@@ -138,7 +138,7 @@ class ParsedCfgTest extends UtilitySpecification {
         ]
 
         when:
-        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname);
+        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname)
         List<ParsedCfgCommand> actual = parsedCfg.toCommandList()
 
         then:
@@ -168,7 +168,7 @@ class ParsedCfgTest extends UtilitySpecification {
         ]
 
         when:
-        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname);
+        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname)
         List<ParsedCfgCommand> actual = parsedCfg.toCommandList()
 
         then:
@@ -198,7 +198,7 @@ class ParsedCfgTest extends UtilitySpecification {
         ]
 
         when:
-        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname);
+        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname)
         List<String> actual = parsedCfg.toStringList()
 
         then:
@@ -228,7 +228,7 @@ class ParsedCfgTest extends UtilitySpecification {
         ])
 
         when:
-        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname);
+        ParsedCfg parsedCfg = new ParsedCfg(inputCommands, playerNickname)
         String actual = parsedCfg.toString()
 
         then:

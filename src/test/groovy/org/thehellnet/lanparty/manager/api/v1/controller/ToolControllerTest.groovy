@@ -42,7 +42,7 @@ class ToolControllerTest extends ControllerSpecification {
 
         then:
         rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
@@ -69,7 +69,7 @@ class ToolControllerTest extends ControllerSpecification {
 
         then:
         rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
@@ -96,7 +96,7 @@ class ToolControllerTest extends ControllerSpecification {
 
         then:
         rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
@@ -131,7 +131,7 @@ class ToolControllerTest extends ControllerSpecification {
 
         then:
         rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
@@ -165,7 +165,7 @@ class ToolControllerTest extends ControllerSpecification {
 
         then:
         rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
@@ -177,7 +177,7 @@ class ToolControllerTest extends ControllerSpecification {
 
         when:
         JSONArray data = response.getJSONArray("data")
-        String cfg = StringUtility.joinLines(data.toList() as List<String>);
+        String cfg = StringUtility.joinLines(data.toList() as List<String>)
 
         then:
         cfg == PLAYER_CFG_SANITIZED
@@ -200,7 +200,7 @@ class ToolControllerTest extends ControllerSpecification {
 
         then:
         rawResponse.status == HttpStatus.OK.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON_UTF8
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)

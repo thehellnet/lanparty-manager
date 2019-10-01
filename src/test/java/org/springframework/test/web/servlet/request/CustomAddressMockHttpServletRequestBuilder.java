@@ -42,48 +42,30 @@ public class CustomAddressMockHttpServletRequestBuilder implements ConfigurableS
     private final String method;
 
     private final URI url;
-
+    private final MultiValueMap<String, Object> headers = new LinkedMultiValueMap<>();
+    private final MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+    private final List<Cookie> cookies = new ArrayList<>();
+    private final List<Locale> locales = new ArrayList<>();
+    private final Map<String, Object> requestAttributes = new LinkedHashMap<>();
+    private final Map<String, Object> sessionAttributes = new LinkedHashMap<>();
+    private final Map<String, Object> flashAttributes = new LinkedHashMap<>();
+    private final List<RequestPostProcessor> postProcessors = new ArrayList<>();
     private String contextPath = "";
-
     private String servletPath = "";
-
     @Nullable
     private String pathInfo = "";
-
     @Nullable
     private Boolean secure;
-
     @Nullable
     private Principal principal;
-
     @Nullable
     private MockHttpSession session;
-
     @Nullable
     private String characterEncoding;
-
     @Nullable
     private byte[] content;
-
     @Nullable
     private String contentType;
-
-    private final MultiValueMap<String, Object> headers = new LinkedMultiValueMap<>();
-
-    private final MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-
-    private final List<Cookie> cookies = new ArrayList<>();
-
-    private final List<Locale> locales = new ArrayList<>();
-
-    private final Map<String, Object> requestAttributes = new LinkedHashMap<>();
-
-    private final Map<String, Object> sessionAttributes = new LinkedHashMap<>();
-
-    private final Map<String, Object> flashAttributes = new LinkedHashMap<>();
-
-    private final List<RequestPostProcessor> postProcessors = new ArrayList<>();
-
     private String remoteAddr;
 
 
@@ -126,6 +108,20 @@ public class CustomAddressMockHttpServletRequestBuilder implements ConfigurableS
         Assert.notNull(url, "'url' is required");
         this.method = httpMethod;
         this.url = url;
+    }
+
+    private static void addToMap(Map<String, Object> map, String name, Object value) {
+        Assert.hasLength(name, "'name' must not be empty");
+        Assert.notNull(value, "'value' must not be null");
+        map.put(name, value);
+    }
+
+    private static <T> void addToMultiValueMap(MultiValueMap<String, T> map, String name, T[] values) {
+        Assert.hasLength(name, "'name' must not be empty");
+        Assert.notEmpty(values, "'values' must not be empty");
+        for (T value : values) {
+            map.add(name, value);
+        }
     }
 
     /**
@@ -458,7 +454,6 @@ public class CustomAddressMockHttpServletRequestBuilder implements ConfigurableS
         return this;
     }
 
-
     /**
      * {@inheritDoc}
      *
@@ -744,20 +739,5 @@ public class CustomAddressMockHttpServletRequestBuilder implements ConfigurableS
             request = postProcessor.postProcessRequest(request);
         }
         return request;
-    }
-
-
-    private static void addToMap(Map<String, Object> map, String name, Object value) {
-        Assert.hasLength(name, "'name' must not be empty");
-        Assert.notNull(value, "'value' must not be null");
-        map.put(name, value);
-    }
-
-    private static <T> void addToMultiValueMap(MultiValueMap<String, T> map, String name, T[] values) {
-        Assert.hasLength(name, "'name' must not be empty");
-        Assert.notEmpty(values, "'values' must not be empty");
-        for (T value : values) {
-            map.add(name, value);
-        }
     }
 }
