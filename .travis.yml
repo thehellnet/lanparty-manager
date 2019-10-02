@@ -11,7 +11,6 @@ jdk:
 before_script:
   - psql -c "CREATE ROLE test NOSUPERUSER NOCREATEROLE NOCREATEDB LOGIN INHERIT NOREPLICATION ENCRYPTED PASSWORD 'test';" -U postgres
   - psql -c "CREATE DATABASE test OWNER test;" -U postgres
-  - export JAVA_OPTS="-Xmx8g"
 
 after_script:
   - bash <(curl -s https://codecov.io/bash)
