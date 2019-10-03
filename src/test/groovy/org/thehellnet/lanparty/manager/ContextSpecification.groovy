@@ -12,7 +12,7 @@ import org.thehellnet.lanparty.manager.configuration.PersistenceConfiguration
 import org.thehellnet.lanparty.manager.configuration.SpringConfiguration
 import org.thehellnet.lanparty.manager.configuration.WebSocketConfiguration
 import org.thehellnet.lanparty.manager.model.persistence.*
-import org.thehellnet.lanparty.manager.service.*
+import org.thehellnet.lanparty.manager.repository.*
 import spock.lang.Specification
 
 @WebAppConfiguration
@@ -53,66 +53,76 @@ abstract class ContextSpecification extends Specification {
     protected WebApplicationContext webApplicationContext
 
     @Autowired
-    protected TournamentService tournamentService
+    protected TournamentRepository tournamentRepository
 
     @Autowired
-    protected SeatService seatService
+    protected SeatRepository seatRepository
 
     @Autowired
-    protected GameService gameService
+    protected GameRepository gameRepository
 
     @Autowired
-    protected PlayerService playerService
+    protected PlayerRepository playerRepository
 
     @Autowired
-    protected TeamService teamService
+    protected TeamRepository teamRepository
 
     @Autowired
-    protected CfgService cfgService
+    protected CfgRepository cfgRepository
 
+    @Transactional
     protected Tournament createTournament() {
-        Tournament tournament = tournamentService.findByName(TOURNAMENT_NAME)
+        Tournament tournament = tournamentRepository.findByName(TOURNAMENT_NAME)
         if (tournament == null) {
-            Game game = gameService.findByTag(GAME_TAG)
-            tournament = tournamentService.create(TOURNAMENT_NAME, game.id)
-            tournament = tournamentService.save(tournament.id, null, null, null, TOURNAMENT_CFG)
+            Game game = gameRepository.findByTag(GAME_TAG)
+            tournament = new Tournament(name: TOURNAMENT_NAME, game: game, cfg: TOURNAMENT_CFG)
+            tournament = tournamentRepository.save(tournament)
         }
         return tournament
     }
 
+    @Transactional
     protected Seat createSeat() {
-        Seat seat = seatService.findByAddress(SEAT_ADDRESS)
+        Seat seat = seatRepository.findByIpAddress(SEAT_ADDRESS)
         if (seat == null) {
             Tournament tournament = createTournament()
-            seat = seatService.create(SEAT_NAME, SEAT_ADDRESS, tournament.id)
+            seat = new Seat(name: SEAT_NAME, ipAddress: SEAT_ADDRESS, tournament: tournament)
+            seat = seatRepository.save(seat)
         }
         return seat
     }
 
+    @Transactional
     protected Team createTeam() {
-        Team team = teamService.findByName(TEAM_NAME)
+        Team team = teamRepository.findByName(TEAM_NAME)
         if (team == null) {
             Tournament tournament = createTournament()
-            team = teamService.create(TEAM_NAME, tournament.id)
+            team = new Team(name: TEAM_NAME, tournament: tournament)
+            team = teamRepository.save(team)
         }
         return team
     }
 
+    @Transactional
     protected Player createPlayer() {
-        Player player = playerService.findByBarcode(PLAYER_BARCODE)
+        Player player = playerRepository.findByBarcode(PLAYER_BARCODE)
         if (player == null) {
             Team team = createTeam()
-            player = playerService.create(PLAYER_NICKNAME, team.id)
-            player = playerService.save(player.id, null, PLAYER_BARCODE, null)
+            player = new Player(nickname: PLAYER_NICKNAME, team: team, barcode: PLAYER_BARCODE)
+            player = playerRepository.save(player)
         }
         return player
     }
 
+    @Transactional
     protected Cfg createCfg() {
         Player player = createPlayer()
-        Game game = gameService.findByTag(GAME_TAG)
-        Cfg cfg = cfgService.save(player.id, game.id, PLAYER_CFG)
+        Game game = gameRepository.findByTag(GAME_TAG)
+        Cfg cfg = cfgRepository.findByPlayerAndGame(player, game)
+        if (cfg == null) {
+            cfg = new Cfg(player: player, game: game, cfg: PLAYER_CFG)
+            cfg = cfgRepository.save(cfg)
+        }
         return cfg
     }
-
 }

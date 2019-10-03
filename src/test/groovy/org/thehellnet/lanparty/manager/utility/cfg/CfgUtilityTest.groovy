@@ -1,95 +1,64 @@
 package org.thehellnet.lanparty.manager.utility.cfg
 
+
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class CfgUtilityTest extends Specification {
 
-    private static DATA_parseCfgFromStringList = [
-            []                                     : [],
-            [""]                                   : [],
-            [" "]                                  : [],
-            ["  "]                                 : [],
-            ["", ""]                               : [],
-            ["", " "]                              : [],
-            [" ", ""]                              : [],
-            [" ", " "]                             : [],
-            ["test"]                               : [new ParsedCfgCommand("test")],
-            ["test "]                              : [new ParsedCfgCommand("test")],
-            [" test"]                              : [new ParsedCfgCommand("test")],
-            [" test "]                             : [new ParsedCfgCommand("test")],
-            ["test", ""]                           : [new ParsedCfgCommand("test")],
-            ["test ", ""]                          : [new ParsedCfgCommand("test")],
-            [" test", ""]                          : [new ParsedCfgCommand("test")],
-            [" test ", ""]                         : [new ParsedCfgCommand("test")],
-            ["test", " "]                          : [new ParsedCfgCommand("test")],
-            ["test ", " "]                         : [new ParsedCfgCommand("test")],
-            [" test", " "]                         : [new ParsedCfgCommand("test")],
-            [" test ", " "]                        : [new ParsedCfgCommand("test")],
-            ["test", "bind P quit"]                : [new ParsedCfgCommand("test"), new ParsedCfgCommand("bind", "P", "quit")],
-            ["test", "test"]                       : [new ParsedCfgCommand("test")],
-            ["test", "test", "test"]               : [new ParsedCfgCommand("test")],
-            ["test", "prova", "test"]              : [new ParsedCfgCommand("test"), new ParsedCfgCommand("prova")],
-            ["bind P quit", "bind P +jump"]        : [new ParsedCfgCommand("bind", "P", "+jump")],
-            ["bind P quit", "test", "bind P +jump"]: [new ParsedCfgCommand("bind", "P", "+jump"), new ParsedCfgCommand("test")],
-    ]
+    @Unroll
+    def "parseCfgFromStringList \"#input\" \"#expected\""(List<String> input, List<ParsedCfgCommand> expected) {
+        given:
+        List<ParsedCfgCommand> actual = CfgUtility.parseCfgFromStringList(input)
 
-    def "parseCfgFromStringList with null input"() {
         expect:
-        CfgUtility.parseCfgFromStringList(null) == [] as List<ParsedCfgCommand>
+        actual == expected
+
+        where:
+        input                                   | expected
+        []                                      | []
+        [""]                                    | []
+        [" "]                                   | []
+        ["  "]                                  | []
+        ["", ""]                                | []
+        ["", " "]                               | []
+        [" ", ""]                               | []
+        [" ", " "]                              | []
+        ["test"]                                | [new ParsedCfgCommand("test")]
+        ["test "]                               | [new ParsedCfgCommand("test")]
+        [" test"]                               | [new ParsedCfgCommand("test")]
+        [" test "]                              | [new ParsedCfgCommand("test")]
+        ["test", ""]                            | [new ParsedCfgCommand("test")]
+        ["test ", ""]                           | [new ParsedCfgCommand("test")]
+        [" test", ""]                           | [new ParsedCfgCommand("test")]
+        [" test ", ""]                          | [new ParsedCfgCommand("test")]
+        ["test", " "]                           | [new ParsedCfgCommand("test")]
+        ["test ", " "]                          | [new ParsedCfgCommand("test")]
+        [" test", " "]                          | [new ParsedCfgCommand("test")]
+        [" test ", " "]                         | [new ParsedCfgCommand("test")]
+        ["test", "bind P quit"]                 | [new ParsedCfgCommand("test"), new ParsedCfgCommand("bind", "P", "quit")]
+        ["test", "test"]                        | [new ParsedCfgCommand("test")]
+        ["test", "test", "test"]                | [new ParsedCfgCommand("test")]
+        ["test", "prova", "test"]               | [new ParsedCfgCommand("test"), new ParsedCfgCommand("prova")]
+        ["bind P quit", "bind P +jump"]         | [new ParsedCfgCommand("bind", "P", "+jump")]
+        ["bind P quit", "test", "bind P +jump"] | [new ParsedCfgCommand("bind", "P", "+jump"), new ParsedCfgCommand("test")]
     }
 
     @Unroll
-    def "parseCfgFromStringList"() {
+    def "mergeTournamentWithPlayer with #tournament tournament and #player player"(List<ParsedCfgCommand> tournamentCfgCommands, List<ParsedCfgCommand> playerCfgCommands, List<ParsedCfgCommand> expected) {
+        given:
+        List<ParsedCfgCommand> actual = CfgUtility.mergeTournamentWithPlayer(tournamentCfgCommands, playerCfgCommands)
+
         expect:
-        CfgUtility.parseCfgFromStringList(key as List<String>) == value as List<ParsedCfgCommand>
+        actual == expected
 
         where:
-        key << DATA_parseCfgFromStringList.keySet()
-        value << DATA_parseCfgFromStringList.values()
-    }
-
-    def "mergeTournamentWithPlayer with null tournament and null player"() {
-        given:
-        List<ParsedCfgCommand> tournamentCfgCommands = null
-        List<ParsedCfgCommand> playerCfgCommands = null
-
-        List<ParsedCfgCommand> expected = []
-
-        when:
-        List<ParsedCfgCommand> actual = CfgUtility.mergeTournamentWithPlayer(tournamentCfgCommands, playerCfgCommands)
-
-        then:
-        actual == expected
-    }
-
-    def "mergeTournamentWithPlayer with null tournament and empty player"() {
-        given:
-        List<ParsedCfgCommand> tournamentCfgCommands = null
-        List<ParsedCfgCommand> playerCfgCommands = []
-
-        List<ParsedCfgCommand> expected = []
-
-        when:
-        List<ParsedCfgCommand> actual = CfgUtility.mergeTournamentWithPlayer(tournamentCfgCommands, playerCfgCommands)
-
-        then:
-        actual == expected
-    }
-
-    def "mergeTournamentWithPlayer with empty tournament and null player"() {
-        given:
-        List<ParsedCfgCommand> tournamentCfgCommands = []
-        List<ParsedCfgCommand> playerCfgCommands = null
-
-        List<ParsedCfgCommand> expected = []
-
-        when:
-        List<ParsedCfgCommand> actual = CfgUtility.mergeTournamentWithPlayer(tournamentCfgCommands, playerCfgCommands)
-
-        then:
-        actual == expected
+        tournamentCfgCommands | playerCfgCommands | expected
+        null                  | null              | []
+        null                  | []                | []
+        []                    | null              | []
+        []                    | []                | []
     }
 
     def "mergeTournamentWithPlayer with empty tournament and empty player"() {
@@ -402,242 +371,86 @@ class CfgUtilityTest extends Specification {
         actual == expected
     }
 
-    private static DATA_parseCommand = [
-            ""                                : null,
-            " "                               : null,
-            "  "                              : null,
-            "\n"                              : null,
-            " \n"                             : null,
-            "\n "                             : null,
-            " \n "                            : null,
-            "\n\n"                            : null,
-            "\n \n"                           : null,
-            " \n \n"                          : null,
-            " \n \n "                         : null,
-            " \n  \n "                        : null,
-            "\n\r"                            : null,
-            "\n \r"                           : null,
-            " \n \r"                          : null,
-            " \n \r "                         : null,
-            " \n  \r "                        : null,
-            "test"                            : new ParsedCfgCommand("test"),
-            " test"                           : new ParsedCfgCommand("test"),
-            "test "                           : new ParsedCfgCommand("test"),
-            " test "                          : new ParsedCfgCommand("test"),
-            "test test"                       : new ParsedCfgCommand("test", "test"),
-            "test test "                      : new ParsedCfgCommand("test", "test"),
-            " test test"                      : new ParsedCfgCommand("test", "test"),
-            " test test "                     : new ParsedCfgCommand("test", "test"),
-            " test    test "                  : new ParsedCfgCommand("test", "test"),
-            " test   \n test "                : null,
-            " test   \n test\n "              : null,
-            "test\nTEST\ntest"                : null,
-            " test   \n test\r "              : null,
-            "test\nTEST\rtest"                : null,
-            "test TEST test"                  : new ParsedCfgCommand("test", "TEST", "test"),
-            "test   TEST test"                : new ParsedCfgCommand("test", "TEST", "test"),
-            "test TEST   test"                : new ParsedCfgCommand("test", "TEST", "test"),
-            "test   TEST   test"              : new ParsedCfgCommand("test", "TEST", "test"),
-            "test   TEST   test  "            : new ParsedCfgCommand("test", "TEST", "test"),
-            "  test   TEST   test  "          : new ParsedCfgCommand("test", "TEST", "test"),
-            "  test   TEST   test"            : new ParsedCfgCommand("test", "TEST", "test"),
-            "test TEST test tesssst"          : new ParsedCfgCommand("test", "TEST", "test tesssst"),
-            "test TEST test   tesssst"        : new ParsedCfgCommand("test", "TEST", "test tesssst"),
-            "test TEST test   tesssst "       : new ParsedCfgCommand("test", "TEST", "test tesssst"),
-            "test TEST   test     tesssst"    : new ParsedCfgCommand("test", "TEST", "test tesssst"),
-            "test   TEST   test tesssst"      : new ParsedCfgCommand("test", "TEST", "test tesssst"),
-            "  test   TEST   test tesssst er" : new ParsedCfgCommand("test", "TEST", "test tesssst er"),
-            "  test   TEST   test tesssst  er": new ParsedCfgCommand("test", "TEST", "test tesssst er"),
-            "test TEST \"test tesssst  er\""  : new ParsedCfgCommand("test", "TEST", "test tesssst er")
-    ]
+    @Unroll
+    def "parseCommand with input \"#a\" and expected \"#b\""(String a, ParsedCfgCommand b) {
+        given:
+        ParsedCfgCommand actual = CfgUtility.parseCommand(a)
 
-    def "parseCommand with null input"() {
         expect:
-        CfgUtility.parseCommand(null) == null
-    }
-
-    def "parseCommand"() {
-        expect:
-        CfgUtility.parseCommand(key) == value
+        actual == b
 
         where:
-        key << DATA_parseCommand.keySet()
-        value << DATA_parseCommand.values()
+        a                                  | b
+        null                               | null
+        ""                                 | null
+        " "                                | null
+        "  "                               | null
+        "\n"                               | null
+        " \n"                              | null
+        "\n "                              | null
+        " \n "                             | null
+        "\n\n"                             | null
+        "\n \n"                            | null
+        " \n \n"                           | null
+        " \n \n "                          | null
+        " \n  \n "                         | null
+        "\n\r"                             | null
+        "\n \r"                            | null
+        " \n \r"                           | null
+        " \n \r "                          | null
+        " \n  \r "                         | null
+        "test"                             | new ParsedCfgCommand("test")
+        " test"                            | new ParsedCfgCommand("test")
+        "test "                            | new ParsedCfgCommand("test")
+        " test "                           | new ParsedCfgCommand("test")
+        "test test"                        | new ParsedCfgCommand("test", "test")
+        "test test "                       | new ParsedCfgCommand("test", "test")
+        " test test"                       | new ParsedCfgCommand("test", "test")
+        " test test "                      | new ParsedCfgCommand("test", "test")
+        " test    test "                   | new ParsedCfgCommand("test", "test")
+        " test   \n test "                 | null
+        " test   \n test\n "               | null
+        "test\nTEST\ntest"                 | null
+        " test   \n test\r "               | null
+        "test\nTEST\rtest"                 | null
+        "test TEST test"                   | new ParsedCfgCommand("test", "TEST", "test")
+        "test   TEST test"                 | new ParsedCfgCommand("test", "TEST", "test")
+        "test TEST   test"                 | new ParsedCfgCommand("test", "TEST", "test")
+        "test   TEST   test"               | new ParsedCfgCommand("test", "TEST", "test")
+        "test   TEST   test  "             | new ParsedCfgCommand("test", "TEST", "test")
+        "  test   TEST   test  "           | new ParsedCfgCommand("test", "TEST", "test")
+        "  test   TEST   test"             | new ParsedCfgCommand("test", "TEST", "test")
+        "test TEST test tesssst"           | new ParsedCfgCommand("test", "TEST", "test tesssst")
+        "test TEST test   tesssst"         | new ParsedCfgCommand("test", "TEST", "test tesssst")
+        "test TEST test   tesssst "        | new ParsedCfgCommand("test", "TEST", "test tesssst")
+        "test TEST   test     tesssst"     | new ParsedCfgCommand("test", "TEST", "test tesssst")
+        "test   TEST   test tesssst"       | new ParsedCfgCommand("test", "TEST", "test tesssst")
+        "  test   TEST   test tesssst er"  | new ParsedCfgCommand("test", "TEST", "test tesssst er")
+        "  test   TEST   test tesssst  er" | new ParsedCfgCommand("test", "TEST", "test tesssst er")
+        "test TEST \"test tesssst  er\""   | new ParsedCfgCommand("test", "TEST", "test tesssst er")
     }
-
-    def "sanitize with null input"() {
-        given:
-        String tournamentCfg = null
-        String playerCfg = null
-        String expected = ""
-
-        when:
-        String actual = CfgUtility.sanitize(tournamentCfg, playerCfg)
-
-        then:
-        actual == expected
-    }
-
-    def "sanitize with null tournament input"() {
-        given:
-        String tournamentCfg = null
-        String playerCfg = ""
-        String expected = ""
-
-        when:
-        String actual = CfgUtility.sanitize(tournamentCfg, playerCfg)
-
-        then:
-        actual == expected
-    }
-
-    def "sanitize with null player input"() {
-        given:
-        String tournamentCfg = ""
-        String playerCfg = null
-        String expected = ""
-
-        when:
-        String actual = CfgUtility.sanitize(tournamentCfg, playerCfg)
-
-        then:
-        actual == expected
-    }
-
-    def "sanitize with empty input"() {
-        given:
-        String tournamentCfg = ""
-        String playerCfg = ""
-        String expected = ""
-
-        when:
-        String actual = CfgUtility.sanitize(tournamentCfg, playerCfg)
-
-        then:
-        actual == expected
-    }
-
-    def "sanitize with empty tournamentCfg input"() {
-        given:
-        String tournamentCfg = ""
-        String playerCfg = "// generated by Call of Duty, do not modify\n" +
-                "unbindall\n" +
-                "bind TAB \"+scores\"\n" +
-                "bind ESCAPE \"togglemenu\"\n" +
-                "bind SPACE \"+gostand\"\n" +
-                "bind 4 \"+smoke\"\n" +
-                "bind H \"say Google\""
-
-        String expected = ""
-
-        when:
-        String actual = CfgUtility.sanitize(tournamentCfg, playerCfg)
-
-        then:
-        actual == expected
-    }
-
-    def "sanitize with empty playerCfg input"() {
-        given:
-        String tournamentCfg = "unbindall\n" +
-                "bind TAB \"+scores\"\n" +
-                "bind ESCAPE \"togglemenu\"\n" +
-                "bind SPACE \"+gostand\"\n" +
-                "bind 4 \"+smoke\"\n" +
-                "bind H \"say Google\""
-
-        String playerCfg = ""
-
-        String expected = "unbindall\n" +
-                "bind TAB \"+scores\"\n" +
-                "bind ESCAPE \"togglemenu\"\n" +
-                "bind SPACE \"+gostand\"\n" +
-                "bind 4 \"+smoke\"\n" +
-                "bind H \"say Google\""
-
-        when:
-        String actual = CfgUtility.sanitize(tournamentCfg, playerCfg)
-
-        then:
-        actual == expected
-    }
-
-    def "sanitize with replace of params contained in playerCfg"() {
-        given:
-        String tournamentCfg = "unbindall\n" +
-                "bind TAB \"+scores\"\n" +
-                "bind ESCAPE \"togglemenu\"\n" +
-                "bind SPACE \"+gostand\"\n" +
-                "bind 4 \"+smoke\"\n" +
-                "bind H \"say Google\""
-
-        String playerCfg = "bind 4 \"+gostand\"\n" +
-                "bind H \"+smoke\""
-
-        String expected = "unbindall\n" +
-                "bind TAB \"+scores\"\n" +
-                "bind ESCAPE \"togglemenu\"\n" +
-                "bind SPACE \"+gostand\"\n" +
-                "bind 4 \"+gostand\"\n" +
-                "bind H \"+smoke\""
-
-        when:
-        String actual = CfgUtility.sanitize(tournamentCfg, playerCfg)
-
-        then:
-        actual == expected
-    }
-
-    def "sanitize with replace of params contained in playerCfg and extra config params"() {
-        given:
-        String tournamentCfg = "unbindall\n" +
-                "bind TAB \"+scores\"\n" +
-                "bind ESCAPE \"togglemenu\"\n" +
-                "bind SPACE \"+gostand\"\n" +
-                "bind 4 \"+smoke\"\n" +
-                "bind H \"say Google\""
-
-        String playerCfg = "bind 4 \"+gostand\"\n" +
-                "bind Z \"+test\""
-
-        String expected = "unbindall\n" +
-                "bind TAB \"+scores\"\n" +
-                "bind ESCAPE \"togglemenu\"\n" +
-                "bind SPACE \"+gostand\"\n" +
-                "bind 4 \"+gostand\"\n" +
-                "bind H \"say Google\""
-
-        when:
-        String actual = CfgUtility.sanitize(tournamentCfg, playerCfg)
-
-        then:
-        actual == expected
-    }
-
-    private static DATA_ensureRequired_empty = [
-            null,
-            "",
-            " ",
-            "  ",
-            "   ",
-            "\n",
-            "\r",
-            "\n\r",
-            "\n \r",
-            "\n\r ",
-            " \n\r",
-            " \n \r",
-            " \n\r ",
-            " \n \r ",
-    ]
 
     @Unroll
-    def "ensureRequired with empty cfg"() {
+    def "ensureRequired with empty cfg: \"#cfg\""(String cfg) {
         expect:
-        CfgUtility.ensureRequired(it) == CfgUtility.CFG_MINIMAL
+        CfgUtility.ensureRequired(cfg) == CfgUtility.CFG_MINIMAL
 
         where:
-        it << DATA_ensureRequired_empty
+        cfg       | _
+        null      | _
+        ""        | _
+        " "       | _
+        "  "      | _
+        "   "     | _
+        "\n"      | _
+        "\r"      | _
+        "\n\r"    | _
+        "\n \r"   | _
+        "\n\r "   | _
+        " \n\r"   | _
+        " \n \r"  | _
+        " \n\r "  | _
+        " \n \r " | _
     }
 
     def "ensureRequired with normal cfg"() {

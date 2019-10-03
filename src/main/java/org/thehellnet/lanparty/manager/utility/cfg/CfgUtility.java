@@ -112,33 +112,6 @@ public final class CfgUtility {
         return nameCmd + "\n" + cfg;
     }
 
-    public static String sanitize(String tournamentCfg, String playerCfg) {
-        if (tournamentCfg == null || playerCfg == null) {
-            return "";
-        }
-
-        List<String> tournamentLines = StringUtility.splitLines(tournamentCfg);
-        List<String> playerLines = StringUtility.splitLines(playerCfg);
-
-        List<String> cfg = new ArrayList<>();
-
-        for (String line : tournamentLines) {
-            ParsedCfgCommand command = parseCommand(line);
-
-            for (String playerLine : playerLines) {
-                ParsedCfgCommand playerCommand = parseCommand(playerLine);
-
-                if (playerCommand.same(command)) {
-                    command.setArgs(playerCommand.getArgs());
-                }
-            }
-
-            cfg.add(command.toString());
-        }
-
-        return StringUtility.joinLines(cfg);
-    }
-
     public static String ensureRequired(String inputCfg) {
         if (inputCfg == null || inputCfg.length() == 0) {
             return CFG_MINIMAL;

@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.utility.cfg
 
-import org.thehellnet.lanparty.manager.exception.player.InvalidNamePlayerException
+import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand
 import org.thehellnet.lanparty.manager.utility.UtilitySpecification
 import org.thehellnet.utility.StringUtility
@@ -22,7 +22,7 @@ class ParsedCfgTest extends UtilitySpecification {
         new ParsedCfg(inputCommands, inputNickname)
 
         then:
-        thrown InvalidNamePlayerException
+        thrown InvalidDataException
     }
 
     def "toCommandList with empty commands and null nickname"() {
@@ -34,7 +34,7 @@ class ParsedCfgTest extends UtilitySpecification {
         new ParsedCfg(inputCommands, inputNickname)
 
         then:
-        thrown InvalidNamePlayerException
+        thrown InvalidDataException
     }
 
     def "toCommandList with null commands and empty nickname"() {
@@ -46,7 +46,7 @@ class ParsedCfgTest extends UtilitySpecification {
         new ParsedCfg(inputCommands, inputNickname)
 
         then:
-        thrown InvalidNamePlayerException
+        thrown InvalidDataException
     }
 
     def "toCommandList with empty commands and empty nickname"() {
@@ -58,7 +58,7 @@ class ParsedCfgTest extends UtilitySpecification {
         new ParsedCfg(inputCommands, inputNickname)
 
         then:
-        thrown InvalidNamePlayerException
+        thrown InvalidDataException
     }
 
     def "toCommandList with null commands and empty nickname with spaces"() {
@@ -70,7 +70,7 @@ class ParsedCfgTest extends UtilitySpecification {
         new ParsedCfg(inputCommands, inputNickname)
 
         then:
-        thrown InvalidNamePlayerException
+        thrown InvalidDataException
     }
 
     def "toCommandList with empty commands and empty nickname with spaces"() {
@@ -82,7 +82,7 @@ class ParsedCfgTest extends UtilitySpecification {
         new ParsedCfg(inputCommands, inputNickname)
 
         then:
-        thrown InvalidNamePlayerException
+        thrown InvalidDataException
     }
 
     def "toCommandList with null commands"() {

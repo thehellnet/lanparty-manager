@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.exception.seat.SeatAlreadyExistsException;
 import org.thehellnet.lanparty.manager.exception.seat.SeatInvalidNameException;
 import org.thehellnet.lanparty.manager.exception.tournament.TournamentNotFoundException;
@@ -27,19 +28,17 @@ public class SeatService extends AbstractService {
 
     @Transactional(readOnly = true)
     public Seat findByAddress(String address) {
-        if (address == null || address.length() == 0) {
-            return null;
+        Seat seat = seatRepository.findByIpAddress(address);
+        if (seat == null) {
+            throw new NotFoundException();
         }
 
-        return seatRepository.findByIpAddress(address);
+        return seat;
     }
 
     @Transactional
-    public void updateLastContact(Seat seat) {
-        seat = seatRepository.findById(seat.getId()).orElse(null);
-        if (seat == null) {
-            return;
-        }
+    public void updateLastContact(String address) {
+        Seat seat = findByAddress(address);
 
         logger.info("Updating last contact for seat {}", seat.getName());
 

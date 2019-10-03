@@ -15,18 +15,24 @@ public class ParsedCfgCommand {
     public ParsedCfgCommand() {
     }
 
+    public ParsedCfgCommand(ParsedCfgCommand other) {
+        action = clean(other.action);
+        param = clean(other.param);
+        args = clean(other.args);
+    }
+
     public ParsedCfgCommand(String action) {
-        setAction(action);
+        this.action = clean(action);
     }
 
     public ParsedCfgCommand(String action, String param) {
         this(action);
-        setParam(param);
+        this.param = clean(param);
     }
 
     public ParsedCfgCommand(String action, String param, String args) {
         this(action, param);
-        setArgs(args);
+        this.args = clean(args);
     }
 
     public static ParsedCfgCommand prepareName(String name) {
@@ -42,7 +48,7 @@ public class ParsedCfgCommand {
     }
 
     public ParsedCfgCommand setAction(String action) {
-        this.action = action != null ? action.trim() : "";
+        this.action = clean(action);
         return this;
     }
 
@@ -51,7 +57,7 @@ public class ParsedCfgCommand {
     }
 
     public ParsedCfgCommand setParam(String param) {
-        this.param = param != null ? param.trim() : "";
+        this.param = clean(param);
         return this;
     }
 
@@ -60,12 +66,46 @@ public class ParsedCfgCommand {
     }
 
     public ParsedCfgCommand setArgs(String args) {
-        this.args = args != null ? args.trim() : "";
+        this.args = clean(args);
         return this;
     }
 
     public boolean same(ParsedCfgCommand o) {
         return o != null && o.hashCode() == this.hashCode();
+    }
+
+    public ParsedCfgCommand replace(String action) {
+        ParsedCfgCommand parsedCfgCommand = new ParsedCfgCommand(this);
+        parsedCfgCommand.setAction(action);
+        return parsedCfgCommand;
+    }
+
+    public ParsedCfgCommand replace(String action, String param) {
+        ParsedCfgCommand parsedCfgCommand = replace(action);
+        parsedCfgCommand.setParam(param);
+        return parsedCfgCommand;
+    }
+
+    public ParsedCfgCommand replace(String action, String param, String args) {
+        ParsedCfgCommand parsedCfgCommand = replace(action, param);
+        parsedCfgCommand.setArgs(args);
+        return parsedCfgCommand;
+    }
+
+    public ParsedCfgCommand replaceAction(String action) {
+        return replace(action);
+    }
+
+    public ParsedCfgCommand replaceParam(String param) {
+        return replace(action).setParam(param);
+    }
+
+    public ParsedCfgCommand replaceArgs(String args) {
+        return replace(action).setArgs(args);
+    }
+
+    private String clean(String input) {
+        return input != null ? input.trim() : "";
     }
 
     @Override

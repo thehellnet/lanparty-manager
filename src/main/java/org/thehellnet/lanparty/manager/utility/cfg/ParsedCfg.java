@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.utility.cfg;
 
-import org.thehellnet.lanparty.manager.exception.player.InvalidNamePlayerException;
+import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.utility.StringUtility;
 
@@ -12,17 +12,17 @@ public class ParsedCfg {
     private final List<ParsedCfgCommand> commands;
     private final String playerNickname;
 
-    public ParsedCfg(List<ParsedCfgCommand> commands, String playerNickname) throws InvalidNamePlayerException {
+    public ParsedCfg(List<ParsedCfgCommand> commands, String playerNickname) {
         this.commands = commands;
 
         if (playerNickname == null) {
-            throw new InvalidNamePlayerException("Null player nickname");
+            throw new InvalidDataException("Null player nickname");
         }
 
         this.playerNickname = playerNickname.trim();
 
         if (this.playerNickname.length() == 0) {
-            throw new InvalidNamePlayerException("Empty player nickname");
+            throw new InvalidDataException("Empty player nickname");
         }
     }
 

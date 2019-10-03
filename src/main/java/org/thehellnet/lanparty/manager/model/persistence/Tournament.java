@@ -61,6 +61,12 @@ public class Tournament implements Serializable {
         this.game = game;
     }
 
+    public Tournament(String name, Game game, String cfg) {
+        this.name = name;
+        this.game = game;
+        this.cfg = cfg;
+    }
+
     public Long getId() {
         return id;
     }

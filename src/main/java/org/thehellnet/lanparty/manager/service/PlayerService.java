@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.appuser.AppUserNotFoundException;
+import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerAlreadyExistsException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerInvalidNickameOrTeamIDException;
 import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
@@ -33,15 +34,6 @@ public class PlayerService extends AbstractService {
         this.teamRepository = teamRepository;
     }
 
-    @Transactional(readOnly = true)
-    public Player findByBarcode(String barcode) {
-        if (barcode == null || barcode.length() == 0) {
-            return null;
-        }
-
-        return playerRepository.findByBarcode(barcode);
-    }
-
     @Transactional
     public Player create(String nickname, Long teamId) throws PlayerInvalidNickameOrTeamIDException, PlayerAlreadyExistsException, TeamNotFoundException {
         if (nickname == null || nickname.length() == 0
@@ -66,10 +58,7 @@ public class PlayerService extends AbstractService {
 
     @Transactional
     public Player save(Long id, String nickname, String barcode, Long appUserId) throws PlayerNotFoundException, AppUserNotFoundException {
-        Player player = playerRepository.findById(id).orElse(null);
-        if (player == null) {
-            throw new PlayerNotFoundException();
-        }
+        Player player = findById(id);
 
         if (nickname != null && nickname.length() > 0) {
             player.setNickname(nickname);
@@ -88,5 +77,24 @@ public class PlayerService extends AbstractService {
         }
 
         return playerRepository.save(player);
+    }
+
+    @Transactional(readOnly = true)
+    public Player findById(Long id) {
+        Player player = playerRepository.findById(id).orElse(null);
+        if (player == null) {
+            throw new NotFoundException();
+        }
+        return player;
+    }
+
+    @Transactional(readOnly = true)
+    public Player findByBarcode(String barcode) {
+        Player player = playerRepository.findByBarcode(barcode);
+        if (player == null) {
+            throw new NotFoundException();
+        }
+
+        return player;
     }
 }

@@ -2,6 +2,7 @@ package org.thehellnet.lanparty.manager.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
 import org.thehellnet.lanparty.manager.repository.GameRepository;
 
@@ -19,6 +20,15 @@ public class GameService extends AbstractService {
     @Transactional(readOnly = true)
     public List<Game> getAllGames() {
         return gameRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Game findById(Long id) {
+        Game game = gameRepository.findById(id).orElse(null);
+        if (game == null) {
+            throw new NotFoundException();
+        }
+        return game;
     }
 
     @Transactional(readOnly = true)

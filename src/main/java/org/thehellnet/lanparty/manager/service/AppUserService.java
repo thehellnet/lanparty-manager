@@ -59,11 +59,7 @@ public class AppUserService extends AbstractService {
 
     @Transactional(readOnly = true)
     public AppUser get(Long id) {
-        AppUser appUser = appUserRepository.findById(id).orElse(null);
-        if (appUser == null) {
-            throw new NotFoundException();
-        }
-        return appUser;
+        return findById(id);
     }
 
     @Transactional(readOnly = true)
@@ -73,10 +69,7 @@ public class AppUserService extends AbstractService {
 
     @Transactional
     public AppUser update(Long id, String name, String password, String[] appUserRoles) {
-        AppUser appUser = appUserRepository.findById(id).orElse(null);
-        if (appUser == null) {
-            throw new NotFoundException();
-        }
+        AppUser appUser = findById(id);
 
         boolean changed = false;
 
@@ -109,11 +102,7 @@ public class AppUserService extends AbstractService {
 
     @Transactional
     public void delete(Long id) {
-        AppUser appUser = appUserRepository.findById(id).orElse(null);
-        if (appUser == null) {
-            throw new NotFoundException();
-        }
-
+        AppUser appUser = findById(id);
         appUserRepository.delete(appUser);
     }
 
@@ -149,6 +138,15 @@ public class AppUserService extends AbstractService {
     @Transactional(readOnly = true)
     public boolean hasAnyRoles(AppUser appUser, Role... roles) {
         return hasRoles(appUser, false, roles);
+    }
+
+    @Transactional(readOnly = true)
+    public AppUser findById(Long id) {
+        AppUser appUser = appUserRepository.findById(id).orElse(null);
+        if (appUser == null) {
+            throw new NotFoundException();
+        }
+        return appUser;
     }
 
     private boolean hasRoles(AppUser appUser, boolean all, Role[] roles) {

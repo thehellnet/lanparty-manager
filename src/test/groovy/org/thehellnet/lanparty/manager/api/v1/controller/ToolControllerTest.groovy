@@ -48,10 +48,7 @@ class ToolControllerTest extends ControllerSpecification {
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
         then:
-        validateResponseAsJsonResponse(response)
-
-        response.getBoolean("success")
-        response.get("data") == JSONObject.NULL
+        response.isEmpty()
     }
 
     def "ping with existing seat"() {
@@ -75,10 +72,7 @@ class ToolControllerTest extends ControllerSpecification {
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
         then:
-        validateResponseAsJsonResponse(response)
-
-        response.getBoolean("success")
-        response.get("data") == JSONObject.NULL
+        response.isEmpty()
     }
 
     def "welcome with not existing seat"() {
@@ -95,25 +89,14 @@ class ToolControllerTest extends ControllerSpecification {
                 .response
 
         then:
-        rawResponse.status == HttpStatus.OK.value()
+        rawResponse.status == HttpStatus.NOT_FOUND.value()
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         when:
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
         then:
-        validateResponseAsJsonResponse(response)
-
-        !response.getBoolean("success")
-        response.get("data") == JSONObject.NULL
-
-        response.has("errors")
-
-        when:
-        JSONObject errors = response.getJSONObject("errors")
-
-        then:
-        errors.getString("message").length() > 0
+        response.isEmpty()
     }
 
     def "welcome with existing seat"() {
@@ -137,16 +120,7 @@ class ToolControllerTest extends ControllerSpecification {
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
         then:
-        validateResponseAsJsonResponse(response)
-
-        response.getBoolean("success")
-
-        when:
-        JSONObject data = response.getJSONObject("data")
-
-        then:
-        data.has("name")
-        data.getString("name") == SEAT_NAME
+        response.isEmpty()
     }
 
     def "getCfg with existing seat and existing barcode"() {
@@ -168,16 +142,8 @@ class ToolControllerTest extends ControllerSpecification {
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
 
         when:
-        JSONObject response = new JSONObject(rawResponse.contentAsString)
-
-        then:
-        validateResponseAsJsonResponse(response)
-
-        response.getBoolean("success")
-
-        when:
-        JSONArray data = response.getJSONArray("data")
-        String cfg = StringUtility.joinLines(data.toList() as List<String>)
+        JSONArray response = new JSONArray(rawResponse.contentAsString)
+        String cfg = StringUtility.joinLines(response.toList() as List<String>)
 
         then:
         cfg == PLAYER_CFG_SANITIZED
@@ -206,8 +172,6 @@ class ToolControllerTest extends ControllerSpecification {
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
         then:
-        validateResponseAsJsonResponse(response)
-
-        response.getBoolean("success")
+        response.isEmpty()
     }
 }
