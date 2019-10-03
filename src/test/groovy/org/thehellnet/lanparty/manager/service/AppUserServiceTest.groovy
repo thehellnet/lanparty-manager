@@ -544,24 +544,25 @@ class AppUserServiceTest extends ServiceSpecification {
         [Role.APPUSER_VIEW, Role.APPUSER_ADMIN, Role.APPUSER_CHANGE_PASSWORD] | true
     }
 
-    def "newToken"() {
-        given:
-        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser = appUserRepository.save(appUser)
-
+    def "newToken with valid user"() {
         when:
-        int count = appUserTokenRepository.findByAppUser(appUser).size()
+        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         then:
-        count == 0
+        appUserTokenRepository.findByAppUser(appUser).size() == 0
 
         when:
         appUserService.newToken(appUser)
 
-        and:
-        count = appUserTokenRepository.findByAppUser(appUser).size()
+        then:
+        appUserTokenRepository.findByAppUser(appUser).size() == 1
+    }
+
+    def "newToken with invalid user"() {
+        when:
+        appUserService.newToken(null)
 
         then:
-        count == 1
+        thrown InvalidDataException
     }
 }

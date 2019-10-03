@@ -177,7 +177,7 @@ public class AppUserService extends AbstractService {
     @Transactional
     public AppUserToken newToken(AppUser appUser) {
         if (appUser == null) {
-            throw new NotFoundException();
+            throw new InvalidDataException();
         }
 
         String token = TokenUtility.generate();
