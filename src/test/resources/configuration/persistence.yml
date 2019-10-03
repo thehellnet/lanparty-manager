@@ -1,5 +1,5 @@
 driverClass: "org.postgresql.Driver"
-dialect: "org.hibernate.dialect.PostgreSQL10Dialect"
+dialect: "org.hibernate.dialect.PostgreSQL9Dialect"
 jdbcUrl: "jdbc:postgresql://127.0.0.1:5432/test"
 username: "test"
 password: "test"
