@@ -1,5 +1,9 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -12,6 +16,7 @@ import java.util.Set;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"name"})
         })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Team implements Serializable {
 
     @Id
@@ -26,15 +31,19 @@ public class Team implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "tournament_id", nullable = false)
+    @JsonIdentityReference(alwaysAsId = true)
     private Tournament tournament;
 
     @OneToMany(mappedBy = "team", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonIdentityReference(alwaysAsId = true)
     private Set<Player> players = new HashSet<>();
 
     @OneToMany(mappedBy = "localTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonIdentityReference(alwaysAsId = true)
     private Set<Match> localMatches = new HashSet<>();
 
     @OneToMany(mappedBy = "guestTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonIdentityReference(alwaysAsId = true)
     private Set<Match> guestMatches = new HashSet<>();
 
     public Team() {

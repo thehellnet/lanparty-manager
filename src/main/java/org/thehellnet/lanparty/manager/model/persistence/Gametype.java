@@ -1,5 +1,9 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -8,6 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "gametype")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Gametype implements Serializable {
 
     @Id
@@ -21,6 +26,7 @@ public class Gametype implements Serializable {
     private String name;
 
     @OneToMany(mappedBy = "gametype", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonIdentityReference(alwaysAsId = true)
     private Set<GameGametype> gameGametypes = new HashSet<>();
 
     public Gametype() {

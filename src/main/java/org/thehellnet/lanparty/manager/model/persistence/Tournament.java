@@ -1,6 +1,9 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus;
 
 import javax.persistence.*;
@@ -11,6 +14,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tournament")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityReference(alwaysAsId = true)
 public class Tournament implements Serializable {
 
     @Id

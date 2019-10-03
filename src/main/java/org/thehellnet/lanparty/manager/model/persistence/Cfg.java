@@ -1,11 +1,16 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "cfg")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Cfg implements Serializable {
 
     @Id
@@ -16,10 +21,12 @@ public class Cfg implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "player_id", nullable = false)
+    @JsonIdentityReference(alwaysAsId = true)
     private Player player;
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
+    @JsonIdentityReference(alwaysAsId = true)
     private Game game;
 
     @Basic
