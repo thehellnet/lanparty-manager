@@ -1,9 +1,10 @@
 package org.thehellnet.lanparty.manager.service
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.thehellnet.lanparty.manager.exception.appuser.AppUserAlreadyPresentException
-import org.thehellnet.lanparty.manager.exception.appuser.AppUserInvalidMailException
-import org.thehellnet.lanparty.manager.exception.appuser.AppUserNotFoundException
+import org.thehellnet.lanparty.manager.exception.controller.AlreadyPresentException
+import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
+import org.thehellnet.lanparty.manager.exception.controller.NotFoundException
+import org.thehellnet.lanparty.manager.exception.controller.UnchangedException
 import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.lanparty.manager.repository.AppUserRepository
@@ -70,7 +71,7 @@ class AppUserServiceTest extends ServiceSpecification {
         appUserService.create("not_valid_email", APPUSER_PASSWORD, APPUSER_NAME)
 
         then:
-        thrown AppUserInvalidMailException
+        thrown InvalidDataException
     }
 
     def "create with already exiting email"() {
@@ -81,7 +82,7 @@ class AppUserServiceTest extends ServiceSpecification {
         appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)
 
         then:
-        thrown AppUserAlreadyPresentException
+        thrown AlreadyPresentException
     }
 
     def "get with existing id"() {
@@ -107,7 +108,7 @@ class AppUserServiceTest extends ServiceSpecification {
         AppUser appUser = appUserService.get(appUserId)
 
         then:
-        appUser == null
+        thrown NotFoundException
     }
 
     def "getAll with admin user only"() {
@@ -156,6 +157,25 @@ class AppUserServiceTest extends ServiceSpecification {
     }
 
     @Unroll
+    def "update UnchangedException #name name, #password password and #appUserRoles appUserRoles"(String name, String password, String[] appUserRoles) {
+        given:
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
+
+        when:
+        appUserService.update(appUserId, name, password, appUserRoles)
+
+        then:
+        thrown UnchangedException
+
+        where:
+        name | password | appUserRoles
+        null | null     | null
+        null | ""       | null
+        ""   | null     | null
+        ""   | ""       | null
+    }
+
+    @Unroll
     def "update with #name name, #password password and #appUserRoles appUserRoles"(String name, String password, String[] appUserRoles) {
         given:
         Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
@@ -176,19 +196,15 @@ class AppUserServiceTest extends ServiceSpecification {
 
         where:
         name             | password             | appUserRoles
-        null             | null                 | null
         null             | null                 | [] as String[]
         null             | null                 | [Role.LOGIN.name] as String[]
-        null             | ""                   | null
         null             | ""                   | [] as String[]
         null             | ""                   | [Role.LOGIN.name] as String[]
         null             | APPUSER_PASSWORD_NEW | null
         null             | APPUSER_PASSWORD_NEW | [] as String[]
         null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[]
-        ""               | null                 | null
         ""               | null                 | [] as String[]
         ""               | null                 | [Role.LOGIN.name] as String[]
-        ""               | ""                   | null
         ""               | ""                   | [] as String[]
         ""               | ""                   | [Role.LOGIN.name] as String[]
         ""               | APPUSER_PASSWORD_NEW | null
@@ -213,7 +229,7 @@ class AppUserServiceTest extends ServiceSpecification {
         appUserService.update(appUserId, APPUSER_NAME_NEW, APPUSER_PASSWORD_NEW, [Role.LOGIN.name] as String[])
 
         then:
-        thrown AppUserNotFoundException
+        thrown NotFoundException
     }
 
     def "delete"() {
@@ -235,7 +251,7 @@ class AppUserServiceTest extends ServiceSpecification {
         appUserService.delete(appUserId)
 
         then:
-        thrown AppUserNotFoundException
+        thrown NotFoundException
     }
 
     def "findByEmail with admin"() {
@@ -267,10 +283,10 @@ class AppUserServiceTest extends ServiceSpecification {
         String email = APPUSER_EMAIL
 
         when:
-        AppUser appUser = appUserService.findByEmail(email)
+        appUserService.findByEmail(email)
 
         then:
-        appUser == null
+        thrown NotFoundException
     }
 
     def "findByEmail with not valid email"() {
@@ -278,10 +294,10 @@ class AppUserServiceTest extends ServiceSpecification {
         String email = "not_valid_email"
 
         when:
-        AppUser appUser = appUserService.findByEmail(email)
+        appUserService.findByEmail(email)
 
         then:
-        appUser == null
+        thrown NotFoundException
     }
 
     def "findByEmailAndPassword with admin user"() {
@@ -316,19 +332,19 @@ class AppUserServiceTest extends ServiceSpecification {
         String password = APPUSER_PASSWORD
 
         when:
-        AppUser appUser = appUserService.findByEmailAndPassword(email, password)
+        appUserService.findByEmailAndPassword(email, password)
 
         then:
-        appUser == null
+        thrown NotFoundException
     }
 
     @Unroll
     def "findByEmailAndPassword with email #input_email and password #input_password and not exiting user"(String input_email, String input_password) {
         when:
-        AppUser appUser = appUserService.findByEmailAndPassword(input_email, input_password)
+        appUserService.findByEmailAndPassword(input_email, input_password)
 
         then:
-        appUser == null
+        thrown NotFoundException
 
         where:
         input_email   | input_password
@@ -352,10 +368,10 @@ class AppUserServiceTest extends ServiceSpecification {
         String password = APPUSER_PASSWORD
 
         when:
-        AppUser appUser = appUserService.findByEmailAndPassword(email, password)
+        appUserService.findByEmailAndPassword(email, password)
 
         then:
-        appUser == null
+        thrown NotFoundException
     }
 
     def "findByEmailAndPassword with not exiting user but wrong password"() {
@@ -367,10 +383,10 @@ class AppUserServiceTest extends ServiceSpecification {
         String password = "wrong_password"
 
         when:
-        AppUser appUser = appUserService.findByEmailAndPassword(email, password)
+        appUserService.findByEmailAndPassword(email, password)
 
         then:
-        appUser == null
+        thrown NotFoundException
     }
 
     @Unroll
@@ -379,10 +395,10 @@ class AppUserServiceTest extends ServiceSpecification {
         appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         when:
-        AppUser appUser = appUserService.findByEmailAndPassword(input_email, input_password)
+        appUserService.findByEmailAndPassword(input_email, input_password)
 
         then:
-        appUser == null
+        thrown NotFoundException
 
         where:
         input_email   | input_password

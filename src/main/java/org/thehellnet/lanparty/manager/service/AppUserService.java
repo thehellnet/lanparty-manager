@@ -3,7 +3,10 @@ package org.thehellnet.lanparty.manager.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thehellnet.lanparty.manager.exception.appuser.*;
+import org.thehellnet.lanparty.manager.exception.controller.AlreadyPresentException;
+import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
+import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
+import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
@@ -28,19 +31,19 @@ public class AppUserService extends AbstractService {
     }
 
     @Transactional
-    public AppUser create(String email, String password, String name) throws AppUserException {
+    public AppUser create(String email, String password, String name) {
         if (!EmailUtility.validate(email)) {
-            throw new AppUserInvalidMailException();
+            throw new InvalidDataException("E-mail address not valid");
         }
 
         AppUser appUser = appUserRepository.findByEmail(email);
         if (appUser != null) {
-            throw new AppUserAlreadyPresentException();
+            throw new AlreadyPresentException("E-mail address already registered");
         }
 
         String encryptedPassword = PasswordUtility.hash(password);
         if (encryptedPassword == null) {
-            throw new AppUserInvalidPasswordException();
+            throw new InvalidDataException("Password not valid");
         }
 
         appUser = new AppUser(email, encryptedPassword);
@@ -56,7 +59,11 @@ public class AppUserService extends AbstractService {
 
     @Transactional(readOnly = true)
     public AppUser get(Long id) {
-        return appUserRepository.findById(id).orElse(null);
+        AppUser appUser = appUserRepository.findById(id).orElse(null);
+        if (appUser == null) {
+            throw new NotFoundException();
+        }
+        return appUser;
     }
 
     @Transactional(readOnly = true)
@@ -65,19 +72,23 @@ public class AppUserService extends AbstractService {
     }
 
     @Transactional
-    public AppUser update(Long id, String name, String password, String[] appUserRoles) throws AppUserNotFoundException {
+    public AppUser update(Long id, String name, String password, String[] appUserRoles) {
         AppUser appUser = appUserRepository.findById(id).orElse(null);
         if (appUser == null) {
-            throw new AppUserNotFoundException();
+            throw new NotFoundException();
         }
+
+        boolean changed = false;
 
         if (name != null && name.strip().length() > 0) {
             appUser.setName(name);
+            changed = true;
         }
 
         if (password != null && password.strip().length() > 0) {
             String encryptedPassword = PasswordUtility.hash(password);
             appUser.setPassword(encryptedPassword);
+            changed = true;
         }
 
         if (appUserRoles != null) {
@@ -86,16 +97,21 @@ public class AppUserService extends AbstractService {
                 roles.add(Role.valueOf(roleName));
             }
             appUser.setAppUserRoles(roles);
+            changed = true;
+        }
+
+        if (!changed) {
+            throw new UnchangedException();
         }
 
         return appUserRepository.save(appUser);
     }
 
     @Transactional
-    public void delete(Long id) throws AppUserNotFoundException {
+    public void delete(Long id) {
         AppUser appUser = appUserRepository.findById(id).orElse(null);
         if (appUser == null) {
-            throw new AppUserNotFoundException();
+            throw new NotFoundException();
         }
 
         appUserRepository.delete(appUser);
@@ -104,21 +120,22 @@ public class AppUserService extends AbstractService {
     @Transactional(readOnly = true)
     public AppUser findByEmail(String email) {
         if (!EmailUtility.validateForLogin(email)) {
-            return null;
+            throw new NotFoundException();
         }
 
-        return appUserRepository.findByEmail(email);
+        AppUser appUser = appUserRepository.findByEmail(email);
+        if (appUser == null) {
+            throw new NotFoundException();
+        }
+
+        return appUser;
     }
 
     @Transactional(readOnly = true)
     public AppUser findByEmailAndPassword(String email, String password) {
         AppUser appUser = findByEmail(email);
-        if (appUser == null) {
-            return null;
-        }
-
         if (!PasswordUtility.verify(appUser.getPassword(), password)) {
-            return null;
+            throw new NotFoundException();
         }
 
         return appUser;
@@ -126,33 +143,15 @@ public class AppUserService extends AbstractService {
 
     @Transactional(readOnly = true)
     public boolean hasAllRoles(AppUser appUser, Role... roles) {
-        if (roles == null) {
-            return false;
-        }
-
-        appUser = appUserRepository.getOne(appUser.getId());
-
-        if (roles.length == 0) {
-            return appUser.getAppUserRoles().size() == 0;
-        }
-
-        Map<Role, Boolean> roleBooleanMap = new HashMap<>();
-
-        for (Role role : roles) {
-            roleBooleanMap.put(role, appUser.getAppUserRoles().contains(role));
-        }
-
-        for (Boolean item : roleBooleanMap.values()) {
-            if (!item) {
-                return false;
-            }
-        }
-
-        return true;
+        return hasRoles(appUser, true, roles);
     }
 
     @Transactional(readOnly = true)
     public boolean hasAnyRoles(AppUser appUser, Role... roles) {
+        return hasRoles(appUser, false, roles);
+    }
+
+    private boolean hasRoles(AppUser appUser, boolean all, Role[] roles) {
         if (roles == null) {
             return false;
         }
@@ -170,18 +169,17 @@ public class AppUserService extends AbstractService {
         }
 
         for (Boolean item : roleBooleanMap.values()) {
-            if (item) {
-                return true;
-            }
+            if (all && !item) return false;
+            if (!all && item) return true;
         }
 
-        return false;
+        return all;
     }
 
     @Transactional
     public AppUserToken newToken(AppUser appUser) {
         if (appUser == null) {
-            return null;
+            throw new NotFoundException();
         }
 
         String token = TokenUtility.generate();

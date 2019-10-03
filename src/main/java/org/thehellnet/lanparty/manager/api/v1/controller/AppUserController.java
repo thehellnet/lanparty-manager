@@ -8,12 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
-import org.thehellnet.lanparty.manager.exception.appuser.AppUserException;
-import org.thehellnet.lanparty.manager.exception.appuser.AppUserNotFoundException;
 import org.thehellnet.lanparty.manager.model.constant.Role;
-import org.thehellnet.lanparty.manager.model.dto.request.appuser.AppUserLoginRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.appuser.LoginAppUserRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.appuser.CreateAppUserRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.appuser.AppUserLoginResponseDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.appuser.UpdateAppUserRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.response.appuser.LoginAppUserResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.service.AppUserService;
@@ -44,15 +43,7 @@ public class AppUserController {
     @CheckRoles(Role.APPUSER_ADMIN)
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateAppUserRequestDTO dto) {
-        AppUser user;
-
-        try {
-            user = appUserService.create(dto.email, dto.password, dto.name);
-        } catch (AppUserException e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.unprocessableEntity().build();
-        }
-
+        AppUser user = appUserService.create(dto.email, dto.password, dto.name);
         return ResponseEntity.created(URI.create("")).body(user);
     }
 
@@ -61,10 +52,6 @@ public class AppUserController {
     @RequestMapping(method = RequestMethod.GET, path = "{id}")
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
         AppUser user = appUserService.get(id);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(user);
     }
 
@@ -79,25 +66,8 @@ public class AppUserController {
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
     @RequestMapping(method = RequestMethod.PATCH, path = "{id}")
-    public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id,
-                                 @RequestParam(required = false) String name,
-                                 @RequestParam(required = false) String password,
-                                 @RequestParam(required = false) String[] appUserRoles) {
-        if ((name == null || name.strip().length() == 0)
-                && (password == null || password.strip().length() == 0)
-                && (appUserRoles == null || appUserRoles.length == 0)) {
-            return ResponseEntity.noContent().build();
-        }
-
-        AppUser user;
-
-        try {
-            user = appUserService.update(id, name, password, appUserRoles);
-        } catch (AppUserNotFoundException e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
-
+    public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateAppUserRequestDTO dto) {
+        AppUser user = appUserService.update(id, dto.name, dto.password, dto.appUserRoles);
         return ResponseEntity.ok(user);
     }
 
@@ -105,30 +75,18 @@ public class AppUserController {
     @CheckRoles(Role.APPUSER_ADMIN)
     @RequestMapping(method = RequestMethod.DELETE, path = "{id}")
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        try {
-            appUserService.delete(id);
-        } catch (AppUserNotFoundException e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok().build();
+        appUserService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(path = "/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody AppUserLoginRequestDTO dto) {
+    @RequestMapping(method = RequestMethod.POST, path = "/login")
+    public ResponseEntity login(@RequestBody LoginAppUserRequestDTO dto) {
         AppUser appUser = appUserService.findByEmailAndPassword(dto.email, dto.password);
-        if (appUser == null
-                || !appUserService.hasAllRoles(appUser, Role.LOGIN)) {
-            return ResponseEntity.notFound().build();
-        }
-
         AppUserToken appUserToken = appUserService.newToken(appUser);
 
-        AppUserLoginResponseDTO body = new AppUserLoginResponseDTO()
-                .setToken(appUserToken.getToken())
-                .setExpiration(appUserToken.getExpirationDateTime());
-
+        LoginAppUserResponseDTO body = new LoginAppUserResponseDTO();
+        body.token = appUserToken.getToken();
+        body.expiration = appUserToken.getExpirationDateTime();
         return ResponseEntity.ok(body);
     }
 }
