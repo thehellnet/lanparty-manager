@@ -10,6 +10,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.service.AppUserTokenService;
 
@@ -37,26 +38,16 @@ public class TokenControllerAspect {
         HttpServletRequest servletRequest = (HttpServletRequest) params[0];
         String token = servletRequest.getHeader("X-Auth-Token");
         if (token == null) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .build();
+            throw new UnauthorizedException();
         }
 
         AppUser appUser = appUserTokenService.getAppUserByToken(token);
         if (appUser == null) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .build();
+            throw new UnauthorizedException();
         }
 
         params[1] = appUser;
 
-        try {
-            return joinPoint.proceed(params);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            logger.error(throwable.getMessage());
-            throw throwable;
-        }
+        return joinPoint.proceed(params);
     }
 }

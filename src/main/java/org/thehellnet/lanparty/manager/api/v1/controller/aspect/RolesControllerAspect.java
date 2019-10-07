@@ -8,9 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.service.AppUserService;
 
@@ -40,15 +39,11 @@ public class RolesControllerAspect {
 
         if (annotation.mode == CheckRoles.Mode.ALL) {
             if (!appUserService.hasAllRoles(appUser, annotation.value())) {
-                return ResponseEntity
-                        .status(HttpStatus.UNAUTHORIZED)
-                        .build();
+                throw new UnauthorizedException();
             }
         } else if (annotation.mode == CheckRoles.Mode.ANY) {
             if (!appUserService.hasAnyRoles(appUser, annotation.value())) {
-                return ResponseEntity
-                        .status(HttpStatus.UNAUTHORIZED)
-                        .build();
+                throw new UnauthorizedException();
             }
         }
 
