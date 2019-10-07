@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
-import org.thehellnet.lanparty.manager.model.dto.request.appuser.LoginAppUserRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.appuser.CreateAppUserRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.appuser.LoginAppUserRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.appuser.UpdateAppUserRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.appuser.LoginAppUserResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
@@ -85,6 +85,7 @@ public class AppUserController {
         AppUserToken appUserToken = appUserService.newToken(appUser);
 
         LoginAppUserResponseDTO body = new LoginAppUserResponseDTO();
+        body.id = appUserToken.getId();
         body.token = appUserToken.getToken();
         body.expiration = appUserToken.getExpirationDateTime();
         return ResponseEntity.ok(body);
