@@ -30,7 +30,7 @@ public class SeatService extends AbstractService {
     public Seat findByAddress(String address) {
         Seat seat = seatRepository.findByIpAddress(address);
         if (seat == null) {
-            throw new NotFoundException();
+            throw new NotFoundException("Seat not found");
         }
 
         return seat;
