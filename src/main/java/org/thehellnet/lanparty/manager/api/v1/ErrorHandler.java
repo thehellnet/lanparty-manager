@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.api.v1;
 
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +24,14 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
             }
         }
 
-        Object responseBody = new Object();
+        JSONObject responseBody = new JSONObject();
         if (e.getMessage() != null && e.getMessage().length() > 0) {
-            responseBody = e.getMessage();
+            responseBody.put("message", e.getMessage());
         }
 
         return ResponseEntity
                 .status(httpStatus)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(responseBody);
+                .body(responseBody.toString());
     }
 }
