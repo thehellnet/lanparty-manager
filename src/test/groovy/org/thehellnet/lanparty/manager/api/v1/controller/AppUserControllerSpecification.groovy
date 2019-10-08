@@ -16,10 +16,12 @@ class AppUserControllerSpecification extends ControllerSpecification {
     private static final String APPUSER_EMAIL = "email@email.com"
     private static final String APPUSER_PASSWORD = "password"
     private static final String APPUSER_NAME = "Name"
+    private static final String APPUSER_BARCODE = "0123456789"
 
     private static final String APPUSER_PASSWORD_NEW = "password_new"
     private static final String APPUSER_NAME_NEW = "Name2"
     private static final String[] APPUSER_ROLES_NEW = [Role.LOGIN.name, Role.APPUSER_CHANGE_PASSWORD.name] as String[]
+    private static final String APPUSER_BARCODE_NEW = "9876543210"
 
     @Autowired
     private AppUserService appUserService
@@ -29,12 +31,13 @@ class AppUserControllerSpecification extends ControllerSpecification {
     }
 
     @Unroll
-    def "create success with #email email, #password password, #name name"(String email, String password, String name) {
+    def "create success with '#email' email, '#password' password, '#name' name and '#barcode' barcode"(String email, String password, String name, String barcode) {
         given:
         def requestBody = new JSONObject()
         requestBody.put("email", email)
         requestBody.put("password", password)
         requestBody.put("name", name)
+        requestBody.put("barcode", barcode)
 
         when:
         def rawResponse = mockMvc
@@ -65,9 +68,19 @@ class AppUserControllerSpecification extends ControllerSpecification {
         appUser.getString("email") == email
 
         appUser.has("name")
-        if (name != null && name.length() > 0) {
+        if (name != null) {
             appUser.get("name") instanceof String
             appUser.getString("name") == name
+        } else {
+            appUser.isNull("name")
+        }
+
+        appUser.has("barcode")
+        if (barcode != null) {
+            appUser.get("barcode") instanceof String
+            appUser.getString("barcode") == barcode
+        } else {
+            appUser.isNull("barcode")
         }
 
         appUser.has("appUserRoles")
@@ -82,15 +95,21 @@ class AppUserControllerSpecification extends ControllerSpecification {
         "check number of appUsers in database"() == 2
 
         where:
-        email         | password         | name
-        APPUSER_EMAIL | APPUSER_PASSWORD | null
-        APPUSER_EMAIL | APPUSER_PASSWORD | ""
-        APPUSER_EMAIL | APPUSER_PASSWORD | APPUSER_NAME
+        email         | password         | name         | barcode
+        APPUSER_EMAIL | APPUSER_PASSWORD | null         | null
+        APPUSER_EMAIL | APPUSER_PASSWORD | null         | ""
+        APPUSER_EMAIL | APPUSER_PASSWORD | null         | APPUSER_BARCODE
+        APPUSER_EMAIL | APPUSER_PASSWORD | ""           | null
+        APPUSER_EMAIL | APPUSER_PASSWORD | ""           | ""
+        APPUSER_EMAIL | APPUSER_PASSWORD | ""           | APPUSER_BARCODE
+        APPUSER_EMAIL | APPUSER_PASSWORD | APPUSER_NAME | null
+        APPUSER_EMAIL | APPUSER_PASSWORD | APPUSER_NAME | ""
+        APPUSER_EMAIL | APPUSER_PASSWORD | APPUSER_NAME | APPUSER_BARCODE
 
     }
 
     @Unroll
-    def "create error with #email email, #password password, #name name"(String email, String password, String name) {
+    def "create error with '#email' email, '#password' password, '#name' name and '#barcode' barcode"(String email, String password, String name, String barcode) {
         given:
         def requestBody = new JSONObject()
         requestBody.put("email", email)
@@ -115,35 +134,79 @@ class AppUserControllerSpecification extends ControllerSpecification {
         "check number of appUsers in database"() == 1
 
         where:
-        email         | password         | name
-        null          | null             | null
-        null          | null             | ""
-        null          | null             | APPUSER_NAME
-        null          | ""               | null
-        null          | ""               | ""
-        null          | ""               | APPUSER_NAME
-        null          | APPUSER_PASSWORD | null
-        null          | APPUSER_PASSWORD | ""
-        null          | APPUSER_PASSWORD | APPUSER_NAME
-        ""            | null             | null
-        ""            | null             | ""
-        ""            | null             | APPUSER_NAME
-        ""            | ""               | null
-        ""            | ""               | ""
-        ""            | ""               | APPUSER_NAME
-        ""            | APPUSER_PASSWORD | null
-        ""            | APPUSER_PASSWORD | ""
-        ""            | APPUSER_PASSWORD | APPUSER_NAME
-        APPUSER_EMAIL | null             | null
-        APPUSER_EMAIL | null             | ""
-        APPUSER_EMAIL | null             | APPUSER_NAME
-        APPUSER_EMAIL | ""               | null
-        APPUSER_EMAIL | ""               | ""
-        APPUSER_EMAIL | ""               | APPUSER_NAME
-    }
-
-    private int "check number of appUsers in database"() {
-        return appUserService.getAll().size()
+        email         | password         | name         | barcode
+        null          | null             | null         | null
+        null          | null             | null         | ""
+        null          | null             | null         | APPUSER_BARCODE
+        null          | null             | ""           | null
+        null          | null             | ""           | ""
+        null          | null             | ""           | APPUSER_BARCODE
+        null          | null             | APPUSER_NAME | null
+        null          | null             | APPUSER_NAME | ""
+        null          | null             | APPUSER_NAME | APPUSER_BARCODE
+        null          | ""               | null         | null
+        null          | ""               | null         | ""
+        null          | ""               | null         | APPUSER_BARCODE
+        null          | ""               | ""           | null
+        null          | ""               | ""           | ""
+        null          | ""               | ""           | APPUSER_BARCODE
+        null          | ""               | APPUSER_NAME | null
+        null          | ""               | APPUSER_NAME | ""
+        null          | ""               | APPUSER_NAME | APPUSER_BARCODE
+        null          | APPUSER_PASSWORD | null         | null
+        null          | APPUSER_PASSWORD | null         | ""
+        null          | APPUSER_PASSWORD | null         | APPUSER_BARCODE
+        null          | APPUSER_PASSWORD | ""           | null
+        null          | APPUSER_PASSWORD | ""           | ""
+        null          | APPUSER_PASSWORD | ""           | APPUSER_BARCODE
+        null          | APPUSER_PASSWORD | APPUSER_NAME | null
+        null          | APPUSER_PASSWORD | APPUSER_NAME | ""
+        null          | APPUSER_PASSWORD | APPUSER_NAME | APPUSER_BARCODE
+        ""            | null             | null         | null
+        ""            | null             | null         | ""
+        ""            | null             | null         | APPUSER_BARCODE
+        ""            | null             | ""           | null
+        ""            | null             | ""           | ""
+        ""            | null             | ""           | APPUSER_BARCODE
+        ""            | null             | APPUSER_NAME | null
+        ""            | null             | APPUSER_NAME | ""
+        ""            | null             | APPUSER_NAME | APPUSER_BARCODE
+        ""            | ""               | null         | null
+        ""            | ""               | null         | ""
+        ""            | ""               | null         | APPUSER_BARCODE
+        ""            | ""               | ""           | null
+        ""            | ""               | ""           | ""
+        ""            | ""               | ""           | APPUSER_BARCODE
+        ""            | ""               | APPUSER_NAME | null
+        ""            | ""               | APPUSER_NAME | ""
+        ""            | ""               | APPUSER_NAME | APPUSER_BARCODE
+        ""            | APPUSER_PASSWORD | null         | null
+        ""            | APPUSER_PASSWORD | null         | ""
+        ""            | APPUSER_PASSWORD | null         | APPUSER_BARCODE
+        ""            | APPUSER_PASSWORD | ""           | null
+        ""            | APPUSER_PASSWORD | ""           | ""
+        ""            | APPUSER_PASSWORD | ""           | APPUSER_BARCODE
+        ""            | APPUSER_PASSWORD | APPUSER_NAME | null
+        ""            | APPUSER_PASSWORD | APPUSER_NAME | ""
+        ""            | APPUSER_PASSWORD | APPUSER_NAME | APPUSER_BARCODE
+        APPUSER_EMAIL | null             | null         | null
+        APPUSER_EMAIL | null             | null         | ""
+        APPUSER_EMAIL | null             | null         | APPUSER_BARCODE
+        APPUSER_EMAIL | null             | ""           | null
+        APPUSER_EMAIL | null             | ""           | ""
+        APPUSER_EMAIL | null             | ""           | APPUSER_BARCODE
+        APPUSER_EMAIL | null             | APPUSER_NAME | null
+        APPUSER_EMAIL | null             | APPUSER_NAME | ""
+        APPUSER_EMAIL | null             | APPUSER_NAME | APPUSER_BARCODE
+        APPUSER_EMAIL | ""               | null         | null
+        APPUSER_EMAIL | ""               | null         | ""
+        APPUSER_EMAIL | ""               | null         | APPUSER_BARCODE
+        APPUSER_EMAIL | ""               | ""           | null
+        APPUSER_EMAIL | ""               | ""           | ""
+        APPUSER_EMAIL | ""               | ""           | APPUSER_BARCODE
+        APPUSER_EMAIL | ""               | APPUSER_NAME | null
+        APPUSER_EMAIL | ""               | APPUSER_NAME | ""
+        APPUSER_EMAIL | ""               | APPUSER_NAME | APPUSER_BARCODE
     }
 
 //    MockHttpServletResponse doPost(String url, JSONObject requestBody = new JSONObject()) {
@@ -402,7 +465,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
 //        appUserId != null
 //        appUserToken != null
 //
-//        when: "Token of appUser \"admin\""
+//        when: "Token of appUser 'admin'"
 //        JSONObject requestBody = new JSONObject()
 //        requestBody.put("oldPassword", APPUSER_PASSWORD)
 //        requestBody.put("newPassword", APPUSER_PASSWORD_NEW)
@@ -430,7 +493,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
 //        !response.getBoolean("success")
 //
 //        when:
-//        "Token of appUser \"${APPUSER_NAME}\""
+//        "Token of appUser '${APPUSER_NAME}'"
 //        requestBody = new JSONObject()
 //        requestBody.put("oldPassword", APPUSER_PASSWORD)
 //        requestBody.put("newPassword", APPUSER_PASSWORD_NEW)
@@ -500,4 +563,8 @@ class AppUserControllerSpecification extends ControllerSpecification {
 //
 //        return data.getString("token")
 //    }
+
+    private int "check number of appUsers in database"() {
+        return appUserService.getAll().size()
+    }
 }

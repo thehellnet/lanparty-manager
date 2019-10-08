@@ -48,11 +48,11 @@ public class AppUserService extends AbstractService {
 
         appUser = new AppUser(email, encryptedPassword);
 
-        if (name != null && name.length() > 0) {
+        if (name != null) {
             appUser.setName(name);
         }
 
-        if (barcode != null && barcode.length() > 0) {
+        if (barcode != null) {
             appUser.setBarcode(barcode);
         }
 
@@ -77,12 +77,12 @@ public class AppUserService extends AbstractService {
 
         boolean changed = false;
 
-        if (name != null && name.strip().length() > 0) {
-            appUser.setName(name);
+        if (name != null) {
+            appUser.setName(name.strip());
             changed = true;
         }
 
-        if (password != null && password.strip().length() > 0) {
+        if (password != null && password.length() > 0) {
             String encryptedPassword = PasswordUtility.hash(password);
             appUser.setPassword(encryptedPassword);
             changed = true;
@@ -97,8 +97,8 @@ public class AppUserService extends AbstractService {
             changed = true;
         }
 
-        if (barcode != null && barcode.strip().length() > 0) {
-            appUser.setBarcode(barcode);
+        if (barcode != null) {
+            appUser.setBarcode(barcode.strip());
             changed = true;
         }
 
@@ -130,6 +130,16 @@ public class AppUserService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
+    public AppUser findByEmailAndPassword(String email, String password) {
+        AppUser appUser = findByEmail(email);
+        if (!PasswordUtility.verify(appUser.getPassword(), password)) {
+            throw new NotFoundException();
+        }
+
+        return appUser;
+    }
+
+    @Transactional(readOnly = true)
     public AppUser findByBarcode(String barcode) {
         AppUser appUser = appUserRepository.findByBarcode(barcode);
         if (appUser == null) {
@@ -139,15 +149,6 @@ public class AppUserService extends AbstractService {
         return appUser;
     }
 
-    @Transactional(readOnly = true)
-    public AppUser findByEmailAndPassword(String email, String password) {
-        AppUser appUser = findByEmail(email);
-        if (!PasswordUtility.verify(appUser.getPassword(), password)) {
-            throw new NotFoundException();
-        }
-
-        return appUser;
-    }
 
     @Transactional(readOnly = true)
     public boolean hasAllRoles(AppUser appUser, Role... roles) {

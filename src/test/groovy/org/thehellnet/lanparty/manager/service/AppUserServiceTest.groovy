@@ -41,8 +41,8 @@ class AppUserServiceTest extends ServiceSpecification {
         appUser != null
         appUser.id != null
         appUser.email == email
-        appUser.name == name != null ? name : ""
-        appUser.barcode == barcode != null ? barcode : ""
+        appUser.name == name
+        appUser.barcode == barcode
         appUser.appUserRoles.size() == 0
 
         where:
@@ -59,12 +59,21 @@ class AppUserServiceTest extends ServiceSpecification {
     }
 
 
-    def "create with invalid email"() {
+    def "create with invalid email"(String email, String password) {
         when:
-        appUserService.create("not_valid_email", APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)
+        appUserService.create(email, password, APPUSER_NAME, APPUSER_BARCODE)
 
         then:
         thrown InvalidDataException
+
+        where:
+        email             | password
+        null              | null
+        null              | ""
+        ""                | null
+        ""                | ""
+        "not_valid_email" | null
+        "not_valid_email" | ""
     }
 
     def "create with already exiting email"() {
@@ -76,6 +85,18 @@ class AppUserServiceTest extends ServiceSpecification {
 
         then:
         thrown AlreadyPresentException
+    }
+
+    @Unroll
+    def "create with \"#password\" password"(String password) {
+        when:
+        appUserService.create(APPUSER_EMAIL, password, APPUSER_NAME, APPUSER_BARCODE)
+
+        then:
+        thrown InvalidDataException
+
+        where:
+        password << [null, ""]
     }
 
     def "get with existing id"() {
@@ -90,6 +111,7 @@ class AppUserServiceTest extends ServiceSpecification {
         appUser.id == userId
         appUser.email == APPUSER_EMAIL
         appUser.name == null
+        appUser.barcode == null
         appUser.appUserRoles.size() == 0
     }
 
@@ -98,7 +120,7 @@ class AppUserServiceTest extends ServiceSpecification {
         Long appUserId = 12345678
 
         when:
-        AppUser appUser = appUserService.get(appUserId)
+        appUserService.get(appUserId)
 
         then:
         thrown NotFoundException
@@ -152,7 +174,7 @@ class AppUserServiceTest extends ServiceSpecification {
     @Unroll
     def "update UnchangedException #name name, #password password and #appUserRoles appUserRoles"(String name, String password, String[] appUserRoles, String barcode) {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME, barcode)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME, APPUSER_BARCODE)).id
 
         when:
         appUserService.update(appUserId, name, password, appUserRoles, barcode)
@@ -163,19 +185,13 @@ class AppUserServiceTest extends ServiceSpecification {
         where:
         name | password | appUserRoles | barcode
         null | null     | null         | null
-        null | null     | null         | ""
         null | ""       | null         | null
-        null | ""       | null         | ""
-        ""   | null     | null         | null
-        ""   | null     | null         | ""
-        ""   | ""       | null         | null
-        ""   | ""       | null         | ""
     }
 
     @Unroll
-    def "update with #name name, #password password and #appUserRoles appUserRoles"(String name, String password, String[] appUserRoles, String barcode) {
+    def "update with \"#name\" name, \"#password\" password, \"#appUserRoles\" appUserRolesand \"#barcode\" barcode"(String name, String password, String[] appUserRoles, String barcode) {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME, APPUSER_BARCODE)).id
 
         when:
         appUserService.update(appUserId, name, password, appUserRoles, barcode)
@@ -187,9 +203,10 @@ class AppUserServiceTest extends ServiceSpecification {
         appUser != null
         appUser.id == appUserId
         appUser.email == APPUSER_EMAIL
-        PasswordUtility.verify(appUser.password, (password != null && password.length() > 0 ? password : APPUSER_PASSWORD))
-        appUser.name == (name != null && name.length() > 0 ? name : APPUSER_NAME)
-        appUser.appUserRoles.size() == ((appUserRoles != null && appUserRoles.length > 0) ? appUserRoles.length : 0)
+        PasswordUtility.verify(appUser.password, ((password != null && password.length() > 0) ? password : APPUSER_PASSWORD))
+        appUser.name == (name != null ? name : APPUSER_NAME)
+        appUser.barcode == (barcode != null ? barcode : APPUSER_BARCODE)
+        appUser.appUserRoles.size() == (appUserRoles != null ? appUserRoles.length : 0)
 
         where:
         name             | password             | appUserRoles                  | barcode
@@ -269,7 +286,7 @@ class AppUserServiceTest extends ServiceSpecification {
         Long appUserId = 12345678
 
         when:
-        appUserService.update(appUserId, APPUSER_NAME_NEW, APPUSER_PASSWORD_NEW, [Role.LOGIN.name] as String[])
+        appUserService.update(appUserId, APPUSER_NAME_NEW, APPUSER_PASSWORD_NEW, [Role.LOGIN.name] as String[], APPUSER_BARCODE_NEW)
 
         then:
         thrown NotFoundException
@@ -277,13 +294,16 @@ class AppUserServiceTest extends ServiceSpecification {
 
     def "delete"() {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD))).id
 
         when:
         appUserService.delete(appUserId)
 
         then:
         noExceptionThrown()
+
+        and:
+        appUserRepository.findAll().size() == 1
     }
 
     def "delete with not existing ID"() {
@@ -447,6 +467,39 @@ class AppUserServiceTest extends ServiceSpecification {
         input_email   | input_password
         APPUSER_EMAIL | null
         APPUSER_EMAIL | ""
+    }
+
+    def "findByBarcode with not registered barcode"() {
+        when:
+        appUserService.findByBarcode(APPUSER_BARCODE)
+
+        then:
+        thrown NotFoundException
+    }
+
+    def "findByBarcode with registered barcode"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME, APPUSER_BARCODE))
+
+        when:
+        AppUser appUser = appUserService.findByBarcode(APPUSER_BARCODE)
+
+        then:
+        appUser != null
+        appUser.email == APPUSER_EMAIL
+        appUser.name == APPUSER_NAME
+        appUser.barcode == APPUSER_BARCODE
+    }
+
+    def "findByBarcode with user and wrong barcode"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME, APPUSER_BARCODE))
+
+        when:
+        appUserService.findByBarcode(APPUSER_BARCODE_NEW)
+
+        then:
+        thrown NotFoundException
     }
 
     @Unroll

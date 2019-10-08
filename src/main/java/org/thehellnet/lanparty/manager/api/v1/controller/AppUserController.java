@@ -67,7 +67,7 @@ public class AppUserController {
     @CheckRoles(Role.APPUSER_ADMIN)
     @RequestMapping(method = RequestMethod.PATCH, path = "{id}")
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateAppUserRequestDTO dto) {
-        AppUser user = appUserService.update(id, dto.name, dto.password, dto.appUserRoles,dto.barcode);
+        AppUser user = appUserService.update(id, dto.name, dto.password, dto.appUserRoles, dto.barcode);
         return ResponseEntity.ok(user);
     }
 

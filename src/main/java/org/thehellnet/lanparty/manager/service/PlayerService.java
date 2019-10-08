@@ -83,14 +83,4 @@ public class PlayerService extends AbstractService {
         }
         return player;
     }
-
-    @Transactional(readOnly = true)
-    public Player findByBarcode(String barcode) {
-        Player player = playerRepository.findByBarcode(barcode);
-        if (player == null) {
-            throw new NotFoundException();
-        }
-
-        return player;
-    }
 }

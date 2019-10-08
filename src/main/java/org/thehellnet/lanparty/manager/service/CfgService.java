@@ -53,7 +53,7 @@ public class CfgService extends AbstractService {
         }
 
         Seat seat = findSeatByIpAddress(remoteAddress);
-        Player player = findPlayerByBarcode(barcode);
+        Player player = null;//findPlayerByBarcode(barcode);
 
         Tournament tournament = seat.getTournament();
         String tournamentCfg = tournament.getCfg();
@@ -81,7 +81,7 @@ public class CfgService extends AbstractService {
         }
 
         Seat seat = findSeatByIpAddress(remoteAddress);
-        Player player = findPlayerByBarcode(barcode);
+        Player player = null;//findPlayerByBarcode(barcode);
 
         Tournament tournament = seat.getTournament();
 
@@ -100,7 +100,7 @@ public class CfgService extends AbstractService {
             throw new InvalidDataException("Invalid playerId or gameId");
         }
 
-        Player player = findPlayerById(playerId);
+        Player player = null;//findPlayerById(playerId);
         Game game = findGameById(gameId);
 
         Cfg cfg = cfgRepository.findByPlayerAndGame(player, game);
@@ -112,22 +112,6 @@ public class CfgService extends AbstractService {
         cfg = cfgRepository.save(cfg);
 
         return cfg;
-    }
-
-    private Player findPlayerById(Long id) {
-        Player player = playerRepository.findById(id).orElse(null);
-        if (player == null) {
-            throw new NotFoundException();
-        }
-        return player;
-    }
-
-    private Player findPlayerByBarcode(String barcode) {
-        Player player = playerRepository.findByBarcode(barcode);
-        if (player == null) {
-            throw new NotFoundException();
-        }
-        return player;
     }
 
     private Seat findSeatByIpAddress(String remoteAddress) {
