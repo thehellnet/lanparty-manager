@@ -1,6 +1,5 @@
 package org.thehellnet.lanparty.manager.api.v1.controller
 
-
 import org.json.JSONArray
 import org.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,7 +7,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.model.constant.Role
-import org.thehellnet.lanparty.manager.repository.AppUserRepository
 import org.thehellnet.lanparty.manager.service.AppUserService
 import spock.lang.Unroll
 
