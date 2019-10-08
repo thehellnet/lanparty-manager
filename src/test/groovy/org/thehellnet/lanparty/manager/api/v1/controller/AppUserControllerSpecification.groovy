@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.model.constant.Role
+import org.thehellnet.lanparty.manager.repository.AppUserRepository
 import org.thehellnet.lanparty.manager.service.AppUserService
 import spock.lang.Unroll
 
@@ -207,6 +208,86 @@ class AppUserControllerSpecification extends ControllerSpecification {
         APPUSER_EMAIL | ""               | APPUSER_NAME | null
         APPUSER_EMAIL | ""               | APPUSER_NAME | ""
         APPUSER_EMAIL | ""               | APPUSER_NAME | APPUSER_BARCODE
+    }
+
+    def "read"() {
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        when:
+        JSONArray appUsers = new JSONArray(rawResponse.contentAsString)
+
+        then:
+        appUsers.length() == 1
+
+        when:
+        JSONObject appUser = appUsers.getJSONObject(0)
+
+        then:
+        appUser.has("id")
+        appUser.get("id") instanceof Integer
+
+        appUser.has("email")
+        appUser.get("email") instanceof String
+        appUser.getString("email") == "admin"
+    }
+
+    def "read with more than one user"() {
+        given:
+        appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        when:
+        JSONArray appUsers = new JSONArray(rawResponse.contentAsString)
+
+        then:
+        appUsers.length() == 2
+
+        when:
+        JSONObject appUser = appUsers.getJSONObject(0)
+
+        then:
+        appUser.has("id")
+        appUser.get("id") instanceof Integer
+
+        appUser.has("email")
+        appUser.get("email") instanceof String
+        appUser.getString("email") == "admin"
+
+        when:
+        appUser = appUsers.getJSONObject(1)
+
+        then:
+        appUser.has("id")
+        appUser.get("id") instanceof Integer
+
+        appUser.has("email")
+        appUser.get("email") instanceof String
+        appUser.getString("email") == APPUSER_EMAIL
     }
 
 //    MockHttpServletResponse doPost(String url, JSONObject requestBody = new JSONObject()) {
