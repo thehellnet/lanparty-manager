@@ -17,9 +17,11 @@ class AppUserServiceTest extends ServiceSpecification {
     private static final String APPUSER_EMAIL = "user@domain.tdl"
     private static final String APPUSER_NAME = "User"
     private static final String APPUSER_PASSWORD = "password"
+    private static final String APPUSER_BARCODE = "0123456789"
 
     private static final String APPUSER_NAME_NEW = "New name"
     private static final String APPUSER_PASSWORD_NEW = "passwordnew"
+    private static final String APPUSER_BARCODE_NEW = "9876543210"
 
     @Autowired
     private AppUserRepository appUserRepository
@@ -30,45 +32,36 @@ class AppUserServiceTest extends ServiceSpecification {
     @Autowired
     private AppUserService appUserService
 
-    def "create normal user"() {
+    @Unroll
+    def "create valid user with \"#email\" \"#password\" \"#name\" \"#barcode\""(String email, String password, String name, String barcode) {
         when:
-        AppUser appUser = appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)
+        AppUser appUser = appUserService.create(email, password, name, barcode)
 
         then:
         appUser != null
         appUser.id != null
-        appUser.email == APPUSER_EMAIL
-        appUser.name == APPUSER_NAME
+        appUser.email == email
+        appUser.name == name != null ? name : ""
+        appUser.barcode == barcode != null ? barcode : ""
         appUser.appUserRoles.size() == 0
+
+        where:
+        email         | password         | name         | barcode
+        APPUSER_EMAIL | APPUSER_PASSWORD | null         | null
+        APPUSER_EMAIL | APPUSER_PASSWORD | null         | ""
+        APPUSER_EMAIL | APPUSER_PASSWORD | null         | APPUSER_BARCODE
+        APPUSER_EMAIL | APPUSER_PASSWORD | ""           | null
+        APPUSER_EMAIL | APPUSER_PASSWORD | ""           | ""
+        APPUSER_EMAIL | APPUSER_PASSWORD | ""           | APPUSER_BARCODE
+        APPUSER_EMAIL | APPUSER_PASSWORD | APPUSER_NAME | null
+        APPUSER_EMAIL | APPUSER_PASSWORD | APPUSER_NAME | ""
+        APPUSER_EMAIL | APPUSER_PASSWORD | APPUSER_NAME | APPUSER_BARCODE
     }
 
-    def "create normal user with null name"() {
-        when:
-        AppUser appUser = appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, null)
-
-        then:
-        appUser != null
-        appUser.id != null
-        appUser.email == APPUSER_EMAIL
-        appUser.name == null
-        appUser.appUserRoles.size() == 0
-    }
-
-    def "create normal user with empty name"() {
-        when:
-        AppUser appUser = appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, "")
-
-        then:
-        appUser != null
-        appUser.id != null
-        appUser.email == APPUSER_EMAIL
-        appUser.name == null
-        appUser.appUserRoles.size() == 0
-    }
 
     def "create with invalid email"() {
         when:
-        appUserService.create("not_valid_email", APPUSER_PASSWORD, APPUSER_NAME)
+        appUserService.create("not_valid_email", APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)
 
         then:
         thrown InvalidDataException
@@ -79,7 +72,7 @@ class AppUserServiceTest extends ServiceSpecification {
         appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD))
 
         when:
-        appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME)
+        appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)
 
         then:
         thrown AlreadyPresentException
@@ -157,31 +150,35 @@ class AppUserServiceTest extends ServiceSpecification {
     }
 
     @Unroll
-    def "update UnchangedException #name name, #password password and #appUserRoles appUserRoles"(String name, String password, String[] appUserRoles) {
+    def "update UnchangedException #name name, #password password and #appUserRoles appUserRoles"(String name, String password, String[] appUserRoles, String barcode) {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME, barcode)).id
 
         when:
-        appUserService.update(appUserId, name, password, appUserRoles)
+        appUserService.update(appUserId, name, password, appUserRoles, barcode)
 
         then:
         thrown UnchangedException
 
         where:
-        name | password | appUserRoles
-        null | null     | null
-        null | ""       | null
-        ""   | null     | null
-        ""   | ""       | null
+        name | password | appUserRoles | barcode
+        null | null     | null         | null
+        null | null     | null         | ""
+        null | ""       | null         | null
+        null | ""       | null         | ""
+        ""   | null     | null         | null
+        ""   | null     | null         | ""
+        ""   | ""       | null         | null
+        ""   | ""       | null         | ""
     }
 
     @Unroll
-    def "update with #name name, #password password and #appUserRoles appUserRoles"(String name, String password, String[] appUserRoles) {
+    def "update with #name name, #password password and #appUserRoles appUserRoles"(String name, String password, String[] appUserRoles, String barcode) {
         given:
         Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)).id
 
         when:
-        appUserService.update(appUserId, name, password, appUserRoles)
+        appUserService.update(appUserId, name, password, appUserRoles, barcode)
 
         and:
         AppUser appUser = appUserRepository.getOne(appUserId)
@@ -195,30 +192,76 @@ class AppUserServiceTest extends ServiceSpecification {
         appUser.appUserRoles.size() == ((appUserRoles != null && appUserRoles.length > 0) ? appUserRoles.length : 0)
 
         where:
-        name             | password             | appUserRoles
-        null             | null                 | [] as String[]
-        null             | null                 | [Role.LOGIN.name] as String[]
-        null             | ""                   | [] as String[]
-        null             | ""                   | [Role.LOGIN.name] as String[]
-        null             | APPUSER_PASSWORD_NEW | null
-        null             | APPUSER_PASSWORD_NEW | [] as String[]
-        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[]
-        ""               | null                 | [] as String[]
-        ""               | null                 | [Role.LOGIN.name] as String[]
-        ""               | ""                   | [] as String[]
-        ""               | ""                   | [Role.LOGIN.name] as String[]
-        ""               | APPUSER_PASSWORD_NEW | null
-        ""               | APPUSER_PASSWORD_NEW | [] as String[]
-        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[]
-        APPUSER_NAME_NEW | null                 | null
-        APPUSER_NAME_NEW | null                 | [] as String[]
-        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[]
-        APPUSER_NAME_NEW | ""                   | null
-        APPUSER_NAME_NEW | ""                   | [] as String[]
-        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[]
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[]
+        name             | password             | appUserRoles                  | barcode
+        null             | null                 | [] as String[]                | null
+        null             | null                 | [] as String[]                | ""
+        null             | null                 | [] as String[]                | APPUSER_BARCODE_NEW
+        null             | null                 | [Role.LOGIN.name] as String[] | null
+        null             | null                 | [Role.LOGIN.name] as String[] | ""
+        null             | null                 | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        null             | ""                   | [] as String[]                | null
+        null             | ""                   | [] as String[]                | ""
+        null             | ""                   | [] as String[]                | APPUSER_BARCODE_NEW
+        null             | ""                   | [Role.LOGIN.name] as String[] | null
+        null             | ""                   | [Role.LOGIN.name] as String[] | ""
+        null             | ""                   | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        null             | APPUSER_PASSWORD_NEW | null                          | null
+        null             | APPUSER_PASSWORD_NEW | null                          | ""
+        null             | APPUSER_PASSWORD_NEW | null                          | APPUSER_BARCODE_NEW
+        null             | APPUSER_PASSWORD_NEW | [] as String[]                | null
+        null             | APPUSER_PASSWORD_NEW | [] as String[]                | ""
+        null             | APPUSER_PASSWORD_NEW | [] as String[]                | APPUSER_BARCODE_NEW
+        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | null
+        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | ""
+        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        ""               | null                 | [] as String[]                | null
+        ""               | null                 | [] as String[]                | ""
+        ""               | null                 | [] as String[]                | APPUSER_BARCODE_NEW
+        ""               | null                 | [Role.LOGIN.name] as String[] | null
+        ""               | null                 | [Role.LOGIN.name] as String[] | ""
+        ""               | null                 | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        ""               | ""                   | [] as String[]                | null
+        ""               | ""                   | [] as String[]                | ""
+        ""               | ""                   | [] as String[]                | APPUSER_BARCODE_NEW
+        ""               | ""                   | [Role.LOGIN.name] as String[] | null
+        ""               | ""                   | [Role.LOGIN.name] as String[] | ""
+        ""               | ""                   | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        ""               | APPUSER_PASSWORD_NEW | null                          | null
+        ""               | APPUSER_PASSWORD_NEW | null                          | ""
+        ""               | APPUSER_PASSWORD_NEW | null                          | APPUSER_BARCODE_NEW
+        ""               | APPUSER_PASSWORD_NEW | [] as String[]                | null
+        ""               | APPUSER_PASSWORD_NEW | [] as String[]                | ""
+        ""               | APPUSER_PASSWORD_NEW | [] as String[]                | APPUSER_BARCODE_NEW
+        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | null
+        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | ""
+        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | null                 | null                          | null
+        APPUSER_NAME_NEW | null                 | null                          | ""
+        APPUSER_NAME_NEW | null                 | null                          | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | null                 | [] as String[]                | null
+        APPUSER_NAME_NEW | null                 | [] as String[]                | ""
+        APPUSER_NAME_NEW | null                 | [] as String[]                | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[] | null
+        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[] | ""
+        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | ""                   | null                          | null
+        APPUSER_NAME_NEW | ""                   | null                          | ""
+        APPUSER_NAME_NEW | ""                   | null                          | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | ""                   | [] as String[]                | null
+        APPUSER_NAME_NEW | ""                   | [] as String[]                | ""
+        APPUSER_NAME_NEW | ""                   | [] as String[]                | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[] | null
+        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[] | ""
+        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                          | null
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                          | ""
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                          | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                | null
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                | ""
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | null
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | ""
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
     }
 
     def "update with invalid id"() {

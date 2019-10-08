@@ -25,10 +25,6 @@ public class Player implements Serializable {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @Basic
-    @Column(name = "barcode")
-    private String barcode;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appuser_id")
     @JsonIdentityReference(alwaysAsId = true)
@@ -51,12 +47,6 @@ public class Player implements Serializable {
         this.team = team;
     }
 
-    public Player(String nickname, String barcode, Team team) {
-        this.nickname = nickname;
-        this.barcode = barcode;
-        this.team = team;
-    }
-
     public Long getId() {
         return id;
     }
@@ -71,14 +61,6 @@ public class Player implements Serializable {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
     }
 
     public AppUser getAppUser() {
@@ -112,7 +94,6 @@ public class Player implements Serializable {
         Player player = (Player) o;
         return id.equals(player.id) &&
                 nickname.equals(player.nickname) &&
-                Objects.equals(barcode, player.barcode) &&
                 Objects.equals(appUser, player.appUser) &&
                 cfgs.equals(player.cfgs) &&
                 team.equals(player.team);

@@ -64,10 +64,6 @@ public class PlayerService extends AbstractService {
             player.setNickname(nickname);
         }
 
-        if (barcode != null && barcode.length() > 0) {
-            player.setBarcode(barcode);
-        }
-
         if (appUserId != null) {
             AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
             if (appUser == null) {

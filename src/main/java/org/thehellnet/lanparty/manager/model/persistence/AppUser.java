@@ -35,6 +35,10 @@ public class AppUser implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Basic
+    @Column(name = "barcode", unique = true)
+    private String barcode;
+
     @JsonIgnore
     @OneToMany(mappedBy = "appUser", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<AppUserToken> appUserTokens = new HashSet<>();
@@ -56,6 +60,11 @@ public class AppUser implements Serializable {
     public AppUser(String email, String password, String name) {
         this(email, password);
         this.name = name;
+    }
+
+    public AppUser(String email, String password, String name, String barcode) {
+        this(email, password, name);
+        this.barcode = barcode;
     }
 
     public Long getId() {
@@ -90,6 +99,14 @@ public class AppUser implements Serializable {
         this.name = name;
     }
 
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
     public Set<AppUserToken> getAppUserTokens() {
         return appUserTokens;
     }
@@ -115,6 +132,7 @@ public class AppUser implements Serializable {
                 email.equals(appUser.email) &&
                 password.equals(appUser.password) &&
                 Objects.equals(name, appUser.name) &&
+                Objects.equals(barcode, appUser.barcode) &&
                 appUserTokens.equals(appUser.appUserTokens) &&
                 appUserRoles.equals(appUser.appUserRoles);
     }

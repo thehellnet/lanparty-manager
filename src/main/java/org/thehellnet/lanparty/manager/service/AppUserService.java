@@ -31,7 +31,7 @@ public class AppUserService extends AbstractService {
     }
 
     @Transactional
-    public AppUser create(String email, String password, String name) {
+    public AppUser create(String email, String password, String name, String barcode) {
         if (!EmailUtility.validate(email)) {
             throw new InvalidDataException("E-mail address not valid");
         }
@@ -52,6 +52,10 @@ public class AppUserService extends AbstractService {
             appUser.setName(name);
         }
 
+        if (barcode != null && barcode.length() > 0) {
+            appUser.setBarcode(barcode);
+        }
+
         appUser = appUserRepository.save(appUser);
 
         return appUser;
@@ -68,7 +72,7 @@ public class AppUserService extends AbstractService {
     }
 
     @Transactional
-    public AppUser update(Long id, String name, String password, String[] appUserRoles) {
+    public AppUser update(Long id, String name, String password, String[] appUserRoles, String barcode) {
         AppUser appUser = findById(id);
 
         boolean changed = false;
@@ -93,6 +97,11 @@ public class AppUserService extends AbstractService {
             changed = true;
         }
 
+        if (barcode != null && barcode.strip().length() > 0) {
+            appUser.setBarcode(barcode);
+            changed = true;
+        }
+
         if (!changed) {
             throw new UnchangedException();
         }
@@ -113,6 +122,16 @@ public class AppUserService extends AbstractService {
         }
 
         AppUser appUser = appUserRepository.findByEmail(email);
+        if (appUser == null) {
+            throw new NotFoundException();
+        }
+
+        return appUser;
+    }
+
+    @Transactional(readOnly = true)
+    public AppUser findByBarcode(String barcode) {
+        AppUser appUser = appUserRepository.findByBarcode(barcode);
         if (appUser == null) {
             throw new NotFoundException();
         }
@@ -149,6 +168,16 @@ public class AppUserService extends AbstractService {
         return appUser;
     }
 
+    @Transactional
+    public AppUserToken newToken(AppUser appUser) {
+        if (appUser == null) {
+            throw new InvalidDataException();
+        }
+
+        String token = TokenUtility.generate();
+        return appUserTokenRepository.save(new AppUserToken(token, appUser));
+    }
+
     private boolean hasRoles(AppUser appUser, boolean all, Role[] roles) {
         if (roles == null) {
             return false;
@@ -172,15 +201,5 @@ public class AppUserService extends AbstractService {
         }
 
         return all;
-    }
-
-    @Transactional
-    public AppUserToken newToken(AppUser appUser) {
-        if (appUser == null) {
-            throw new InvalidDataException();
-        }
-
-        String token = TokenUtility.generate();
-        return appUserTokenRepository.save(new AppUserToken(token, appUser));
     }
 }

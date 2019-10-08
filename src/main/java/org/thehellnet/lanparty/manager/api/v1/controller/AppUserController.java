@@ -43,7 +43,7 @@ public class AppUserController {
     @CheckRoles(Role.APPUSER_ADMIN)
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateAppUserRequestDTO dto) {
-        AppUser user = appUserService.create(dto.email, dto.password, dto.name);
+        AppUser user = appUserService.create(dto.email, dto.password, dto.name, dto.barcode);
         return ResponseEntity.created(URI.create("")).body(user);
     }
 
@@ -67,7 +67,7 @@ public class AppUserController {
     @CheckRoles(Role.APPUSER_ADMIN)
     @RequestMapping(method = RequestMethod.PATCH, path = "{id}")
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateAppUserRequestDTO dto) {
-        AppUser user = appUserService.update(id, dto.name, dto.password, dto.appUserRoles);
+        AppUser user = appUserService.update(id, dto.name, dto.password, dto.appUserRoles,dto.barcode);
         return ResponseEntity.ok(user);
     }
 
