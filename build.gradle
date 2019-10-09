@@ -1,11 +1,11 @@
 group "org.thehellnet.lanparty"
-version "0.0.0"
+version "0.5.0"
 
 buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url "http://repository.atricore.org/m2-release-repository/" }
+        maven { url "http://repository.atricore.org/m2-release-repository" }
     }
 }
 
@@ -25,7 +25,7 @@ war {
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url "http://repository.atricore.org/m2-release-repository/" }
+    maven { url "http://repository.atricore.org/m2-release-repository" }
 }
 
 jacocoTestReport {

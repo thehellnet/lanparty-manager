@@ -29,6 +29,86 @@ class AppUserControllerSpecification extends ControllerSpecification {
         "Do login for token retrieving"()
     }
 
+    def "create without token"() {
+        given:
+        def requestBody = new JSONObject()
+        requestBody.put("email", APPUSER_EMAIL)
+        requestBody.put("password", APPUSER_PASSWORD)
+        requestBody.put("name", APPUSER_NAME)
+        requestBody.put("barcode", APPUSER_BARCODE)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .post("/api/v1/public/appUser")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        and:
+        "check number of appUsers in database"() == 1
+    }
+
+    def "create with empty token"() {
+        given:
+        def requestBody = new JSONObject()
+        requestBody.put("email", APPUSER_EMAIL)
+        requestBody.put("password", APPUSER_PASSWORD)
+        requestBody.put("name", APPUSER_NAME)
+        requestBody.put("barcode", APPUSER_BARCODE)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .post("/api/v1/public/appUser")
+                        .header("X-Auth-Token", "")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        and:
+        "check number of appUsers in database"() == 1
+    }
+
+    def "create with invalid token"() {
+        given:
+        def requestBody = new JSONObject()
+        requestBody.put("email", APPUSER_EMAIL)
+        requestBody.put("password", APPUSER_PASSWORD)
+        requestBody.put("name", APPUSER_NAME)
+        requestBody.put("barcode", APPUSER_BARCODE)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .post("/api/v1/public/appUser")
+                        .header("X-Auth-Token", "0123456789abcdef")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        and:
+        "check number of appUsers in database"() == 1
+    }
+
     @Unroll
     def "create success with '#email' email, '#password' password, '#name' name and '#barcode' barcode"(String email, String password, String name, String barcode) {
         given:
@@ -114,6 +194,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
         requestBody.put("email", email)
         requestBody.put("password", password)
         requestBody.put("name", name)
+        requestBody.put("barcode", barcode)
 
         when:
         def rawResponse = mockMvc
@@ -208,7 +289,155 @@ class AppUserControllerSpecification extends ControllerSpecification {
         APPUSER_EMAIL | ""               | APPUSER_NAME | APPUSER_BARCODE
     }
 
-    def "read"() {
+    @Unroll
+    def "create error with '#value' values #email #password #name #barcode"(boolean email, boolean password, boolean name, boolean barcode, String value) {
+        given:
+        def requestBody = new JSONObject()
+        if (email) requestBody.put("email", value)
+        if (password) requestBody.put("password", value)
+        if (name) requestBody.put("name", value)
+        if (barcode) requestBody.put("barcode", value)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .post("/api/v1/public/appUser")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNPROCESSABLE_ENTITY.value()
+
+        and:
+        "check number of appUsers in database"() == 1
+
+        where:
+        [email, password, name, barcode, value] << [
+                [false, true],
+                [false, true],
+                [false, true],
+                [false, true],
+                [null, ""]
+        ].combinations()
+    }
+
+    @Unroll
+    def "create error with valid values #email #password #name #barcode"(boolean email, boolean password, boolean name, boolean barcode) {
+        given:
+        def requestBody = new JSONObject()
+        if (email) requestBody.put("email", APPUSER_EMAIL)
+        if (password) requestBody.put("password", APPUSER_PASSWORD)
+        if (name) requestBody.put("name", APPUSER_NAME)
+        if (barcode) requestBody.put("barcode", APPUSER_BARCODE)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .post("/api/v1/public/appUser")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNPROCESSABLE_ENTITY.value()
+
+        and:
+        "check number of appUsers in database"() == 1
+
+        where:
+        email | password | name  | barcode
+        false | false    | false | false
+        false | false    | false | true
+        false | false    | true  | false
+        false | false    | true  | true
+        false | true     | false | false
+        false | true     | false | true
+        false | true     | true  | false
+        false | true     | true  | true
+        true  | false    | false | false
+        true  | false    | false | true
+        true  | false    | true  | false
+        true  | false    | true  | true
+    }
+
+    def "readAll without token"() {
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+    }
+
+    @Unroll
+    def "readAll with '#value' token"(String value) {
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser")
+                        .header("X-Auth-Token", value)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        where:
+        value << ["", "0123456789abcdef"]
+    }
+
+    def "read without token"() {
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+    }
+
+    @Unroll
+    def "read with '#value' token"(String value) {
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser/1")
+                        .header("X-Auth-Token", value)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        where:
+        value << ["", "0123456789abcdef"]
+    }
+
+    def "readAll with one user"() {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
@@ -241,7 +470,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
         appUser.getString("email") == "admin"
     }
 
-    def "read with more than one user"() {
+    def "readAll with more than one user"() {
         given:
         appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)
 
@@ -286,6 +515,68 @@ class AppUserControllerSpecification extends ControllerSpecification {
         appUser.has("email")
         appUser.get("email") instanceof String
         appUser.getString("email") == APPUSER_EMAIL
+    }
+
+    def "read with id == 1"() {
+        given:
+        Long appUserId = 1
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser/${appUserId}")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        when:
+        JSONObject appUser = new JSONObject(rawResponse.contentAsString)
+
+        then:
+        appUser.has("id")
+        appUser.get("id") instanceof Integer
+        appUser.getLong("id") == appUserId
+    }
+
+    def "read with new appUser created"() {
+        given:
+        Long appUserId = appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE).id
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser/${appUserId}")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        when:
+        JSONObject appUser = new JSONObject(rawResponse.contentAsString)
+
+        then:
+        appUser.has("id")
+        appUser.get("id") instanceof Integer
+        appUser.getLong("id") == appUserId
+
+        appUser.has("name")
+        appUser.get("name") instanceof String
+        appUser.getString("name") == APPUSER_NAME
+
+        appUser.has("barcode")
+        appUser.get("barcode") instanceof String
+        appUser.getString("barcode") == APPUSER_BARCODE
     }
 
 //    MockHttpServletResponse doPost(String url, JSONObject requestBody = new JSONObject()) {
