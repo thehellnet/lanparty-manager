@@ -24,7 +24,7 @@ class TokenControllerAspectTest extends ContextSpecification {
         request = new MockHttpServletRequest()
     }
 
-    def "checkToken without x-auth-token header"() {
+    def "checkToken for AppUserController.isTokenValid() without x-auth-token header"() {
         when:
         proxy.isTokenValid(request, null)
 
@@ -32,7 +32,7 @@ class TokenControllerAspectTest extends ContextSpecification {
         thrown UnauthorizedException
     }
 
-    def "checkToken with empty x-auth-token header"() {
+    def "checkToken for AppUserController.isTokenValid() with empty x-auth-token header"() {
         given:
         request.addHeader("x-auth-token", "")
 
@@ -43,7 +43,7 @@ class TokenControllerAspectTest extends ContextSpecification {
         thrown UnauthorizedException
     }
 
-    def "checkToken with invalid x-auth-token header"() {
+    def "checkToken for AppUserController.isTokenValid() with invalid x-auth-token header"() {
         given:
         request.addHeader("x-auth-token", APPUSERTOKEN)
 
@@ -54,7 +54,7 @@ class TokenControllerAspectTest extends ContextSpecification {
         thrown UnauthorizedException
     }
 
-    def "checkToken with valid x-auth-token header"() {
+    def "checkToken for AppUserController.isTokenValid() with valid x-auth-token header"() {
         given:
         AppUser appUser = appUserRepository.findByEmail("admin")
         appUserTokenRepository.save(new AppUserToken(APPUSERTOKEN, appUser))
