@@ -40,6 +40,8 @@ abstract class ContextSpecification extends Specification {
     protected static final String[] APPUSER_ROLES_NEW = [Role.LOGIN.name, Role.APPUSER_CHANGE_PASSWORD.name] as String[]
     protected static final String APPUSER_BARCODE_NEW = "9876543210"
 
+    protected static final String APPUSERTOKEN = "0123456789abcdef"
+
     protected final static String TOURNAMENT_NAME = "Test Tournament"
     protected final static String TOURNAMENT_NAME_2 = "Test Tournament 2"
     protected final static String TOURNAMENT_CFG = "bind TAB \"+scores\"\n" +
@@ -65,6 +67,9 @@ abstract class ContextSpecification extends Specification {
 
     @Autowired
     protected AppUserRepository appUserRepository
+
+    @Autowired
+    protected AppUserTokenRepository appUserTokenRepository
 
     @Autowired
     protected TournamentRepository tournamentRepository
