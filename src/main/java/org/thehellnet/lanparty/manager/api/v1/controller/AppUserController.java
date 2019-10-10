@@ -23,11 +23,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(
-        path = "/api/v1/public/appUser",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-)
+@RequestMapping(path = "/api/v1/public/appUser")
 public class AppUserController {
 
     private static final Logger logger = LoggerFactory.getLogger(AppUserController.class);
@@ -41,7 +37,11 @@ public class AppUserController {
 
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateAppUserRequestDTO dto) {
         AppUser user = appUserService.create(dto.email, dto.password, dto.name, dto.barcode);
         return ResponseEntity.created(URI.create("")).body(user);
@@ -49,7 +49,11 @@ public class AppUserController {
 
     @CheckToken
     @CheckRoles(Role.APPUSER_VIEW)
-    @RequestMapping(method = RequestMethod.GET, path = "{id}")
+    @RequestMapping(
+            path = "{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
         AppUser user = appUserService.get(id);
         return ResponseEntity.ok(user);
@@ -57,7 +61,10 @@ public class AppUserController {
 
     @CheckToken
     @CheckRoles(Role.APPUSER_VIEW)
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
         List<AppUser> appUsers = appUserService.getAll();
         return ResponseEntity.ok(appUsers);
@@ -65,7 +72,12 @@ public class AppUserController {
 
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
-    @RequestMapping(method = RequestMethod.PATCH, path = "{id}")
+    @RequestMapping(
+            path = "{id}",
+            method = RequestMethod.PATCH,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateAppUserRequestDTO dto) {
         AppUser user = appUserService.update(id, dto.name, dto.password, dto.appUserRoles, dto.barcode);
         return ResponseEntity.ok(user);
@@ -73,13 +85,21 @@ public class AppUserController {
 
     @CheckToken
     @CheckRoles(Role.APPUSER_ADMIN)
-    @RequestMapping(method = RequestMethod.DELETE, path = "{id}")
+    @RequestMapping(
+            path = "{id}",
+            method = RequestMethod.DELETE
+    )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
         appUserService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/login")
+    @RequestMapping(
+            path = "/login",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity login(@RequestBody LoginAppUserRequestDTO dto) {
         AppUser appUser = appUserService.findByEmailAndPassword(dto.email, dto.password);
         AppUserToken appUserToken = appUserService.newToken(appUser);
@@ -93,8 +113,11 @@ public class AppUserController {
 
     @CheckToken
     @CheckRoles(Role.APPUSER_VIEW)
-    @RequestMapping(method = RequestMethod.GET, path = "/isTokenValid")
+    @RequestMapping(
+            path = "/isTokenValid",
+            method = RequestMethod.GET
+    )
     public ResponseEntity isTokenValid(HttpServletRequest request, AppUser appUser) {
-            return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 }
