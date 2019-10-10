@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.lanparty.manager.service.AppUserService
 import spock.lang.Unroll
 
@@ -16,86 +17,6 @@ class AppUserControllerSpecification extends ControllerSpecification {
 
     def setup() {
         "Do login for token retrieving"()
-    }
-
-    def "create without token"() {
-        given:
-        def requestBody = new JSONObject()
-        requestBody.put("email", APPUSER_EMAIL)
-        requestBody.put("password", APPUSER_PASSWORD)
-        requestBody.put("name", APPUSER_NAME)
-        requestBody.put("barcode", APPUSER_BARCODE)
-
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody.toString())
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-
-        and:
-        "check number of appUsers in database"() == 1
-    }
-
-    def "create with empty token"() {
-        given:
-        def requestBody = new JSONObject()
-        requestBody.put("email", APPUSER_EMAIL)
-        requestBody.put("password", APPUSER_PASSWORD)
-        requestBody.put("name", APPUSER_NAME)
-        requestBody.put("barcode", APPUSER_BARCODE)
-
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser")
-                        .header("X-Auth-Token", "")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody.toString())
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-
-        and:
-        "check number of appUsers in database"() == 1
-    }
-
-    def "create with invalid token"() {
-        given:
-        def requestBody = new JSONObject()
-        requestBody.put("email", APPUSER_EMAIL)
-        requestBody.put("password", APPUSER_PASSWORD)
-        requestBody.put("name", APPUSER_NAME)
-        requestBody.put("barcode", APPUSER_BARCODE)
-
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser")
-                        .header("X-Auth-Token", "0123456789abcdef")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody.toString())
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-
-        and:
-        "check number of appUsers in database"() == 1
     }
 
     @Unroll
@@ -356,76 +277,6 @@ class AppUserControllerSpecification extends ControllerSpecification {
         true  | false    | true  | true
     }
 
-    def "readAll without token"() {
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser")
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-    }
-
-    @Unroll
-    def "readAll with '#value' token"(String value) {
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser")
-                        .header("X-Auth-Token", value)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-
-        where:
-        value << ["", "0123456789abcdef"]
-    }
-
-    def "read without token"() {
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-    }
-
-    @Unroll
-    def "read with '#value' token"(String value) {
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser/1")
-                        .header("X-Auth-Token", value)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-
-        where:
-        value << ["", "0123456789abcdef"]
-    }
-
     def "readAll with one user"() {
         when:
         def rawResponse = mockMvc
@@ -566,6 +417,152 @@ class AppUserControllerSpecification extends ControllerSpecification {
         appUser.has("barcode")
         appUser.get("barcode") instanceof String
         appUser.getString("barcode") == APPUSER_BARCODE
+    }
+
+    def "update without id"() {
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .patch("/api/v1/public/appUser")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.METHOD_NOT_ALLOWED.value()
+    }
+
+    def "update with wrong appUserId"() {
+        given:
+        Long appUserId = 123
+        JSONObject requestBody = new JSONObject()
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .patch("/api/v1/public/appUser/${appUserId}")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.NOT_FOUND.value()
+    }
+
+    def "update with empty body"() {
+        given:
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD)).id
+        JSONObject requestBody = new JSONObject()
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .patch("/api/v1/public/appUser/${appUserId}")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.NO_CONTENT.value()
+    }
+
+    def "update with name"() {
+        given:
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)).id
+        JSONObject requestBody = new JSONObject()
+        requestBody.put("name", APPUSER_NAME_NEW)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .patch("/api/v1/public/appUser/${appUserId}")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        when:
+        JSONObject appUser = new JSONObject(rawResponse.contentAsString)
+
+        then:
+        appUser.getLong("id") == appUserId
+        appUser.getString("name") == APPUSER_NAME_NEW
+        appUser.getString("barcode") == APPUSER_BARCODE
+    }
+
+    def "update with barcode"() {
+        given:
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)).id
+        JSONObject requestBody = new JSONObject()
+        requestBody.put("barcode", APPUSER_BARCODE_NEW)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .patch("/api/v1/public/appUser/${appUserId}")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        when:
+        JSONObject appUser = new JSONObject(rawResponse.contentAsString)
+
+        then:
+        appUser.getLong("id") == appUserId
+        appUser.getString("name") == APPUSER_NAME
+        appUser.getString("barcode") == APPUSER_BARCODE_NEW
+    }
+
+    def "update with name and barcode"() {
+        given:
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)).id
+        JSONObject requestBody = new JSONObject()
+        requestBody.put("name", APPUSER_NAME_NEW)
+        requestBody.put("barcode", APPUSER_BARCODE_NEW)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .patch("/api/v1/public/appUser/${appUserId}")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        when:
+        JSONObject appUser = new JSONObject(rawResponse.contentAsString)
+
+        then:
+        appUser.getLong("id") == appUserId
+        appUser.getString("name") == APPUSER_NAME_NEW
+        appUser.getString("barcode") == APPUSER_BARCODE_NEW
     }
 
 //    MockHttpServletResponse doPost(String url, JSONObject requestBody = new JSONObject()) {
