@@ -90,4 +90,11 @@ public class AppUserController {
         body.expiration = appUserToken.getExpirationDateTime();
         return ResponseEntity.ok(body);
     }
+
+    @CheckToken
+    @CheckRoles(Role.APPUSER_VIEW)
+    @RequestMapping(method = RequestMethod.GET, path = "/isTokenValid")
+    public ResponseEntity isTokenValid(HttpServletRequest request, AppUser appUser) {
+            return ResponseEntity.noContent().build();
+    }
 }

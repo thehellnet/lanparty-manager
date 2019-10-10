@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.service.AppUserService
 import spock.lang.Unroll
 
@@ -923,6 +922,68 @@ class AppUserControllerSpecification extends ControllerSpecification {
 //
 //        return data.getString("token")
 //    }
+
+    def "isTokenValid without token"() {
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser/isTokenValid")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+    }
+
+    def "isTokenValid with empty token"() {
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser/isTokenValid")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Auth-Token", "")
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+    }
+
+    def "isTokenValid with invalid token"() {
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser/isTokenValid")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Auth-Token", "0123456789abcdef")
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+    }
+
+    def "isTokenValid with valid token"() {
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .get("/api/v1/public/appUser/isTokenValid")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Auth-Token", token)
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.NO_CONTENT.value()
+    }
 
     private int "check number of appUsers in database"() {
         return appUserService.getAll().size()
