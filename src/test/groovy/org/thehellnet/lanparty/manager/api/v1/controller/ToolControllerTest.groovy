@@ -96,7 +96,7 @@ class ToolControllerTest extends ControllerSpecification {
         JSONObject response = new JSONObject(rawResponse.contentAsString)
 
         then:
-        response.isEmpty()
+        response.isEmpty() || response.has("message")
     }
 
     def "welcome with existing seat"() {
