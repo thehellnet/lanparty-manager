@@ -2,14 +2,15 @@ package org.thehellnet.lanparty.manager.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.lanparty.manager.model.persistence.*;
+import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.CfgRepository;
-import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.repository.SeatRepository;
 import org.thehellnet.lanparty.manager.utility.cfg.CfgUtility;
@@ -21,18 +22,63 @@ import java.util.List;
 @Service
 public class CfgService extends AbstractService {
 
+    private class FindTournamentAndPlayer {
+        private String remoteAddress;
+        private String barcode;
+        private Tournament tournament;
+        private Player player;
+
+        public FindTournamentAndPlayer(String remoteAddress, String barcode) {
+            this.remoteAddress = remoteAddress;
+            this.barcode = barcode;
+        }
+
+        public Tournament getTournament() {
+            return tournament;
+        }
+
+        public Player getPlayer() {
+            return player;
+        }
+
+        public FindTournamentAndPlayer invoke() {
+            Seat seat = seatRepository.findByIpAddress(remoteAddress);
+            if (seat == null) {
+                throw new NotFoundException("Seat not found");
+            }
+
+            tournament = seat.getTournament();
+            if (tournament == null) {
+                throw new NotFoundException("Tournament not found");
+            }
+
+            AppUser appUser = appUserRepository.findByBarcode(barcode);
+            if (appUser == null) {
+                throw new NotFoundException("AppUser not found");
+            }
+
+            player = playerRepository.findByAppUserAndTournament(appUser, tournament);
+            if (player == null) {
+                throw new NotFoundException("Player not found");
+            }
+
+            return this;
+        }
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(CfgService.class);
 
     private final SeatRepository seatRepository;
+    private final AppUserRepository appUserRepository;
     private final PlayerRepository playerRepository;
     private final CfgRepository cfgRepository;
-    private final GameRepository gameRepository;
 
-    public CfgService(SeatRepository seatRepository, PlayerRepository playerRepository, CfgRepository cfgRepository, GameRepository gameRepository) {
+    @Autowired
+    public CfgService(SeatRepository seatRepository, AppUserRepository appUserRepository, PlayerRepository playerRepository, CfgRepository cfgRepository) {
         this.seatRepository = seatRepository;
+        this.appUserRepository = appUserRepository;
         this.playerRepository = playerRepository;
         this.cfgRepository = cfgRepository;
-        this.gameRepository = gameRepository;
     }
 
     @Transactional(readOnly = true)
@@ -52,10 +98,26 @@ public class CfgService extends AbstractService {
             throw new InvalidDataException("Invalid remote address or barcode");
         }
 
-        Seat seat = findSeatByIpAddress(remoteAddress);
-        Player player = null;//findPlayerByBarcode(barcode);
+        Seat seat = seatRepository.findByIpAddress(remoteAddress);
+        if (seat == null) {
+            throw new NotFoundException("Seat not found");
+        }
 
         Tournament tournament = seat.getTournament();
+        if (tournament == null) {
+            throw new NotFoundException("Tournament not found");
+        }
+
+        AppUser appUser = appUserRepository.findByBarcode(barcode);
+        if (appUser == null) {
+            throw new NotFoundException("Player not found");
+        }
+
+        Player player = playerRepository.findByAppUserAndTournament(appUser, tournament);
+        if (player == null) {
+            throw new NotFoundException("Player not found");
+        }
+
         String tournamentCfg = tournament.getCfg();
         List<ParsedCfgCommand> tournamentCfgCommands = CfgUtility.parseCfgFromString(tournamentCfg);
         tournamentCfgCommands = CfgUtility.removeSpecialCommands(tournamentCfgCommands);
@@ -80,10 +142,9 @@ public class CfgService extends AbstractService {
             throw new InvalidDataException("Invalid remote address or barcode");
         }
 
-        Seat seat = findSeatByIpAddress(remoteAddress);
-        Player player = null;//findPlayerByBarcode(barcode);
-
-        Tournament tournament = seat.getTournament();
+        FindTournamentAndPlayer findTournamentAndPlayer = new FindTournamentAndPlayer(remoteAddress, barcode).invoke();
+        Tournament tournament = findTournamentAndPlayer.getTournament();
+        Player player = findTournamentAndPlayer.getPlayer();
 
         Cfg cfg = cfgRepository.findByPlayerAndGame(player, tournament.getGame());
         if (cfg == null) {
@@ -92,41 +153,5 @@ public class CfgService extends AbstractService {
 
         cfg.setCfg(StringUtility.joinLines(newCfg));
         cfgRepository.save(cfg);
-    }
-
-    @Transactional
-    public Cfg update(Long playerId, Long gameId, String newCfg) {
-        if (playerId == null || gameId == null) {
-            throw new InvalidDataException("Invalid playerId or gameId");
-        }
-
-        Player player = null;//findPlayerById(playerId);
-        Game game = findGameById(gameId);
-
-        Cfg cfg = cfgRepository.findByPlayerAndGame(player, game);
-        if (cfg == null) {
-            cfg = new Cfg(player, game);
-        }
-
-        cfg.setCfg(newCfg);
-        cfg = cfgRepository.save(cfg);
-
-        return cfg;
-    }
-
-    private Seat findSeatByIpAddress(String remoteAddress) {
-        Seat seat = seatRepository.findByIpAddress(remoteAddress);
-        if (seat == null) {
-            throw new NotFoundException();
-        }
-        return seat;
-    }
-
-    private Game findGameById(Long id) {
-        Game game = gameRepository.findById(id).orElse(null);
-        if (game == null) {
-            throw new NotFoundException();
-        }
-        return game;
     }
 }

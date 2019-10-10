@@ -11,6 +11,7 @@ import org.thehellnet.lanparty.manager.configuration.JacksonConfiguration
 import org.thehellnet.lanparty.manager.configuration.PersistenceConfiguration
 import org.thehellnet.lanparty.manager.configuration.SpringConfiguration
 import org.thehellnet.lanparty.manager.configuration.WebSocketConfiguration
+import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.model.persistence.*
 import org.thehellnet.lanparty.manager.repository.*
 import spock.lang.Specification
@@ -28,6 +29,16 @@ import spock.lang.Specification
 @Transactional
 @Rollback
 abstract class ContextSpecification extends Specification {
+
+    protected static final String APPUSER_EMAIL = "email@email.com"
+    protected static final String APPUSER_PASSWORD = "password"
+    protected static final String APPUSER_NAME = "Name"
+    protected static final String APPUSER_BARCODE = "0123456789"
+
+    protected static final String APPUSER_PASSWORD_NEW = "password_new"
+    protected static final String APPUSER_NAME_NEW = "Name2"
+    protected static final String[] APPUSER_ROLES_NEW = [Role.LOGIN.name, Role.APPUSER_CHANGE_PASSWORD.name] as String[]
+    protected static final String APPUSER_BARCODE_NEW = "9876543210"
 
     protected final static String TOURNAMENT_NAME = "Test Tournament"
     protected final static String TOURNAMENT_NAME_2 = "Test Tournament 2"
@@ -53,6 +64,9 @@ abstract class ContextSpecification extends Specification {
     protected WebApplicationContext webApplicationContext
 
     @Autowired
+    protected AppUserRepository appUserRepository
+
+    @Autowired
     protected TournamentRepository tournamentRepository
 
     @Autowired
@@ -69,6 +83,16 @@ abstract class ContextSpecification extends Specification {
 
     @Autowired
     protected CfgRepository cfgRepository
+
+    @Transactional
+    protected AppUser createAppUser() {
+        AppUser appUser = appUserRepository.findByEmail(APPUSER_EMAIL)
+        if (appUser == null) {
+            appUser = new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)
+            appUser = appUserRepository.save(appUser)
+        }
+        return appUser
+    }
 
     @Transactional
     protected Tournament createTournament() {
@@ -105,10 +129,11 @@ abstract class ContextSpecification extends Specification {
 
     @Transactional
     protected Player createPlayer() {
-        Player player = playerRepository.findByBarcode(PLAYER_BARCODE)
+        Player player = playerRepository.findByNickname(PLAYER_NICKNAME)
         if (player == null) {
+            AppUser appUser = createAppUser()
             Team team = createTeam()
-            player = new Player(nickname: PLAYER_NICKNAME, team: team, barcode: PLAYER_BARCODE)
+            player = new Player(nickname: PLAYER_NICKNAME, appUser: appUser, team: team)
             player = playerRepository.save(player)
         }
         return player

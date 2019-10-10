@@ -12,16 +12,6 @@ import spock.lang.Unroll
 
 class AppUserControllerSpecification extends ControllerSpecification {
 
-    private static final String APPUSER_EMAIL = "email@email.com"
-    private static final String APPUSER_PASSWORD = "password"
-    private static final String APPUSER_NAME = "Name"
-    private static final String APPUSER_BARCODE = "0123456789"
-
-    private static final String APPUSER_PASSWORD_NEW = "password_new"
-    private static final String APPUSER_NAME_NEW = "Name2"
-    private static final String[] APPUSER_ROLES_NEW = [Role.LOGIN.name, Role.APPUSER_CHANGE_PASSWORD.name] as String[]
-    private static final String APPUSER_BARCODE_NEW = "9876543210"
-
     @Autowired
     private AppUserService appUserService
 

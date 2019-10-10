@@ -47,6 +47,12 @@ public class Player implements Serializable {
         this.team = team;
     }
 
+    public Player(String nickname, AppUser appUser, Team team) {
+        this.nickname = nickname;
+        this.appUser = appUser;
+        this.team = team;
+    }
+
     public Long getId() {
         return id;
     }
