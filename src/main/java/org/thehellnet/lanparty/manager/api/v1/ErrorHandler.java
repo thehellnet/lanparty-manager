@@ -1,6 +1,8 @@
 package org.thehellnet.lanparty.manager.api.v1;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,8 @@ import org.thehellnet.lanparty.manager.exception.controller.ResponseStatus;
 
 @ControllerAdvice
 public class ErrorHandler extends ResponseEntityExceptionHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity handleCrudException(RuntimeException e) {
@@ -29,6 +33,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
             responseBody.put("message", e.getMessage());
         }
 
+        logger.debug(String.format("StatusCode: %d - Message: %s", httpStatus.value(), e.getMessage()));
         return ResponseEntity
                 .status(httpStatus)
                 .contentType(MediaType.APPLICATION_JSON)
