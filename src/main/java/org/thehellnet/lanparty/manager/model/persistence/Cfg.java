@@ -30,8 +30,8 @@ public class Cfg implements Serializable {
     private Game game;
 
     @Basic
-    @Column(name = "cfg", nullable = false, length = 1048576)
-    private String cfg = "";
+    @Column(name = "cfg_content", nullable = false, length = 1048576)
+    private String cfgContent = "";
 
     public Cfg() {
     }
@@ -41,10 +41,10 @@ public class Cfg implements Serializable {
         this.game = game;
     }
 
-    public Cfg(Player player, Game game, String cfg) {
+    public Cfg(Player player, Game game, String cfgContent) {
         this.player = player;
         this.game = game;
-        this.cfg = cfg;
+        this.cfgContent = cfgContent;
     }
 
     public Long getId() {
@@ -71,12 +71,12 @@ public class Cfg implements Serializable {
         this.game = game;
     }
 
-    public String getCfg() {
-        return cfg;
+    public String getCfgContent() {
+        return cfgContent;
     }
 
-    public void setCfg(String cfg) {
-        this.cfg = cfg;
+    public void setCfgContent(String cfg) {
+        this.cfgContent = cfg;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class Cfg implements Serializable {
         return id.equals(cfg1.id) &&
                 player.equals(cfg1.player) &&
                 game.equals(cfg1.game) &&
-                cfg.equals(cfg1.cfg);
+                cfgContent.equals(cfg1.cfgContent);
     }
 
     @Override
