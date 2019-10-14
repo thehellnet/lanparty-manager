@@ -7,12 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
+import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.lanparty.manager.model.persistence.*;
-import org.thehellnet.lanparty.manager.repository.AppUserRepository;
-import org.thehellnet.lanparty.manager.repository.CfgRepository;
-import org.thehellnet.lanparty.manager.repository.PlayerRepository;
-import org.thehellnet.lanparty.manager.repository.SeatRepository;
+import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.lanparty.manager.utility.cfg.CfgUtility;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfg;
 import org.thehellnet.utility.StringUtility;
@@ -71,25 +69,91 @@ public class CfgService extends AbstractService {
     private final SeatRepository seatRepository;
     private final AppUserRepository appUserRepository;
     private final PlayerRepository playerRepository;
+    private final GameRepository gameRepository;
     private final CfgRepository cfgRepository;
 
     @Autowired
-    public CfgService(SeatRepository seatRepository, AppUserRepository appUserRepository, PlayerRepository playerRepository, CfgRepository cfgRepository) {
+    public CfgService(SeatRepository seatRepository, AppUserRepository appUserRepository, PlayerRepository playerRepository, GameRepository gameRepository, CfgRepository cfgRepository) {
         this.seatRepository = seatRepository;
         this.appUserRepository = appUserRepository;
         this.playerRepository = playerRepository;
+        this.gameRepository = gameRepository;
         this.cfgRepository = cfgRepository;
     }
 
-    @Transactional(readOnly = true)
-    public Cfg findByPlayerAndGame(Player player, Game game) {
-        Cfg cfg = cfgRepository.findByPlayerAndGame(player, game);
-        if (cfg == null) {
-            throw new NotFoundException();
+    @Transactional
+    public Cfg create(Player player, Game game, String cfgContent) {
+        if (player == null) {
+            throw new InvalidDataException("Invalid player");
         }
+        if (game == null) {
+            throw new InvalidDataException("Invalid game");
+        }
+
+        Cfg cfg = new Cfg(player, game, cfgContent);
+
+        if (cfgContent != null) {
+            cfg.setCfg(cfgContent);
+        }
+
+        cfg = cfgRepository.save(cfg);
 
         return cfg;
     }
+
+    @Transactional(readOnly = true)
+    public Cfg get(Long id) {
+        return findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Cfg> getAll() {
+        return cfgRepository.findAll();
+    }
+
+    @Transactional
+    public Cfg update(Long id, Player player, Game game, String cfgContent) {
+        Cfg cfg = findById(id);
+
+        boolean changed = false;
+
+        if (player != null) {
+            cfg.setPlayer(player);
+            changed = true;
+        }
+
+        if (game != null) {
+            cfg.setGame(game);
+            changed = true;
+        }
+
+        if (cfgContent != null) {
+            cfg.setCfg(cfgContent);
+            changed = true;
+        }
+
+        if (!changed) {
+            throw new UnchangedException();
+        }
+
+        return cfgRepository.save(cfg);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Cfg cfg = findById(id);
+        cfgRepository.delete(cfg);
+    }
+
+    @Transactional(readOnly = true)
+    public Cfg findById(Long id) {
+        Cfg cfg = cfgRepository.findById(id).orElse(null);
+        if (cfg == null) {
+            throw new NotFoundException();
+        }
+        return cfg;
+    }
+
 
     @Transactional(readOnly = true)
     public List<String> computeCfg(String remoteAddress, String barcode) {
