@@ -51,6 +51,7 @@ abstract class ContextSpecification extends Specification {
             "bind H \"say Google\""
 
     protected final static String GAME_TAG = "cod4"
+    protected final static String GAME_TAG_NEW = "cod2"
 
     protected final static String SEAT_ADDRESS = "1.2.3.4"
     protected final static String SEAT_NAME = "Test seat"
@@ -58,12 +59,17 @@ abstract class ContextSpecification extends Specification {
     protected final static String TEAM_NAME = "Test team"
 
     protected final static String PLAYER_NICKNAME = "Testplayer"
+    protected final static String PLAYER_NICKNAME_NEW = "Testplayer new"
+
     protected final static String PLAYER_BARCODE = "0123456789"
 
     protected final static String PLAYER_CFG = "bind H \"say Ciao\""
 
     protected final static String CFG = "unbindall\n" +
             "bind P \"quit\""
+
+    protected final static String CFG_NEW = "unbindall\n" +
+            "bind P \"say mosche\""
 
     @Autowired
     protected WebApplicationContext webApplicationContext
@@ -137,14 +143,12 @@ abstract class ContextSpecification extends Specification {
 
     @Transactional
     protected Player createPlayer() {
-        Player player = playerRepository.findByNickname(PLAYER_NICKNAME)
-        if (player == null) {
-            AppUser appUser = createAppUser()
-            Team team = createTeam()
-            player = new Player(nickname: PLAYER_NICKNAME, appUser: appUser, team: team)
-            player = playerRepository.save(player)
-        }
-        return player
+        return createPlayer(PLAYER_NICKNAME)
+    }
+
+    @Transactional
+    protected Player createNewPlayer() {
+        return createPlayer(PLAYER_NICKNAME_NEW)
     }
 
     @Transactional
@@ -153,9 +157,21 @@ abstract class ContextSpecification extends Specification {
         Game game = gameRepository.findByTag(GAME_TAG)
         Cfg cfg = cfgRepository.findByPlayerAndGame(player, game)
         if (cfg == null) {
-            cfg = new Cfg(player: player, game: game, cfg: PLAYER_CFG)
+            cfg = new Cfg(player: player, game: game, cfgContent: PLAYER_CFG)
             cfg = cfgRepository.save(cfg)
         }
         return cfg
+    }
+
+    @Transactional
+    protected Player createPlayer(String playerName) {
+        Player player = playerRepository.findByNickname(playerName)
+        if (player == null) {
+            AppUser appUser = createAppUser()
+            Team team = createTeam()
+            player = new Player(nickname: PLAYER_NICKNAME, appUser: appUser, team: team)
+            player = playerRepository.save(player)
+        }
+        return player
     }
 }

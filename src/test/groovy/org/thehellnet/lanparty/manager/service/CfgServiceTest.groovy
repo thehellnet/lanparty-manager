@@ -3,6 +3,7 @@ package org.thehellnet.lanparty.manager.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException
+import org.thehellnet.lanparty.manager.exception.controller.UnchangedException
 import org.thehellnet.lanparty.manager.model.persistence.Cfg
 import org.thehellnet.lanparty.manager.model.persistence.Game
 import org.thehellnet.lanparty.manager.model.persistence.Player
@@ -14,11 +15,15 @@ class CfgServiceTest extends ServiceSpecification {
     private CfgService cfgService
 
     private Player player
+    private Player newPlayer
     private Game game
+    private Game newGame
 
     def setup() {
         player = createPlayer()
+        newPlayer = createNewPlayer()
         game = gameRepository.findByTag(GAME_TAG)
+        newGame = gameRepository.findByTag(GAME_TAG_NEW)
     }
 
     @Unroll
@@ -31,7 +36,7 @@ class CfgServiceTest extends ServiceSpecification {
         cfg.id != null
         cfg.player.id == player.id
         cfg.game.id == game.id
-        cfg.cfg == cfgContent
+        cfg.cfgContent == cfgContent
 
         where:
         cfgContent << [null, "", CFG]
@@ -85,7 +90,7 @@ class CfgServiceTest extends ServiceSpecification {
         cfg.id == cfgId
         cfg.player == player
         cfg.game == game
-        cfg.cfg == CFG
+        cfg.cfgContent == CFG
     }
 
     def "get with not existing id"() {
@@ -125,130 +130,107 @@ class CfgServiceTest extends ServiceSpecification {
         cfg.id == cfgId
         cfg.player == player
         cfg.game == game
-        cfg.cfg == CFG
+        cfg.cfgContent == CFG
     }
 
-//    @Unroll
-//    def "update UnchangedException #name name, #password password and #appUserRoles appUserRoles"(String name, String password, String[] appUserRoles, String barcode) {
-//        given:
-//        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME, APPUSER_BARCODE)).id
-//
-//        when:
-//        cfgService.update(appUserId, name, password, appUserRoles, barcode)
-//
-//        then:
-//        thrown UnchangedException
-//
-//        where:
-//        name | password | appUserRoles | barcode
-//        null | null     | null         | null
-//        null | ""       | null         | null
-//    }
-//
-//    @Unroll
-//    def "update with \"#name\" name, \"#password\" password, \"#appUserRoles\" appUserRolesand \"#barcode\" barcode"(String name, String password, String[] appUserRoles, String barcode) {
-//        given:
-//        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME, APPUSER_BARCODE)).id
-//
-//        when:
-//        cfgService.update(appUserId, name, password, appUserRoles, barcode)
-//
-//        and:
-//        AppUser appUser = appUserRepository.getOne(appUserId)
-//
-//        then:
-//        appUser != null
-//        appUser.id == appUserId
-//        appUser.email == APPUSER_EMAIL
-//        PasswordUtility.verify(appUser.password, ((password != null && password.length() > 0) ? password : APPUSER_PASSWORD))
-//        appUser.name == (name != null ? name : APPUSER_NAME)
-//        appUser.barcode == (barcode != null ? barcode : APPUSER_BARCODE)
-//        appUser.appUserRoles.size() == (appUserRoles != null ? appUserRoles.length : 0)
-//
-//        where:
-//        name             | password             | appUserRoles                  | barcode
-//        null             | null                 | [] as String[]                | null
-//        null             | null                 | [] as String[]                | ""
-//        null             | null                 | [] as String[]                | APPUSER_BARCODE_NEW
-//        null             | null                 | [Role.LOGIN.name] as String[] | null
-//        null             | null                 | [Role.LOGIN.name] as String[] | ""
-//        null             | null                 | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-//        null             | ""                   | [] as String[]                | null
-//        null             | ""                   | [] as String[]                | ""
-//        null             | ""                   | [] as String[]                | APPUSER_BARCODE_NEW
-//        null             | ""                   | [Role.LOGIN.name] as String[] | null
-//        null             | ""                   | [Role.LOGIN.name] as String[] | ""
-//        null             | ""                   | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-//        null             | APPUSER_PASSWORD_NEW | null                          | null
-//        null             | APPUSER_PASSWORD_NEW | null                          | ""
-//        null             | APPUSER_PASSWORD_NEW | null                          | APPUSER_BARCODE_NEW
-//        null             | APPUSER_PASSWORD_NEW | [] as String[]                | null
-//        null             | APPUSER_PASSWORD_NEW | [] as String[]                | ""
-//        null             | APPUSER_PASSWORD_NEW | [] as String[]                | APPUSER_BARCODE_NEW
-//        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | null
-//        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | ""
-//        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-//        ""               | null                 | [] as String[]                | null
-//        ""               | null                 | [] as String[]                | ""
-//        ""               | null                 | [] as String[]                | APPUSER_BARCODE_NEW
-//        ""               | null                 | [Role.LOGIN.name] as String[] | null
-//        ""               | null                 | [Role.LOGIN.name] as String[] | ""
-//        ""               | null                 | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-//        ""               | ""                   | [] as String[]                | null
-//        ""               | ""                   | [] as String[]                | ""
-//        ""               | ""                   | [] as String[]                | APPUSER_BARCODE_NEW
-//        ""               | ""                   | [Role.LOGIN.name] as String[] | null
-//        ""               | ""                   | [Role.LOGIN.name] as String[] | ""
-//        ""               | ""                   | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-//        ""               | APPUSER_PASSWORD_NEW | null                          | null
-//        ""               | APPUSER_PASSWORD_NEW | null                          | ""
-//        ""               | APPUSER_PASSWORD_NEW | null                          | APPUSER_BARCODE_NEW
-//        ""               | APPUSER_PASSWORD_NEW | [] as String[]                | null
-//        ""               | APPUSER_PASSWORD_NEW | [] as String[]                | ""
-//        ""               | APPUSER_PASSWORD_NEW | [] as String[]                | APPUSER_BARCODE_NEW
-//        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | null
-//        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | ""
-//        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-//        APPUSER_NAME_NEW | null                 | null                          | null
-//        APPUSER_NAME_NEW | null                 | null                          | ""
-//        APPUSER_NAME_NEW | null                 | null                          | APPUSER_BARCODE_NEW
-//        APPUSER_NAME_NEW | null                 | [] as String[]                | null
-//        APPUSER_NAME_NEW | null                 | [] as String[]                | ""
-//        APPUSER_NAME_NEW | null                 | [] as String[]                | APPUSER_BARCODE_NEW
-//        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[] | null
-//        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[] | ""
-//        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-//        APPUSER_NAME_NEW | ""                   | null                          | null
-//        APPUSER_NAME_NEW | ""                   | null                          | ""
-//        APPUSER_NAME_NEW | ""                   | null                          | APPUSER_BARCODE_NEW
-//        APPUSER_NAME_NEW | ""                   | [] as String[]                | null
-//        APPUSER_NAME_NEW | ""                   | [] as String[]                | ""
-//        APPUSER_NAME_NEW | ""                   | [] as String[]                | APPUSER_BARCODE_NEW
-//        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[] | null
-//        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[] | ""
-//        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-//        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                          | null
-//        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                          | ""
-//        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                          | APPUSER_BARCODE_NEW
-//        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                | null
-//        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                | ""
-//        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                | APPUSER_BARCODE_NEW
-//        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | null
-//        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | ""
-//        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-//    }
-//
-//    def "update with invalid id"() {
-//        given:
-//        Long appUserId = 12345678
-//
-//        when:
-//        cfgService.update(appUserId, APPUSER_NAME_NEW, APPUSER_PASSWORD_NEW, [Role.LOGIN.name] as String[], APPUSER_BARCODE_NEW)
-//
-//        then:
-//        thrown NotFoundException
-//    }
-//
+    def "update UnchangedException with null player, null game and null cfgContent"() {
+        given:
+        Long cfgId = cfgRepository.save(new Cfg(this.player, this.game, CFG)).id
+
+        when:
+        cfgService.update(cfgId, null, null, null)
+
+        then:
+        thrown UnchangedException
+    }
+
+    @Unroll
+    def "update with null player, null game and '#cfgContent' cfgContent"(String cfgContent) {
+        given:
+        Long cfgId = cfgRepository.save(new Cfg(this.player, this.game, CFG)).id
+
+        when:
+        Cfg cfg = cfgService.update(cfgId, null, null, cfgContent)
+
+        then:
+        cfg != null
+        cfg.id == cfgId
+        cfg.player == this.player
+        cfg.game == this.game
+        cfg.cfgContent == ((cfgContent != null) ? cfgContent : CFG)
+
+        where:
+        cfgContent << ["", CFG, CFG_NEW]
+    }
+
+    @Unroll
+    def "update with null player, new game and '#cfgContent' cfgContent"(String cfgContent) {
+        given:
+        Long cfgId = cfgRepository.save(new Cfg(this.player, this.game, CFG)).id
+
+        when:
+        Cfg cfg = cfgService.update(cfgId, null, this.newGame, cfgContent)
+
+        then:
+        cfg != null
+        cfg.id == cfgId
+        cfg.player == this.player
+        cfg.game == this.newGame
+        cfg.cfgContent == ((cfgContent != null) ? cfgContent : CFG)
+
+        where:
+        cfgContent << [null, "", CFG, CFG_NEW]
+    }
+
+    @Unroll
+    def "update with new player, null game and '#cfgContent' cfgContent"(String cfgContent) {
+        given:
+        Long cfgId = cfgRepository.save(new Cfg(this.player, this.game, CFG)).id
+
+        when:
+        Cfg cfg = cfgService.update(cfgId, this.newPlayer, null, cfgContent)
+
+        then:
+        cfg != null
+        cfg.id == cfgId
+        cfg.player == this.newPlayer
+        cfg.game == this.game
+        cfg.cfgContent == ((cfgContent != null) ? cfgContent : CFG)
+
+        where:
+        cfgContent << [null, "", CFG, CFG_NEW]
+    }
+
+    @Unroll
+    def "update with new player, new game and '#cfgContent' cfgContent"(String cfgContent) {
+        given:
+        Long cfgId = cfgRepository.save(new Cfg(this.player, this.game, CFG)).id
+
+        when:
+        Cfg cfg = cfgService.update(cfgId, this.newPlayer, this.newGame, cfgContent)
+
+        then:
+        cfg != null
+        cfg.id == cfgId
+        cfg.player == this.newPlayer
+        cfg.game == this.newGame
+        cfg.cfgContent == ((cfgContent != null) ? cfgContent : CFG)
+
+        where:
+        cfgContent << [null, "", CFG, CFG_NEW]
+    }
+
+    def "update with invalid id"() {
+        given:
+        Long appUserId = 12345678
+
+        when:
+        cfgService.update(appUserId, this.newPlayer, this.newGame, CFG_NEW)
+
+        then:
+        thrown NotFoundException
+    }
+
 //    def "delete"() {
 //        given:
 //        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD))).id

@@ -93,7 +93,7 @@ public class CfgService extends AbstractService {
         Cfg cfg = new Cfg(player, game, cfgContent);
 
         if (cfgContent != null) {
-            cfg.setCfg(cfgContent);
+            cfg.setCfgContent(cfgContent);
         }
 
         cfg = cfgRepository.save(cfg);
@@ -128,7 +128,7 @@ public class CfgService extends AbstractService {
         }
 
         if (cfgContent != null) {
-            cfg.setCfg(cfgContent);
+            cfg.setCfgContent(cfgContent);
             changed = true;
         }
 
@@ -187,7 +187,7 @@ public class CfgService extends AbstractService {
         tournamentCfgCommands = CfgUtility.removeSpecialCommands(tournamentCfgCommands);
 
         Cfg cfg = cfgRepository.findByPlayerAndGame(player, tournament.getGame());
-        String playerCfg = cfg != null ? cfg.getCfg() : null;
+        String playerCfg = cfg != null ? cfg.getCfgContent() : null;
 
         List<ParsedCfgCommand> playerCfgCommands = CfgUtility.parseCfgFromString(playerCfg);
         playerCfgCommands = CfgUtility.removeSpecialCommands(playerCfgCommands);
@@ -215,7 +215,7 @@ public class CfgService extends AbstractService {
             cfg = new Cfg(player, tournament.getGame());
         }
 
-        cfg.setCfg(StringUtility.joinLines(newCfg));
+        cfg.setCfgContent(StringUtility.joinLines(newCfg));
         cfgRepository.save(cfg);
     }
 }
