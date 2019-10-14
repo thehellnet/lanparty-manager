@@ -231,31 +231,31 @@ class CfgServiceTest extends ServiceSpecification {
         thrown NotFoundException
     }
 
-//    def "delete"() {
-//        given:
-//        Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD))).id
-//
-//        when:
-//        cfgService.delete(appUserId)
-//
-//        then:
-//        noExceptionThrown()
-//
-//        and:
-//        appUserRepository.findAll().size() == 1
-//    }
-//
-//    def "delete with not existing ID"() {
-//        given:
-//        Long appUserId = 12345678
-//
-//        when:
-//        cfgService.delete(appUserId)
-//
-//        then:
-//        thrown NotFoundException
-//    }
-//
+    def "delete"() {
+        given:
+        Long cfgId = cfgRepository.save(new Cfg(this.player, this.game, CFG)).id
+
+        when:
+        cfgService.delete(cfgId)
+
+        then:
+        noExceptionThrown()
+
+        and:
+        appUserRepository.findAll().size() == 0
+    }
+
+    def "delete with not existing ID"() {
+        given:
+        Long appUserId = 12345678
+
+        when:
+        cfgService.delete(appUserId)
+
+        then:
+        thrown NotFoundException
+    }
+
 //    def "findByEmail with admin"() {
 //        given:
 //        String email = "admin"
