@@ -62,6 +62,9 @@ abstract class ContextSpecification extends Specification {
 
     protected final static String PLAYER_CFG = "bind H \"say Ciao\""
 
+    protected final static String CFG = "unbindall\n" +
+            "bind P \"quit\""
+
     @Autowired
     protected WebApplicationContext webApplicationContext
 
