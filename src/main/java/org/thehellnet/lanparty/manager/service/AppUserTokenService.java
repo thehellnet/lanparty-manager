@@ -26,10 +26,10 @@ public class AppUserTokenService extends AbstractService {
     }
 
     @Transactional
-    public AppUserToken create(String token, AppUser appUser) {
-        appUser = appUserRepository.findById(appUser.getId()).orElse(null);
+    public AppUserToken create(String token, Long appUserId) {
+        AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
         if (appUser != null) {
-            throw new NotFoundException("E-mail address already registered");
+            throw new NotFoundException("AppUser not found");
         }
 
         AppUserToken appUserToken = new AppUserToken(token, appUser);
@@ -50,7 +50,7 @@ public class AppUserTokenService extends AbstractService {
     }
 
     @Transactional
-    public AppUserToken update(Long id, String token, AppUser appUser) {
+    public AppUserToken update(Long id, String token, Long appUserId) {
         AppUserToken appUserToken = findById(id);
 
         boolean changed = false;
@@ -60,8 +60,11 @@ public class AppUserTokenService extends AbstractService {
             changed = true;
         }
 
-
-        if (appUser != null) {
+        if (appUserId != null) {
+            AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
+            if (appUser != null) {
+                throw new NotFoundException("AppUser not found");
+            }
             appUserToken.setAppUser(appUser);
             changed = true;
         }
