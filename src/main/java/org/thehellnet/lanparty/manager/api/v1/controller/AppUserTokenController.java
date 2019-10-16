@@ -24,7 +24,7 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/public/appUserToken")
 public class AppUserTokenController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AppUserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AppUserTokenController.class);
 
     private final AppUserTokenService appUserTokenService;
 

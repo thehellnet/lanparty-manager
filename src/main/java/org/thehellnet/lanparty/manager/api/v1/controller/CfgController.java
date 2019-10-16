@@ -24,7 +24,7 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/public/cfg")
 public class CfgController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AppUserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CfgController.class);
 
     private final CfgService cfgService;
 
