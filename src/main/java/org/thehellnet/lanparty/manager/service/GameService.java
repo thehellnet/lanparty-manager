@@ -2,11 +2,16 @@ package org.thehellnet.lanparty.manager.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
+import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
+import org.thehellnet.lanparty.manager.model.persistence.GameGametype;
+import org.thehellnet.lanparty.manager.model.persistence.GameMap;
 import org.thehellnet.lanparty.manager.repository.GameRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class GameService extends AbstractService {
@@ -17,9 +22,67 @@ public class GameService extends AbstractService {
         this.gameRepository = gameRepository;
     }
 
+    @Transactional
+    public Game create(String tag, String name) {
+        if (tag == null) {
+            throw new InvalidDataException("Invalid player");
+        }
+        if (name == null) {
+            throw new InvalidDataException("Invalid game");
+        }
+
+        Game game = new Game(tag, name);
+        game = gameRepository.save(game);
+        return game;
+    }
+
     @Transactional(readOnly = true)
-    public List<Game> getAllGames() {
+    public Game get(Long id) {
+        return findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Game> getAll() {
         return gameRepository.findAll();
+    }
+
+    @Transactional
+    public Game update(Long id, String tag, String name, Set<GameGametype> gameGametypes, Set<GameMap> gameMaps) {
+        Game game = findById(id);
+
+        boolean changed = false;
+
+        if (tag != null) {
+            game.setTag(tag);
+            changed = true;
+        }
+
+        if (name != null) {
+            game.setName(name);
+            changed = true;
+        }
+
+        if (gameGametypes != null) {
+            game.setGameGametypes(gameGametypes);
+            changed = true;
+        }
+
+        if (gameMaps != null) {
+            game.setGameMaps(gameMaps);
+            changed = true;
+        }
+
+        if (!changed) {
+            throw new UnchangedException();
+        }
+
+        return gameRepository.save(game);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Game game = findById(id);
+        gameRepository.delete(game);
     }
 
     @Transactional(readOnly = true)
