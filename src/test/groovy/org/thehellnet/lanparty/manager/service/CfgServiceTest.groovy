@@ -36,7 +36,10 @@ class CfgServiceTest extends ServiceSpecification {
         cfg.id != null
         cfg.player.id == player.id
         cfg.game.id == game.id
-        cfg.cfgContent == cfgContent
+        cfg.cfgContent == ((cfgContent != null) ? cfgContent : "")
+
+        and:
+        cfgRepository.findAll().size() == 1
 
         where:
         cfgContent << [null, "", CFG]
@@ -50,6 +53,9 @@ class CfgServiceTest extends ServiceSpecification {
         then:
         thrown InvalidDataException
 
+        and:
+        cfgRepository.findAll().size() == 0
+
         where:
         cfgContent << [null, "", CFG]
     }
@@ -62,6 +68,9 @@ class CfgServiceTest extends ServiceSpecification {
         then:
         thrown InvalidDataException
 
+        and:
+        cfgRepository.findAll().size() == 0
+
         where:
         cfgContent << [null, "", CFG]
     }
@@ -73,6 +82,9 @@ class CfgServiceTest extends ServiceSpecification {
 
         then:
         thrown InvalidDataException
+
+        and:
+        cfgRepository.findAll().size() == 0
 
         where:
         cfgContent << [null, "", CFG]
@@ -242,7 +254,7 @@ class CfgServiceTest extends ServiceSpecification {
         noExceptionThrown()
 
         and:
-        appUserRepository.findAll().size() == 0
+        cfgRepository.findAll().size() == 0
     }
 
     def "delete with not existing ID"() {

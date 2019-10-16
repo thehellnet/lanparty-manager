@@ -52,9 +52,15 @@ public class Seat implements Serializable {
     }
 
     public Seat(String name, String ipAddress, Tournament tournament) {
+        this();
         this.name = name;
         this.ipAddress = ipAddress;
         this.tournament = tournament;
+    }
+
+    public Seat(String name, String ipAddress, Tournament tournament, Player player) {
+        this(name, ipAddress, tournament);
+        this.player = player;
     }
 
     public Long getId() {

@@ -5,18 +5,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thehellnet.lanparty.manager.exception.appuser.AppUserNotFoundException;
+import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
-import org.thehellnet.lanparty.manager.exception.player.PlayerAlreadyExistsException;
-import org.thehellnet.lanparty.manager.exception.player.PlayerInvalidNickameOrTeamIDException;
-import org.thehellnet.lanparty.manager.exception.player.PlayerNotFoundException;
-import org.thehellnet.lanparty.manager.exception.team.TeamNotFoundException;
+import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Player;
 import org.thehellnet.lanparty.manager.model.persistence.Team;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.repository.TeamRepository;
+
+import java.util.List;
 
 @Service
 public class PlayerService extends AbstractService {
@@ -35,44 +34,64 @@ public class PlayerService extends AbstractService {
     }
 
     @Transactional
-    public Player create(String nickname, Long teamId) throws PlayerInvalidNickameOrTeamIDException, PlayerAlreadyExistsException, TeamNotFoundException {
-        if (nickname == null || nickname.length() == 0
-                || teamId == null) {
-            throw new PlayerInvalidNickameOrTeamIDException();
+    public Player create(String nickname, AppUser appUser, Team team) {
+        if (nickname == null) {
+            throw new InvalidDataException("Invalid nickname");
         }
-
-        Player player = playerRepository.findByNickname(nickname);
-        if (player != null) {
-            throw new PlayerAlreadyExistsException();
+        if (appUser == null) {
+            throw new InvalidDataException("Invalid appUser");
         }
-
-        Team team = teamRepository.findById(teamId).orElse(null);
         if (team == null) {
-            throw new TeamNotFoundException();
+            throw new InvalidDataException("Invalid team");
         }
 
-        player = new Player(nickname, team);
+        Player player = new Player(nickname, appUser, team);
         player = playerRepository.save(player);
         return player;
     }
 
+    @Transactional(readOnly = true)
+    public Player get(Long id) {
+        return findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Player> getAll() {
+        return playerRepository.findAll();
+    }
+
     @Transactional
-    public Player save(Long id, String nickname, String barcode, Long appUserId) throws PlayerNotFoundException, AppUserNotFoundException {
+    public Player update(Long id, String nickname, AppUser appUser, Team team) {
         Player player = findById(id);
 
-        if (nickname != null && nickname.length() > 0) {
+        boolean changed = false;
+
+        if (nickname != null) {
             player.setNickname(nickname);
+            changed = true;
         }
 
-        if (appUserId != null) {
-            AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
-            if (appUser == null) {
-                throw new AppUserNotFoundException();
-            }
+        if (appUser != null) {
             player.setAppUser(appUser);
+            changed = true;
+        }
+
+        if (team != null) {
+            player.setTeam(team);
+            changed = true;
+        }
+
+        if (!changed) {
+            throw new UnchangedException();
         }
 
         return playerRepository.save(player);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Player player = findById(id);
+        playerRepository.delete(player);
     }
 
     @Transactional(readOnly = true)

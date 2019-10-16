@@ -63,6 +63,19 @@ public class Match implements Serializable {
     @JsonIdentityReference(alwaysAsId = true)
     private Team guestTeam;
 
+    public Match() {
+    }
+
+    public Match(String name, Tournament tournament, Server server, GameMap gameMap, Gametype gametype, Team localTeam, Team guestTeam) {
+        this.name = name;
+        this.tournament = tournament;
+        this.server = server;
+        this.gameMap = gameMap;
+        this.gametype = gametype;
+        this.localTeam = localTeam;
+        this.guestTeam = guestTeam;
+    }
+
     public Long getId() {
         return id;
     }

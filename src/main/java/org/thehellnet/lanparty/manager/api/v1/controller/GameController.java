@@ -32,27 +32,27 @@ public class GameController {
         this.gameService = gameService;
     }
 
-    @RequestMapping(
-            path = "/list",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @CheckToken
-    @CheckRoles(Role.READ_PUBLIC)
-    @ResponseBody
-    public JsonResponse list(AppUser appUser, @RequestBody GameListDTO dto) {
-        List<Game> games = gameService.getAllGames();
-
-
-        List<Map<String, String>> data = new ArrayList<>();
-        for (Game game : games) {
-            Map<String, String> gameData = new HashMap<>();
-            gameData.put("tag", game.getTag());
-            gameData.put("name", game.getName());
-            data.add(gameData);
-        }
-
-        return JsonResponse.getInstance(data);
-    }
+//    @RequestMapping(
+//            path = "/list",
+//            method = RequestMethod.POST,
+//            consumes = MediaType.APPLICATION_JSON_VALUE,
+//            produces = MediaType.APPLICATION_JSON_VALUE
+//    )
+//    @CheckToken
+//    @CheckRoles(Role.READ_PUBLIC)
+//    @ResponseBody
+//    public JsonResponse list(AppUser appUser, @RequestBody GameListDTO dto) {
+//        List<Game> games = gameService.getAllGames();
+//
+//
+//        List<Map<String, String>> data = new ArrayList<>();
+//        for (Game game : games) {
+//            Map<String, String> gameData = new HashMap<>();
+//            gameData.put("tag", game.getTag());
+//            gameData.put("name", game.getName());
+//            data.add(gameData);
+//        }
+//
+//        return JsonResponse.getInstance(data);
+//    }
 }

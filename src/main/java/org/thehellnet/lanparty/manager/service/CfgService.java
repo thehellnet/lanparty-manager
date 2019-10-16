@@ -90,7 +90,7 @@ public class CfgService extends AbstractService {
             throw new InvalidDataException("Invalid game");
         }
 
-        Cfg cfg = new Cfg(player, game, cfgContent);
+        Cfg cfg = new Cfg(player, game);
 
         if (cfgContent != null) {
             cfg.setCfgContent(cfgContent);

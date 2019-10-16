@@ -6,12 +6,9 @@ import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
-import org.thehellnet.lanparty.manager.model.persistence.GameGametype;
-import org.thehellnet.lanparty.manager.model.persistence.GameMap;
 import org.thehellnet.lanparty.manager.repository.GameRepository;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class GameService extends AbstractService {
@@ -47,7 +44,7 @@ public class GameService extends AbstractService {
     }
 
     @Transactional
-    public Game update(Long id, String tag, String name, Set<GameGametype> gameGametypes, Set<GameMap> gameMaps) {
+    public Game update(Long id, String tag, String name) {
         Game game = findById(id);
 
         boolean changed = false;
@@ -59,16 +56,6 @@ public class GameService extends AbstractService {
 
         if (name != null) {
             game.setName(name);
-            changed = true;
-        }
-
-        if (gameGametypes != null) {
-            game.setGameGametypes(gameGametypes);
-            changed = true;
-        }
-
-        if (gameMaps != null) {
-            game.setGameMaps(gameMaps);
             changed = true;
         }
 
