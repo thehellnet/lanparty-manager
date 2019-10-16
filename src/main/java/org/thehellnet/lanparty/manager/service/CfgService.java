@@ -154,7 +154,6 @@ public class CfgService extends AbstractService {
         return cfg;
     }
 
-
     @Transactional(readOnly = true)
     public List<String> computeCfg(String remoteAddress, String barcode) {
         if (remoteAddress == null || remoteAddress.length() == 0
