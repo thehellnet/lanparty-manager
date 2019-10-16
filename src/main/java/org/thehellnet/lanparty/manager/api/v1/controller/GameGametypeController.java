@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api/v1/public/gamegametype")
+@RequestMapping(path = "/api/v1/public/gameGametype")
 public class GameGametypeController {
 
     private static final Logger logger = LoggerFactory.getLogger(GameGametypeController.class);
