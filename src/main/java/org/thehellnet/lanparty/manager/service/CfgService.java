@@ -120,14 +120,20 @@ public class CfgService extends AbstractService {
 
         boolean changed = false;
 
-        Player player = playerRepository.findById(playerId).orElse(null);
-        if (player != null) {
+        if (playerId != null) {
+            Player player = playerRepository.findById(playerId).orElse(null);
+            if (player == null) {
+                throw new InvalidDataException("Invalid player");
+            }
             cfg.setPlayer(player);
             changed = true;
         }
 
-        Game game = gameRepository.findById(gameId).orElse(null);
-        if (game != null) {
+        if (gameId != null) {
+            Game game = gameRepository.findById(gameId).orElse(null);
+            if (game == null) {
+                throw new InvalidDataException("Invalid game");
+            }
             cfg.setGame(game);
             changed = true;
         }
