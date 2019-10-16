@@ -9,6 +9,7 @@ import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;
+import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 import java.util.List;
@@ -19,19 +20,24 @@ public class TournamentService extends AbstractService {
     private static final Logger logger = LoggerFactory.getLogger(TournamentService.class);
 
     private final TournamentRepository tournamentRepository;
+    private final GameRepository gameRepository;
 
-    public TournamentService(TournamentRepository tournamentRepository) {
+    public TournamentService(TournamentRepository tournamentRepository, GameRepository gameRepository) {
         this.tournamentRepository = tournamentRepository;
+        this.gameRepository = gameRepository;
     }
 
     @Transactional
-    public Tournament create(String name, Game game, String cfg) {
+    public Tournament create(String name, Long gameId, String cfg) {
         if (name == null) {
             throw new InvalidDataException("Invalid name");
         }
+
+        Game game = gameRepository.findById(gameId).orElse(null);
         if (game == null) {
             throw new InvalidDataException("Invalid game");
         }
+
         if (cfg == null) {
             throw new InvalidDataException("Invalid cfg");
         }
@@ -52,7 +58,7 @@ public class TournamentService extends AbstractService {
     }
 
     @Transactional
-    public Tournament update(Long id, String name, Game game, String cfg) {
+    public Tournament update(Long id, String name, Long gameId, String cfg) {
         Tournament tournament = findById(id);
 
         boolean changed = false;
@@ -62,7 +68,12 @@ public class TournamentService extends AbstractService {
             changed = true;
         }
 
-        if (game != null) {
+        if (gameId != null) {
+            Game game = gameRepository.findById(gameId).orElse(null);
+            if (game == null) {
+                throw new InvalidDataException("Invalid game");
+            }
+
             tournament.setGame(game);
             changed = true;
         }
