@@ -34,13 +34,17 @@ public class PlayerService extends AbstractService {
     }
 
     @Transactional
-    public Player create(String nickname, AppUser appUser, Team team) {
+    public Player create(String nickname, Long appUserId, Long teamId) {
         if (nickname == null) {
             throw new InvalidDataException("Invalid nickname");
         }
+
+        AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
         if (appUser == null) {
             throw new InvalidDataException("Invalid appUser");
         }
+
+        Team team = teamRepository.findById(teamId).orElse(null);
         if (team == null) {
             throw new InvalidDataException("Invalid team");
         }
@@ -61,7 +65,7 @@ public class PlayerService extends AbstractService {
     }
 
     @Transactional
-    public Player update(Long id, String nickname, AppUser appUser, Team team) {
+    public Player update(Long id, String nickname, Long appUserId, Long teamId) {
         Player player = findById(id);
 
         boolean changed = false;
@@ -71,12 +75,20 @@ public class PlayerService extends AbstractService {
             changed = true;
         }
 
-        if (appUser != null) {
+        if (appUserId != null) {
+            AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
+            if (appUser == null) {
+                throw new InvalidDataException("Invalid appUser");
+            }
             player.setAppUser(appUser);
             changed = true;
         }
 
-        if (team != null) {
+        if (teamId != null) {
+            Team team = teamRepository.findById(teamId).orElse(null);
+            if (team == null) {
+                throw new InvalidDataException("Invalid team");
+            }
             player.setTeam(team);
             changed = true;
         }
