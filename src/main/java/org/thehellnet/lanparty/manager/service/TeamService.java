@@ -11,6 +11,7 @@ import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.persistence.Team;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;
 import org.thehellnet.lanparty.manager.repository.TeamRepository;
+import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 import java.util.List;
 
@@ -20,17 +21,21 @@ public class TeamService extends AbstractService {
     private static final Logger logger = LoggerFactory.getLogger(TeamService.class);
 
     private final TeamRepository teamRepository;
+    private final TournamentRepository tournamentRepository;
 
     @Autowired
-    public TeamService(TeamRepository teamRepository) {
+    public TeamService(TeamRepository teamRepository, TournamentRepository tournamentRepository) {
         this.teamRepository = teamRepository;
+        this.tournamentRepository = tournamentRepository;
     }
 
     @Transactional
-    public Team create(String name, Tournament tournament) {
+    public Team create(String name, Long tournamentId) {
         if (name == null) {
             throw new InvalidDataException("Invalid name");
         }
+
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
         if (tournament == null) {
             throw new InvalidDataException("Invalid tournament");
         }
@@ -51,7 +56,7 @@ public class TeamService extends AbstractService {
     }
 
     @Transactional
-    public Team update(Long id, String name, Tournament tournament) {
+    public Team update(Long id, String name, Long tournamentId) {
         Team team = findById(id);
 
         boolean changed = false;
@@ -61,7 +66,11 @@ public class TeamService extends AbstractService {
             changed = true;
         }
 
-        if (tournament != null) {
+        if (tournamentId != null) {
+            Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+            if (tournament == null) {
+                throw new InvalidDataException("Invalid tournament");
+            }
             team.setTournament(tournament);
             changed = true;
         }
