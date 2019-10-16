@@ -10,6 +10,7 @@ import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
+import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.ServerRepository;
 
 import java.util.List;
@@ -20,28 +21,35 @@ public class ServerService extends AbstractService {
     private static final Logger logger = LoggerFactory.getLogger(TeamService.class);
 
     private final ServerRepository serverRepository;
+    private final GameRepository gameRepository;
 
     @Autowired
-    public ServerService(ServerRepository serverRepository) {
+    public ServerService(ServerRepository serverRepository, GameRepository gameRepository) {
         this.serverRepository = serverRepository;
+        this.gameRepository = gameRepository;
     }
 
     @Transactional
-    public Server create(String tag, String name, Game game, String address, Integer port, String rconPassword, String logFile, Boolean logParsingEnabled) {
+    public Server create(String tag, String name, Long gameId, String address, Integer port, String rconPassword, String logFile, Boolean logParsingEnabled) {
         if (tag == null) {
-            throw new InvalidDataException("Invalid tournament");
+            throw new InvalidDataException("Invalid tag");
         }
+
+        Game game = gameRepository.findById(gameId).orElse(null);
         if (game == null) {
-            throw new InvalidDataException("Invalid tournament");
+            throw new InvalidDataException("Invalid game");
         }
+
         if (address == null) {
-            throw new InvalidDataException("Invalid tournament");
+            throw new InvalidDataException("Invalid address");
         }
+
         if (port == null) {
-            throw new InvalidDataException("Invalid tournament");
+            throw new InvalidDataException("Invalid port");
         }
+
         if (logParsingEnabled == null) {
-            throw new InvalidDataException("Invalid tournament");
+            throw new InvalidDataException("Invalid logParsingEnabled");
         }
 
         Server server = new Server(tag, name, game, address, port, rconPassword, logFile, logParsingEnabled);
@@ -60,17 +68,26 @@ public class ServerService extends AbstractService {
     }
 
     @Transactional
-    public Server update(Long id, String tag, String name, Game game, String address, Integer port, String rconPassword, String logFile, Boolean logParsingEnabled) {
+    public Server update(Long id, String tag, String name, Long gameId, String address, Integer port, String rconPassword, String logFile, Boolean logParsingEnabled) {
         Server server = findById(id);
 
         boolean changed = false;
 
         if (tag != null) {
-            server.setName(tag);
+            server.setTag(tag);
             changed = true;
         }
 
-        if (game != null) {
+        if (name != null) {
+            server.setName(name);
+            changed = true;
+        }
+
+        if (gameId != null) {
+            Game game = gameRepository.findById(gameId).orElse(null);
+            if (game == null) {
+                throw new InvalidDataException("Invalid game");
+            }
             server.setGame(game);
             changed = true;
         }
