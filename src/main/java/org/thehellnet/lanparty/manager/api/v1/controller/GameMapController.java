@@ -1,38 +1,94 @@
 package org.thehellnet.lanparty.manager.api.v1.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
-import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
+import org.thehellnet.lanparty.manager.model.dto.request.gamemap.CreateGameMapRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.gamemap.UpdateGameMapRequestDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
-import org.thehellnet.lanparty.manager.model.persistence.Game;
 import org.thehellnet.lanparty.manager.model.persistence.GameMap;
-import org.thehellnet.lanparty.manager.repository.GameMapRepository;
-import org.thehellnet.lanparty.manager.repository.GameRepository;
+import org.thehellnet.lanparty.manager.service.GameMapService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
-@Controller
+@RestController
+@CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/v1/public/gameMap")
 public class GameMapController {
 
-    private final GameRepository gameRepository;
-    private final GameMapRepository gameMapRepository;
+    private static final Logger logger = LoggerFactory.getLogger(GameMapController.class);
+
+    private final GameMapService gameMapService;
 
     @Autowired
-    public GameMapController(GameRepository gameRepository, GameMapRepository gameMapRepository) {
-        this.gameRepository = gameRepository;
-        this.gameMapRepository = gameMapRepository;
+    public GameMapController(GameMapService gameMapService) {
+        this.gameMapService = gameMapService;
     }
 
+    @CheckToken
+    @CheckRoles(Role.APPUSER_ADMIN)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateGameMapRequestDTO dto) {
+        GameMap gameMap = gameMapService.create(dto.tag, dto.name, dto.game, dto.stock);
+        return ResponseEntity.created(URI.create("")).body(gameMap);
+    }
+
+    @CheckToken
+    @CheckRoles(Role.APPUSER_VIEW)
+    @RequestMapping(
+            path = "{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
+        GameMap gameMap = gameMapService.get(id);
+        return ResponseEntity.ok(gameMap);
+    }
+
+    @CheckToken
+    @CheckRoles(Role.APPUSER_VIEW)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
+        List<GameMap> gameMaps = gameMapService.getAll();
+        return ResponseEntity.ok(gameMaps);
+    }
+
+    @CheckToken
+    @CheckRoles(Role.APPUSER_ADMIN)
+    @RequestMapping(
+            path = "{id}",
+            method = RequestMethod.PATCH,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateGameMapRequestDTO dto) {
+        GameMap gameMap = gameMapService.update(id, dto.tag, dto.name, dto.game, dto.stock);
+        return ResponseEntity.ok(gameMap);
+    }
+
+    @CheckToken
+    @CheckRoles(Role.APPUSER_ADMIN)
+    @RequestMapping(
+            path = "{id}",
+            method = RequestMethod.DELETE
+    )
+    public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
+        gameMapService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

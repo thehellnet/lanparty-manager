@@ -11,6 +11,7 @@ import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
 import org.thehellnet.lanparty.manager.model.persistence.GameMap;
 import org.thehellnet.lanparty.manager.repository.GameMapRepository;
+import org.thehellnet.lanparty.manager.repository.GameRepository;
 
 import java.util.List;
 
@@ -20,22 +21,27 @@ public class GameMapService extends AbstractService {
     private static final Logger logger = LoggerFactory.getLogger(TeamService.class);
 
     private final GameMapRepository gameMapRepository;
+    private final GameRepository gameRepository;
 
     @Autowired
-    public GameMapService(GameMapRepository gameMapRepository) {
+    public GameMapService(GameMapRepository gameMapRepository, GameRepository gameRepository) {
         this.gameMapRepository = gameMapRepository;
+        this.gameRepository = gameRepository;
     }
 
     @Transactional
-    public GameMap create(String tag, String name, Game game, Boolean stock) {
+    public GameMap create(String tag, String name, Long gameId, Boolean stock) {
         if (tag == null) {
-            throw new InvalidDataException("Invalid name");
+            throw new InvalidDataException("Invalid tag");
         }
+
+        Game game = gameRepository.findById(gameId).orElse(null);
         if (game == null) {
-            throw new InvalidDataException("Invalid tournament");
+            throw new InvalidDataException("Invalid game");
         }
+
         if (stock == null) {
-            throw new InvalidDataException("Invalid tournament");
+            throw new InvalidDataException("Invalid stock");
         }
 
         GameMap gameMap = new GameMap(tag, name, game, stock);
@@ -54,7 +60,7 @@ public class GameMapService extends AbstractService {
     }
 
     @Transactional
-    public GameMap update(Long id, String tag, String name, Game game, Boolean stock) {
+    public GameMap update(Long id, String tag, String name, Long gameId, Boolean stock) {
         GameMap gameMap = findById(id);
 
         boolean changed = false;
@@ -69,7 +75,11 @@ public class GameMapService extends AbstractService {
             changed = true;
         }
 
-        if (game != null) {
+        if (gameId != null) {
+            Game game = gameRepository.findById(gameId).orElse(null);
+            if (game == null) {
+                throw new InvalidDataException("Invalid game");
+            }
             gameMap.setGame(game);
             changed = true;
         }
