@@ -149,7 +149,6 @@ public class AppUserService extends AbstractService {
         return appUser;
     }
 
-
     @Transactional(readOnly = true)
     public boolean hasAllRoles(AppUser appUser, Role... roles) {
         return hasRoles(appUser, true, roles);
