@@ -12,6 +12,8 @@ import org.thehellnet.lanparty.manager.model.persistence.Game;
 import org.thehellnet.lanparty.manager.model.persistence.GameGametype;
 import org.thehellnet.lanparty.manager.model.persistence.Gametype;
 import org.thehellnet.lanparty.manager.repository.GameGametypeRepository;
+import org.thehellnet.lanparty.manager.repository.GameRepository;
+import org.thehellnet.lanparty.manager.repository.GametypeRepository;
 
 import java.util.List;
 
@@ -21,25 +23,33 @@ public class GameGametypeService extends AbstractService {
     private static final Logger logger = LoggerFactory.getLogger(TeamService.class);
 
     private final GameGametypeRepository gameGametypeRepository;
+    private final GameRepository gameRepository;
+    private final GametypeRepository gametypeRepository;
 
     @Autowired
-    public GameGametypeService(GameGametypeRepository gameGametypeRepository) {
+    public GameGametypeService(GameGametypeRepository gameGametypeRepository, GameRepository gameRepository, GametypeRepository gametypeRepository) {
         this.gameGametypeRepository = gameGametypeRepository;
+        this.gameRepository = gameRepository;
+        this.gametypeRepository = gametypeRepository;
     }
 
     @Transactional
-    public GameGametype create(Game game, Gametype gametype, String tag) {
+    public GameGametype create(Long gameId, Long gametypeId, String tag) {
+        Game game = gameRepository.findById(gameId).orElse(null);
         if (game == null) {
-            throw new InvalidDataException("Invalid name");
-        }
-        if (gametype == null) {
-            throw new InvalidDataException("Invalid tournament");
-        }
-        if (tag == null) {
-            throw new InvalidDataException("Invalid tournament");
+            throw new InvalidDataException("Invalid game");
         }
 
-        GameGametype gameGametype = new GameGametype(game, gametype, tag);
+        Gametype gametype = gametypeRepository.findById(gameId).orElse(null);
+        if (gametype == null) {
+            throw new InvalidDataException("Invalid gametype");
+        }
+
+        if (tag == null || tag.strip().length() == 0) {
+            throw new InvalidDataException("Invalid tag");
+        }
+
+        GameGametype gameGametype = new GameGametype(game, gametype, tag.strip());
         gameGametype = gameGametypeRepository.save(gameGametype);
         return gameGametype;
     }
@@ -55,23 +65,31 @@ public class GameGametypeService extends AbstractService {
     }
 
     @Transactional
-    public GameGametype update(Long id, Game game, Gametype gametype, String tag) {
+    public GameGametype update(Long id, Long gameId, Long gametypeId, String tag) {
         GameGametype gameGametype = findById(id);
 
         boolean changed = false;
 
-        if (game != null) {
+        if (gameId != null) {
+            Game game = gameRepository.findById(gameId).orElse(null);
+            if (game == null) {
+                throw new InvalidDataException("Invalid game");
+            }
             gameGametype.setGame(game);
             changed = true;
         }
 
-        if (gametype != null) {
+        if (gametypeId != null) {
+            Gametype gametype = gametypeRepository.findById(gametypeId).orElse(null);
+            if (gametype == null) {
+                throw new InvalidDataException("Invalid gametype");
+            }
             gameGametype.setGametype(gametype);
             changed = true;
         }
 
-        if (tag != null) {
-            gameGametype.setTag(tag);
+        if (tag != null && tag.strip().length() > 0) {
+            gameGametype.setTag(tag.strip());
             changed = true;
         }
 
