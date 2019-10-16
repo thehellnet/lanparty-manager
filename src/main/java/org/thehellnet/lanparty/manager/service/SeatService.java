@@ -10,7 +10,9 @@ import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.persistence.Player;
 import org.thehellnet.lanparty.manager.model.persistence.Seat;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;
+import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.repository.SeatRepository;
+import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 import java.util.List;
 
@@ -20,22 +22,31 @@ public class SeatService extends AbstractService {
     private static final Logger logger = LoggerFactory.getLogger(SeatService.class);
 
     private final SeatRepository seatRepository;
+    private final TournamentRepository tournamentRepository;
+    private final PlayerRepository playerRepository;
 
-    public SeatService(SeatRepository seatRepository) {
+    public SeatService(SeatRepository seatRepository, TournamentRepository tournamentRepository, PlayerRepository playerRepository) {
         this.seatRepository = seatRepository;
+        this.tournamentRepository = tournamentRepository;
+        this.playerRepository = playerRepository;
     }
 
     @Transactional
-    public Seat create(String name, String ipAddress, Tournament tournament, Player player) {
+    public Seat create(String name, String ipAddress, Long tournamentId, Long playerId) {
         if (name == null) {
             throw new InvalidDataException("Invalid name");
         }
+
         if (ipAddress == null) {
             throw new InvalidDataException("Invalid ipAddress");
         }
+
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
         if (tournament == null) {
             throw new InvalidDataException("Invalid tournament");
         }
+
+        Player player = playerRepository.findById(playerId).orElse(null);
 
         Seat seat = new Seat(name, ipAddress, tournament, player);
         seat = seatRepository.save(seat);
@@ -53,7 +64,7 @@ public class SeatService extends AbstractService {
     }
 
     @Transactional
-    public Seat update(Long id, String name, String ipAddress, Tournament tournament, Player player) {
+    public Seat update(Long id, String name, String ipAddress, Long tournamentId, Long playerId) {
         Seat seat = findById(id);
 
         boolean changed = false;
@@ -68,13 +79,24 @@ public class SeatService extends AbstractService {
             changed = true;
         }
 
-        if (tournament != null) {
+        if (tournamentId != null) {
+            Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+            if (tournament == null) {
+                throw new InvalidDataException("Invalid tournament");
+            }
             seat.setTournament(tournament);
             changed = true;
         }
 
-        if (player != null) {
+        if (playerId != null) {
+            Player player = playerRepository.findById(playerId).orElse(null);
+            if (player == null) {
+                throw new InvalidDataException("Invalid player");
+            }
             seat.setPlayer(player);
+            changed = true;
+        } else if (seat.getPlayer() != null) {
+            seat.setPlayer(null);
             changed = true;
         }
 
