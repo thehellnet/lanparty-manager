@@ -11,7 +11,6 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.JsonResponse;
-import org.thehellnet.lanparty.manager.model.dto.request.GameMapListDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
 import org.thehellnet.lanparty.manager.model.persistence.GameMap;
@@ -36,38 +35,4 @@ public class GameMapController {
         this.gameMapRepository = gameMapRepository;
     }
 
-    @RequestMapping(
-            path = "/list",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @CheckToken
-    @CheckRoles(Role.READ_PUBLIC)
-    @ResponseBody
-    public JsonResponse list(AppUser appUser, @RequestBody GameMapListDTO dto) {
-        List<GameMap> gameMaps = new ArrayList<>();
-
-        if (dto.gameTag != null) {
-            Game game = gameRepository.findByTag(dto.gameTag);
-            if (game == null) {
-                return JsonResponse.getErrorInstance("Game tag not found");
-            }
-            gameMaps.addAll(gameMapRepository.findByGame(game));
-        } else {
-            gameMaps.addAll(gameMapRepository.findAll());
-        }
-
-        List<Map<String, Object>> data = new ArrayList<>();
-        for (GameMap gameMap : gameMaps) {
-            Map<String, Object> mapData = new HashMap<>();
-            mapData.put("tag", gameMap.getTag());
-            mapData.put("name", gameMap.getName());
-            mapData.put("gameTag", gameMap.getGame().getTag());
-            mapData.put("stock", gameMap.getStock());
-            data.add(mapData);
-        }
-
-        return JsonResponse.getInstance(data);
-    }
 }
