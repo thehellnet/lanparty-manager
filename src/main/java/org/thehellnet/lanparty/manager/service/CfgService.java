@@ -82,10 +82,13 @@ public class CfgService extends AbstractService {
     }
 
     @Transactional
-    public Cfg create(Player player, Game game, String cfgContent) {
+    public Cfg create(Long playerId, Long gameId, String cfgContent) {
+        Player player = playerRepository.findById(playerId).orElse(null);
         if (player == null) {
             throw new InvalidDataException("Invalid player");
         }
+
+        Game game = gameRepository.findById(gameId).orElse(null);
         if (game == null) {
             throw new InvalidDataException("Invalid game");
         }
@@ -112,16 +115,18 @@ public class CfgService extends AbstractService {
     }
 
     @Transactional
-    public Cfg update(Long id, Player player, Game game, String cfgContent) {
+    public Cfg update(Long id, Long playerId, Long gameId, String cfgContent) {
         Cfg cfg = findById(id);
 
         boolean changed = false;
 
+        Player player = playerRepository.findById(playerId).orElse(null);
         if (player != null) {
             cfg.setPlayer(player);
             changed = true;
         }
 
+        Game game = gameRepository.findById(gameId).orElse(null);
         if (game != null) {
             cfg.setGame(game);
             changed = true;

@@ -91,5 +91,4 @@ public class AppUserTokenController {
         appUserTokenService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }
