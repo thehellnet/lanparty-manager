@@ -39,14 +39,20 @@ public class PlayerService extends AbstractService {
             throw new InvalidDataException("Invalid nickname");
         }
 
-        AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
-        if (appUser == null) {
+        if (appUserId == null) {
             throw new InvalidDataException("Invalid appUser");
         }
+        AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
+        if (appUser == null) {
+            throw new InvalidDataException("AppUser not found");
+        }
 
+        if (teamId == null) {
+            throw new InvalidDataException("Invalid team");
+        }
         Team team = teamRepository.findById(teamId).orElse(null);
         if (team == null) {
-            throw new InvalidDataException("Invalid team");
+            throw new InvalidDataException("Team not found");
         }
 
         Player player = new Player(nickname, appUser, team);

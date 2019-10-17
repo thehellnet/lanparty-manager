@@ -28,6 +28,9 @@ public class AppUserTokenService extends AbstractService {
 
     @Transactional
     public AppUserToken create(String token, Long appUserId) {
+        if (appUserId == null) {
+            throw new InvalidDataException("Invalid appUser");
+        }
         AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
         if (appUser != null) {
             throw new InvalidDataException("AppUser not found");

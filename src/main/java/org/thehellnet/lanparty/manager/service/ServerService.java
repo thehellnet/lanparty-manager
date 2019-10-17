@@ -35,9 +35,12 @@ public class ServerService extends AbstractService {
             throw new InvalidDataException("Invalid tag");
         }
 
+        if (gameId == null) {
+            throw new InvalidDataException("Invalid game");
+        }
         Game game = gameRepository.findById(gameId).orElse(null);
         if (game == null) {
-            throw new InvalidDataException("Invalid game");
+            throw new InvalidDataException("Game not found");
         }
 
         if (address == null) {

@@ -35,14 +35,20 @@ public class GameGametypeService extends AbstractService {
 
     @Transactional
     public GameGametype create(Long gameId, Long gametypeId, String tag) {
-        Game game = gameRepository.findById(gameId).orElse(null);
-        if (game == null) {
+        if (gameId == null) {
             throw new InvalidDataException("Invalid game");
         }
+        Game game = gameRepository.findById(gameId).orElse(null);
+        if (game == null) {
+            throw new InvalidDataException("Game not found");
+        }
 
-        Gametype gametype = gametypeRepository.findById(gameId).orElse(null);
-        if (gametype == null) {
+        if (gametypeId == null) {
             throw new InvalidDataException("Invalid gametype");
+        }
+        Gametype gametype = gametypeRepository.findById(gametypeId).orElse(null);
+        if (gametype == null) {
+            throw new InvalidDataException("Gametype not found");
         }
 
         if (tag == null || tag.strip().length() == 0) {

@@ -41,19 +41,40 @@ public class MatchService extends AbstractService {
             throw new InvalidDataException("Invalid name");
         }
 
-        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
-        if (tournament == null) {
+        if (tournamentId == null) {
             throw new InvalidDataException("Invalid tournament");
         }
-
-        Server server = serverRepository.findById(serverId).orElse(null);
-        if (server == null) {
-            throw new InvalidDataException("Invalid server");
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+        if (tournament == null) {
+            throw new InvalidDataException("Tournament not found");
         }
 
+        if (serverId == null) {
+            throw new InvalidDataException("Invalid server");
+        }
+        Server server = serverRepository.findById(serverId).orElse(null);
+        if (server == null) {
+            throw new InvalidDataException("Server not found");
+        }
+
+        if (gameMapId == null) {
+            throw new InvalidDataException("Invalid gamemap");
+        }
         GameMap gameMap = gameMapRepository.findById(gameMapId).orElse(null);
+
+        if (gametypeId == null) {
+            throw new InvalidDataException("Invalid gametype");
+        }
         Gametype gametype = gametypeRepository.findById(gametypeId).orElse(null);
+
+        if (localTeamId == null) {
+            throw new InvalidDataException("Invalid local team");
+        }
         Team localTeam = teamRepository.findById(localTeamId).orElse(null);
+
+        if (guestTeamId == null) {
+            throw new InvalidDataException("Invalid guest team");
+        }
         Team guestTeam = teamRepository.findById(guestTeamId).orElse(null);
 
         Match match = new Match(name, tournament, server, gameMap, gametype, localTeam, guestTeam);

@@ -35,9 +35,12 @@ public class TeamService extends AbstractService {
             throw new InvalidDataException("Invalid name");
         }
 
+        if (tournamentId == null) {
+            throw new InvalidDataException("Invalid tournament");
+        }
         Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
         if (tournament == null) {
-            throw new InvalidDataException("Invalid tournament");
+            throw new InvalidDataException("Tournament not found");
         }
 
         Team team = new Team(name, tournament);

@@ -41,11 +41,17 @@ public class SeatService extends AbstractService {
             throw new InvalidDataException("Invalid ipAddress");
         }
 
-        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
-        if (tournament == null) {
+        if (tournamentId == null) {
             throw new InvalidDataException("Invalid tournament");
         }
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+        if (tournament == null) {
+            throw new InvalidDataException("Tournament not found");
+        }
 
+        if (playerId == null) {
+            throw new InvalidDataException("Invalid player");
+        }
         Player player = playerRepository.findById(playerId).orElse(null);
 
         Seat seat = new Seat(name, ipAddress, tournament, player);

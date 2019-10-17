@@ -83,14 +83,20 @@ public class CfgService extends AbstractService {
 
     @Transactional
     public Cfg create(Long playerId, Long gameId, String cfgContent) {
-        Player player = playerRepository.findById(playerId).orElse(null);
-        if (player == null) {
+        if (playerId == null) {
             throw new InvalidDataException("Invalid player");
         }
+        Player player = playerRepository.findById(playerId).orElse(null);
+        if (player == null) {
+            throw new InvalidDataException("Player not found");
+        }
 
+        if (gameId == null) {
+            throw new InvalidDataException("Invalid game");
+        }
         Game game = gameRepository.findById(gameId).orElse(null);
         if (game == null) {
-            throw new InvalidDataException("Invalid game");
+            throw new InvalidDataException("Game not found");
         }
 
         Cfg cfg = new Cfg(player, game);
@@ -123,7 +129,7 @@ public class CfgService extends AbstractService {
         if (playerId != null) {
             Player player = playerRepository.findById(playerId).orElse(null);
             if (player == null) {
-                throw new InvalidDataException("Invalid player");
+                throw new InvalidDataException("Game not found");
             }
             cfg.setPlayer(player);
             changed = true;
@@ -132,7 +138,7 @@ public class CfgService extends AbstractService {
         if (gameId != null) {
             Game game = gameRepository.findById(gameId).orElse(null);
             if (game == null) {
-                throw new InvalidDataException("Invalid game");
+                throw new InvalidDataException("Game not found");
             }
             cfg.setGame(game);
             changed = true;
@@ -184,7 +190,7 @@ public class CfgService extends AbstractService {
 
         AppUser appUser = appUserRepository.findByBarcode(barcode);
         if (appUser == null) {
-            throw new NotFoundException("Player not found");
+            throw new NotFoundException("AppUser not found");
         }
 
         Player player = playerRepository.findByAppUserAndTournament(appUser, tournament);
