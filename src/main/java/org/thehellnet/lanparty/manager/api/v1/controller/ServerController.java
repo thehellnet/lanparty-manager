@@ -53,7 +53,7 @@ public class ServerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Server server = serverService.get(id);
+        Server server = serverService.read(id);
         return ResponseEntity.ok(server);
     }
 
@@ -64,7 +64,7 @@ public class ServerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Server> servers = serverService.getAll();
+        List<Server> servers = serverService.readAll();
         return ResponseEntity.ok(servers);
     }
 

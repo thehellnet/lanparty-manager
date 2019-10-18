@@ -11,9 +11,10 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.cfg.CreateCfgRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.cfg.UpdateCfgRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.CfgServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Cfg;
-import org.thehellnet.lanparty.manager.service.CfgService;
+import org.thehellnet.lanparty.manager.service.impl.CfgService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -41,7 +42,8 @@ public class CfgController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateCfgRequestDTO dto) {
-        Cfg cfg = cfgService.create(dto.player, dto.game, dto.cfgContent);
+        CfgServiceDTO serviceDTO = new CfgServiceDTO(dto.player, dto.game, dto.cfgContent);
+        Cfg cfg = cfgService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(cfg);
     }
 
@@ -53,7 +55,7 @@ public class CfgController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Cfg cfg = cfgService.get(id);
+        Cfg cfg = cfgService.read(id);
         return ResponseEntity.ok(cfg);
     }
 
@@ -64,7 +66,7 @@ public class CfgController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Cfg> cfgs = cfgService.getAll();
+        List<Cfg> cfgs = cfgService.readAll();
         return ResponseEntity.ok(cfgs);
     }
 
@@ -77,7 +79,8 @@ public class CfgController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateCfgRequestDTO dto) {
-        Cfg cfg = cfgService.update(id, dto.player, dto.game, dto.cfgContent);
+        CfgServiceDTO serviceDTO = new CfgServiceDTO(dto.player, dto.game, dto.cfgContent);
+        Cfg cfg = cfgService.update(id, serviceDTO);
         return ResponseEntity.ok(cfg);
     }
 

@@ -13,9 +13,10 @@ import org.thehellnet.lanparty.manager.model.dto.request.appuser.CreateAppUserRe
 import org.thehellnet.lanparty.manager.model.dto.request.appuser.LoginAppUserRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.appuser.UpdateAppUserRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.appuser.LoginAppUserResponseDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.AppUserServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
-import org.thehellnet.lanparty.manager.service.AppUserService;
+import org.thehellnet.lanparty.manager.service.impl.AppUserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -43,7 +44,8 @@ public class AppUserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateAppUserRequestDTO dto) {
-        AppUser user = appUserService.create(dto.email, dto.password, dto.name, dto.barcode);
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(dto.email, dto.name, dto.password, null, dto.barcode);
+        AppUser user = appUserService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(user);
     }
 
@@ -55,7 +57,7 @@ public class AppUserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        AppUser user = appUserService.get(id);
+        AppUser user = appUserService.read(id);
         return ResponseEntity.ok(user);
     }
 
@@ -66,7 +68,7 @@ public class AppUserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<AppUser> appUsers = appUserService.getAll();
+        List<AppUser> appUsers = appUserService.readAll();
         return ResponseEntity.ok(appUsers);
     }
 
@@ -79,7 +81,8 @@ public class AppUserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateAppUserRequestDTO dto) {
-        AppUser user = appUserService.update(id, dto.name, dto.password, dto.appUserRoles, dto.barcode);
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(null, dto.name, dto.password, dto.appUserRoles, dto.barcode);
+        AppUser user = appUserService.update(id, serviceDTO);
         return ResponseEntity.ok(user);
     }
 

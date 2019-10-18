@@ -53,12 +53,12 @@ public class GameMapService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public GameMap get(Long id) {
+    public GameMap read(Long id) {
         return findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<GameMap> getAll() {
+    public List<GameMap> readAll() {
         return gameMapRepository.findAll();
     }
 

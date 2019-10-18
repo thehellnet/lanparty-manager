@@ -53,7 +53,7 @@ public class PlayerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Player player = playerService.get(id);
+        Player player = playerService.read(id);
         return ResponseEntity.ok(player);
     }
 
@@ -64,7 +64,7 @@ public class PlayerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Player> players = playerService.getAll();
+        List<Player> players = playerService.readAll();
         return ResponseEntity.ok(players);
     }
 

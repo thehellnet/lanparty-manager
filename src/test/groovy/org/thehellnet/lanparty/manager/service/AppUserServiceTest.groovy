@@ -6,9 +6,11 @@ import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException
 import org.thehellnet.lanparty.manager.model.constant.Role
+import org.thehellnet.lanparty.manager.model.dto.service.AppUserServiceDTO
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.lanparty.manager.repository.AppUserRepository
 import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository
+import org.thehellnet.lanparty.manager.service.impl.AppUserService
 import org.thehellnet.utility.PasswordUtility
 import spock.lang.Unroll
 
@@ -35,7 +37,13 @@ class AppUserServiceTest extends ServiceSpecification {
     @Unroll
     def "create valid user with \"#email\" \"#password\" \"#name\" \"#barcode\""(String email, String password, String name, String barcode) {
         when:
-        AppUser appUser = appUserService.create(email, password, name, barcode)
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+                email: email,
+                password: password,
+                name: name,
+                barcode: barcode
+        )
+        AppUser appUser = appUserService.create(serviceDTO)
 
         then:
         appUser != null
@@ -61,7 +69,13 @@ class AppUserServiceTest extends ServiceSpecification {
 
     def "create with invalid email"(String email, String password) {
         when:
-        appUserService.create(email, password, APPUSER_NAME, APPUSER_BARCODE)
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+                email: email,
+                password: password,
+                name: APPUSER_NAME,
+                barcode: APPUSER_BARCODE
+        )
+        appUserService.create(serviceDTO)
 
         then:
         thrown InvalidDataException
@@ -81,7 +95,13 @@ class AppUserServiceTest extends ServiceSpecification {
         appUserRepository.save(new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD))
 
         when:
-        appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+                email: APPUSER_EMAIL,
+                password: APPUSER_PASSWORD,
+                name: APPUSER_NAME,
+                barcode: APPUSER_BARCODE
+        )
+        appUserService.create(serviceDTO)
 
         then:
         thrown AlreadyPresentException
@@ -90,7 +110,13 @@ class AppUserServiceTest extends ServiceSpecification {
     @Unroll
     def "create with \"#password\" password"(String password) {
         when:
-        appUserService.create(APPUSER_EMAIL, password, APPUSER_NAME, APPUSER_BARCODE)
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+                email: APPUSER_EMAIL,
+                password: password,
+                name: APPUSER_NAME,
+                barcode: APPUSER_BARCODE
+        )
+        appUserService.create(serviceDTO)
 
         then:
         thrown InvalidDataException
@@ -104,7 +130,7 @@ class AppUserServiceTest extends ServiceSpecification {
         Long userId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD))).id
 
         when:
-        AppUser appUser = appUserService.get(userId)
+        AppUser appUser = appUserService.read(userId)
 
         then:
         appUser != null
@@ -120,7 +146,7 @@ class AppUserServiceTest extends ServiceSpecification {
         Long appUserId = 12345678
 
         when:
-        appUserService.get(appUserId)
+        appUserService.read(appUserId)
 
         then:
         thrown NotFoundException
@@ -128,7 +154,7 @@ class AppUserServiceTest extends ServiceSpecification {
 
     def "getAll with admin user only"() {
         when:
-        List<AppUser> appUsers = appUserService.getAll()
+        List<AppUser> appUsers = appUserService.readAll()
 
         then:
         appUsers.size() == 1
@@ -146,7 +172,7 @@ class AppUserServiceTest extends ServiceSpecification {
         appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
 
         when:
-        List<AppUser> appUsers = appUserService.getAll()
+        List<AppUser> appUsers = appUserService.readAll()
 
         then:
         appUsers.size() == 2
@@ -165,7 +191,7 @@ class AppUserServiceTest extends ServiceSpecification {
         appUserRepository.deleteAll()
 
         when:
-        List<AppUser> appUsers = appUserService.getAll()
+        List<AppUser> appUsers = appUserService.readAll()
 
         then:
         appUsers.size() == 0
@@ -177,7 +203,13 @@ class AppUserServiceTest extends ServiceSpecification {
         Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME, APPUSER_BARCODE)).id
 
         when:
-        appUserService.update(appUserId, name, password, appUserRoles, barcode)
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+                name: name,
+                password: password,
+                appUserRoles: appUserRoles,
+                barcode: barcode
+        )
+        appUserService.update(appUserId, serviceDTO)
 
         then:
         thrown UnchangedException
@@ -194,7 +226,13 @@ class AppUserServiceTest extends ServiceSpecification {
         Long appUserId = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME, APPUSER_BARCODE)).id
 
         when:
-        appUserService.update(appUserId, name, password, appUserRoles, barcode)
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+                name: name,
+                password: password,
+                appUserRoles: appUserRoles,
+                barcode: barcode
+        )
+        appUserService.update(appUserId, serviceDTO)
 
         and:
         AppUser appUser = appUserRepository.getOne(appUserId)
@@ -286,7 +324,13 @@ class AppUserServiceTest extends ServiceSpecification {
         Long appUserId = 12345678
 
         when:
-        appUserService.update(appUserId, APPUSER_NAME_NEW, APPUSER_PASSWORD_NEW, [Role.LOGIN.name] as String[], APPUSER_BARCODE_NEW)
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+                name: APPUSER_NAME_NEW,
+                password: APPUSER_PASSWORD_NEW,
+                appUserRoles: [Role.LOGIN.name] as String[],
+                barcode: APPUSER_BARCODE_NEW
+        )
+        appUserService.update(appUserId, serviceDTO)
 
         then:
         thrown NotFoundException

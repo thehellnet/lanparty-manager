@@ -61,12 +61,12 @@ public class PlayerService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public Player get(Long id) {
+    public Player read(Long id) {
         return findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Player> getAll() {
+    public List<Player> readAll() {
         return playerRepository.findAll();
     }
 

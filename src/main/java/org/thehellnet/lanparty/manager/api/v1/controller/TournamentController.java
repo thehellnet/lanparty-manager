@@ -53,7 +53,7 @@ public class TournamentController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Tournament tournament = tournamentService.get(id);
+        Tournament tournament = tournamentService.read(id);
         return ResponseEntity.ok(tournament);
     }
 
@@ -64,7 +64,7 @@ public class TournamentController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Tournament> tournaments = tournamentService.getAll();
+        List<Tournament> tournaments = tournamentService.readAll();
         return ResponseEntity.ok(tournaments);
     }
 

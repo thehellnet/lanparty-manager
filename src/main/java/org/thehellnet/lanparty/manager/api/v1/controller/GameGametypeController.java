@@ -53,7 +53,7 @@ public class GameGametypeController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        GameGametype gameGametype = gameGametypeService.get(id);
+        GameGametype gameGametype = gameGametypeService.read(id);
         return ResponseEntity.ok(gameGametype);
     }
 
@@ -64,7 +64,7 @@ public class GameGametypeController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<GameGametype> gameGametypes = gameGametypeService.getAll();
+        List<GameGametype> gameGametypes = gameGametypeService.readAll();
         return ResponseEntity.ok(gameGametypes);
     }
 

@@ -34,12 +34,12 @@ public class GameService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public Game get(Long id) {
+    public Game read(Long id) {
         return findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Game> getAll() {
+    public List<Game> readAll() {
         return gameRepository.findAll();
     }
 

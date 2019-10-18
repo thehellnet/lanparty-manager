@@ -1,71 +1,59 @@
-package org.thehellnet.lanparty.manager.service;
+package org.thehellnet.lanparty.manager.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
-import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
+import org.thehellnet.lanparty.manager.model.dto.service.AppUserTokenServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository;
+import org.thehellnet.lanparty.manager.service.AbstractCrudService;
 import org.thehellnet.utility.TokenUtility;
 
-import java.util.List;
-
 @Service
-public class AppUserTokenService extends AbstractService {
+public class AppUserTokenService extends AbstractCrudService<AppUserToken, AppUserTokenServiceDTO, AppUserTokenRepository> {
 
     private final AppUserTokenRepository appUserTokenRepository;
     private final AppUserRepository appUserRepository;
 
-    @Autowired
-    public AppUserTokenService(AppUserTokenRepository appUserTokenRepository, AppUserRepository appUserRepository) {
+    public AppUserTokenService(AppUserTokenRepository repository, AppUserTokenRepository appUserTokenRepository, AppUserRepository appUserRepository) {
+        super(repository);
         this.appUserTokenRepository = appUserTokenRepository;
         this.appUserRepository = appUserRepository;
     }
 
-    @Transactional
-    public AppUserToken create(String token, Long appUserId) {
-        if (appUserId == null) {
+    @Override
+    public AppUserToken create(AppUserTokenServiceDTO dto) {
+        if (dto.appUserId == null) {
             throw new InvalidDataException("Invalid appUser");
         }
-        AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
+        AppUser appUser = appUserRepository.findById(dto.appUserId).orElse(null);
         if (appUser != null) {
             throw new InvalidDataException("AppUser not found");
         }
 
-        AppUserToken appUserToken = new AppUserToken(token, appUser);
+        AppUserToken appUserToken = new AppUserToken(dto.token, appUser);
 
         appUserToken = appUserTokenRepository.save(appUserToken);
 
         return appUserToken;
     }
 
-    @Transactional(readOnly = true)
-    public AppUserToken get(Long id) {
-        return findById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<AppUserToken> getAll() {
-        return appUserTokenRepository.findAll();
-    }
-
-    @Transactional
-    public AppUserToken update(Long id, String token, Long appUserId) {
+    @Override
+    public AppUserToken update(Long id, AppUserTokenServiceDTO dto) {
         AppUserToken appUserToken = findById(id);
 
         boolean changed = false;
 
-        if (token != null) {
-            appUserToken.setToken(token.strip());
+        if (dto.token != null) {
+            appUserToken.setToken(dto.token.strip());
             changed = true;
         }
 
-        if (appUserId != null) {
-            AppUser appUser = appUserRepository.findById(appUserId).orElse(null);
+        if (dto.appUserId != null) {
+            AppUser appUser = appUserRepository.findById(dto.appUserId).orElse(null);
             if (appUser != null) {
                 throw new InvalidDataException("AppUser not found");
             }
@@ -78,21 +66,7 @@ public class AppUserTokenService extends AbstractService {
         }
 
         return appUserTokenRepository.save(appUserToken);
-    }
 
-    @Transactional
-    public void delete(Long id) {
-        AppUserToken appUserToken = findById(id);
-        appUserTokenRepository.delete(appUserToken);
-    }
-
-    @Transactional(readOnly = true)
-    public AppUserToken findById(Long id) {
-        AppUserToken appUserToken = appUserTokenRepository.findById(id).orElse(null);
-        if (appUserToken == null) {
-            throw new NotFoundException();
-        }
-        return appUserToken;
     }
 
     @Transactional(readOnly = true)

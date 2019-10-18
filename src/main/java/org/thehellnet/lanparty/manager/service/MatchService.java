@@ -83,12 +83,12 @@ public class MatchService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public Match get(Long id) {
+    public Match read(Long id) {
         return findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Match> getAll() {
+    public List<Match> readAll() {
         return matchRepository.findAll();
     }
 

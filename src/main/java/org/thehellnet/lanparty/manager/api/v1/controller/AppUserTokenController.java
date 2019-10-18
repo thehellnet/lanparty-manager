@@ -11,9 +11,10 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.appusertoken.CreateAppUserTokenRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.appusertoken.UpdateAppUserTokenRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.AppUserTokenServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
-import org.thehellnet.lanparty.manager.service.AppUserTokenService;
+import org.thehellnet.lanparty.manager.service.impl.AppUserTokenService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -41,7 +42,8 @@ public class AppUserTokenController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateAppUserTokenRequestDTO dto) {
-        AppUserToken appUserToken = appUserTokenService.create(dto.token, dto.appUser);
+        AppUserTokenServiceDTO serviceDTO = new AppUserTokenServiceDTO(dto.token,dto.appUser);
+        AppUserToken appUserToken = appUserTokenService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(appUserToken);
     }
 
@@ -53,7 +55,7 @@ public class AppUserTokenController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        AppUserToken appUserToken = appUserTokenService.get(id);
+        AppUserToken appUserToken = appUserTokenService.read(id);
         return ResponseEntity.ok(appUserToken);
     }
 
@@ -64,7 +66,7 @@ public class AppUserTokenController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<AppUserToken> appUserTokens = appUserTokenService.getAll();
+        List<AppUserToken> appUserTokens = appUserTokenService.readAll();
         return ResponseEntity.ok(appUserTokens);
     }
 
@@ -77,7 +79,8 @@ public class AppUserTokenController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateAppUserTokenRequestDTO dto) {
-        AppUserToken appUserToken = appUserTokenService.update(id, dto.token, dto.appUser);
+        AppUserTokenServiceDTO serviceDTO = new AppUserTokenServiceDTO(dto.token,dto.appUser);
+        AppUserToken appUserToken = appUserTokenService.update(id, serviceDTO);
         return ResponseEntity.ok(appUserToken);
     }
 

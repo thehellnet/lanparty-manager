@@ -53,7 +53,7 @@ public class SeatController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Seat seat = seatService.get(id);
+        Seat seat = seatService.read(id);
         return ResponseEntity.ok(seat);
     }
 
@@ -64,7 +64,7 @@ public class SeatController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Seat> seats = seatService.getAll();
+        List<Seat> seats = seatService.readAll();
         return ResponseEntity.ok(seats);
     }
 

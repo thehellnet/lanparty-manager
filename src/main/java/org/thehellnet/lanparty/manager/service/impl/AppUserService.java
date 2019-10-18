@@ -1,6 +1,5 @@
-package org.thehellnet.lanparty.manager.service;
+package org.thehellnet.lanparty.manager.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.AlreadyPresentException;
@@ -8,97 +7,92 @@ import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.constant.Role;
+import org.thehellnet.lanparty.manager.model.dto.service.AppUserServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository;
+import org.thehellnet.lanparty.manager.service.AbstractCrudService;
 import org.thehellnet.utility.EmailUtility;
 import org.thehellnet.utility.PasswordUtility;
 import org.thehellnet.utility.TokenUtility;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Service
-public class AppUserService extends AbstractService {
+public class AppUserService extends AbstractCrudService<AppUser, AppUserServiceDTO, AppUserRepository> {
 
-    private final AppUserRepository appUserRepository;
     private final AppUserTokenRepository appUserTokenRepository;
 
-    @Autowired
-    public AppUserService(AppUserRepository appUserRepository, AppUserTokenRepository appUserTokenRepository) {
-        this.appUserRepository = appUserRepository;
+    public AppUserService(AppUserRepository repository, AppUserTokenRepository appUserTokenRepository) {
+        super(repository);
         this.appUserTokenRepository = appUserTokenRepository;
     }
 
+    @Override
     @Transactional
-    public AppUser create(String email, String password, String name, String barcode) {
-        if (!EmailUtility.validate(email)) {
+    public AppUser create(AppUserServiceDTO dto) {
+        if (!EmailUtility.validate(dto.email)) {
             throw new InvalidDataException("E-mail address not valid");
         }
 
-        AppUser appUser = appUserRepository.findByEmail(email);
+        AppUser appUser = repository.findByEmail(dto.email);
         if (appUser != null) {
             throw new AlreadyPresentException("E-mail address already registered");
         }
 
-        String encryptedPassword = PasswordUtility.hash(password);
+        String encryptedPassword = PasswordUtility.hash(dto.password);
         if (encryptedPassword == null) {
             throw new InvalidDataException("Password not valid");
         }
 
-        appUser = new AppUser(email, encryptedPassword);
+        appUser = new AppUser(dto.email, encryptedPassword);
 
-        if (name != null) {
-            appUser.setName(name);
+        if (dto.name != null) {
+            appUser.setName(dto.name);
         }
 
-        if (barcode != null) {
-            appUser.setBarcode(barcode);
+        if (dto.barcode != null) {
+            appUser.setBarcode(dto.barcode);
         }
 
-        appUser = appUserRepository.save(appUser);
+        appUser = repository.save(appUser);
 
         return appUser;
     }
 
-    @Transactional(readOnly = true)
-    public AppUser get(Long id) {
-        return findById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<AppUser> getAll() {
-        return appUserRepository.findAll();
-    }
-
+    @Override
     @Transactional
-    public AppUser update(Long id, String name, String password, String[] appUserRoles, String barcode) {
+    public AppUser update(Long id, AppUserServiceDTO dto) {
         AppUser appUser = findById(id);
 
         boolean changed = false;
 
-        if (name != null) {
-            appUser.setName(name.strip());
+        if (dto.name != null) {
+            appUser.setName(dto.name.strip());
             changed = true;
         }
 
-        if (password != null && password.length() > 0) {
-            String encryptedPassword = PasswordUtility.hash(password);
+        if (dto.password != null && dto.password.length() > 0) {
+            String encryptedPassword = PasswordUtility.hash(dto.password);
             appUser.setPassword(encryptedPassword);
             changed = true;
         }
 
-        if (appUserRoles != null) {
+        if (dto.appUserRoles != null) {
             Set<Role> roles = new HashSet<>();
-            for (String roleName : appUserRoles) {
+            for (String roleName : dto.appUserRoles) {
                 roles.add(Role.valueOf(roleName));
             }
             appUser.setAppUserRoles(roles);
             changed = true;
         }
 
-        if (barcode != null) {
-            appUser.setBarcode(barcode.strip());
+        if (dto.barcode != null) {
+            appUser.setBarcode(dto.barcode.strip());
             changed = true;
         }
 
@@ -106,13 +100,7 @@ public class AppUserService extends AbstractService {
             throw new UnchangedException();
         }
 
-        return appUserRepository.save(appUser);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        AppUser appUser = findById(id);
-        appUserRepository.delete(appUser);
+        return repository.save(appUser);
     }
 
     @Transactional(readOnly = true)
@@ -121,7 +109,7 @@ public class AppUserService extends AbstractService {
             throw new NotFoundException();
         }
 
-        AppUser appUser = appUserRepository.findByEmail(email);
+        AppUser appUser = repository.findByEmail(email);
         if (appUser == null) {
             throw new NotFoundException();
         }
@@ -141,7 +129,7 @@ public class AppUserService extends AbstractService {
 
     @Transactional(readOnly = true)
     public AppUser findByBarcode(String barcode) {
-        AppUser appUser = appUserRepository.findByBarcode(barcode);
+        AppUser appUser = repository.findByBarcode(barcode);
         if (appUser == null) {
             throw new NotFoundException();
         }
@@ -159,15 +147,6 @@ public class AppUserService extends AbstractService {
         return hasRoles(appUser, false, roles);
     }
 
-    @Transactional(readOnly = true)
-    public AppUser findById(Long id) {
-        AppUser appUser = appUserRepository.findById(id).orElse(null);
-        if (appUser == null) {
-            throw new NotFoundException();
-        }
-        return appUser;
-    }
-
     @Transactional
     public AppUserToken newToken(AppUser appUser) {
         if (appUser == null) {
@@ -183,7 +162,7 @@ public class AppUserService extends AbstractService {
             return false;
         }
 
-        appUser = appUserRepository.getOne(appUser.getId());
+        appUser = repository.getOne(appUser.getId());
 
         if (roles.length == 0) {
             return appUser.getAppUserRoles().size() == 0;

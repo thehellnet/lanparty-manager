@@ -61,12 +61,12 @@ public class GameGametypeService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public GameGametype get(Long id) {
+    public GameGametype read(Long id) {
         return findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<GameGametype> getAll() {
+    public List<GameGametype> readAll() {
         return gameGametypeRepository.findAll();
     }
 

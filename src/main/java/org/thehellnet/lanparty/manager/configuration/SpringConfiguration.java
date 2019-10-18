@@ -16,7 +16,7 @@ import javax.servlet.ServletRegistration;
 @Configuration
 @ComponentScan(basePackages = "org.thehellnet.lanparty.manager")
 @EnableWebMvc
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class SpringConfiguration implements WebApplicationInitializer {
 
     @Override

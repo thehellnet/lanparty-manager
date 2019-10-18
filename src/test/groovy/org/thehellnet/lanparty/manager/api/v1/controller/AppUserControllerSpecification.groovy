@@ -6,8 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.thehellnet.lanparty.manager.model.dto.service.AppUserServiceDTO
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
-import org.thehellnet.lanparty.manager.service.AppUserService
+import org.thehellnet.lanparty.manager.service.impl.AppUserService
 import spock.lang.Unroll
 
 class AppUserControllerSpecification extends ControllerSpecification {
@@ -312,7 +313,13 @@ class AppUserControllerSpecification extends ControllerSpecification {
 
     def "readAll with more than one user"() {
         given:
-        appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+                email: APPUSER_EMAIL,
+                password: APPUSER_PASSWORD,
+                name: APPUSER_NAME,
+                barcode: APPUSER_BARCODE
+        )
+        appUserService.create(serviceDTO)
 
         when:
         def rawResponse = mockMvc
@@ -386,7 +393,13 @@ class AppUserControllerSpecification extends ControllerSpecification {
 
     def "read with new appUser created"() {
         given:
-        Long appUserId = appUserService.create(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE).id
+        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+                email: APPUSER_EMAIL,
+                password: APPUSER_PASSWORD,
+                name: APPUSER_NAME,
+                barcode: APPUSER_BARCODE
+        )
+        Long appUserId = appUserService.create(serviceDTO).id
 
         when:
         def rawResponse = mockMvc
@@ -687,6 +700,6 @@ class AppUserControllerSpecification extends ControllerSpecification {
     }
 
     private int "check number of appUsers in database"() {
-        return appUserService.getAll().size()
+        return appUserService.readAll().size()
     }
 }

@@ -61,12 +61,12 @@ public class ServerService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public Server get(Long id) {
+    public Server read(Long id) {
         return findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Server> getAll() {
+    public List<Server> readAll() {
         return serverRepository.findAll();
     }
 

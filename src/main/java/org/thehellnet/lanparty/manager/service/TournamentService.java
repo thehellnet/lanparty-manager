@@ -51,12 +51,12 @@ public class TournamentService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public Tournament get(Long id) {
+    public Tournament read(Long id) {
         return findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Tournament> getAll() {
+    public List<Tournament> readAll() {
         return tournamentRepository.findAll();
     }
 

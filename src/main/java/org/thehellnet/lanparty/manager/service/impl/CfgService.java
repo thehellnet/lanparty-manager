@@ -1,16 +1,17 @@
-package org.thehellnet.lanparty.manager.service;
+package org.thehellnet.lanparty.manager.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
+import org.thehellnet.lanparty.manager.model.dto.service.CfgServiceDTO;
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
+import org.thehellnet.lanparty.manager.service.AbstractCrudService;
 import org.thehellnet.lanparty.manager.utility.cfg.CfgUtility;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfg;
 import org.thehellnet.utility.StringUtility;
@@ -18,7 +19,7 @@ import org.thehellnet.utility.StringUtility;
 import java.util.List;
 
 @Service
-public class CfgService extends AbstractService {
+public class CfgService extends AbstractCrudService<Cfg, CfgServiceDTO, CfgRepository> {
 
     private class FindTournamentAndPlayer {
         private String remoteAddress;
@@ -70,64 +71,54 @@ public class CfgService extends AbstractService {
     private final AppUserRepository appUserRepository;
     private final PlayerRepository playerRepository;
     private final GameRepository gameRepository;
-    private final CfgRepository cfgRepository;
 
-    @Autowired
-    public CfgService(SeatRepository seatRepository, AppUserRepository appUserRepository, PlayerRepository playerRepository, GameRepository gameRepository, CfgRepository cfgRepository) {
+    public CfgService(CfgRepository repository, SeatRepository seatRepository, AppUserRepository appUserRepository, PlayerRepository playerRepository, GameRepository gameRepository) {
+        super(repository);
         this.seatRepository = seatRepository;
         this.appUserRepository = appUserRepository;
         this.playerRepository = playerRepository;
         this.gameRepository = gameRepository;
-        this.cfgRepository = cfgRepository;
     }
 
+    @Override
     @Transactional
-    public Cfg create(Long playerId, Long gameId, String cfgContent) {
-        if (playerId == null) {
+    public Cfg create(CfgServiceDTO dto) {
+        if (dto.playerId == null) {
             throw new InvalidDataException("Invalid player");
         }
-        Player player = playerRepository.findById(playerId).orElse(null);
+        Player player = playerRepository.findById(dto.playerId).orElse(null);
         if (player == null) {
             throw new InvalidDataException("Player not found");
         }
 
-        if (gameId == null) {
+        if (dto.gameId == null) {
             throw new InvalidDataException("Invalid game");
         }
-        Game game = gameRepository.findById(gameId).orElse(null);
+        Game game = gameRepository.findById(dto.gameId).orElse(null);
         if (game == null) {
             throw new InvalidDataException("Game not found");
         }
 
         Cfg cfg = new Cfg(player, game);
 
-        if (cfgContent != null) {
-            cfg.setCfgContent(cfgContent);
+        if (dto.cfgContent != null) {
+            cfg.setCfgContent(dto.cfgContent);
         }
 
-        cfg = cfgRepository.save(cfg);
+        cfg = repository.save(cfg);
 
         return cfg;
     }
 
-    @Transactional(readOnly = true)
-    public Cfg get(Long id) {
-        return findById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Cfg> getAll() {
-        return cfgRepository.findAll();
-    }
-
+    @Override
     @Transactional
-    public Cfg update(Long id, Long playerId, Long gameId, String cfgContent) {
+    public Cfg update(Long id, CfgServiceDTO dto) {
         Cfg cfg = findById(id);
 
         boolean changed = false;
 
-        if (playerId != null) {
-            Player player = playerRepository.findById(playerId).orElse(null);
+        if (dto.playerId != null) {
+            Player player = playerRepository.findById(dto.playerId).orElse(null);
             if (player == null) {
                 throw new InvalidDataException("Game not found");
             }
@@ -135,8 +126,8 @@ public class CfgService extends AbstractService {
             changed = true;
         }
 
-        if (gameId != null) {
-            Game game = gameRepository.findById(gameId).orElse(null);
+        if (dto.gameId != null) {
+            Game game = gameRepository.findById(dto.gameId).orElse(null);
             if (game == null) {
                 throw new InvalidDataException("Game not found");
             }
@@ -144,8 +135,8 @@ public class CfgService extends AbstractService {
             changed = true;
         }
 
-        if (cfgContent != null) {
-            cfg.setCfgContent(cfgContent);
+        if (dto.cfgContent != null) {
+            cfg.setCfgContent(dto.cfgContent);
             changed = true;
         }
 
@@ -153,22 +144,7 @@ public class CfgService extends AbstractService {
             throw new UnchangedException();
         }
 
-        return cfgRepository.save(cfg);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        Cfg cfg = findById(id);
-        cfgRepository.delete(cfg);
-    }
-
-    @Transactional(readOnly = true)
-    public Cfg findById(Long id) {
-        Cfg cfg = cfgRepository.findById(id).orElse(null);
-        if (cfg == null) {
-            throw new NotFoundException();
-        }
-        return cfg;
+        return repository.save(cfg);
     }
 
     @Transactional(readOnly = true)
@@ -202,7 +178,7 @@ public class CfgService extends AbstractService {
         List<ParsedCfgCommand> tournamentCfgCommands = CfgUtility.parseCfgFromString(tournamentCfg);
         tournamentCfgCommands = CfgUtility.removeSpecialCommands(tournamentCfgCommands);
 
-        Cfg cfg = cfgRepository.findByPlayerAndGame(player, tournament.getGame());
+        Cfg cfg = repository.findByPlayerAndGame(player, tournament.getGame());
         String playerCfg = cfg != null ? cfg.getCfgContent() : null;
 
         List<ParsedCfgCommand> playerCfgCommands = CfgUtility.parseCfgFromString(playerCfg);
@@ -226,12 +202,12 @@ public class CfgService extends AbstractService {
         Tournament tournament = findTournamentAndPlayer.getTournament();
         Player player = findTournamentAndPlayer.getPlayer();
 
-        Cfg cfg = cfgRepository.findByPlayerAndGame(player, tournament.getGame());
+        Cfg cfg = repository.findByPlayerAndGame(player, tournament.getGame());
         if (cfg == null) {
             cfg = new Cfg(player, tournament.getGame());
         }
 
         cfg.setCfgContent(StringUtility.joinLines(newCfg));
-        cfgRepository.save(cfg);
+        repository.save(cfg);
     }
 }

@@ -60,12 +60,12 @@ public class SeatService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public Seat get(Long id) {
+    public Seat read(Long id) {
         return findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Seat> getAll() {
+    public List<Seat> readAll() {
         return seatRepository.findAll();
     }
 

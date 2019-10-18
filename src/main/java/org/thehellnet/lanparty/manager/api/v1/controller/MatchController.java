@@ -53,7 +53,7 @@ public class MatchController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Match match = matchService.get(id);
+        Match match = matchService.read(id);
         return ResponseEntity.ok(match);
     }
 
@@ -64,7 +64,7 @@ public class MatchController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Match> matchs = matchService.getAll();
+        List<Match> matchs = matchService.readAll();
         return ResponseEntity.ok(matchs);
     }
 

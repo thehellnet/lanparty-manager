@@ -53,7 +53,7 @@ public class TeamController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Team team = teamService.get(id);
+        Team team = teamService.read(id);
         return ResponseEntity.ok(team);
     }
 
@@ -64,7 +64,7 @@ public class TeamController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Team> teams = teamService.getAll();
+        List<Team> teams = teamService.readAll();
         return ResponseEntity.ok(teams);
     }
 

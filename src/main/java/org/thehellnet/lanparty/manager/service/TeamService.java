@@ -49,12 +49,12 @@ public class TeamService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public Team get(Long id) {
+    public Team read(Long id) {
         return findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Team> getAll() {
+    public List<Team> readAll() {
         return teamRepository.findAll();
     }
 
