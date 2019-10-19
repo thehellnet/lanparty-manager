@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.cfg.UpdateCfgRequestDTO
 import org.thehellnet.lanparty.manager.model.dto.service.CfgServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Cfg;
-import org.thehellnet.lanparty.manager.service.impl.CfgService;
+import org.thehellnet.lanparty.manager.service.crud.CfgService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;

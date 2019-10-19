@@ -11,7 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
-import org.thehellnet.lanparty.manager.service.impl.AppUserService;
+import org.thehellnet.lanparty.manager.service.crud.AppUserService;
 
 import java.lang.reflect.Method;
 

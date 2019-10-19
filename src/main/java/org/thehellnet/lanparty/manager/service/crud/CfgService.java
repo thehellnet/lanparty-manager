@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.service.impl;
+package org.thehellnet.lanparty.manager.service.crud;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,6 @@ import org.thehellnet.lanparty.manager.model.dto.service.CfgServiceDTO;
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
-import org.thehellnet.lanparty.manager.service.AbstractCrudService;
 import org.thehellnet.lanparty.manager.utility.cfg.CfgUtility;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfg;
 import org.thehellnet.utility.StringUtility;

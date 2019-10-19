@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.gamegametype.UpdateGame
 import org.thehellnet.lanparty.manager.model.dto.service.GameGametypeServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.GameGametype;
-import org.thehellnet.lanparty.manager.service.impl.GameGametypeService;
+import org.thehellnet.lanparty.manager.service.crud.GameGametypeService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;

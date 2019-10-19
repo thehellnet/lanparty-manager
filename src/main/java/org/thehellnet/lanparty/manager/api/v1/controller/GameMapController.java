@@ -11,9 +11,10 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.gamemap.CreateGameMapRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.gamemap.UpdateGameMapRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.GameMapServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.GameMap;
-import org.thehellnet.lanparty.manager.service.GameMapService;
+import org.thehellnet.lanparty.manager.service.crud.GameMapService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -41,7 +42,8 @@ public class GameMapController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateGameMapRequestDTO dto) {
-        GameMap gameMap = gameMapService.create(dto.tag, dto.name, dto.game, dto.stock);
+        GameMapServiceDTO serviceDTO = new GameMapServiceDTO(dto.tag, dto.name, dto.game, dto.stock);
+        GameMap gameMap = gameMapService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(gameMap);
     }
 
@@ -77,7 +79,8 @@ public class GameMapController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateGameMapRequestDTO dto) {
-        GameMap gameMap = gameMapService.update(id, dto.tag, dto.name, dto.game, dto.stock);
+        GameMapServiceDTO serviceDTO = new GameMapServiceDTO(dto.tag, dto.name, dto.game, dto.stock);
+        GameMap gameMap = gameMapService.update(id, serviceDTO);
         return ResponseEntity.ok(gameMap);
     }
 

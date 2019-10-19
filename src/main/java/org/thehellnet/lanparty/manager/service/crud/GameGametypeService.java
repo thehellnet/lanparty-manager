@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.service.impl;
+package org.thehellnet.lanparty.manager.service.crud;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,6 @@ import org.thehellnet.lanparty.manager.model.persistence.Gametype;
 import org.thehellnet.lanparty.manager.repository.GameGametypeRepository;
 import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.GametypeRepository;
-import org.thehellnet.lanparty.manager.service.AbstractCrudService;
 import org.thehellnet.lanparty.manager.service.TeamService;
 
 @Service

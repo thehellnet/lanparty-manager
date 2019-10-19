@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.service.impl;
+package org.thehellnet.lanparty.manager.service.crud;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +12,6 @@ import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository;
-import org.thehellnet.lanparty.manager.service.AbstractCrudService;
 import org.thehellnet.utility.EmailUtility;
 import org.thehellnet.utility.PasswordUtility;
 import org.thehellnet.utility.TokenUtility;

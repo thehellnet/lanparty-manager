@@ -1,9 +1,11 @@
-package org.thehellnet.lanparty.manager.service;
+package org.thehellnet.lanparty.manager.service.crud;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.model.dto.service.ServiceDTO;
+import org.thehellnet.lanparty.manager.service.AbstractService;
+import org.thehellnet.lanparty.manager.service.CrudService;
 
 import java.util.List;
 
@@ -42,5 +44,4 @@ public abstract class AbstractCrudService<T, D extends ServiceDTO, R extends Jpa
         }
         return record;
     }
-
 }

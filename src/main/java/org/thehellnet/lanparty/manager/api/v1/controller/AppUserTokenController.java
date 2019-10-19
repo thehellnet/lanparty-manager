@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.appusertoken.UpdateAppU
 import org.thehellnet.lanparty.manager.model.dto.service.AppUserTokenServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
-import org.thehellnet.lanparty.manager.service.impl.AppUserTokenService;
+import org.thehellnet.lanparty.manager.service.crud.AppUserTokenService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
