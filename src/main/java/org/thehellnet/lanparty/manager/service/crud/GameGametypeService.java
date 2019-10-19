@@ -13,7 +13,6 @@ import org.thehellnet.lanparty.manager.model.persistence.Gametype;
 import org.thehellnet.lanparty.manager.repository.GameGametypeRepository;
 import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.GametypeRepository;
-import org.thehellnet.lanparty.manager.service.TeamService;
 
 @Service
 public class GameGametypeService extends AbstractCrudService<GameGametype, GameGametypeServiceDTO, GameGametypeRepository> {

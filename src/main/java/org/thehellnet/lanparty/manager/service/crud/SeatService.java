@@ -30,6 +30,7 @@ public class SeatService extends AbstractCrudService<Seat, SeatServiceDTO, SeatR
     }
 
     @Override
+    @Transactional
     public Seat create(SeatServiceDTO dto) {
         if (dto.name == null) {
             throw new InvalidDataException("Invalid name");
@@ -58,6 +59,7 @@ public class SeatService extends AbstractCrudService<Seat, SeatServiceDTO, SeatR
     }
 
     @Override
+    @Transactional
     public Seat update(Long id, SeatServiceDTO dto) {
         Seat seat = findById(id);
 

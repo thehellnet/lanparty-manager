@@ -3,6 +3,7 @@ package org.thehellnet.lanparty.manager.service.crud;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.dto.service.ServerServiceDTO;
@@ -10,7 +11,6 @@ import org.thehellnet.lanparty.manager.model.persistence.Game;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
 import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.ServerRepository;
-import org.thehellnet.lanparty.manager.service.TeamService;
 
 @Service
 public class ServerService extends AbstractCrudService<Server, ServerServiceDTO, ServerRepository> {
@@ -25,6 +25,7 @@ public class ServerService extends AbstractCrudService<Server, ServerServiceDTO,
     }
 
     @Override
+    @Transactional
     public Server create(ServerServiceDTO dto) {
         if (dto.tag == null) {
             throw new InvalidDataException("Invalid tag");
@@ -56,6 +57,7 @@ public class ServerService extends AbstractCrudService<Server, ServerServiceDTO,
     }
 
     @Override
+    @Transactional
     public Server update(Long id, ServerServiceDTO dto) {
         Server server = findById(id);
 

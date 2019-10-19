@@ -3,6 +3,7 @@ package org.thehellnet.lanparty.manager.service.crud;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.dto.service.PlayerServiceDTO;
@@ -28,6 +29,7 @@ public class PlayerService extends AbstractCrudService<Player, PlayerServiceDTO,
     }
 
     @Override
+    @Transactional
     public Player create(PlayerServiceDTO dto) {
         if (dto.nickname == null) {
             throw new InvalidDataException("Invalid nickname");
@@ -55,6 +57,7 @@ public class PlayerService extends AbstractCrudService<Player, PlayerServiceDTO,
     }
 
     @Override
+    @Transactional
     public Player update(Long id, PlayerServiceDTO dto) {
         Player player = findById(id);
 

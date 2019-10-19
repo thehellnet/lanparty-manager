@@ -9,7 +9,6 @@ import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.dto.service.MatchServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
-import org.thehellnet.lanparty.manager.service.TeamService;
 
 @Service
 public class MatchService extends AbstractCrudService<Match, MatchServiceDTO, MatchRepository> {
