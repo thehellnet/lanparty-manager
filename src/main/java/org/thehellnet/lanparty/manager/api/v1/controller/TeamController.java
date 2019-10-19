@@ -11,9 +11,10 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.team.CreateTeamRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.team.UpdateTeamRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.TeamServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Team;
-import org.thehellnet.lanparty.manager.service.TeamService;
+import org.thehellnet.lanparty.manager.service.crud.TeamService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -41,7 +42,8 @@ public class TeamController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateTeamRequestDTO dto) {
-        Team team = teamService.create(dto.name, dto.tournament);
+        TeamServiceDTO serviceDTO = new TeamServiceDTO(dto.name, dto.tournament);
+        Team team = teamService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(team);
     }
 
@@ -77,7 +79,8 @@ public class TeamController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateTeamRequestDTO dto) {
-        Team team = teamService.update(id, dto.name, dto.tournament);
+        TeamServiceDTO serviceDTO = new TeamServiceDTO(dto.name, dto.tournament);
+        Team team = teamService.update(id, serviceDTO);
         return ResponseEntity.ok(team);
     }
 
