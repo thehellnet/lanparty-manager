@@ -11,9 +11,10 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.player.CreatePlayerRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.player.UpdatePlayerRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.PlayerServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Player;
-import org.thehellnet.lanparty.manager.service.PlayerService;
+import org.thehellnet.lanparty.manager.service.crud.PlayerService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -41,7 +42,8 @@ public class PlayerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreatePlayerRequestDTO dto) {
-        Player player = playerService.create(dto.nickname, dto.appUser, dto.team);
+        PlayerServiceDTO serviceDTO = new PlayerServiceDTO(dto.nickname, dto.appUser, dto.team);
+        Player player = playerService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(player);
     }
 
@@ -77,7 +79,8 @@ public class PlayerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdatePlayerRequestDTO dto) {
-        Player player = playerService.update(id, dto.nickname, dto.appUser, dto.team);
+        PlayerServiceDTO serviceDTO = new PlayerServiceDTO(dto.nickname, dto.appUser, dto.team);
+        Player player = playerService.update(id, serviceDTO);
         return ResponseEntity.ok(player);
     }
 
