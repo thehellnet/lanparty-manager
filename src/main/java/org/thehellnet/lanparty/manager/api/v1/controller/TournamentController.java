@@ -11,9 +11,10 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.tournament.CreateTournamentRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.tournament.UpdateTournamentRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.TournamentServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;
-import org.thehellnet.lanparty.manager.service.TournamentService;
+import org.thehellnet.lanparty.manager.service.crud.TournamentService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -41,7 +42,8 @@ public class TournamentController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateTournamentRequestDTO dto) {
-        Tournament tournament = tournamentService.create(dto.name, dto.game, dto.cfg);
+        TournamentServiceDTO serviceDTO = new TournamentServiceDTO(dto.name, dto.game, dto.cfg);
+        Tournament tournament = tournamentService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(tournament);
     }
 
@@ -77,7 +79,8 @@ public class TournamentController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateTournamentRequestDTO dto) {
-        Tournament tournament = tournamentService.update(id, dto.name, dto.game, dto.cfg);
+        TournamentServiceDTO serviceDTO = new TournamentServiceDTO(dto.name, dto.game, dto.cfg);
+        Tournament tournament = tournamentService.update(id, serviceDTO);
         return ResponseEntity.ok(tournament);
     }
 

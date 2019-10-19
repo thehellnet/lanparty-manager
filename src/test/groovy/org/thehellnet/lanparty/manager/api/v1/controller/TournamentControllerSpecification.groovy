@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus
 import org.thehellnet.lanparty.manager.model.persistence.Game
 import org.thehellnet.lanparty.manager.model.persistence.Tournament
-import org.thehellnet.lanparty.manager.service.TournamentService
+import org.thehellnet.lanparty.manager.service.crud.TournamentService
 
 class TournamentControllerSpecification extends ControllerSpecification {
 
