@@ -11,9 +11,10 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.server.CreateServerRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.server.UpdateServerRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.ServerServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
-import org.thehellnet.lanparty.manager.service.ServerService;
+import org.thehellnet.lanparty.manager.service.crud.ServerService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -41,7 +42,8 @@ public class ServerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateServerRequestDTO dto) {
-        Server server = serverService.create(dto.tag, dto.name, dto.game, dto.address, dto.port, dto.rconPassword, dto.logFile, dto.logParsingEnabled);
+        ServerServiceDTO serviceDTO = new ServerServiceDTO(dto.tag, dto.name, dto.game, dto.address, dto.port, dto.rconPassword, dto.logFile, dto.logParsingEnabled);
+        Server server = serverService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(server);
     }
 
@@ -77,7 +79,8 @@ public class ServerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateServerRequestDTO dto) {
-        Server server = serverService.update(id, dto.tag, dto.name, dto.game, dto.address, dto.port, dto.rconPassword, dto.logFile, dto.logParsingEnabled);
+        ServerServiceDTO serviceDTO = new ServerServiceDTO(dto.tag, dto.name, dto.game, dto.address, dto.port, dto.rconPassword, dto.logFile, dto.logParsingEnabled);
+        Server server = serverService.update(id, serviceDTO);
         return ResponseEntity.ok(server);
     }
 
