@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.service
+package org.thehellnet.lanparty.manager.service.crud
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
@@ -8,13 +8,14 @@ import org.thehellnet.lanparty.manager.model.dto.service.CfgServiceDTO
 import org.thehellnet.lanparty.manager.model.persistence.Cfg
 import org.thehellnet.lanparty.manager.model.persistence.Game
 import org.thehellnet.lanparty.manager.model.persistence.Player
-import org.thehellnet.lanparty.manager.service.impl.CfgService
+import org.thehellnet.lanparty.manager.service.ServiceSpecification
+import org.thehellnet.lanparty.manager.service.crud.CfgCrudService
 import spock.lang.Unroll
 
-class CfgCrudServiceTest extends ServiceSpecification {
+class CfgCrudServiceTest extends CrudServiceSpecification {
 
     @Autowired
-    private CfgService cfgService
+    private CfgCrudService cfgCrudService
 
     private Player player
     private Player newPlayer
@@ -32,7 +33,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
     def "create valid user with \"#cfgContent\""(String cfgContent) {
         when:
         CfgServiceDTO serviceDTO = new CfgServiceDTO(player.id, game.id, cfgContent)
-        Cfg cfg = cfgService.create(serviceDTO)
+        Cfg cfg = cfgCrudService.create(serviceDTO)
 
         then:
         cfg != null
@@ -52,7 +53,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
     def "create with null player, null game and \"#cfgContent\""(String cfgContent) {
         when:
         CfgServiceDTO serviceDTO = new CfgServiceDTO(null, null, cfgContent)
-        cfgService.create(serviceDTO)
+        cfgCrudService.create(serviceDTO)
 
         then:
         thrown InvalidDataException
@@ -68,7 +69,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
     def "create with valid player, null game and \"#cfgContent\""(String cfgContent) {
         when:
         CfgServiceDTO serviceDTO = new CfgServiceDTO(player.id, null, cfgContent)
-        cfgService.create(serviceDTO)
+        cfgCrudService.create(serviceDTO)
 
         then:
         thrown InvalidDataException
@@ -84,7 +85,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
     def "create with null player, valid game and \"#cfgContent\""(String cfgContent) {
         when:
         CfgServiceDTO serviceDTO = new CfgServiceDTO(null, game.id, cfgContent)
-        cfgService.create(serviceDTO)
+        cfgCrudService.create(serviceDTO)
 
         then:
         thrown InvalidDataException
@@ -101,7 +102,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
         Long cfgId = cfgRepository.save(new Cfg(player, game, CFG)).id
 
         when:
-        Cfg cfg = cfgService.read(cfgId)
+        Cfg cfg = cfgCrudService.read(cfgId)
 
         then:
         cfg != null
@@ -116,7 +117,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
         Long cfgId = 12345678
 
         when:
-        cfgService.read(cfgId)
+        cfgCrudService.read(cfgId)
 
         then:
         thrown NotFoundException
@@ -124,7 +125,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
 
     def "getAll with no cfg"() {
         when:
-        List<Cfg> cfgs = cfgService.readAll()
+        List<Cfg> cfgs = cfgCrudService.readAll()
 
         then:
         cfgs.size() == 0
@@ -135,7 +136,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
         Long cfgId = cfgRepository.save(new Cfg(player, game, CFG)).id
 
         when:
-        List<Cfg> cfgs = cfgService.readAll()
+        List<Cfg> cfgs = cfgCrudService.readAll()
 
         then:
         cfgs.size() == 1
@@ -157,7 +158,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
 
         when:
         CfgServiceDTO serviceDTO = new CfgServiceDTO(null, null, null)
-        cfgService.update(cfgId, serviceDTO)
+        cfgCrudService.update(cfgId, serviceDTO)
 
         then:
         thrown UnchangedException
@@ -170,7 +171,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
 
         when:
         CfgServiceDTO serviceDTO = new CfgServiceDTO(null, null, cfgContent)
-        Cfg cfg = cfgService.update(cfgId, serviceDTO)
+        Cfg cfg = cfgCrudService.update(cfgId, serviceDTO)
 
         then:
         cfg != null
@@ -190,7 +191,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
 
         when:
         CfgServiceDTO serviceDTO = new CfgServiceDTO(null, this.newGame.id, cfgContent)
-        Cfg cfg = cfgService.update(cfgId, serviceDTO)
+        Cfg cfg = cfgCrudService.update(cfgId, serviceDTO)
 
         then:
         cfg != null
@@ -210,7 +211,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
 
         when:
         CfgServiceDTO serviceDTO = new CfgServiceDTO(this.newPlayer.id, null, cfgContent)
-        Cfg cfg = cfgService.update(cfgId, serviceDTO)
+        Cfg cfg = cfgCrudService.update(cfgId, serviceDTO)
 
         then:
         cfg != null
@@ -230,7 +231,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
 
         when:
         CfgServiceDTO serviceDTO = new CfgServiceDTO(this.newPlayer.id, this.newGame.id, cfgContent)
-        Cfg cfg = cfgService.update(cfgId, serviceDTO)
+        Cfg cfg = cfgCrudService.update(cfgId, serviceDTO)
 
         then:
         cfg != null
@@ -249,7 +250,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
 
         when:
         CfgServiceDTO serviceDTO = new CfgServiceDTO(this.newPlayer.id, this.newGame.id, CFG_NEW)
-        cfgService.update(appUserId, serviceDTO)
+        cfgCrudService.update(appUserId, serviceDTO)
 
         then:
         thrown NotFoundException
@@ -260,7 +261,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
         Long cfgId = cfgRepository.save(new Cfg(this.player, this.game, CFG)).id
 
         when:
-        cfgService.delete(cfgId)
+        cfgCrudService.delete(cfgId)
 
         then:
         noExceptionThrown()
@@ -274,7 +275,7 @@ class CfgCrudServiceTest extends ServiceSpecification {
         Long appUserId = 12345678
 
         when:
-        cfgService.delete(appUserId)
+        cfgCrudService.delete(appUserId)
 
         then:
         thrown NotFoundException

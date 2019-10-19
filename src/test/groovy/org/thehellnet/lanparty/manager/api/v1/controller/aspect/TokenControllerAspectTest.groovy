@@ -7,14 +7,22 @@ import org.thehellnet.lanparty.manager.api.v1.controller.AppUserController
 import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken
+import org.thehellnet.lanparty.manager.service.AppUserService
+import org.thehellnet.lanparty.manager.service.LoginService
+import org.thehellnet.lanparty.manager.service.crud.AppUserCrudService
 
 class TokenControllerAspectTest extends ContextSpecification {
 
-    private AppUserController proxy
     private MockHttpServletRequest request
 
+    private AppUserService appUserService
+    private AppUserCrudService appUserCrudService
+    private LoginService loginService
+
+    private AppUserController proxy
+
     def setup() {
-        AppUserController target = new AppUserController()
+        AppUserController target = new AppUserController(appUserService, appUserCrudService, loginService)
         AspectJProxyFactory factory = new AspectJProxyFactory(target)
 
         TokenControllerAspect aspect = webApplicationContext.getBean(TokenControllerAspect)

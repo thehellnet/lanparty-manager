@@ -6,12 +6,11 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
-import org.thehellnet.lanparty.manager.service.crud.AppUserCrudService;
+import org.thehellnet.lanparty.manager.service.LoginService;
 
 import java.lang.reflect.Method;
 
@@ -21,11 +20,10 @@ import java.lang.reflect.Method;
 public class RolesControllerAspect {
     private static final Logger logger = LoggerFactory.getLogger(TokenControllerAspect.class);
 
-    private final AppUserCrudService appUserCrudService;
+    private final LoginService loginService;
 
-    @Autowired
-    public RolesControllerAspect(AppUserCrudService appUserCrudService) {
-        this.appUserCrudService = appUserCrudService;
+    public RolesControllerAspect(LoginService loginService) {
+        this.loginService = loginService;
     }
 
     @Around("@annotation(CheckRoles)")
@@ -38,11 +36,11 @@ public class RolesControllerAspect {
         AppUser appUser = (AppUser) params[1];
 
         if (annotation.mode == CheckRoles.Mode.ALL) {
-            if (!appUserCrudService.hasAllRoles(appUser, annotation.value())) {
+            if (!loginService.hasAllRoles(appUser, annotation.value())) {
                 throw new UnauthorizedException();
             }
         } else if (annotation.mode == CheckRoles.Mode.ANY) {
-            if (!appUserCrudService.hasAnyRoles(appUser, annotation.value())) {
+            if (!loginService.hasAnyRoles(appUser, annotation.value())) {
                 throw new UnauthorizedException();
             }
         }

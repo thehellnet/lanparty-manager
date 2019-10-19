@@ -16,6 +16,8 @@ import org.thehellnet.lanparty.manager.model.dto.response.appuser.LoginAppUserRe
 import org.thehellnet.lanparty.manager.model.dto.service.AppUserServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
+import org.thehellnet.lanparty.manager.service.AppUserService;
+import org.thehellnet.lanparty.manager.service.LoginService;
 import org.thehellnet.lanparty.manager.service.crud.AppUserCrudService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,11 +31,15 @@ public class AppUserController {
 
     private static final Logger logger = LoggerFactory.getLogger(AppUserController.class);
 
+    private final AppUserService appUserService;
     private final AppUserCrudService appUserCrudService;
+    private final LoginService loginService;
 
     @Autowired
-    public AppUserController(AppUserCrudService appUserCrudService) {
+    public AppUserController(AppUserService appUserService, AppUserCrudService appUserCrudService, LoginService loginService) {
+        this.appUserService = appUserService;
         this.appUserCrudService = appUserCrudService;
+        this.loginService = loginService;
     }
 
     @CheckToken
@@ -104,8 +110,8 @@ public class AppUserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity login(@RequestBody LoginAppUserRequestDTO dto) {
-        AppUser appUser = appUserCrudService.findByEmailAndPassword(dto.email, dto.password);
-        AppUserToken appUserToken = appUserCrudService.newToken(appUser);
+        AppUser appUser = loginService.findByEmailAndPassword(dto.email, dto.password);
+        AppUserToken appUserToken = loginService.newToken(appUser);
 
         LoginAppUserResponseDTO body = new LoginAppUserResponseDTO();
         body.id = appUserToken.getId();

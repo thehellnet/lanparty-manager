@@ -8,13 +8,13 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.model.dto.service.AppUserServiceDTO
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
-import org.thehellnet.lanparty.manager.service.impl.AppUserService
+import org.thehellnet.lanparty.manager.service.crud.AppUserCrudService
 import spock.lang.Unroll
 
 class AppUserControllerSpecification extends ControllerSpecification {
 
     @Autowired
-    private AppUserService appUserService
+    private AppUserCrudService appUserCrudService
 
     def setup() {
         "Do login for token retrieving"()
@@ -319,7 +319,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
                 name: APPUSER_NAME,
                 barcode: APPUSER_BARCODE
         )
-        appUserService.create(serviceDTO)
+        appUserCrudService.create(serviceDTO)
 
         when:
         def rawResponse = mockMvc
@@ -399,7 +399,7 @@ class AppUserControllerSpecification extends ControllerSpecification {
                 name: APPUSER_NAME,
                 barcode: APPUSER_BARCODE
         )
-        Long appUserId = appUserService.create(serviceDTO).id
+        Long appUserId = appUserCrudService.create(serviceDTO).id
 
         when:
         def rawResponse = mockMvc
@@ -700,6 +700,6 @@ class AppUserControllerSpecification extends ControllerSpecification {
     }
 
     private int "check number of appUsers in database"() {
-        return appUserService.readAll().size()
+        return appUserCrudService.readAll().size()
     }
 }
