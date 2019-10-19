@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.model.dto.service.ServiceDTO;
 
 import java.util.List;

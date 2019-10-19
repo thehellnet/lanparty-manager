@@ -17,16 +17,6 @@ public abstract class AbstractCrudService<T, D extends ServiceDTO, R extends Jpa
         this.repository = repository;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public T findById(Long id) {
-        T record = repository.findById(id).orElse(null);
-        if (record == null) {
-            throw new NotFoundException();
-        }
-        return record;
-    }
-
     @Transactional(readOnly = true)
     public T read(Long id) {
         return findById(id);
@@ -42,4 +32,15 @@ public abstract class AbstractCrudService<T, D extends ServiceDTO, R extends Jpa
         T record = findById(id);
         repository.delete(record);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public T findById(Long id) {
+        T record = repository.findById(id).orElse(null);
+        if (record == null) {
+            throw new NotFoundException();
+        }
+        return record;
+    }
+
 }
