@@ -11,9 +11,10 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.match.CreateMatchRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.match.UpdateMatchRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.MatchServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Match;
-import org.thehellnet.lanparty.manager.service.MatchService;
+import org.thehellnet.lanparty.manager.service.crud.MatchService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -41,7 +42,8 @@ public class MatchController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateMatchRequestDTO dto) {
-        Match match = matchService.create(dto.name, dto.tournament, dto.server, dto.gameMap, dto.gametype, dto.localTeam, dto.guestTeam);
+        MatchServiceDTO serviceDTO = new MatchServiceDTO(dto.name, dto.tournament, dto.server, dto.gameMap, dto.gametype, dto.localTeam, dto.guestTeam);
+        Match match = matchService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(match);
     }
 
@@ -77,7 +79,8 @@ public class MatchController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateMatchRequestDTO dto) {
-        Match match = matchService.update(id, dto.name, dto.tournament, dto.server, dto.gameMap, dto.gametype, dto.localTeam, dto.guestTeam);
+        MatchServiceDTO serviceDTO = new MatchServiceDTO(dto.name, dto.tournament, dto.server, dto.gameMap, dto.gametype, dto.localTeam, dto.guestTeam);
+        Match match = matchService.update(id, serviceDTO);
         return ResponseEntity.ok(match);
     }
 
