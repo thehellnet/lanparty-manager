@@ -11,9 +11,10 @@ import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.seat.CreateSeatRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.seat.UpdateSeatRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.SeatServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Seat;
-import org.thehellnet.lanparty.manager.service.SeatService;
+import org.thehellnet.lanparty.manager.service.crud.SeatService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -41,7 +42,8 @@ public class SeatController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateSeatRequestDTO dto) {
-        Seat seat = seatService.create(dto.name, dto.ipAddress, dto.tournament, dto.player);
+        SeatServiceDTO serviceDTO = new SeatServiceDTO(dto.name, dto.ipAddress, dto.tournament, dto.player);
+        Seat seat = seatService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(seat);
     }
 
@@ -77,7 +79,8 @@ public class SeatController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateSeatRequestDTO dto) {
-        Seat seat = seatService.update(id, dto.name, dto.ipAddress, dto.tournament, dto.player);
+        SeatServiceDTO serviceDTO = new SeatServiceDTO(dto.name, dto.ipAddress, dto.tournament, dto.player);
+        Seat seat = seatService.update(id, serviceDTO);
         return ResponseEntity.ok(seat);
     }
 

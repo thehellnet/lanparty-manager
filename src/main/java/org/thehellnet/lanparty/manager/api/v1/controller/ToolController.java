@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.BarcodeToolRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.SaveCfgToolRequestDTO;
 import org.thehellnet.lanparty.manager.service.crud.CfgService;
-import org.thehellnet.lanparty.manager.service.SeatService;
+import org.thehellnet.lanparty.manager.service.crud.SeatService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

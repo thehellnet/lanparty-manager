@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.service;
+package org.thehellnet.lanparty.manager.service.crud;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
+import org.thehellnet.lanparty.manager.model.dto.service.SeatServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.Player;
 import org.thehellnet.lanparty.manager.model.persistence.Seat;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;
@@ -14,79 +15,66 @@ import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.repository.SeatRepository;
 import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
-import java.util.List;
-
 @Service
-public class SeatService extends AbstractService {
+public class SeatService extends AbstractCrudService<Seat, SeatServiceDTO, SeatRepository> {
 
     private static final Logger logger = LoggerFactory.getLogger(SeatService.class);
 
-    private final SeatRepository seatRepository;
     private final TournamentRepository tournamentRepository;
     private final PlayerRepository playerRepository;
 
-    public SeatService(SeatRepository seatRepository, TournamentRepository tournamentRepository, PlayerRepository playerRepository) {
-        this.seatRepository = seatRepository;
+    public SeatService(SeatRepository repository, TournamentRepository tournamentRepository, PlayerRepository playerRepository) {
+        super(repository);
         this.tournamentRepository = tournamentRepository;
         this.playerRepository = playerRepository;
     }
 
-    @Transactional
-    public Seat create(String name, String ipAddress, Long tournamentId, Long playerId) {
-        if (name == null) {
+    @Override
+    public Seat create(SeatServiceDTO dto) {
+        if (dto.name == null) {
             throw new InvalidDataException("Invalid name");
         }
 
-        if (ipAddress == null) {
+        if (dto.ipAddress == null) {
             throw new InvalidDataException("Invalid ipAddress");
         }
 
-        if (tournamentId == null) {
+        if (dto.tournamentId == null) {
             throw new InvalidDataException("Invalid tournament");
         }
-        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+        Tournament tournament = tournamentRepository.findById(dto.tournamentId).orElse(null);
         if (tournament == null) {
             throw new InvalidDataException("Tournament not found");
         }
 
-        if (playerId == null) {
+        if (dto.playerId == null) {
             throw new InvalidDataException("Invalid player");
         }
-        Player player = playerRepository.findById(playerId).orElse(null);
+        Player player = playerRepository.findById(dto.playerId).orElse(null);
 
-        Seat seat = new Seat(name, ipAddress, tournament, player);
-        seat = seatRepository.save(seat);
+        Seat seat = new Seat(dto.name, dto.ipAddress, tournament, player);
+        seat = repository.save(seat);
         return seat;
     }
 
-    @Transactional(readOnly = true)
-    public Seat read(Long id) {
-        return findById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Seat> readAll() {
-        return seatRepository.findAll();
-    }
-
-    @Transactional
-    public Seat update(Long id, String name, String ipAddress, Long tournamentId, Long playerId) {
+    @Override
+    public Seat update(Long id, SeatServiceDTO dto) {
         Seat seat = findById(id);
 
         boolean changed = false;
 
-        if (name != null) {
-            seat.setName(name);
+        if (dto.name != null) {
+            seat.setName(dto.name);
             changed = true;
         }
 
-        if (ipAddress != null) {
-            seat.setIpAddress(ipAddress);
+        if (dto.ipAddress != null) {
+            seat.setIpAddress(dto.ipAddress);
             changed = true;
         }
 
-        if (tournamentId != null) {
-            Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+        if (dto.tournamentId != null) {
+            Tournament tournament = tournamentRepository.findById(dto.tournamentId).orElse(null);
             if (tournament == null) {
                 throw new InvalidDataException("Invalid tournament");
             }
@@ -94,8 +82,8 @@ public class SeatService extends AbstractService {
             changed = true;
         }
 
-        if (playerId != null) {
-            Player player = playerRepository.findById(playerId).orElse(null);
+        if (dto.playerId != null) {
+            Player player = playerRepository.findById(dto.playerId).orElse(null);
             if (player == null) {
                 throw new InvalidDataException("Invalid player");
             }
@@ -110,27 +98,12 @@ public class SeatService extends AbstractService {
             throw new UnchangedException();
         }
 
-        return seatRepository.save(seat);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        Seat seat = findById(id);
-        seatRepository.delete(seat);
-    }
-
-    @Transactional(readOnly = true)
-    public Seat findById(Long id) {
-        Seat seat = seatRepository.findById(id).orElse(null);
-        if (seat == null) {
-            throw new NotFoundException();
-        }
-        return seat;
+        return repository.save(seat);
     }
 
     @Transactional(readOnly = true)
     public Seat findByAddress(String address) {
-        Seat seat = seatRepository.findByIpAddress(address);
+        Seat seat = repository.findByIpAddress(address);
         if (seat == null) {
             throw new NotFoundException("Seat not found");
         }
@@ -145,6 +118,6 @@ public class SeatService extends AbstractService {
         logger.info("Updating last contact for seat {}", seat.getName());
 
         seat.updateLastContact();
-        seatRepository.save(seat);
+        repository.save(seat);
     }
 }
