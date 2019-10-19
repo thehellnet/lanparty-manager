@@ -6,29 +6,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
-import org.thehellnet.lanparty.manager.model.dto.service.TournamentServiceDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.GameMapServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
-import org.thehellnet.lanparty.manager.model.persistence.Tournament;
+import org.thehellnet.lanparty.manager.model.persistence.GameMap;
+import org.thehellnet.lanparty.manager.repository.GameMapRepository;
 import org.thehellnet.lanparty.manager.repository.GameRepository;
-import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 @Service
-public class TournamentService extends AbstractCrudService<Tournament, TournamentServiceDTO, TournamentRepository> {
+public class GameMapCrudService extends AbstractCrudService<GameMap, GameMapServiceDTO, GameMapRepository> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TournamentService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GameMapCrudService.class);
 
     private final GameRepository gameRepository;
 
-    public TournamentService(TournamentRepository repository, GameRepository gameRepository) {
+    public GameMapCrudService(GameMapRepository repository, GameRepository gameRepository) {
         super(repository);
         this.gameRepository = gameRepository;
     }
 
     @Override
     @Transactional
-    public Tournament create(TournamentServiceDTO dto) {
-        if (dto.name == null) {
-            throw new InvalidDataException("Invalid name");
+    public GameMap create(GameMapServiceDTO dto) {
+        if (dto.tag == null) {
+            throw new InvalidDataException("Invalid tag");
         }
 
         if (dto.gameId == null) {
@@ -39,24 +39,29 @@ public class TournamentService extends AbstractCrudService<Tournament, Tournamen
             throw new InvalidDataException("Game not found");
         }
 
-        if (dto.cfg == null) {
-            throw new InvalidDataException("Invalid cfg");
+        if (dto.stock == null) {
+            throw new InvalidDataException("Invalid stock");
         }
 
-        Tournament tournament = new Tournament(dto.name, game, dto.cfg);
-        tournament = repository.save(tournament);
-        return tournament;
+        GameMap gameMap = new GameMap(dto.tag, dto.name, game, dto.stock);
+        gameMap = repository.save(gameMap);
+        return gameMap;
     }
 
     @Override
     @Transactional
-    public Tournament update(Long id, TournamentServiceDTO dto) {
-        Tournament tournament = findById(id);
+    public GameMap update(Long id, GameMapServiceDTO dto) {
+        GameMap gameMap = findById(id);
 
         boolean changed = false;
 
+        if (dto.tag != null) {
+            gameMap.setTag(dto.tag);
+            changed = true;
+        }
+
         if (dto.name != null) {
-            tournament.setName(dto.name);
+            gameMap.setName(dto.name);
             changed = true;
         }
 
@@ -65,13 +70,12 @@ public class TournamentService extends AbstractCrudService<Tournament, Tournamen
             if (game == null) {
                 throw new InvalidDataException("Invalid game");
             }
-
-            tournament.setGame(game);
+            gameMap.setGame(game);
             changed = true;
         }
 
-        if (dto.cfg != null) {
-            tournament.setCfg(dto.cfg);
+        if (dto.stock != null) {
+            gameMap.setStock(dto.stock);
             changed = true;
         }
 
@@ -79,6 +83,6 @@ public class TournamentService extends AbstractCrudService<Tournament, Tournamen
             throw new UnchangedException();
         }
 
-        return repository.save(tournament);
+        return repository.save(gameMap);
     }
 }

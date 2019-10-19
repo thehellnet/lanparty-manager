@@ -11,7 +11,7 @@ import org.thehellnet.lanparty.manager.model.persistence.Player
 import org.thehellnet.lanparty.manager.service.impl.CfgService
 import spock.lang.Unroll
 
-class CfgServiceTest extends ServiceSpecification {
+class CfgCrudServiceTest extends ServiceSpecification {
 
     @Autowired
     private CfgService cfgService

@@ -11,7 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
-import org.thehellnet.lanparty.manager.service.crud.AppUserService;
+import org.thehellnet.lanparty.manager.service.crud.AppUserCrudService;
 
 import java.lang.reflect.Method;
 
@@ -21,11 +21,11 @@ import java.lang.reflect.Method;
 public class RolesControllerAspect {
     private static final Logger logger = LoggerFactory.getLogger(TokenControllerAspect.class);
 
-    private final AppUserService appUserService;
+    private final AppUserCrudService appUserCrudService;
 
     @Autowired
-    public RolesControllerAspect(AppUserService appUserService) {
-        this.appUserService = appUserService;
+    public RolesControllerAspect(AppUserCrudService appUserCrudService) {
+        this.appUserCrudService = appUserCrudService;
     }
 
     @Around("@annotation(CheckRoles)")
@@ -38,11 +38,11 @@ public class RolesControllerAspect {
         AppUser appUser = (AppUser) params[1];
 
         if (annotation.mode == CheckRoles.Mode.ALL) {
-            if (!appUserService.hasAllRoles(appUser, annotation.value())) {
+            if (!appUserCrudService.hasAllRoles(appUser, annotation.value())) {
                 throw new UnauthorizedException();
             }
         } else if (annotation.mode == CheckRoles.Mode.ANY) {
-            if (!appUserService.hasAnyRoles(appUser, annotation.value())) {
+            if (!appUserCrudService.hasAnyRoles(appUser, annotation.value())) {
                 throw new UnauthorizedException();
             }
         }

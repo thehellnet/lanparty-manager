@@ -13,13 +13,13 @@ import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.ServerRepository;
 
 @Service
-public class ServerService extends AbstractCrudService<Server, ServerServiceDTO, ServerRepository> {
+public class ServerCrudService extends AbstractCrudService<Server, ServerServiceDTO, ServerRepository> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TeamService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TeamCrudService.class);
 
     private final GameRepository gameRepository;
 
-    public ServerService(ServerRepository repository, GameRepository gameRepository) {
+    public ServerCrudService(ServerRepository repository, GameRepository gameRepository) {
         super(repository);
         this.gameRepository = gameRepository;
     }

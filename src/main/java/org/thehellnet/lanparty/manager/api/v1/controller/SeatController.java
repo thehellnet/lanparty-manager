@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.seat.UpdateSeatRequestD
 import org.thehellnet.lanparty.manager.model.dto.service.SeatServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Seat;
-import org.thehellnet.lanparty.manager.service.crud.SeatService;
+import org.thehellnet.lanparty.manager.service.crud.SeatCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,11 +27,11 @@ public class SeatController {
 
     private static final Logger logger = LoggerFactory.getLogger(SeatController.class);
 
-    private final SeatService seatService;
+    private final SeatCrudService seatCrudService;
 
     @Autowired
-    public SeatController(SeatService seatService) {
-        this.seatService = seatService;
+    public SeatController(SeatCrudService seatCrudService) {
+        this.seatCrudService = seatCrudService;
     }
 
     @CheckToken
@@ -43,7 +43,7 @@ public class SeatController {
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateSeatRequestDTO dto) {
         SeatServiceDTO serviceDTO = new SeatServiceDTO(dto.name, dto.ipAddress, dto.tournament, dto.player);
-        Seat seat = seatService.create(serviceDTO);
+        Seat seat = seatCrudService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(seat);
     }
 
@@ -55,7 +55,7 @@ public class SeatController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Seat seat = seatService.read(id);
+        Seat seat = seatCrudService.read(id);
         return ResponseEntity.ok(seat);
     }
 
@@ -66,7 +66,7 @@ public class SeatController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Seat> seats = seatService.readAll();
+        List<Seat> seats = seatCrudService.readAll();
         return ResponseEntity.ok(seats);
     }
 
@@ -80,7 +80,7 @@ public class SeatController {
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateSeatRequestDTO dto) {
         SeatServiceDTO serviceDTO = new SeatServiceDTO(dto.name, dto.ipAddress, dto.tournament, dto.player);
-        Seat seat = seatService.update(id, serviceDTO);
+        Seat seat = seatCrudService.update(id, serviceDTO);
         return ResponseEntity.ok(seat);
     }
 
@@ -91,7 +91,7 @@ public class SeatController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        seatService.delete(id);
+        seatCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

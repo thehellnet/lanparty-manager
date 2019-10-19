@@ -12,12 +12,12 @@ import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository;
 import org.thehellnet.utility.TokenUtility;
 
 @Service
-public class AppUserTokenService extends AbstractCrudService<AppUserToken, AppUserTokenServiceDTO, AppUserTokenRepository> {
+public class AppUserTokenCrudService extends AbstractCrudService<AppUserToken, AppUserTokenServiceDTO, AppUserTokenRepository> {
 
     private final AppUserTokenRepository appUserTokenRepository;
     private final AppUserRepository appUserRepository;
 
-    public AppUserTokenService(AppUserTokenRepository repository, AppUserTokenRepository appUserTokenRepository, AppUserRepository appUserRepository) {
+    public AppUserTokenCrudService(AppUserTokenRepository repository, AppUserTokenRepository appUserTokenRepository, AppUserRepository appUserRepository) {
         super(repository);
         this.appUserTokenRepository = appUserTokenRepository;
         this.appUserRepository = appUserRepository;

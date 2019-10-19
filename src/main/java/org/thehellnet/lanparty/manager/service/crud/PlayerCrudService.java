@@ -15,14 +15,14 @@ import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.repository.TeamRepository;
 
 @Service
-public class PlayerService extends AbstractCrudService<Player, PlayerServiceDTO, PlayerRepository> {
+public class PlayerCrudService extends AbstractCrudService<Player, PlayerServiceDTO, PlayerRepository> {
 
-    private static final Logger logger = LoggerFactory.getLogger(PlayerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PlayerCrudService.class);
 
     private final AppUserRepository appUserRepository;
     private final TeamRepository teamRepository;
 
-    public PlayerService(PlayerRepository repository, AppUserRepository appUserRepository, TeamRepository teamRepository) {
+    public PlayerCrudService(PlayerRepository repository, AppUserRepository appUserRepository, TeamRepository teamRepository) {
         super(repository);
         this.appUserRepository = appUserRepository;
         this.teamRepository = teamRepository;

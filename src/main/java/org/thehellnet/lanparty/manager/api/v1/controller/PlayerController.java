@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.player.UpdatePlayerRequ
 import org.thehellnet.lanparty.manager.model.dto.service.PlayerServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Player;
-import org.thehellnet.lanparty.manager.service.crud.PlayerService;
+import org.thehellnet.lanparty.manager.service.crud.PlayerCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,11 +27,11 @@ public class PlayerController {
 
     private static final Logger logger = LoggerFactory.getLogger(PlayerController.class);
 
-    private final PlayerService playerService;
+    private final PlayerCrudService playerCrudService;
 
     @Autowired
-    public PlayerController(PlayerService playerService) {
-        this.playerService = playerService;
+    public PlayerController(PlayerCrudService playerCrudService) {
+        this.playerCrudService = playerCrudService;
     }
 
     @CheckToken
@@ -43,7 +43,7 @@ public class PlayerController {
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreatePlayerRequestDTO dto) {
         PlayerServiceDTO serviceDTO = new PlayerServiceDTO(dto.nickname, dto.appUser, dto.team);
-        Player player = playerService.create(serviceDTO);
+        Player player = playerCrudService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(player);
     }
 
@@ -55,7 +55,7 @@ public class PlayerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Player player = playerService.read(id);
+        Player player = playerCrudService.read(id);
         return ResponseEntity.ok(player);
     }
 
@@ -66,7 +66,7 @@ public class PlayerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Player> players = playerService.readAll();
+        List<Player> players = playerCrudService.readAll();
         return ResponseEntity.ok(players);
     }
 
@@ -80,7 +80,7 @@ public class PlayerController {
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdatePlayerRequestDTO dto) {
         PlayerServiceDTO serviceDTO = new PlayerServiceDTO(dto.nickname, dto.appUser, dto.team);
-        Player player = playerService.update(id, serviceDTO);
+        Player player = playerCrudService.update(id, serviceDTO);
         return ResponseEntity.ok(player);
     }
 
@@ -91,7 +91,7 @@ public class PlayerController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        playerService.delete(id);
+        playerCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

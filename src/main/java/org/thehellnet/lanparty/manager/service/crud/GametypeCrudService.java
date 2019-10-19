@@ -11,11 +11,11 @@ import org.thehellnet.lanparty.manager.model.persistence.Gametype;
 import org.thehellnet.lanparty.manager.repository.GametypeRepository;
 
 @Service
-public class GametypeService extends AbstractCrudService<Gametype, GametypeServiceDTO, GametypeRepository> {
+public class GametypeCrudService extends AbstractCrudService<Gametype, GametypeServiceDTO, GametypeRepository> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TeamService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TeamCrudService.class);
 
-    public GametypeService(GametypeRepository repository) {
+    public GametypeCrudService(GametypeRepository repository) {
         super(repository);
     }
 

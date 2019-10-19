@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.match.UpdateMatchReques
 import org.thehellnet.lanparty.manager.model.dto.service.MatchServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Match;
-import org.thehellnet.lanparty.manager.service.crud.MatchService;
+import org.thehellnet.lanparty.manager.service.crud.MatchCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,11 +27,11 @@ public class MatchController {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchController.class);
 
-    private final MatchService matchService;
+    private final MatchCrudService matchCrudService;
 
     @Autowired
-    public MatchController(MatchService matchService) {
-        this.matchService = matchService;
+    public MatchController(MatchCrudService matchCrudService) {
+        this.matchCrudService = matchCrudService;
     }
 
     @CheckToken
@@ -43,7 +43,7 @@ public class MatchController {
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateMatchRequestDTO dto) {
         MatchServiceDTO serviceDTO = new MatchServiceDTO(dto.name, dto.tournament, dto.server, dto.gameMap, dto.gametype, dto.localTeam, dto.guestTeam);
-        Match match = matchService.create(serviceDTO);
+        Match match = matchCrudService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(match);
     }
 
@@ -55,7 +55,7 @@ public class MatchController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Match match = matchService.read(id);
+        Match match = matchCrudService.read(id);
         return ResponseEntity.ok(match);
     }
 
@@ -66,7 +66,7 @@ public class MatchController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Match> matchs = matchService.readAll();
+        List<Match> matchs = matchCrudService.readAll();
         return ResponseEntity.ok(matchs);
     }
 
@@ -80,7 +80,7 @@ public class MatchController {
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateMatchRequestDTO dto) {
         MatchServiceDTO serviceDTO = new MatchServiceDTO(dto.name, dto.tournament, dto.server, dto.gameMap, dto.gametype, dto.localTeam, dto.guestTeam);
-        Match match = matchService.update(id, serviceDTO);
+        Match match = matchCrudService.update(id, serviceDTO);
         return ResponseEntity.ok(match);
     }
 
@@ -91,7 +91,7 @@ public class MatchController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        matchService.delete(id);
+        matchCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.team.UpdateTeamRequestD
 import org.thehellnet.lanparty.manager.model.dto.service.TeamServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Team;
-import org.thehellnet.lanparty.manager.service.crud.TeamService;
+import org.thehellnet.lanparty.manager.service.crud.TeamCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,11 +27,11 @@ public class TeamController {
 
     private static final Logger logger = LoggerFactory.getLogger(TeamController.class);
 
-    private final TeamService teamService;
+    private final TeamCrudService teamCrudService;
 
     @Autowired
-    public TeamController(TeamService teamService) {
-        this.teamService = teamService;
+    public TeamController(TeamCrudService teamCrudService) {
+        this.teamCrudService = teamCrudService;
     }
 
     @CheckToken
@@ -43,7 +43,7 @@ public class TeamController {
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateTeamRequestDTO dto) {
         TeamServiceDTO serviceDTO = new TeamServiceDTO(dto.name, dto.tournament);
-        Team team = teamService.create(serviceDTO);
+        Team team = teamCrudService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(team);
     }
 
@@ -55,7 +55,7 @@ public class TeamController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Team team = teamService.read(id);
+        Team team = teamCrudService.read(id);
         return ResponseEntity.ok(team);
     }
 
@@ -66,7 +66,7 @@ public class TeamController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Team> teams = teamService.readAll();
+        List<Team> teams = teamCrudService.readAll();
         return ResponseEntity.ok(teams);
     }
 
@@ -80,7 +80,7 @@ public class TeamController {
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateTeamRequestDTO dto) {
         TeamServiceDTO serviceDTO = new TeamServiceDTO(dto.name, dto.tournament);
-        Team team = teamService.update(id, serviceDTO);
+        Team team = teamCrudService.update(id, serviceDTO);
         return ResponseEntity.ok(team);
     }
 
@@ -91,7 +91,7 @@ public class TeamController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        teamService.delete(id);
+        teamCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

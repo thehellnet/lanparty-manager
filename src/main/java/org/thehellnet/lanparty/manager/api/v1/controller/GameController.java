@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.game.UpdateGameRequestD
 import org.thehellnet.lanparty.manager.model.dto.service.GameServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
-import org.thehellnet.lanparty.manager.service.crud.GameService;
+import org.thehellnet.lanparty.manager.service.crud.GameCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,11 +27,11 @@ public class GameController {
 
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
-    private final GameService gameService;
+    private final GameCrudService gameCrudService;
 
     @Autowired
-    public GameController(GameService gameService) {
-        this.gameService = gameService;
+    public GameController(GameCrudService gameCrudService) {
+        this.gameCrudService = gameCrudService;
     }
 
     @CheckToken
@@ -43,7 +43,7 @@ public class GameController {
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateGameRequestDTO dto) {
         GameServiceDTO serviceDTO = new GameServiceDTO(dto.tag, dto.name);
-        Game game = gameService.create(serviceDTO);
+        Game game = gameCrudService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(game);
     }
 
@@ -55,7 +55,7 @@ public class GameController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Game game = gameService.read(id);
+        Game game = gameCrudService.read(id);
         return ResponseEntity.ok(game);
     }
 
@@ -66,7 +66,7 @@ public class GameController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Game> games = gameService.readAll();
+        List<Game> games = gameCrudService.readAll();
         return ResponseEntity.ok(games);
     }
 
@@ -80,7 +80,7 @@ public class GameController {
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateGameRequestDTO dto) {
         GameServiceDTO serviceDTO = new GameServiceDTO(dto.tag, dto.name);
-        Game game = gameService.update(id, serviceDTO);
+        Game game = gameCrudService.update(id, serviceDTO);
         return ResponseEntity.ok(game);
     }
 
@@ -91,7 +91,7 @@ public class GameController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        gameService.delete(id);
+        gameCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

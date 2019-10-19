@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.cfg.UpdateCfgRequestDTO
 import org.thehellnet.lanparty.manager.model.dto.service.CfgServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Cfg;
-import org.thehellnet.lanparty.manager.service.crud.CfgService;
+import org.thehellnet.lanparty.manager.service.crud.CfgCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,11 +27,11 @@ public class CfgController {
 
     private static final Logger logger = LoggerFactory.getLogger(CfgController.class);
 
-    private final CfgService cfgService;
+    private final CfgCrudService cfgCrudService;
 
     @Autowired
-    public CfgController(CfgService cfgService) {
-        this.cfgService = cfgService;
+    public CfgController(CfgCrudService cfgCrudService) {
+        this.cfgCrudService = cfgCrudService;
     }
 
     @CheckToken
@@ -43,7 +43,7 @@ public class CfgController {
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateCfgRequestDTO dto) {
         CfgServiceDTO serviceDTO = new CfgServiceDTO(dto.player, dto.game, dto.cfgContent);
-        Cfg cfg = cfgService.create(serviceDTO);
+        Cfg cfg = cfgCrudService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(cfg);
     }
 
@@ -55,7 +55,7 @@ public class CfgController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Cfg cfg = cfgService.read(id);
+        Cfg cfg = cfgCrudService.read(id);
         return ResponseEntity.ok(cfg);
     }
 
@@ -66,7 +66,7 @@ public class CfgController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Cfg> cfgs = cfgService.readAll();
+        List<Cfg> cfgs = cfgCrudService.readAll();
         return ResponseEntity.ok(cfgs);
     }
 
@@ -80,7 +80,7 @@ public class CfgController {
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateCfgRequestDTO dto) {
         CfgServiceDTO serviceDTO = new CfgServiceDTO(dto.player, dto.game, dto.cfgContent);
-        Cfg cfg = cfgService.update(id, serviceDTO);
+        Cfg cfg = cfgCrudService.update(id, serviceDTO);
         return ResponseEntity.ok(cfg);
     }
 
@@ -91,7 +91,7 @@ public class CfgController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        cfgService.delete(id);
+        cfgCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

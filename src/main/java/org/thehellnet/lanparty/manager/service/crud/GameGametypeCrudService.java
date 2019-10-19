@@ -15,14 +15,14 @@ import org.thehellnet.lanparty.manager.repository.GameRepository;
 import org.thehellnet.lanparty.manager.repository.GametypeRepository;
 
 @Service
-public class GameGametypeService extends AbstractCrudService<GameGametype, GameGametypeServiceDTO, GameGametypeRepository> {
+public class GameGametypeCrudService extends AbstractCrudService<GameGametype, GameGametypeServiceDTO, GameGametypeRepository> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TeamService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TeamCrudService.class);
 
     private final GameRepository gameRepository;
     private final GametypeRepository gametypeRepository;
 
-    public GameGametypeService(GameGametypeRepository repository, GameRepository gameRepository, GametypeRepository gametypeRepository) {
+    public GameGametypeCrudService(GameGametypeRepository repository, GameRepository gameRepository, GametypeRepository gametypeRepository) {
         super(repository);
         this.gameRepository = gameRepository;
         this.gametypeRepository = gametypeRepository;

@@ -16,14 +16,14 @@ import org.thehellnet.lanparty.manager.repository.SeatRepository;
 import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 @Service
-public class SeatService extends AbstractCrudService<Seat, SeatServiceDTO, SeatRepository> {
+public class SeatCrudService extends AbstractCrudService<Seat, SeatServiceDTO, SeatRepository> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SeatService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SeatCrudService.class);
 
     private final TournamentRepository tournamentRepository;
     private final PlayerRepository playerRepository;
 
-    public SeatService(SeatRepository repository, TournamentRepository tournamentRepository, PlayerRepository playerRepository) {
+    public SeatCrudService(SeatRepository repository, TournamentRepository tournamentRepository, PlayerRepository playerRepository) {
         super(repository);
         this.tournamentRepository = tournamentRepository;
         this.playerRepository = playerRepository;

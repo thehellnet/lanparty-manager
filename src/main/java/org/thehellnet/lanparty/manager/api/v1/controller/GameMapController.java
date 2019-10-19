@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.gamemap.UpdateGameMapRe
 import org.thehellnet.lanparty.manager.model.dto.service.GameMapServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.GameMap;
-import org.thehellnet.lanparty.manager.service.crud.GameMapService;
+import org.thehellnet.lanparty.manager.service.crud.GameMapCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,11 +27,11 @@ public class GameMapController {
 
     private static final Logger logger = LoggerFactory.getLogger(GameMapController.class);
 
-    private final GameMapService gameMapService;
+    private final GameMapCrudService gameMapCrudService;
 
     @Autowired
-    public GameMapController(GameMapService gameMapService) {
-        this.gameMapService = gameMapService;
+    public GameMapController(GameMapCrudService gameMapCrudService) {
+        this.gameMapCrudService = gameMapCrudService;
     }
 
     @CheckToken
@@ -43,7 +43,7 @@ public class GameMapController {
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateGameMapRequestDTO dto) {
         GameMapServiceDTO serviceDTO = new GameMapServiceDTO(dto.tag, dto.name, dto.game, dto.stock);
-        GameMap gameMap = gameMapService.create(serviceDTO);
+        GameMap gameMap = gameMapCrudService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(gameMap);
     }
 
@@ -55,7 +55,7 @@ public class GameMapController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        GameMap gameMap = gameMapService.read(id);
+        GameMap gameMap = gameMapCrudService.read(id);
         return ResponseEntity.ok(gameMap);
     }
 
@@ -66,7 +66,7 @@ public class GameMapController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<GameMap> gameMaps = gameMapService.readAll();
+        List<GameMap> gameMaps = gameMapCrudService.readAll();
         return ResponseEntity.ok(gameMaps);
     }
 
@@ -80,7 +80,7 @@ public class GameMapController {
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateGameMapRequestDTO dto) {
         GameMapServiceDTO serviceDTO = new GameMapServiceDTO(dto.tag, dto.name, dto.game, dto.stock);
-        GameMap gameMap = gameMapService.update(id, serviceDTO);
+        GameMap gameMap = gameMapCrudService.update(id, serviceDTO);
         return ResponseEntity.ok(gameMap);
     }
 
@@ -91,7 +91,7 @@ public class GameMapController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        gameMapService.delete(id);
+        gameMapCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

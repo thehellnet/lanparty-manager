@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.gametype.UpdateGametype
 import org.thehellnet.lanparty.manager.model.dto.service.GametypeServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Gametype;
-import org.thehellnet.lanparty.manager.service.crud.GametypeService;
+import org.thehellnet.lanparty.manager.service.crud.GametypeCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,11 +27,11 @@ public class GametypeController {
 
     private static final Logger logger = LoggerFactory.getLogger(GametypeController.class);
 
-    private final GametypeService gametypeService;
+    private final GametypeCrudService gametypeCrudService;
 
     @Autowired
-    public GametypeController(GametypeService gametypeService) {
-        this.gametypeService = gametypeService;
+    public GametypeController(GametypeCrudService gametypeCrudService) {
+        this.gametypeCrudService = gametypeCrudService;
     }
 
     @CheckToken
@@ -43,7 +43,7 @@ public class GametypeController {
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateGametypeRequestDTO dto) {
         GametypeServiceDTO serviceDTO = new GametypeServiceDTO(dto.name);
-        Gametype gametype = gametypeService.create(serviceDTO);
+        Gametype gametype = gametypeCrudService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(gametype);
     }
 
@@ -55,7 +55,7 @@ public class GametypeController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Gametype gametype = gametypeService.read(id);
+        Gametype gametype = gametypeCrudService.read(id);
         return ResponseEntity.ok(gametype);
     }
 
@@ -66,7 +66,7 @@ public class GametypeController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Gametype> gametypes = gametypeService.readAll();
+        List<Gametype> gametypes = gametypeCrudService.readAll();
         return ResponseEntity.ok(gametypes);
     }
 
@@ -80,7 +80,7 @@ public class GametypeController {
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateGametypeRequestDTO dto) {
         GametypeServiceDTO serviceDTO = new GametypeServiceDTO(dto.name);
-        Gametype gametype = gametypeService.update(id, serviceDTO);
+        Gametype gametype = gametypeCrudService.update(id, serviceDTO);
         return ResponseEntity.ok(gametype);
     }
 
@@ -91,7 +91,7 @@ public class GametypeController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        gametypeService.delete(id);
+        gametypeCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

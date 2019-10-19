@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.server.UpdateServerRequ
 import org.thehellnet.lanparty.manager.model.dto.service.ServerServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
-import org.thehellnet.lanparty.manager.service.crud.ServerService;
+import org.thehellnet.lanparty.manager.service.crud.ServerCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,11 +27,11 @@ public class ServerController {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerController.class);
 
-    private final ServerService serverService;
+    private final ServerCrudService serverCrudService;
 
     @Autowired
-    public ServerController(ServerService serverService) {
-        this.serverService = serverService;
+    public ServerController(ServerCrudService serverCrudService) {
+        this.serverCrudService = serverCrudService;
     }
 
     @CheckToken
@@ -43,7 +43,7 @@ public class ServerController {
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateServerRequestDTO dto) {
         ServerServiceDTO serviceDTO = new ServerServiceDTO(dto.tag, dto.name, dto.game, dto.address, dto.port, dto.rconPassword, dto.logFile, dto.logParsingEnabled);
-        Server server = serverService.create(serviceDTO);
+        Server server = serverCrudService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(server);
     }
 
@@ -55,7 +55,7 @@ public class ServerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Server server = serverService.read(id);
+        Server server = serverCrudService.read(id);
         return ResponseEntity.ok(server);
     }
 
@@ -66,7 +66,7 @@ public class ServerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Server> servers = serverService.readAll();
+        List<Server> servers = serverCrudService.readAll();
         return ResponseEntity.ok(servers);
     }
 
@@ -80,7 +80,7 @@ public class ServerController {
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateServerRequestDTO dto) {
         ServerServiceDTO serviceDTO = new ServerServiceDTO(dto.tag, dto.name, dto.game, dto.address, dto.port, dto.rconPassword, dto.logFile, dto.logParsingEnabled);
-        Server server = serverService.update(id, serviceDTO);
+        Server server = serverCrudService.update(id, serviceDTO);
         return ResponseEntity.ok(server);
     }
 
@@ -91,7 +91,7 @@ public class ServerController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        serverService.delete(id);
+        serverCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

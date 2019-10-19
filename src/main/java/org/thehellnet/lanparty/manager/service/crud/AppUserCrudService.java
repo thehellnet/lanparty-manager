@@ -22,11 +22,11 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
-public class AppUserService extends AbstractCrudService<AppUser, AppUserServiceDTO, AppUserRepository> {
+public class AppUserCrudService extends AbstractCrudService<AppUser, AppUserServiceDTO, AppUserRepository> {
 
     private final AppUserTokenRepository appUserTokenRepository;
 
-    public AppUserService(AppUserRepository repository, AppUserTokenRepository appUserTokenRepository) {
+    public AppUserCrudService(AppUserRepository repository, AppUserTokenRepository appUserTokenRepository) {
         super(repository);
         this.appUserTokenRepository = appUserTokenRepository;
     }

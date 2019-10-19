@@ -13,13 +13,13 @@ import org.thehellnet.lanparty.manager.repository.TeamRepository;
 import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 @Service
-public class TeamService extends AbstractCrudService<Team, TeamServiceDTO, TeamRepository> {
+public class TeamCrudService extends AbstractCrudService<Team, TeamServiceDTO, TeamRepository> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TeamService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TeamCrudService.class);
 
     private final TournamentRepository tournamentRepository;
 
-    public TeamService(TeamRepository repository, TournamentRepository tournamentRepository) {
+    public TeamCrudService(TeamRepository repository, TournamentRepository tournamentRepository) {
         super(repository);
         this.tournamentRepository = tournamentRepository;
     }

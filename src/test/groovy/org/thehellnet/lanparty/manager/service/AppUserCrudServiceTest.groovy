@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.service.impl.AppUserService
 import org.thehellnet.utility.PasswordUtility
 import spock.lang.Unroll
 
-class AppUserServiceTest extends ServiceSpecification {
+class AppUserCrudServiceTest extends ServiceSpecification {
 
     private static final String APPUSER_EMAIL = "user@domain.tdl"
     private static final String APPUSER_NAME = "User"

@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.tournament.UpdateTourna
 import org.thehellnet.lanparty.manager.model.dto.service.TournamentServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;
-import org.thehellnet.lanparty.manager.service.crud.TournamentService;
+import org.thehellnet.lanparty.manager.service.crud.TournamentCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,11 +27,11 @@ public class TournamentController {
 
     private static final Logger logger = LoggerFactory.getLogger(TournamentController.class);
 
-    private final TournamentService tournamentService;
+    private final TournamentCrudService tournamentCrudService;
 
     @Autowired
-    public TournamentController(TournamentService tournamentService) {
-        this.tournamentService = tournamentService;
+    public TournamentController(TournamentCrudService tournamentCrudService) {
+        this.tournamentCrudService = tournamentCrudService;
     }
 
     @CheckToken
@@ -43,7 +43,7 @@ public class TournamentController {
     )
     public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateTournamentRequestDTO dto) {
         TournamentServiceDTO serviceDTO = new TournamentServiceDTO(dto.name, dto.game, dto.cfg);
-        Tournament tournament = tournamentService.create(serviceDTO);
+        Tournament tournament = tournamentCrudService.create(serviceDTO);
         return ResponseEntity.created(URI.create("")).body(tournament);
     }
 
@@ -55,7 +55,7 @@ public class TournamentController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Tournament tournament = tournamentService.read(id);
+        Tournament tournament = tournamentCrudService.read(id);
         return ResponseEntity.ok(tournament);
     }
 
@@ -66,7 +66,7 @@ public class TournamentController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Tournament> tournaments = tournamentService.readAll();
+        List<Tournament> tournaments = tournamentCrudService.readAll();
         return ResponseEntity.ok(tournaments);
     }
 
@@ -80,7 +80,7 @@ public class TournamentController {
     )
     public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateTournamentRequestDTO dto) {
         TournamentServiceDTO serviceDTO = new TournamentServiceDTO(dto.name, dto.game, dto.cfg);
-        Tournament tournament = tournamentService.update(id, serviceDTO);
+        Tournament tournament = tournamentCrudService.update(id, serviceDTO);
         return ResponseEntity.ok(tournament);
     }
 
@@ -91,7 +91,7 @@ public class TournamentController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        tournamentService.delete(id);
+        tournamentCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
