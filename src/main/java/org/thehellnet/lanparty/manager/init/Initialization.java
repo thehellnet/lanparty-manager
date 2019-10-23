@@ -408,6 +408,7 @@ public class Initialization {
 
         for (String userEmail : userRoleMap.keySet()) {
             AppUser appUser = appUserRepository.findByEmail(userEmail);
+            appUser.getAppUserRoles().clear();
             for (Role role : userRoleMap.get(userEmail)) {
                 appUser.getAppUserRoles().add(role);
             }

@@ -37,7 +37,7 @@ abstract class ContextSpecification extends Specification {
 
     protected static final String APPUSER_PASSWORD_NEW = "password_new"
     protected static final String APPUSER_NAME_NEW = "Name2"
-    protected static final String[] APPUSER_ROLES_NEW = [Role.LOGIN.name, Role.APPUSER_CHANGE_PASSWORD.name] as String[]
+    protected static final String[] APPUSER_ROLES_NEW = [Role.ACTION_LOGIN.name, Role.ACTION_APPUSER_CHANGE_PASSWORD.name] as String[]
     protected static final String APPUSER_BARCODE_NEW = "9876543210"
 
     protected static final String APPUSERTOKEN = "0123456789abcdef"

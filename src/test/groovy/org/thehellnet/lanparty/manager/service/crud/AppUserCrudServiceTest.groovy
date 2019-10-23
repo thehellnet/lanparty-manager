@@ -246,76 +246,76 @@ class AppUserCrudServiceTest extends CrudServiceSpecification {
         appUser.appUserRoles.size() == (appUserRoles != null ? appUserRoles.length : 0)
 
         where:
-        name             | password             | appUserRoles                  | barcode
-        null             | null                 | [] as String[]                | null
-        null             | null                 | [] as String[]                | ""
-        null             | null                 | [] as String[]                | APPUSER_BARCODE_NEW
-        null             | null                 | [Role.LOGIN.name] as String[] | null
-        null             | null                 | [Role.LOGIN.name] as String[] | ""
-        null             | null                 | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-        null             | ""                   | [] as String[]                | null
-        null             | ""                   | [] as String[]                | ""
-        null             | ""                   | [] as String[]                | APPUSER_BARCODE_NEW
-        null             | ""                   | [Role.LOGIN.name] as String[] | null
-        null             | ""                   | [Role.LOGIN.name] as String[] | ""
-        null             | ""                   | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-        null             | APPUSER_PASSWORD_NEW | null                          | null
-        null             | APPUSER_PASSWORD_NEW | null                          | ""
-        null             | APPUSER_PASSWORD_NEW | null                          | APPUSER_BARCODE_NEW
-        null             | APPUSER_PASSWORD_NEW | [] as String[]                | null
-        null             | APPUSER_PASSWORD_NEW | [] as String[]                | ""
-        null             | APPUSER_PASSWORD_NEW | [] as String[]                | APPUSER_BARCODE_NEW
-        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | null
-        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | ""
-        null             | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-        ""               | null                 | [] as String[]                | null
-        ""               | null                 | [] as String[]                | ""
-        ""               | null                 | [] as String[]                | APPUSER_BARCODE_NEW
-        ""               | null                 | [Role.LOGIN.name] as String[] | null
-        ""               | null                 | [Role.LOGIN.name] as String[] | ""
-        ""               | null                 | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-        ""               | ""                   | [] as String[]                | null
-        ""               | ""                   | [] as String[]                | ""
-        ""               | ""                   | [] as String[]                | APPUSER_BARCODE_NEW
-        ""               | ""                   | [Role.LOGIN.name] as String[] | null
-        ""               | ""                   | [Role.LOGIN.name] as String[] | ""
-        ""               | ""                   | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-        ""               | APPUSER_PASSWORD_NEW | null                          | null
-        ""               | APPUSER_PASSWORD_NEW | null                          | ""
-        ""               | APPUSER_PASSWORD_NEW | null                          | APPUSER_BARCODE_NEW
-        ""               | APPUSER_PASSWORD_NEW | [] as String[]                | null
-        ""               | APPUSER_PASSWORD_NEW | [] as String[]                | ""
-        ""               | APPUSER_PASSWORD_NEW | [] as String[]                | APPUSER_BARCODE_NEW
-        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | null
-        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | ""
-        ""               | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-        APPUSER_NAME_NEW | null                 | null                          | null
-        APPUSER_NAME_NEW | null                 | null                          | ""
-        APPUSER_NAME_NEW | null                 | null                          | APPUSER_BARCODE_NEW
-        APPUSER_NAME_NEW | null                 | [] as String[]                | null
-        APPUSER_NAME_NEW | null                 | [] as String[]                | ""
-        APPUSER_NAME_NEW | null                 | [] as String[]                | APPUSER_BARCODE_NEW
-        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[] | null
-        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[] | ""
-        APPUSER_NAME_NEW | null                 | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-        APPUSER_NAME_NEW | ""                   | null                          | null
-        APPUSER_NAME_NEW | ""                   | null                          | ""
-        APPUSER_NAME_NEW | ""                   | null                          | APPUSER_BARCODE_NEW
-        APPUSER_NAME_NEW | ""                   | [] as String[]                | null
-        APPUSER_NAME_NEW | ""                   | [] as String[]                | ""
-        APPUSER_NAME_NEW | ""                   | [] as String[]                | APPUSER_BARCODE_NEW
-        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[] | null
-        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[] | ""
-        APPUSER_NAME_NEW | ""                   | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                          | null
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                          | ""
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                          | APPUSER_BARCODE_NEW
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                | null
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                | ""
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                | APPUSER_BARCODE_NEW
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | null
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | ""
-        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        name             | password             | appUserRoles                         | barcode
+        null             | null                 | [] as String[]                       | null
+        null             | null                 | [] as String[]                       | ""
+        null             | null                 | [] as String[]                       | APPUSER_BARCODE_NEW
+        null             | null                 | [Role.ACTION_LOGIN.name] as String[] | null
+        null             | null                 | [Role.ACTION_LOGIN.name] as String[] | ""
+        null             | null                 | [Role.ACTION_LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        null             | ""                   | [] as String[]                       | null
+        null             | ""                   | [] as String[]                       | ""
+        null             | ""                   | [] as String[]                       | APPUSER_BARCODE_NEW
+        null             | ""                   | [Role.ACTION_LOGIN.name] as String[] | null
+        null             | ""                   | [Role.ACTION_LOGIN.name] as String[] | ""
+        null             | ""                   | [Role.ACTION_LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        null             | APPUSER_PASSWORD_NEW | null                                 | null
+        null             | APPUSER_PASSWORD_NEW | null                                 | ""
+        null             | APPUSER_PASSWORD_NEW | null                                 | APPUSER_BARCODE_NEW
+        null             | APPUSER_PASSWORD_NEW | [] as String[]                       | null
+        null             | APPUSER_PASSWORD_NEW | [] as String[]                       | ""
+        null             | APPUSER_PASSWORD_NEW | [] as String[]                       | APPUSER_BARCODE_NEW
+        null             | APPUSER_PASSWORD_NEW | [Role.ACTION_LOGIN.name] as String[] | null
+        null             | APPUSER_PASSWORD_NEW | [Role.ACTION_LOGIN.name] as String[] | ""
+        null             | APPUSER_PASSWORD_NEW | [Role.ACTION_LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        ""               | null                 | [] as String[]                       | null
+        ""               | null                 | [] as String[]                       | ""
+        ""               | null                 | [] as String[]                       | APPUSER_BARCODE_NEW
+        ""               | null                 | [Role.ACTION_LOGIN.name] as String[] | null
+        ""               | null                 | [Role.ACTION_LOGIN.name] as String[] | ""
+        ""               | null                 | [Role.ACTION_LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        ""               | ""                   | [] as String[]                       | null
+        ""               | ""                   | [] as String[]                       | ""
+        ""               | ""                   | [] as String[]                       | APPUSER_BARCODE_NEW
+        ""               | ""                   | [Role.ACTION_LOGIN.name] as String[] | null
+        ""               | ""                   | [Role.ACTION_LOGIN.name] as String[] | ""
+        ""               | ""                   | [Role.ACTION_LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        ""               | APPUSER_PASSWORD_NEW | null                                 | null
+        ""               | APPUSER_PASSWORD_NEW | null                                 | ""
+        ""               | APPUSER_PASSWORD_NEW | null                                 | APPUSER_BARCODE_NEW
+        ""               | APPUSER_PASSWORD_NEW | [] as String[]                       | null
+        ""               | APPUSER_PASSWORD_NEW | [] as String[]                       | ""
+        ""               | APPUSER_PASSWORD_NEW | [] as String[]                       | APPUSER_BARCODE_NEW
+        ""               | APPUSER_PASSWORD_NEW | [Role.ACTION_LOGIN.name] as String[] | null
+        ""               | APPUSER_PASSWORD_NEW | [Role.ACTION_LOGIN.name] as String[] | ""
+        ""               | APPUSER_PASSWORD_NEW | [Role.ACTION_LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | null                 | null                                 | null
+        APPUSER_NAME_NEW | null                 | null                                 | ""
+        APPUSER_NAME_NEW | null                 | null                                 | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | null                 | [] as String[]                       | null
+        APPUSER_NAME_NEW | null                 | [] as String[]                       | ""
+        APPUSER_NAME_NEW | null                 | [] as String[]                       | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | null                 | [Role.ACTION_LOGIN.name] as String[] | null
+        APPUSER_NAME_NEW | null                 | [Role.ACTION_LOGIN.name] as String[] | ""
+        APPUSER_NAME_NEW | null                 | [Role.ACTION_LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | ""                   | null                                 | null
+        APPUSER_NAME_NEW | ""                   | null                                 | ""
+        APPUSER_NAME_NEW | ""                   | null                                 | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | ""                   | [] as String[]                       | null
+        APPUSER_NAME_NEW | ""                   | [] as String[]                       | ""
+        APPUSER_NAME_NEW | ""                   | [] as String[]                       | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | ""                   | [Role.ACTION_LOGIN.name] as String[] | null
+        APPUSER_NAME_NEW | ""                   | [Role.ACTION_LOGIN.name] as String[] | ""
+        APPUSER_NAME_NEW | ""                   | [Role.ACTION_LOGIN.name] as String[] | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                                 | null
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                                 | ""
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | null                                 | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                       | null
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                       | ""
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [] as String[]                       | APPUSER_BARCODE_NEW
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.ACTION_LOGIN.name] as String[] | null
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.ACTION_LOGIN.name] as String[] | ""
+        APPUSER_NAME_NEW | APPUSER_PASSWORD_NEW | [Role.ACTION_LOGIN.name] as String[] | APPUSER_BARCODE_NEW
     }
 
     def "update with invalid id"() {
@@ -326,7 +326,7 @@ class AppUserCrudServiceTest extends CrudServiceSpecification {
         AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
                 name: APPUSER_NAME_NEW,
                 password: APPUSER_PASSWORD_NEW,
-                appUserRoles: [Role.LOGIN.name] as String[],
+                appUserRoles: [Role.ACTION_LOGIN.name] as String[],
                 barcode: APPUSER_BARCODE_NEW
         )
         appUserCrudService.update(appUserId, serviceDTO)

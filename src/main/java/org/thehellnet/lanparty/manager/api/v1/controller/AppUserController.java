@@ -2,7 +2,6 @@ package org.thehellnet.lanparty.manager.api.v1.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,6 @@ import org.thehellnet.lanparty.manager.model.dto.response.appuser.LoginAppUserRe
 import org.thehellnet.lanparty.manager.model.dto.service.AppUserServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
-import org.thehellnet.lanparty.manager.service.AppUserService;
 import org.thehellnet.lanparty.manager.service.LoginService;
 import org.thehellnet.lanparty.manager.service.crud.AppUserCrudService;
 
@@ -31,19 +29,16 @@ public class AppUserController {
 
     private static final Logger logger = LoggerFactory.getLogger(AppUserController.class);
 
-    private final AppUserService appUserService;
     private final AppUserCrudService appUserCrudService;
     private final LoginService loginService;
 
-    @Autowired
-    public AppUserController(AppUserService appUserService, AppUserCrudService appUserCrudService, LoginService loginService) {
-        this.appUserService = appUserService;
+    public AppUserController(AppUserCrudService appUserCrudService, LoginService loginService) {
         this.appUserCrudService = appUserCrudService;
         this.loginService = loginService;
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_ADMIN)
+    @CheckRoles(Role.APPUSER_CREATE)
     @RequestMapping(
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -56,7 +51,7 @@ public class AppUserController {
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_VIEW)
+    @CheckRoles(Role.APPUSER_READ)
     @RequestMapping(
             path = "{id}",
             method = RequestMethod.GET,
@@ -68,7 +63,7 @@ public class AppUserController {
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_VIEW)
+    @CheckRoles(Role.APPUSER_READ)
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -79,7 +74,7 @@ public class AppUserController {
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_ADMIN)
+    @CheckRoles(Role.APPUSER_UPDATE)
     @RequestMapping(
             path = "{id}",
             method = RequestMethod.PATCH,
@@ -93,7 +88,7 @@ public class AppUserController {
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_ADMIN)
+    @CheckRoles(Role.APPUSER_DELETE)
     @RequestMapping(
             path = "{id}",
             method = RequestMethod.DELETE
@@ -121,7 +116,7 @@ public class AppUserController {
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_VIEW)
+    @CheckRoles(Role.ACTION_LOGIN)
     @RequestMapping(
             path = "/isTokenValid",
             method = RequestMethod.GET

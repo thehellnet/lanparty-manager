@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
+import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
@@ -46,6 +47,10 @@ public class LoginService extends AbstractService {
         AppUser appUser = findByEmail(email);
         if (!PasswordUtility.verify(appUser.getPassword(), password)) {
             throw new NotFoundException();
+        }
+
+        if (!hasAllRoles(appUser, Role.ACTION_LOGIN)) {
+            throw new UnauthorizedException("User not authorized to login");
         }
 
         return appUser;

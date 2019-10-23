@@ -22,7 +22,7 @@ class TokenControllerAspectTest extends ContextSpecification {
     private AppUserController proxy
 
     def setup() {
-        AppUserController target = new AppUserController(appUserService, appUserCrudService, loginService)
+        AppUserController target = new AppUserController(appUserCrudService, loginService)
         AspectJProxyFactory factory = new AspectJProxyFactory(target)
 
         TokenControllerAspect aspect = webApplicationContext.getBean(TokenControllerAspect)

@@ -1,7 +1,6 @@
 package org.thehellnet.lanparty.manager.api.v1.controller.aspect
 
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mock.web.MockHttpServletRequest
 import org.thehellnet.lanparty.manager.ContextSpecification
 import org.thehellnet.lanparty.manager.api.v1.controller.AppUserController
@@ -28,7 +27,7 @@ class RolesControllerAspectTest extends ContextSpecification {
 
     def setup() {
 
-        AppUserController target = new AppUserController(appUserService, appUserCrudService, loginService)
+        AppUserController target = new AppUserController(appUserCrudService, loginService)
         AspectJProxyFactory factory = new AspectJProxyFactory(target)
 
         TokenControllerAspect tokenControllerAspect = webApplicationContext.getBean(TokenControllerAspect)
@@ -57,7 +56,7 @@ class RolesControllerAspectTest extends ContextSpecification {
     def "checkRoles for AppUserController.isTokenValid() with new user and minimum role"() {
         given:
         AppUser appUser = appUserRepository.findByEmail(APPUSER_EMAIL)
-        appUser.appUserRoles.add(Role.APPUSER_VIEW)
+        appUser.appUserRoles.add(Role.ACTION_LOGIN)
         appUserRepository.save(appUser)
 
         when:

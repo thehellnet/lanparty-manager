@@ -35,7 +35,7 @@ public class GameMapController {
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_ADMIN)
+    @CheckRoles(Role.GAMEMAP_CREATE)
     @RequestMapping(
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -48,7 +48,7 @@ public class GameMapController {
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_VIEW)
+    @CheckRoles(Role.GAMEMAP_READ)
     @RequestMapping(
             path = "{id}",
             method = RequestMethod.GET,
@@ -60,7 +60,7 @@ public class GameMapController {
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_VIEW)
+    @CheckRoles(Role.GAMEMAP_READ)
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -71,7 +71,7 @@ public class GameMapController {
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_ADMIN)
+    @CheckRoles(Role.GAMEMAP_UPDATE)
     @RequestMapping(
             path = "{id}",
             method = RequestMethod.PATCH,
@@ -85,7 +85,7 @@ public class GameMapController {
     }
 
     @CheckToken
-    @CheckRoles(Role.APPUSER_ADMIN)
+    @CheckRoles(Role.GAMEMAP_DELETE)
     @RequestMapping(
             path = "{id}",
             method = RequestMethod.DELETE
