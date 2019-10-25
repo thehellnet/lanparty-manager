@@ -1,7 +1,5 @@
 package org.thehellnet.lanparty.manager.service.crud;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
@@ -16,8 +14,6 @@ import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 @Service
 public class ShowcaseCrudService extends AbstractCrudService<Showcase, ShowcaseServiceDTO, ShowcaseRepository> {
-
-    private static final Logger logger = LoggerFactory.getLogger(ShowcaseCrudService.class);
 
     private final TournamentRepository tournamentRepository;
     private final MatchRepository matchRepository;
@@ -42,7 +38,7 @@ public class ShowcaseCrudService extends AbstractCrudService<Showcase, ShowcaseS
         Tournament tournament = tournamentRepository.findById(dto.tournamentId).orElse(null);
         Match match = matchRepository.findById(dto.matchId).orElse(null);
 
-        Showcase showcase = new Showcase(dto.name, dto.mode, tournament, match, dto.lastAddress, dto.lastContact);
+        Showcase showcase = new Showcase(dto.tag, dto.name, dto.mode, tournament, match, dto.lastAddress, dto.lastContact);
         showcase = repository.save(showcase);
         return showcase;
     }
@@ -53,6 +49,11 @@ public class ShowcaseCrudService extends AbstractCrudService<Showcase, ShowcaseS
         Showcase showcase = findById(id);
 
         boolean changed = false;
+
+        if (dto.tag != null) {
+            showcase.setTag(dto.tag);
+            changed = true;
+        }
 
         if (dto.name != null) {
             showcase.setName(dto.name);

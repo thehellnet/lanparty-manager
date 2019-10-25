@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.api.v1.controller
 
-class GameControllerSpecification extends ControllerSpecification {
+class GameCrudControllerSpecification extends ControllerSpecification {
 
     def setup() {
         'Do login for token retrieving'()

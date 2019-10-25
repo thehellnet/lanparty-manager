@@ -1,7 +1,5 @@
 package org.thehellnet.lanparty.manager.service.crud;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
@@ -63,8 +61,6 @@ public class CfgCrudService extends AbstractCrudService<Cfg, CfgServiceDTO, CfgR
             return this;
         }
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(CfgCrudService.class);
 
     private final SeatRepository seatRepository;
     private final AppUserRepository appUserRepository;

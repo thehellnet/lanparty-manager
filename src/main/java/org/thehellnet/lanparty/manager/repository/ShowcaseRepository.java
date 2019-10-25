@@ -7,4 +7,5 @@ import org.thehellnet.lanparty.manager.model.persistence.Showcase;
 @Repository
 public interface ShowcaseRepository extends JpaRepository<Showcase, Long> {
 
+    Showcase findByTag(String tag);
 }

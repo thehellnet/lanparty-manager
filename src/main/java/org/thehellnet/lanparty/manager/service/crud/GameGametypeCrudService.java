@@ -1,7 +1,5 @@
 package org.thehellnet.lanparty.manager.service.crud;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
@@ -16,8 +14,6 @@ import org.thehellnet.lanparty.manager.repository.GametypeRepository;
 
 @Service
 public class GameGametypeCrudService extends AbstractCrudService<GameGametype, GameGametypeServiceDTO, GameGametypeRepository> {
-
-    private static final Logger logger = LoggerFactory.getLogger(TeamCrudService.class);
 
     private final GameRepository gameRepository;
     private final GametypeRepository gametypeRepository;

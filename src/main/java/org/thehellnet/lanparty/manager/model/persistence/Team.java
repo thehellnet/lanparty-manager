@@ -49,6 +49,10 @@ public class Team implements Serializable {
     public Team() {
     }
 
+    public Team(String name) {
+        this.name = name;
+    }
+
     public Team(String name, Tournament tournament) {
         this.name = name;
         this.tournament = tournament;

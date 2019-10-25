@@ -6,4 +6,6 @@ import org.thehellnet.lanparty.manager.model.persistence.Match;
 
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Long> {
+
+    Match findByName(String name);
 }

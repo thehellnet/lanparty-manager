@@ -42,6 +42,10 @@ public class Player implements Serializable {
     public Player() {
     }
 
+    public Player(String nickname) {
+        this.nickname = nickname;
+    }
+
     public Player(String nickname, Team team) {
         this.nickname = nickname;
         this.team = team;

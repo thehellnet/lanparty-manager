@@ -21,6 +21,10 @@ public class Showcase {
     private Long id;
 
     @Basic
+    @Column(name = "tag", nullable = false, unique = true)
+    private String tag;
+
+    @Basic
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
@@ -50,21 +54,25 @@ public class Showcase {
     public Showcase() {
     }
 
-    public Showcase(String name) {
+    public Showcase(String tag, String name) {
+        this.tag = tag;
         this.name = name;
     }
 
-    public Showcase(String name, Tournament tournament) {
+    public Showcase(String tag, String name, Tournament tournament) {
+        this.tag = tag;
         this.name = name;
         this.tournament = tournament;
     }
 
-    public Showcase(String name, Match match) {
+    public Showcase(String tag, String name, Match match) {
+        this.tag = tag;
         this.name = name;
         this.match = match;
     }
 
-    public Showcase(String name, ShowcaseMode mode, Tournament tournament, Match match, String lastAddress, DateTime lastContact) {
+    public Showcase(String tag, String name, ShowcaseMode mode, Tournament tournament, Match match, String lastAddress, DateTime lastContact) {
+        this.tag = tag;
         this.name = name;
         this.mode = mode;
         this.tournament = tournament;
@@ -79,6 +87,14 @@ public class Showcase {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getName() {
@@ -135,6 +151,7 @@ public class Showcase {
         if (o == null || getClass() != o.getClass()) return false;
         Showcase showcase = (Showcase) o;
         return id.equals(showcase.id) &&
+                tag.equals(showcase.tag) &&
                 name.equals(showcase.name) &&
                 mode == showcase.mode &&
                 Objects.equals(tournament, showcase.tournament) &&

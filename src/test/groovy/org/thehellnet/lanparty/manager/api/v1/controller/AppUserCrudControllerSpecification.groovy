@@ -11,7 +11,7 @@ import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.lanparty.manager.service.crud.AppUserCrudService
 import spock.lang.Unroll
 
-class AppUserControllerSpecification extends ControllerSpecification {
+class AppUserCrudControllerSpecification extends ControllerSpecification {
 
     @Autowired
     private AppUserCrudService appUserCrudService

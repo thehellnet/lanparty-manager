@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.api.v1.controller
 
-class TournamentControllerSpecification extends ControllerSpecification {
+class TournamentCrudControllerSpecification extends ControllerSpecification {
 
 //    @Autowired
 //    private TournamentService tournamentService

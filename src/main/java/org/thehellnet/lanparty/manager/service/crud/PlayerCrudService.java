@@ -1,7 +1,5 @@
 package org.thehellnet.lanparty.manager.service.crud;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
@@ -16,8 +14,6 @@ import org.thehellnet.lanparty.manager.repository.TeamRepository;
 
 @Service
 public class PlayerCrudService extends AbstractCrudService<Player, PlayerServiceDTO, PlayerRepository> {
-
-    private static final Logger logger = LoggerFactory.getLogger(PlayerCrudService.class);
 
     private final AppUserRepository appUserRepository;
     private final TeamRepository teamRepository;

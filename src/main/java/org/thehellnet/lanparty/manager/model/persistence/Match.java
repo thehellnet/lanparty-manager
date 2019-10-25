@@ -66,6 +66,17 @@ public class Match implements Serializable {
     public Match() {
     }
 
+    public Match(String name) {
+        this.name = name;
+    }
+
+    public Match(String name, Tournament tournament, Team localTeam, Team guestTeam) {
+        this.name = name;
+        this.tournament = tournament;
+        this.localTeam = localTeam;
+        this.guestTeam = guestTeam;
+    }
+
     public Match(String name, Tournament tournament, Server server, GameMap gameMap, Gametype gametype, Team localTeam, Team guestTeam) {
         this.name = name;
         this.tournament = tournament;

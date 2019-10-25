@@ -51,6 +51,10 @@ public class Seat implements Serializable {
     public Seat() {
     }
 
+    public Seat(String name) {
+        this.name = name;
+    }
+
     public Seat(String name, String ipAddress, Tournament tournament) {
         this();
         this.name = name;

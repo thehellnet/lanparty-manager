@@ -3,7 +3,7 @@ package org.thehellnet.lanparty.manager.api.v1.controller.aspect
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory
 import org.springframework.mock.web.MockHttpServletRequest
 import org.thehellnet.lanparty.manager.ContextSpecification
-import org.thehellnet.lanparty.manager.api.v1.controller.AppUserController
+import org.thehellnet.lanparty.manager.api.v1.controller.crud.AppUserCrudController
 import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException
 import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
@@ -21,13 +21,13 @@ class RolesControllerAspectTest extends ContextSpecification {
     private AppUserCrudService appUserCrudService;
     private LoginService loginService;
 
-    private AppUserController proxy
+    private AppUserCrudController proxy
 
     private AppUser appUser
 
     def setup() {
 
-        AppUserController target = new AppUserController(appUserCrudService, loginService)
+        AppUserCrudController target = new AppUserCrudController(appUserCrudService, loginService)
         AspectJProxyFactory factory = new AspectJProxyFactory(target)
 
         TokenControllerAspect tokenControllerAspect = webApplicationContext.getBean(TokenControllerAspect)

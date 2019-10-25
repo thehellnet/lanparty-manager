@@ -5,6 +5,7 @@ import org.thehellnet.lanparty.manager.model.constant.ShowcaseMode;
 
 public class CreateShowcaseRequestDTO extends ShowcaseRequestDTO {
 
+    public String tag;
     public String name;
     public ShowcaseMode mode;
     public Long tournament;

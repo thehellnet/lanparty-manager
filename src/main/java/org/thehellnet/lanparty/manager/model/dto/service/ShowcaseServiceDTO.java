@@ -5,6 +5,7 @@ import org.thehellnet.lanparty.manager.model.constant.ShowcaseMode;
 
 public class ShowcaseServiceDTO extends ServiceDTO {
 
+    public String tag;
     public String name;
     public ShowcaseMode mode;
     public Long tournamentId;
@@ -15,7 +16,8 @@ public class ShowcaseServiceDTO extends ServiceDTO {
     public ShowcaseServiceDTO() {
     }
 
-    public ShowcaseServiceDTO(String name, ShowcaseMode mode, Long tournamentId, Long matchId, String lastAddress, DateTime lastContact) {
+    public ShowcaseServiceDTO(String tag, String name, ShowcaseMode mode, Long tournamentId, Long matchId, String lastAddress, DateTime lastContact) {
+        this.tag = tag;
         this.name = name;
         this.mode = mode;
         this.tournamentId = tournamentId;
