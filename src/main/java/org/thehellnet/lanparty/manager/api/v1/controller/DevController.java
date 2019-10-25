@@ -1,7 +1,6 @@
 package org.thehellnet.lanparty.manager.api.v1.controller;
 
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -9,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thehellnet.lanparty.manager.model.constant.ShowcaseMode;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.utility.PasswordUtility;
@@ -18,8 +18,10 @@ import org.thehellnet.utility.PasswordUtility;
 public class DevController {
 
     private static final String APPUSER_1_EMAIL = "user1@domain.tdl";
+    private static final String APPUSER_1_PASSWORD = "password1";
+
     private static final String APPUSER_2_EMAIL = "user2@domain.tdl";
-    private static final String APPUSER_PASSWORD = PasswordUtility.hash("password");
+    private static final String APPUSER_2_PASSWORD = "password2";
 
     private static final String GAME_TAG = "cod4";
 
@@ -77,21 +79,35 @@ public class DevController {
             "bind MOUSE3 \"+frag\"\n" +
             "seta sensitivity \"10\"";
 
+    private static final String MATCH_NAME = "Match";
+
+    private static final String SHOWCASE_1_NAME = "Showcase matches";
+    private static final String SHOWCASE_1_TAG = "showcase1";
+
+    private static final String SHOWCASE_2_NAME = "Showcase scores";
+    private static final String SHOWCASE_2_TAG = "showcase2";
+
+    private static final String SHOWCASE_3_NAME = "Showcase single match";
+    private static final String SHOWCASE_3_TAG = "showcase3";
+
     private final AppUserRepository appUserRepository;
     private final GameRepository gameRepository;
     private final TournamentRepository tournamentRepository;
     private final SeatRepository seatRepository;
     private final TeamRepository teamRepository;
     private final PlayerRepository playerRepository;
+    private final MatchRepository matchRepository;
+    private final ShowcaseRepository showcaseRepository;
 
-    @Autowired
-    public DevController(AppUserRepository appUserRepository, GameRepository gameRepository, TournamentRepository tournamentRepository, SeatRepository seatRepository, TeamRepository teamRepository, PlayerRepository playerRepository) {
+    public DevController(AppUserRepository appUserRepository, GameRepository gameRepository, TournamentRepository tournamentRepository, SeatRepository seatRepository, TeamRepository teamRepository, PlayerRepository playerRepository, MatchRepository matchRepository, ShowcaseRepository showcaseRepository) {
         this.appUserRepository = appUserRepository;
         this.gameRepository = gameRepository;
         this.tournamentRepository = tournamentRepository;
         this.seatRepository = seatRepository;
         this.teamRepository = teamRepository;
         this.playerRepository = playerRepository;
+        this.matchRepository = matchRepository;
+        this.showcaseRepository = showcaseRepository;
     }
 
     @Transactional
@@ -101,76 +117,129 @@ public class DevController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public ResponseEntity generateTournament() {
+    public ResponseEntity generateDemoData() {
         JSONObject data = new JSONObject();
 
-        AppUser appUser1 = appUserRepository.findByEmail(APPUSER_1_EMAIL);
-        if (appUser1 == null) {
-            appUser1 = new AppUser(APPUSER_1_EMAIL, APPUSER_PASSWORD);
-            appUser1 = appUserRepository.save(appUser1);
-        }
+        AppUser appUser1 = prepareAppUser(APPUSER_1_EMAIL, APPUSER_1_PASSWORD);
         data.put("appUser1", appUser1);
 
-        AppUser appUser2 = appUserRepository.findByEmail(APPUSER_2_EMAIL);
-        if (appUser2 == null) {
-            appUser2 = new AppUser(APPUSER_2_EMAIL, APPUSER_PASSWORD);
-            appUser2 = appUserRepository.save(appUser2);
-        }
+        AppUser appUser2 = prepareAppUser(APPUSER_2_EMAIL, APPUSER_2_PASSWORD);
         data.put("appUser2", appUser2);
 
         Game game = gameRepository.findByTag(GAME_TAG);
         data.put("game", game);
 
-        Tournament tournament = tournamentRepository.findByName(TOURNAMENT_NAME);
-        if (tournament == null) {
-            tournament = new Tournament(TOURNAMENT_NAME, game);
-            tournament.setCfg(TOURNAMENT_CFG);
-            tournament = tournamentRepository.save(tournament);
-        }
+        Tournament tournament = prepareTournament(TOURNAMENT_NAME, game, TOURNAMENT_CFG);
         data.put("tournament", tournament);
 
-        Seat seat1 = seatRepository.findByIpAddress(SEAT_1_ADDRESS);
-        if (seat1 == null) {
-            seat1 = new Seat(SEAT_1_NAME, SEAT_1_ADDRESS, tournament);
-            seat1 = seatRepository.save(seat1);
-        }
+        Seat seat1 = prepareSeat(tournament, SEAT_1_ADDRESS, SEAT_1_NAME);
         data.put("seat1", seat1);
 
-        Seat seat2 = seatRepository.findByIpAddress(SEAT_2_ADDRESS);
-        if (seat2 == null) {
-            seat2 = new Seat(SEAT_2_NAME, SEAT_2_ADDRESS, tournament);
-            seat2 = seatRepository.save(seat2);
-        }
+        Seat seat2 = prepareSeat(tournament, SEAT_2_ADDRESS, SEAT_2_NAME);
         data.put("seat2", seat2);
 
-        Team team1 = teamRepository.findByName(TEAM_1_NAME);
-        if (team1 == null) {
-            team1 = new Team(TEAM_1_NAME, tournament);
-            team1 = teamRepository.save(team1);
-        }
+        Team team1 = prepareTeam(TEAM_1_NAME, tournament);
         data.put("team1", team1);
 
-        Team team2 = teamRepository.findByName(TEAM_1_NAME);
-        if (team2 == null) {
-            team2 = new Team(TEAM_2_NAME, tournament);
-            team2 = teamRepository.save(team2);
-        }
-        data.put("team2", team2);
+        Team team2 = prepareTeam(TEAM_2_NAME, tournament);
+        data.put("team2", team1);
 
-        Player player1 = playerRepository.findByNickname(PLAYER_1_NICKNAME);
-        if (player1 == null) {
-            player1 = new Player(PLAYER_1_NICKNAME, appUser1, team1);
-            player1 = playerRepository.save(player1);
-        }
+        Player player1 = preparePlayer(appUser1, team1, PLAYER_1_NICKNAME);
         data.put("player1", player1);
 
-        Player player2 = playerRepository.findByNickname(PLAYER_2_NICKNAME);
-        if (player2 == null) {
-            player2 = new Player(PLAYER_2_NICKNAME, appUser2, team2);
-            player2 = playerRepository.save(player2);
-        }
+        Player player2 = preparePlayer(appUser2, team2, PLAYER_2_NICKNAME);
         data.put("player2", player2);
 
+        Match match = prepareMatch(MATCH_NAME, tournament, team1, team2);
+        data.put("match", match);
+
+        Showcase showcase1 = prepareShowcase(SHOWCASE_1_TAG, SHOWCASE_1_NAME, ShowcaseMode.MATCHES, tournament, null);
+        data.put("showcase1", showcase1);
+
+        Showcase showcase2 = prepareShowcase(SHOWCASE_2_TAG, SHOWCASE_2_NAME, ShowcaseMode.SCORES, tournament, null);
+        data.put("showcase2", showcase2);
+
+        Showcase showcase3 = prepareShowcase(SHOWCASE_3_TAG, SHOWCASE_3_NAME, ShowcaseMode.SINGLE_MATCH, null, match);
+        data.put("showcase3", showcase3);
+
         return ResponseEntity.ok(data.toString());
+    }
+
+    private AppUser prepareAppUser(String email, String password) {
+        AppUser appUser = appUserRepository.findByEmail(email);
+        if (appUser == null) {
+            appUser = new AppUser();
+        }
+        appUser.setEmail(email);
+        appUser.setPassword(PasswordUtility.hash(password));
+        return appUserRepository.save(appUser);
+    }
+
+    private Tournament prepareTournament(String name, Game game, String cfg) {
+        Tournament tournament = tournamentRepository.findByName(name);
+        if (tournament == null) {
+            tournament = new Tournament();
+        }
+        tournament.setName(name);
+        tournament.setGame(game);
+        tournament.setCfg(cfg);
+        return tournamentRepository.save(tournament);
+    }
+
+    private Seat prepareSeat(Tournament tournament, String address, String name) {
+        Seat seat = seatRepository.findByIpAddress(address);
+        if (seat == null) {
+            seat = new Seat();
+        }
+        seat.setIpAddress(address);
+        seat.setName(name);
+        seat.setTournament(tournament);
+        return seatRepository.save(seat);
+    }
+
+    private Team prepareTeam(String name, Tournament tournament) {
+        Team team = teamRepository.findByName(name);
+        if (team == null) {
+            team = new Team();
+        }
+        team.setName(name);
+        team.setTournament(tournament);
+        return teamRepository.save(team);
+    }
+
+    private Player preparePlayer(AppUser appUser, Team team, String playerNickname) {
+        Player player = playerRepository.findByNickname(playerNickname);
+        if (player == null) {
+            player = new Player();
+        }
+        player.setNickname(playerNickname);
+        player.setAppUser(appUser);
+        player.setTeam(team);
+        return playerRepository.save(player);
+    }
+
+    private Match prepareMatch(String name, Tournament tournament, Team localTeam, Team guestTeam) {
+        Match match = matchRepository.findByName(name);
+        if (match == null) {
+            match = new Match();
+        }
+        match.setName(name);
+        match.setTournament(tournament);
+        match.setLocalTeam(localTeam);
+        match.setGuestTeam(guestTeam);
+        return matchRepository.save(match);
+    }
+
+    private Showcase prepareShowcase(String tag, String name, ShowcaseMode mode, Tournament tournament, Match match) {
+        Showcase showcase = showcaseRepository.findByTag(tag);
+        if (showcase == null) {
+            showcase = new Showcase();
+        }
+        showcase.setTag(tag);
+        showcase.setName(name);
+        showcase.setMode(mode);
+        showcase.setTournament(tournament);
+        showcase.setMatch(match);
+        return showcaseRepository.save(showcase);
     }
 }

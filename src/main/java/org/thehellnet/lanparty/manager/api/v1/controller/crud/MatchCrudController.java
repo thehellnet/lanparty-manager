@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.api.v1.controller;
+package org.thehellnet.lanparty.manager.api.v1.controller.crud;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +22,15 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api/v1/public/match")
-public class MatchController {
+@RequestMapping(path = "/api/public/v1/crud/match")
+public class MatchCrudController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MatchController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MatchCrudController.class);
 
     private final MatchCrudService matchCrudService;
 
     @Autowired
-    public MatchController(MatchCrudService matchCrudService) {
+    public MatchCrudController(MatchCrudService matchCrudService) {
         this.matchCrudService = matchCrudService;
     }
 

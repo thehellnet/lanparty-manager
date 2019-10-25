@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping(
         method = RequestMethod.POST,
-        path = "/api/v1/tool",
+        path = "/api/public/v1/tool",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
 )

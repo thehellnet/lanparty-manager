@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.api.v1.controller;
+package org.thehellnet.lanparty.manager.api.v1.controller.crud;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
-import org.thehellnet.lanparty.manager.model.dto.request.seat.CreateSeatRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.request.seat.UpdateSeatRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.service.SeatServiceDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.team.CreateTeamRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.team.UpdateTeamRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.service.TeamServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
-import org.thehellnet.lanparty.manager.model.persistence.Seat;
-import org.thehellnet.lanparty.manager.service.crud.SeatCrudService;
+import org.thehellnet.lanparty.manager.model.persistence.Team;
+import org.thehellnet.lanparty.manager.service.crud.TeamCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -22,76 +22,76 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api/v1/public/seat")
-public class SeatController {
+@RequestMapping(path = "/api/public/v1/crud/team")
+public class TeamCrudController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SeatController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TeamCrudController.class);
 
-    private final SeatCrudService seatCrudService;
+    private final TeamCrudService teamCrudService;
 
     @Autowired
-    public SeatController(SeatCrudService seatCrudService) {
-        this.seatCrudService = seatCrudService;
+    public TeamCrudController(TeamCrudService teamCrudService) {
+        this.teamCrudService = teamCrudService;
     }
 
     @CheckToken
-    @CheckRoles(Role.SEAT_CREATE)
+    @CheckRoles(Role.TEAM_CREATE)
     @RequestMapping(
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateSeatRequestDTO dto) {
-        SeatServiceDTO serviceDTO = new SeatServiceDTO(dto.name, dto.ipAddress, dto.tournament, dto.player);
-        Seat seat = seatCrudService.create(serviceDTO);
-        return ResponseEntity.created(URI.create("")).body(seat);
+    public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateTeamRequestDTO dto) {
+        TeamServiceDTO serviceDTO = new TeamServiceDTO(dto.name, dto.tournament);
+        Team team = teamCrudService.create(serviceDTO);
+        return ResponseEntity.created(URI.create("")).body(team);
     }
 
     @CheckToken
-    @CheckRoles(Role.SEAT_READ)
+    @CheckRoles(Role.TEAM_READ)
     @RequestMapping(
             path = "{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        Seat seat = seatCrudService.read(id);
-        return ResponseEntity.ok(seat);
+        Team team = teamCrudService.read(id);
+        return ResponseEntity.ok(team);
     }
 
     @CheckToken
-    @CheckRoles(Role.SEAT_READ)
+    @CheckRoles(Role.TEAM_READ)
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<Seat> seats = seatCrudService.readAll();
-        return ResponseEntity.ok(seats);
+        List<Team> teams = teamCrudService.readAll();
+        return ResponseEntity.ok(teams);
     }
 
     @CheckToken
-    @CheckRoles(Role.SEAT_UPDATE)
+    @CheckRoles(Role.TEAM_UPDATE)
     @RequestMapping(
             path = "{id}",
             method = RequestMethod.PATCH,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateSeatRequestDTO dto) {
-        SeatServiceDTO serviceDTO = new SeatServiceDTO(dto.name, dto.ipAddress, dto.tournament, dto.player);
-        Seat seat = seatCrudService.update(id, serviceDTO);
-        return ResponseEntity.ok(seat);
+    public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateTeamRequestDTO dto) {
+        TeamServiceDTO serviceDTO = new TeamServiceDTO(dto.name, dto.tournament);
+        Team team = teamCrudService.update(id, serviceDTO);
+        return ResponseEntity.ok(team);
     }
 
     @CheckToken
-    @CheckRoles(Role.SEAT_DELETE)
+    @CheckRoles(Role.TEAM_DELETE)
     @RequestMapping(
             path = "{id}",
             method = RequestMethod.DELETE
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        seatCrudService.delete(id);
+        teamCrudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

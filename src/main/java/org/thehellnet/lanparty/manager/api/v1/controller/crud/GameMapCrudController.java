@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.api.v1.controller;
+package org.thehellnet.lanparty.manager.api.v1.controller.crud;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +22,15 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api/v1/public/gameMap")
-public class GameMapController {
+@RequestMapping(path = "/api/public/v1/crud/gameMap")
+public class GameMapCrudController {
 
-    private static final Logger logger = LoggerFactory.getLogger(GameMapController.class);
+    private static final Logger logger = LoggerFactory.getLogger(GameMapCrudController.class);
 
     private final GameMapCrudService gameMapCrudService;
 
     @Autowired
-    public GameMapController(GameMapCrudService gameMapCrudService) {
+    public GameMapCrudController(GameMapCrudService gameMapCrudService) {
         this.gameMapCrudService = gameMapCrudService;
     }
 
