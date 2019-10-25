@@ -62,6 +62,11 @@ public enum Role {
     SERVER_UPDATE("Can update Server"),
     SERVER_DELETE("Can delete Server"),
 
+    SHOWCASE_CREATE("Can create Showcase"),
+    SHOWCASE_READ("Can read Showcase"),
+    SHOWCASE_UPDATE("Can update Showcase"),
+    SHOWCASE_DELETE("Can delete Showcase"),
+
     TEAM_CREATE("Can create Team"),
     TEAM_READ("Can read Team"),
     TEAM_UPDATE("Can update Team"),
