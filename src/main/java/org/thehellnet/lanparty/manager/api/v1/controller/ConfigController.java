@@ -6,11 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.thehellnet.lanparty.manager.model.persistence.*;
+
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -20,15 +19,15 @@ public class ConfigController {
     private static final Logger logger = LoggerFactory.getLogger(ConfigController.class);
 
     @RequestMapping(
+            path = { "" , "/{entity}" },
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity create() {
-        JSONObject responseBody = new JSONObject();
+    public ResponseEntity create(@PathVariable Optional<String> entity) {
+        JSONObject entityConfig = new JSONObject();
 
-        responseBody.put("entities", new JSONArray()
-                .put(new JSONObject()
-                        .put("name", AppUser.class.getSimpleName())
+
+      entityConfig.put(getEntityName(AppUser.class), new JSONObject()
                         .put("label", "User")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -37,8 +36,7 @@ public class ConfigController {
                                 .put(prepareField("barcode", "string", false, true, true))
                                 .put(prepareField("appUserRoles", "list", false, false, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", AppUserToken.class.getSimpleName())
+                ).put(getEntityName(AppUserToken.class) , new JSONObject()
                         .put("label", "User Token")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -47,8 +45,7 @@ public class ConfigController {
                                 .put(prepareField("creationDateTime", "string", true, true, true))
                                 .put(prepareField("expirationDateTime", "string", true, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", Cfg.class.getSimpleName())
+                ).put(getEntityName(Cfg.class), new JSONObject()
                         .put("label", "Cfg")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -56,16 +53,14 @@ public class ConfigController {
                                 .put(prepareField("game", "number", true, true, true))
                                 .put(prepareField("cfgContent", "string", false, false, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", Game.class.getSimpleName())
+                ).put(getEntityName( Game.class), new JSONObject()
                         .put("label", "Game")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
                                 .put(prepareField("tag", "string", true, true, true))
                                 .put(prepareField("name", "number", false, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", GameGametype.class.getSimpleName())
+                ).put(getEntityName(GameGametype.class), new JSONObject()
                         .put("label", "Gametypes in game")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -73,8 +68,7 @@ public class ConfigController {
                                 .put(prepareField("gametype", "number", false, true, true))
                                 .put(prepareField("tag", "string", false, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", GameMap.class.getSimpleName())
+                ).put(getEntityName(GameMap.class), new JSONObject()
                         .put("label", "Map")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -83,15 +77,13 @@ public class ConfigController {
                                 .put(prepareField("game", "number", false, true, true))
                                 .put(prepareField("stock", "boolean", false, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", Gametype.class.getSimpleName())
+                ).put(getEntityName(Gametype.class), new JSONObject()
                         .put("label", "Gametype")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
                                 .put(prepareField("name", "string", false, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", Match.class.getSimpleName())
+                ).put(getEntityName(Match.class), new JSONObject()
                         .put("label", "Match")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -105,8 +97,7 @@ public class ConfigController {
                                 .put(prepareField("localTeam", "number", false, true, true))
                                 .put(prepareField("guestTeam", "number", false, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", Player.class.getSimpleName())
+                ).put(getEntityName( Player.class), new JSONObject()
                         .put("label", "Player")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -114,8 +105,7 @@ public class ConfigController {
                                 .put(prepareField("appUser", "number", false, true, true))
                                 .put(prepareField("team", "number", false, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", Seat.class.getSimpleName())
+                ).put(getEntityName(Seat.class), new JSONObject()
                         .put("label", "Seat")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -125,8 +115,7 @@ public class ConfigController {
                                 .put(prepareField("lastContact", "string", false, true, true))
                                 .put(prepareField("player", "number", false, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", Server.class.getSimpleName())
+                ).put(getEntityName(Server.class), new JSONObject()
                         .put("label", "Server")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -139,8 +128,7 @@ public class ConfigController {
                                 .put(prepareField("logFile", "string", false, true, true))
                                 .put(prepareField("logParsingEnabled", "boolean", false, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", Team.class.getSimpleName())
+                ).put(getEntityName(Team.class), new JSONObject()
                         .put("label", "Showcase")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -151,16 +139,14 @@ public class ConfigController {
                                 .put(prepareField("lastAddress", "string", true, true, true))
                                 .put(prepareField("lastContact", "string", true, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", Team.class.getSimpleName())
+                ).put(getEntityName(Team.class), new JSONObject()
                         .put("label", "Team")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
                                 .put(prepareField("name", "string", false, true, true))
                                 .put(prepareField("tournament", "number", false, true, true))
                         )
-                ).put(new JSONObject()
-                        .put("name", Tournament.class.getSimpleName())
+                ).put(getEntityName(Tournament.class), new JSONObject()
                         .put("label", "Tournament")
                         .put("fields", new JSONArray()
                                 .put(prepareField("id", "number", true, true, true))
@@ -169,10 +155,10 @@ public class ConfigController {
                                 .put(prepareField("status", "string", false, true, true))
                                 .put(prepareField("cfg", "string", false, true, true))
                         )
-                )
-        );
+                );
 
-        return ResponseEntity.ok(responseBody.toString());
+
+        return !entity.isPresent() ? ResponseEntity.ok(entityConfig.toString()) : ResponseEntity.ok(entityConfig.get(entity.get()).toString());
     }
 
     private static JSONObject prepareField(String name, String type, boolean readonly, boolean visibleInList, boolean visibleInForm) {
@@ -184,4 +170,9 @@ public class ConfigController {
                 .put("visibleInForm", visibleInForm);
     }
 
+    private static String getEntityName(Class clazz){
+        String entityName = clazz.getSimpleName();
+        return Character.toLowerCase(entityName.charAt(0)) + entityName.substring(1);
+
+    }
 }
