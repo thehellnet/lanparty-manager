@@ -316,20 +316,21 @@ public class Initialization {
         persisitGameMap(gameMaps, GAME_COD);
 
         gameMaps.clear();
-        gameMaps.put("mp_burgundy", "Burgundy");
-        gameMaps.put("mp_caen", "Caen");
-        gameMaps.put("mp_carentan", "Carentan");
+        gameMaps.put("mp_breakout", "Villers-Bocage");
         gameMaps.put("mp_brecourt", "Brecourt");
-        gameMaps.put("mp_beltot", "Beltot");
+        gameMaps.put("mp_burgundy", "Burgundy");
+        gameMaps.put("mp_carentan", "Carentan");
         gameMaps.put("mp_dawnville", "Sainte-Mère-Eglise");
-        gameMaps.put("mp_stalingrad", "Stalingrad");
-        gameMaps.put("mp_moscow", "Moscow");
-        gameMaps.put("mp_leningrad", "Leningrad");
-        gameMaps.put("mp_breakout", "Villers - Bocage");
-        gameMaps.put("mp_matmata", "Matmata");
-        gameMaps.put("mp_toujane", "Toujane");
         gameMaps.put("mp_decoy", "El Alemein");
+        gameMaps.put("mp_farmhouse", "Beltot");
+        gameMaps.put("mp_harbor", "Rostov");
+        gameMaps.put("mp_leningrad", "Leningrad");
+        gameMaps.put("mp_matmata", "Matmata");
+        gameMaps.put("mp_moscow", "Moscow");
         gameMaps.put("mp_rhine", "Wallendar");
+        gameMaps.put("mp_railyard", "Stalingrad");
+        gameMaps.put("mp_toujane", "Toujane");
+        gameMaps.put("mp_trainstation", "Caen");
         persisitGameMap(gameMaps, GAME_COD2);
 
         gameMaps.clear();
