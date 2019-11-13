@@ -2,21 +2,17 @@ package org.thehellnet.lanparty.manager.api.v1.controller.crud
 
 import org.json.JSONArray
 import org.json.JSONObject
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.api.v1.controller.ControllerSpecification
 import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
-import org.thehellnet.lanparty.manager.service.crud.AppUserCrudService
 import org.thehellnet.utility.PasswordUtility
 import spock.lang.Unroll
 
 class AppUserCrudControllerSpecification extends ControllerSpecification {
 
-    @Autowired
-    private AppUserCrudService appUserCrudService
 
     def setup() {
         "Do login for token retrieving"()
@@ -672,6 +668,6 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
     }
 
     private int "check number of appUsers in database"() {
-        return appUserCrudService.readAll().size()
+        return appUserRepository.findAll().size()
     }
 }
