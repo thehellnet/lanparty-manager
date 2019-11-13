@@ -3,18 +3,20 @@ package org.thehellnet.lanparty.manager.service.crud;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
+import org.thehellnet.lanparty.manager.model.dto.service.ServiceDTO;
 import org.thehellnet.lanparty.manager.service.AbstractService;
-import org.thehellnet.lanparty.manager.service.CrudService;
+import org.thehellnet.lanparty.manager.service.CrudServiceOLD;
 
 import java.util.List;
 
-public abstract class AbstractCrudService<T, R extends JpaRepository<T, Long>>
+@Deprecated
+public abstract class AbstractCrudServiceOLD<T, D extends ServiceDTO, R extends JpaRepository<T, Long>>
         extends AbstractService
-        implements CrudService<T> {
+        implements CrudServiceOLD<T, D> {
 
     protected R repository;
 
-    public AbstractCrudService(R repository) {
+    public AbstractCrudServiceOLD(R repository) {
         this.repository = repository;
     }
 

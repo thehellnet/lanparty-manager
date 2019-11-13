@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.api.v1.controller
+package org.thehellnet.lanparty.manager.api.v1.controller.crud
 
 import org.json.JSONArray
 import org.json.JSONObject
@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.thehellnet.lanparty.manager.model.dto.service.AppUserServiceDTO
+import org.thehellnet.lanparty.manager.api.v1.controller.ControllerSpecification
+import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.lanparty.manager.service.crud.AppUserCrudService
+import org.thehellnet.utility.PasswordUtility
 import spock.lang.Unroll
 
 class AppUserCrudControllerSpecification extends ControllerSpecification {
@@ -27,12 +29,13 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         requestBody.put("email", email)
         requestBody.put("password", password)
         requestBody.put("name", name)
+        requestBody.put("appUserRoles", new String[0])
         requestBody.put("barcode", barcode)
 
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser")
+                        .post("/api/public/v1/crud/appUser")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -105,12 +108,13 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         requestBody.put("email", email)
         requestBody.put("password", password)
         requestBody.put("name", name)
+        requestBody.put("appUserRoles", new String[0])
         requestBody.put("barcode", barcode)
 
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser")
+                        .post("/api/public/v1/crud/appUser")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -212,7 +216,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser")
+                        .post("/api/public/v1/crud/appUser")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -248,7 +252,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser")
+                        .post("/api/public/v1/crud/appUser")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -282,7 +286,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser")
+                        .get("/api/public/v1/crud/appUser")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -313,18 +317,18 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
 
     def "readAll with more than one user"() {
         given:
-        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+        AppUser appUser1 = new AppUser(
                 email: APPUSER_EMAIL,
-                password: APPUSER_PASSWORD,
+                password: PasswordUtility.hash(APPUSER_PASSWORD),
                 name: APPUSER_NAME,
                 barcode: APPUSER_BARCODE
         )
-        appUserCrudService.create(serviceDTO)
+        appUserRepository.save(appUser1)
 
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser")
+                        .get("/api/public/v1/crud/appUser")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -371,7 +375,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser/${appUserId}")
+                        .get("/api/public/v1/crud/appUser/${appUserId}")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -393,18 +397,18 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
 
     def "read with new appUser created"() {
         given:
-        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(
+        AppUser appUser1 = new AppUser(
                 email: APPUSER_EMAIL,
-                password: APPUSER_PASSWORD,
+                password: PasswordUtility.hash(APPUSER_PASSWORD),
                 name: APPUSER_NAME,
                 barcode: APPUSER_BARCODE
         )
-        Long appUserId = appUserCrudService.create(serviceDTO).id
+        Long appUserId = appUserRepository.save(appUser1).id
 
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser/${appUserId}")
+                        .get("/api/public/v1/crud/appUser/${appUserId}")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -436,7 +440,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .patch("/api/v1/public/appUser")
+                        .patch("/api/public/v1/crud/appUser")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -455,7 +459,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .patch("/api/v1/public/appUser/${appUserId}")
+                        .patch("/api/public/v1/crud/appUser/${appUserId}")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -475,7 +479,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .patch("/api/v1/public/appUser/${appUserId}")
+                        .patch("/api/public/v1/crud/appUser/${appUserId}")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -487,16 +491,47 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         rawResponse.status == HttpStatus.NO_CONTENT.value()
     }
 
+    def "update with email"() {
+        given:
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD, APPUSER_NAME, [] as Set<Role>, APPUSER_BARCODE)).id
+        JSONObject requestBody = new JSONObject()
+        requestBody.put("email", APPUSER_EMAIL_NEW)
+
+        when:
+        def rawResponse = mockMvc
+                .perform(MockMvcRequestBuilders
+                        .patch("/api/public/v1/crud/appUser/${appUserId}")
+                        .header("X-Auth-Token", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody.toString())
+                )
+                .andReturn()
+                .response
+
+        then:
+        rawResponse.status == HttpStatus.OK.value()
+        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+
+        when:
+        JSONObject appUser = new JSONObject(rawResponse.contentAsString)
+
+        then:
+        appUser.getLong("id") == appUserId
+        appUser.getString("email") == APPUSER_EMAIL_NEW
+        appUser.getString("name") == APPUSER_NAME
+        appUser.getString("barcode") == APPUSER_BARCODE
+    }
+
     def "update with name"() {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD, APPUSER_NAME, [] as Set<Role>, APPUSER_BARCODE)).id
         JSONObject requestBody = new JSONObject()
         requestBody.put("name", APPUSER_NAME_NEW)
 
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .patch("/api/v1/public/appUser/${appUserId}")
+                        .patch("/api/public/v1/crud/appUser/${appUserId}")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -519,14 +554,14 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
 
     def "update with barcode"() {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD, APPUSER_NAME, [] as Set<Role>, APPUSER_BARCODE)).id
         JSONObject requestBody = new JSONObject()
         requestBody.put("barcode", APPUSER_BARCODE_NEW)
 
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .patch("/api/v1/public/appUser/${appUserId}")
+                        .patch("/api/public/v1/crud/appUser/${appUserId}")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -549,7 +584,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
 
     def "update with name and barcode"() {
         given:
-        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)).id
+        Long appUserId = appUserRepository.save(new AppUser(APPUSER_NAME, APPUSER_PASSWORD, APPUSER_NAME, [] as Set<Role>, APPUSER_BARCODE)).id
         JSONObject requestBody = new JSONObject()
         requestBody.put("name", APPUSER_NAME_NEW)
         requestBody.put("barcode", APPUSER_BARCODE_NEW)
@@ -557,7 +592,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .patch("/api/v1/public/appUser/${appUserId}")
+                        .patch("/api/public/v1/crud/appUser/${appUserId}")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -582,7 +617,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .delete("/api/v1/public/appUser")
+                        .delete("/api/public/v1/crud/appUser")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -601,7 +636,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .delete("/api/v1/public/appUser/${appUserId}")
+                        .delete("/api/public/v1/crud/appUser/${appUserId}")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -621,7 +656,7 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .delete("/api/v1/public/appUser/${appUserId}")
+                        .delete("/api/public/v1/crud/appUser/${appUserId}")
                         .header("X-Auth-Token", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
@@ -634,69 +669,6 @@ class AppUserCrudControllerSpecification extends ControllerSpecification {
 
         and:
         "check number of appUsers in database"() == 1
-    }
-
-
-    def "isTokenValid without token"() {
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser/isTokenValid")
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-    }
-
-    def "isTokenValid with empty token"() {
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser/isTokenValid")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Auth-Token", "")
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-    }
-
-    def "isTokenValid with invalid token"() {
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser/isTokenValid")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Auth-Token", "0123456789abcdef")
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.UNAUTHORIZED.value()
-        MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-    }
-
-    def "isTokenValid with valid token"() {
-        when:
-        def rawResponse = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .get("/api/v1/public/appUser/isTokenValid")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Auth-Token", token)
-                )
-                .andReturn()
-                .response
-
-        then:
-        rawResponse.status == HttpStatus.NO_CONTENT.value()
     }
 
     private int "check number of appUsers in database"() {

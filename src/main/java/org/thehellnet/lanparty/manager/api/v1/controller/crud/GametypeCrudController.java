@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.gametype.UpdateGametype
 import org.thehellnet.lanparty.manager.model.dto.service.GametypeServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Gametype;
-import org.thehellnet.lanparty.manager.service.crud.GametypeCrudService;
+import org.thehellnet.lanparty.manager.service.crud.GametypeCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,10 +27,10 @@ public class GametypeCrudController {
 
     private static final Logger logger = LoggerFactory.getLogger(GametypeCrudController.class);
 
-    private final GametypeCrudService gametypeCrudService;
+    private final GametypeCrudServiceOLD gametypeCrudService;
 
     @Autowired
-    public GametypeCrudController(GametypeCrudService gametypeCrudService) {
+    public GametypeCrudController(GametypeCrudServiceOLD gametypeCrudService) {
         this.gametypeCrudService = gametypeCrudService;
     }
 

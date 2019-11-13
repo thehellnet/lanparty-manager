@@ -10,7 +10,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
-import org.thehellnet.lanparty.manager.service.crud.AppUserTokenCrudService;
+import org.thehellnet.lanparty.manager.service.crud.AppUserTokenCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,10 +21,10 @@ public class TokenControllerAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenControllerAspect.class);
 
-    private final AppUserTokenCrudService appUserTokenCrudService;
+    private final AppUserTokenCrudServiceOLD appUserTokenCrudService;
 
     @Autowired
-    public TokenControllerAspect(AppUserTokenCrudService appUserTokenCrudService) {
+    public TokenControllerAspect(AppUserTokenCrudServiceOLD appUserTokenCrudService) {
         this.appUserTokenCrudService = appUserTokenCrudService;
     }
 

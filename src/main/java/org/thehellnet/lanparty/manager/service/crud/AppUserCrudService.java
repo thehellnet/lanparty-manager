@@ -6,17 +6,17 @@ import org.thehellnet.lanparty.manager.exception.controller.AlreadyPresentExcept
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.UnchangedException;
 import org.thehellnet.lanparty.manager.model.constant.Role;
-import org.thehellnet.lanparty.manager.model.dto.service.AppUserServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.utility.EmailUtility;
 import org.thehellnet.utility.PasswordUtility;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Service
-public class AppUserCrudService extends AbstractCrudService<AppUser, AppUserServiceDTO, AppUserRepository> {
+public class AppUserCrudService extends AbstractCrudService<AppUser, AppUserRepository> {
 
     public AppUserCrudService(AppUserRepository repository) {
         super(repository);
@@ -24,30 +24,49 @@ public class AppUserCrudService extends AbstractCrudService<AppUser, AppUserServ
 
     @Override
     @Transactional
-    public AppUser create(AppUserServiceDTO dto) {
-        if (!EmailUtility.validate(dto.email)) {
+    public AppUser create(Map<String, Object> dto) {
+        if (!dto.containsKey("email")) {
+            throw new InvalidDataException("E-mail address not provided");
+        }
+
+        String email = (String) dto.get("email");
+        if (!EmailUtility.validate(email)) {
             throw new InvalidDataException("E-mail address not valid");
         }
 
-        AppUser appUser = repository.findByEmail(dto.email);
+        AppUser appUser = repository.findByEmail(email);
         if (appUser != null) {
             throw new AlreadyPresentException("E-mail address already registered");
         }
 
-        String encryptedPassword = PasswordUtility.hash(dto.password);
+        if (!dto.containsKey("password")) {
+            throw new InvalidDataException("Password not provided");
+        }
+
+        String password = (String) dto.get("password");
+        String encryptedPassword = PasswordUtility.hash(password);
         if (encryptedPassword == null) {
             throw new InvalidDataException("Password not valid");
         }
 
-        appUser = new AppUser(dto.email, encryptedPassword);
+        appUser = new AppUser(email, encryptedPassword);
 
-        if (dto.name != null) {
-            appUser.setName(dto.name);
+        String name = (String) dto.getOrDefault("name", null);
+        appUser.setName(name);
+
+        if (!dto.containsKey("appUserRoles")) {
+            throw new InvalidDataException("appUserRoles not provided");
         }
 
-        if (dto.barcode != null) {
-            appUser.setBarcode(dto.barcode);
+        String[] appUserRoles = parseStringList(dto.get("appUserRoles"));
+        Set<Role> roles = new HashSet<>();
+        for (String roleName : appUserRoles) {
+            roles.add(Role.valueOf(roleName));
         }
+        appUser.setAppUserRoles(roles);
+
+        String barcode = (String) dto.getOrDefault("barcode", null);
+        appUser.setBarcode(barcode);
 
         appUser = repository.save(appUser);
 
@@ -56,33 +75,50 @@ public class AppUserCrudService extends AbstractCrudService<AppUser, AppUserServ
 
     @Override
     @Transactional
-    public AppUser update(Long id, AppUserServiceDTO dto) {
+    public AppUser update(Long id, Map<String, Object> dto) {
         AppUser appUser = findById(id);
 
         boolean changed = false;
 
-        if (dto.name != null) {
-            appUser.setName(dto.name.strip());
+        if (dto.containsKey("email")) {
+            String email = (String) dto.get("email");
+            email = email != null ? email.strip() : null;
+            appUser.setEmail(email);
             changed = true;
         }
 
-        if (dto.password != null && dto.password.length() > 0) {
-            String encryptedPassword = PasswordUtility.hash(dto.password);
-            appUser.setPassword(encryptedPassword);
-            changed = true;
-        }
-
-        if (dto.appUserRoles != null) {
-            Set<Role> roles = new HashSet<>();
-            for (String roleName : dto.appUserRoles) {
-                roles.add(Role.valueOf(roleName));
+        if (dto.containsKey("password")) {
+            String password = (String) dto.get("password");
+            password = password != null ? password.strip() : null;
+            String encryptedPassword = PasswordUtility.hash(password);
+            if (encryptedPassword != null) {
+                appUser.setPassword(encryptedPassword);
+                changed = true;
             }
-            appUser.setAppUserRoles(roles);
+        }
+
+        if (dto.containsKey("name")) {
+            String name = (String) dto.get("name");
+            name = name != null ? name.strip() : null;
+            appUser.setName(name);
             changed = true;
         }
 
-        if (dto.barcode != null) {
-            appUser.setBarcode(dto.barcode.strip());
+        if (dto.containsKey("appUserRoles")) {
+            String[] appUserRoles = parseStringList(dto.get("appUserRoles"), false);
+            if (appUserRoles != null) {
+                Set<Role> roles = new HashSet<>();
+                for (String roleName : appUserRoles) {
+                    roles.add(Role.valueOf(roleName));
+                }
+                appUser.setAppUserRoles(roles);
+                changed = true;
+            }
+        }
+
+        if (dto.containsKey("barcode")) {
+            String barcode = (String) dto.get("barcode");
+            appUser.setBarcode(barcode);
             changed = true;
         }
 

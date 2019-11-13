@@ -16,7 +16,7 @@ import org.thehellnet.utility.StringUtility;
 import java.util.List;
 
 @Service
-public class CfgCrudService extends AbstractCrudService<Cfg, CfgServiceDTO, CfgRepository> {
+public class CfgCrudServiceOLD extends AbstractCrudServiceOLD<Cfg, CfgServiceDTO, CfgRepository> {
 
     private class FindTournamentAndPlayer {
         private String remoteAddress;
@@ -67,7 +67,7 @@ public class CfgCrudService extends AbstractCrudService<Cfg, CfgServiceDTO, CfgR
     private final PlayerRepository playerRepository;
     private final GameRepository gameRepository;
 
-    public CfgCrudService(CfgRepository repository, SeatRepository seatRepository, AppUserRepository appUserRepository, PlayerRepository playerRepository, GameRepository gameRepository) {
+    public CfgCrudServiceOLD(CfgRepository repository, SeatRepository seatRepository, AppUserRepository appUserRepository, PlayerRepository playerRepository, GameRepository gameRepository) {
         super(repository);
         this.seatRepository = seatRepository;
         this.appUserRepository = appUserRepository;

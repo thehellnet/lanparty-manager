@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.team.UpdateTeamRequestD
 import org.thehellnet.lanparty.manager.model.dto.service.TeamServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Team;
-import org.thehellnet.lanparty.manager.service.crud.TeamCrudService;
+import org.thehellnet.lanparty.manager.service.crud.TeamCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,10 +27,10 @@ public class TeamCrudController {
 
     private static final Logger logger = LoggerFactory.getLogger(TeamCrudController.class);
 
-    private final TeamCrudService teamCrudService;
+    private final TeamCrudServiceOLD teamCrudService;
 
     @Autowired
-    public TeamCrudController(TeamCrudService teamCrudService) {
+    public TeamCrudController(TeamCrudServiceOLD teamCrudService) {
         this.teamCrudService = teamCrudService;
     }
 

@@ -34,7 +34,7 @@ class ToolControllerTest extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(CustomMockMvcRequestBuilders
-                        .post("/api/v1/tool/ping", "5.6.7.8")
+                        .post("/api/public/v1/tool/ping", "5.6.7.8")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString()))
                 .andReturn()
@@ -58,7 +58,7 @@ class ToolControllerTest extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(CustomMockMvcRequestBuilders
-                        .post("/api/v1/tool/ping", SEAT_ADDRESS)
+                        .post("/api/public/v1/tool/ping", SEAT_ADDRESS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString()))
                 .andReturn()
@@ -82,7 +82,7 @@ class ToolControllerTest extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(CustomMockMvcRequestBuilders
-                        .post("/api/v1/tool/welcome", "5.6.7.8")
+                        .post("/api/public/v1/tool/welcome", "5.6.7.8")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString()))
                 .andReturn()
@@ -106,7 +106,7 @@ class ToolControllerTest extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(CustomMockMvcRequestBuilders
-                        .post("/api/v1/tool/welcome", SEAT_ADDRESS)
+                        .post("/api/public/v1/tool/welcome", SEAT_ADDRESS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString()))
                 .andReturn()
@@ -131,7 +131,7 @@ class ToolControllerTest extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(CustomMockMvcRequestBuilders
-                        .post("/api/v1/tool/getCfg", SEAT_ADDRESS)
+                        .post("/api/public/v1/tool/getCfg", SEAT_ADDRESS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString()))
                 .andReturn()
@@ -158,7 +158,7 @@ class ToolControllerTest extends ControllerSpecification {
         when:
         def rawResponse = mockMvc
                 .perform(CustomMockMvcRequestBuilders
-                        .post("/api/v1/tool/saveCfg", SEAT_ADDRESS)
+                        .post("/api/public/v1/tool/saveCfg", SEAT_ADDRESS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString()))
                 .andReturn()

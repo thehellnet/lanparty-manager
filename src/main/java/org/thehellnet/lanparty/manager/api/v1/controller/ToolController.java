@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.BarcodeToolRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.SaveCfgToolRequestDTO;
-import org.thehellnet.lanparty.manager.service.crud.CfgCrudService;
-import org.thehellnet.lanparty.manager.service.crud.SeatCrudService;
+import org.thehellnet.lanparty.manager.service.crud.CfgCrudServiceOLD;
+import org.thehellnet.lanparty.manager.service.crud.SeatCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -27,10 +27,10 @@ public class ToolController {
 
     private static final Logger logger = LoggerFactory.getLogger(ToolController.class);
 
-    private final SeatCrudService seatCrudService;
-    private final CfgCrudService cfgCrudService;
+    private final SeatCrudServiceOLD seatCrudService;
+    private final CfgCrudServiceOLD cfgCrudService;
 
-    public ToolController(SeatCrudService seatCrudService, CfgCrudService cfgCrudService) {
+    public ToolController(SeatCrudServiceOLD seatCrudService, CfgCrudServiceOLD cfgCrudService) {
         this.seatCrudService = seatCrudService;
         this.cfgCrudService = cfgCrudService;
     }

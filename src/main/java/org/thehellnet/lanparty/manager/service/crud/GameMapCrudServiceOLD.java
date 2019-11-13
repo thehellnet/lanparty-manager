@@ -11,11 +11,11 @@ import org.thehellnet.lanparty.manager.repository.GameMapRepository;
 import org.thehellnet.lanparty.manager.repository.GameRepository;
 
 @Service
-public class GameMapCrudService extends AbstractCrudService<GameMap, GameMapServiceDTO, GameMapRepository> {
+public class GameMapCrudServiceOLD extends AbstractCrudServiceOLD<GameMap, GameMapServiceDTO, GameMapRepository> {
 
     private final GameRepository gameRepository;
 
-    public GameMapCrudService(GameMapRepository repository, GameRepository gameRepository) {
+    public GameMapCrudServiceOLD(GameMapRepository repository, GameRepository gameRepository) {
         super(repository);
         this.gameRepository = gameRepository;
     }

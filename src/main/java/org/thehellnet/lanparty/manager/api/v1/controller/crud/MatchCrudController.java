@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.match.UpdateMatchReques
 import org.thehellnet.lanparty.manager.model.dto.service.MatchServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Match;
-import org.thehellnet.lanparty.manager.service.crud.MatchCrudService;
+import org.thehellnet.lanparty.manager.service.crud.MatchCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,10 +27,10 @@ public class MatchCrudController {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchCrudController.class);
 
-    private final MatchCrudService matchCrudService;
+    private final MatchCrudServiceOLD matchCrudService;
 
     @Autowired
-    public MatchCrudController(MatchCrudService matchCrudService) {
+    public MatchCrudController(MatchCrudServiceOLD matchCrudService) {
         this.matchCrudService = matchCrudService;
     }
 

@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.tournament.UpdateTourna
 import org.thehellnet.lanparty.manager.model.dto.service.TournamentServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;
-import org.thehellnet.lanparty.manager.service.crud.TournamentCrudService;
+import org.thehellnet.lanparty.manager.service.crud.TournamentCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,10 +27,10 @@ public class TournamentCrudController {
 
     private static final Logger logger = LoggerFactory.getLogger(TournamentCrudController.class);
 
-    private final TournamentCrudService tournamentCrudService;
+    private final TournamentCrudServiceOLD tournamentCrudService;
 
     @Autowired
-    public TournamentCrudController(TournamentCrudService tournamentCrudService) {
+    public TournamentCrudController(TournamentCrudServiceOLD tournamentCrudService) {
         this.tournamentCrudService = tournamentCrudService;
     }
 

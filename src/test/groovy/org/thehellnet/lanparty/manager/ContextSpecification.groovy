@@ -35,6 +35,7 @@ abstract class ContextSpecification extends Specification {
     protected static final String APPUSER_NAME = "Name"
     protected static final String APPUSER_BARCODE = "0123456789"
 
+    protected static final String APPUSER_EMAIL_NEW = "emailnew@email.com"
     protected static final String APPUSER_PASSWORD_NEW = "password_new"
     protected static final String APPUSER_NAME_NEW = "Name2"
     protected static final String[] APPUSER_ROLES_NEW = [Role.ACTION_LOGIN.name, Role.ACTION_APPUSER_CHANGE_PASSWORD.name] as String[]
@@ -102,7 +103,7 @@ abstract class ContextSpecification extends Specification {
     protected AppUser createAppUser() {
         AppUser appUser = appUserRepository.findByEmail(APPUSER_EMAIL)
         if (appUser == null) {
-            appUser = new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, APPUSER_BARCODE)
+            appUser = new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, [] as Set<Role>, APPUSER_BARCODE)
             appUser = appUserRepository.save(appUser)
         }
         return appUser

@@ -13,12 +13,12 @@ import org.thehellnet.lanparty.manager.repository.ShowcaseRepository;
 import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 @Service
-public class ShowcaseCrudService extends AbstractCrudService<Showcase, ShowcaseServiceDTO, ShowcaseRepository> {
+public class ShowcaseCrudServiceOLD extends AbstractCrudServiceOLD<Showcase, ShowcaseServiceDTO, ShowcaseRepository> {
 
     private final TournamentRepository tournamentRepository;
     private final MatchRepository matchRepository;
 
-    public ShowcaseCrudService(ShowcaseRepository repository, TournamentRepository tournamentRepository, MatchRepository matchRepository) {
+    public ShowcaseCrudServiceOLD(ShowcaseRepository repository, TournamentRepository tournamentRepository, MatchRepository matchRepository) {
         super(repository);
         this.tournamentRepository = tournamentRepository;
         this.matchRepository = matchRepository;

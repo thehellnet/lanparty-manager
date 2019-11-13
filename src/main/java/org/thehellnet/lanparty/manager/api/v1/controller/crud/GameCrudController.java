@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.game.UpdateGameRequestD
 import org.thehellnet.lanparty.manager.model.dto.service.GameServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Game;
-import org.thehellnet.lanparty.manager.service.crud.GameCrudService;
+import org.thehellnet.lanparty.manager.service.crud.GameCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,10 +27,10 @@ public class GameCrudController {
 
     private static final Logger logger = LoggerFactory.getLogger(GameCrudController.class);
 
-    private final GameCrudService gameCrudService;
+    private final GameCrudServiceOLD gameCrudService;
 
     @Autowired
-    public GameCrudController(GameCrudService gameCrudService) {
+    public GameCrudController(GameCrudServiceOLD gameCrudService) {
         this.gameCrudService = gameCrudService;
     }
 

@@ -9,9 +9,9 @@ import org.thehellnet.lanparty.manager.model.persistence.Gametype;
 import org.thehellnet.lanparty.manager.repository.GametypeRepository;
 
 @Service
-public class GametypeCrudService extends AbstractCrudService<Gametype, GametypeServiceDTO, GametypeRepository> {
+public class GametypeCrudServiceOLD extends AbstractCrudServiceOLD<Gametype, GametypeServiceDTO, GametypeRepository> {
 
-    public GametypeCrudService(GametypeRepository repository) {
+    public GametypeCrudServiceOLD(GametypeRepository repository) {
         super(repository);
     }
 

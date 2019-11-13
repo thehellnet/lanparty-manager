@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.appusertoken.UpdateAppU
 import org.thehellnet.lanparty.manager.model.dto.service.AppUserTokenServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
-import org.thehellnet.lanparty.manager.service.crud.AppUserTokenCrudService;
+import org.thehellnet.lanparty.manager.service.crud.AppUserTokenCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,10 +27,10 @@ public class AppUserTokenCrudController {
 
     private static final Logger logger = LoggerFactory.getLogger(AppUserTokenCrudController.class);
 
-    private final AppUserTokenCrudService appUserTokenCrudService;
+    private final AppUserTokenCrudServiceOLD appUserTokenCrudService;
 
     @Autowired
-    public AppUserTokenCrudController(AppUserTokenCrudService appUserTokenCrudService) {
+    public AppUserTokenCrudController(AppUserTokenCrudServiceOLD appUserTokenCrudService) {
         this.appUserTokenCrudService = appUserTokenCrudService;
     }
 

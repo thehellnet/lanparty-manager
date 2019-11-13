@@ -31,7 +31,7 @@ abstract class ControllerSpecification extends ContextSpecification {
 
         def rawResponse = mockMvc
                 .perform(MockMvcRequestBuilders
-                        .post("/api/v1/public/appUser/login")
+                        .post("/api/public/v1/appUser/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody.toString())
                 )

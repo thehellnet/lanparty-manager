@@ -13,7 +13,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.showcase.UpdateShowcase
 import org.thehellnet.lanparty.manager.model.dto.service.ShowcaseServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Showcase;
-import org.thehellnet.lanparty.manager.service.crud.ShowcaseCrudService;
+import org.thehellnet.lanparty.manager.service.crud.ShowcaseCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -26,9 +26,9 @@ public class ShowcaseCrudController {
 
     private static final Logger logger = LoggerFactory.getLogger(TeamCrudController.class);
 
-    private final ShowcaseCrudService showcaseCrudService;
+    private final ShowcaseCrudServiceOLD showcaseCrudService;
 
-    public ShowcaseCrudController(ShowcaseCrudService showcaseCrudService) {
+    public ShowcaseCrudController(ShowcaseCrudServiceOLD showcaseCrudService) {
         this.showcaseCrudService = showcaseCrudService;
     }
 

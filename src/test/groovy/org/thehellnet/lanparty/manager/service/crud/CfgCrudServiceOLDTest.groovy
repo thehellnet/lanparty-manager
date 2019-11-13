@@ -8,14 +8,12 @@ import org.thehellnet.lanparty.manager.model.dto.service.CfgServiceDTO
 import org.thehellnet.lanparty.manager.model.persistence.Cfg
 import org.thehellnet.lanparty.manager.model.persistence.Game
 import org.thehellnet.lanparty.manager.model.persistence.Player
-import org.thehellnet.lanparty.manager.service.ServiceSpecification
-import org.thehellnet.lanparty.manager.service.crud.CfgCrudService
 import spock.lang.Unroll
 
-class CfgCrudServiceTest extends CrudServiceSpecification {
+class CfgCrudServiceOLDTest extends CrudServiceSpecification {
 
     @Autowired
-    private CfgCrudService cfgCrudService
+    private CfgCrudServiceOLD cfgCrudService
 
     private Player player
     private Player newPlayer

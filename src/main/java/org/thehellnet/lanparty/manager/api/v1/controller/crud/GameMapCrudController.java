@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.gamemap.UpdateGameMapRe
 import org.thehellnet.lanparty.manager.model.dto.service.GameMapServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.GameMap;
-import org.thehellnet.lanparty.manager.service.crud.GameMapCrudService;
+import org.thehellnet.lanparty.manager.service.crud.GameMapCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,10 +27,10 @@ public class GameMapCrudController {
 
     private static final Logger logger = LoggerFactory.getLogger(GameMapCrudController.class);
 
-    private final GameMapCrudService gameMapCrudService;
+    private final GameMapCrudServiceOLD gameMapCrudService;
 
     @Autowired
-    public GameMapCrudController(GameMapCrudService gameMapCrudService) {
+    public GameMapCrudController(GameMapCrudServiceOLD gameMapCrudService) {
         this.gameMapCrudService = gameMapCrudService;
     }
 

@@ -9,7 +9,7 @@ import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
 
 @Service
-public class MatchCrudService extends AbstractCrudService<Match, MatchServiceDTO, MatchRepository> {
+public class MatchCrudServiceOLD extends AbstractCrudServiceOLD<Match, MatchServiceDTO, MatchRepository> {
 
     private final TournamentRepository tournamentRepository;
     private final ServerRepository serverRepository;
@@ -17,7 +17,7 @@ public class MatchCrudService extends AbstractCrudService<Match, MatchServiceDTO
     private final GametypeRepository gametypeRepository;
     private final TeamRepository teamRepository;
 
-    public MatchCrudService(MatchRepository repository, TournamentRepository tournamentRepository, ServerRepository serverRepository, GameMapRepository gameMapRepository, GametypeRepository gametypeRepository, TeamRepository teamRepository) {
+    public MatchCrudServiceOLD(MatchRepository repository, TournamentRepository tournamentRepository, ServerRepository serverRepository, GameMapRepository gameMapRepository, GametypeRepository gametypeRepository, TeamRepository teamRepository) {
         super(repository);
         this.tournamentRepository = tournamentRepository;
         this.serverRepository = serverRepository;

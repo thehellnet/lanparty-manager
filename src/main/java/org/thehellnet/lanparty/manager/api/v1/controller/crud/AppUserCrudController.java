@@ -8,33 +8,25 @@ import org.springframework.web.bind.annotation.*;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
 import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
 import org.thehellnet.lanparty.manager.model.constant.Role;
-import org.thehellnet.lanparty.manager.model.dto.request.appuser.CreateAppUserRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.request.appuser.LoginAppUserRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.request.appuser.UpdateAppUserRequestDTO;
-import org.thehellnet.lanparty.manager.model.dto.response.appuser.LoginAppUserResponseDTO;
-import org.thehellnet.lanparty.manager.model.dto.service.AppUserServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
-import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
-import org.thehellnet.lanparty.manager.service.LoginService;
 import org.thehellnet.lanparty.manager.service.crud.AppUserCrudService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/public/v1/crud/appUser")
-public class AppUserCrudController {
+public class AppUserCrudController extends AbstractCrudController {
 
     private static final Logger logger = LoggerFactory.getLogger(AppUserCrudController.class);
 
     private final AppUserCrudService appUserCrudService;
-    private final LoginService loginService;
 
-    public AppUserCrudController(AppUserCrudService appUserCrudService, LoginService loginService) {
+    public AppUserCrudController(AppUserCrudService appUserCrudService) {
         this.appUserCrudService = appUserCrudService;
-        this.loginService = loginService;
     }
 
     @CheckToken
@@ -44,9 +36,8 @@ public class AppUserCrudController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateAppUserRequestDTO dto) {
-        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(dto.email, dto.name, dto.password, null, dto.barcode);
-        AppUser user = appUserCrudService.create(serviceDTO);
+    public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody Map<String, Object> dto) {
+        AppUser user = appUserCrudService.create(dto);
         return ResponseEntity.created(URI.create("")).body(user);
     }
 
@@ -81,9 +72,8 @@ public class AppUserCrudController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateAppUserRequestDTO dto) {
-        AppUserServiceDTO serviceDTO = new AppUserServiceDTO(null, dto.name, dto.password, dto.appUserRoles, dto.barcode);
-        AppUser user = appUserCrudService.update(id, serviceDTO);
+    public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody Map<String, Object> dto) {
+        AppUser user = appUserCrudService.update(id, dto);
         return ResponseEntity.ok(user);
     }
 
@@ -95,33 +85,6 @@ public class AppUserCrudController {
     )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
         appUserCrudService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @RequestMapping(
-            path = "/login",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity login(@RequestBody LoginAppUserRequestDTO dto) {
-        AppUser appUser = loginService.findByEmailAndPassword(dto.email, dto.password);
-        AppUserToken appUserToken = loginService.newToken(appUser);
-
-        LoginAppUserResponseDTO body = new LoginAppUserResponseDTO();
-        body.id = appUserToken.getId();
-        body.token = appUserToken.getToken();
-        body.expiration = appUserToken.getExpirationDateTime();
-        return ResponseEntity.ok(body);
-    }
-
-    @CheckToken
-    @CheckRoles(Role.ACTION_LOGIN)
-    @RequestMapping(
-            path = "/isTokenValid",
-            method = RequestMethod.GET
-    )
-    public ResponseEntity isTokenValid(HttpServletRequest request, AppUser appUser) {
         return ResponseEntity.noContent().build();
     }
 }

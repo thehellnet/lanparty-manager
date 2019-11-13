@@ -62,8 +62,9 @@ public class AppUser implements Serializable {
         this.name = name;
     }
 
-    public AppUser(String email, String password, String name, String barcode) {
+    public AppUser(String email, String password, String name, Set<Role> appUserRoles, String barcode) {
         this(email, password, name);
+        this.appUserRoles = appUserRoles;
         this.barcode = barcode;
     }
 

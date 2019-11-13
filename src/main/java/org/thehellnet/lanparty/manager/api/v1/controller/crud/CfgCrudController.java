@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.request.cfg.UpdateCfgRequestDTO
 import org.thehellnet.lanparty.manager.model.dto.service.CfgServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Cfg;
-import org.thehellnet.lanparty.manager.service.crud.CfgCrudService;
+import org.thehellnet.lanparty.manager.service.crud.CfgCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -27,10 +27,10 @@ public class CfgCrudController {
 
     private static final Logger logger = LoggerFactory.getLogger(CfgCrudController.class);
 
-    private final CfgCrudService cfgCrudService;
+    private final CfgCrudServiceOLD cfgCrudService;
 
     @Autowired
-    public CfgCrudController(CfgCrudService cfgCrudService) {
+    public CfgCrudController(CfgCrudServiceOLD cfgCrudService) {
         this.cfgCrudService = cfgCrudService;
     }
 

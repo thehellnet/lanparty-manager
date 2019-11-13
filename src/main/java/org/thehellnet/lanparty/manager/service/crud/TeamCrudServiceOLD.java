@@ -11,11 +11,11 @@ import org.thehellnet.lanparty.manager.repository.TeamRepository;
 import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 @Service
-public class TeamCrudService extends AbstractCrudService<Team, TeamServiceDTO, TeamRepository> {
+public class TeamCrudServiceOLD extends AbstractCrudServiceOLD<Team, TeamServiceDTO, TeamRepository> {
 
     private final TournamentRepository tournamentRepository;
 
-    public TeamCrudService(TeamRepository repository, TournamentRepository tournamentRepository) {
+    public TeamCrudServiceOLD(TeamRepository repository, TournamentRepository tournamentRepository) {
         super(repository);
         this.tournamentRepository = tournamentRepository;
     }

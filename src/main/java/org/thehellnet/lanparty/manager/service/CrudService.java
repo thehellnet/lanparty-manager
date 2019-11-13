@@ -1,18 +1,17 @@
 package org.thehellnet.lanparty.manager.service;
 
-import org.thehellnet.lanparty.manager.model.dto.service.ServiceDTO;
-
 import java.util.List;
+import java.util.Map;
 
-public interface CrudService<T, D extends ServiceDTO> {
+public interface CrudService<T> {
 
-    T create(D dto);
+    T create(Map<String, Object> dto);
 
     T read(Long id);
 
     List<T> readAll();
 
-    T update(Long id, D dto);
+    T update(Long id, Map<String, Object> dto);
 
     void delete(Long id);
 
