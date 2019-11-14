@@ -13,7 +13,9 @@ import org.thehellnet.lanparty.manager.model.dto.request.gamegametype.CreateGame
 import org.thehellnet.lanparty.manager.model.dto.request.gamegametype.UpdateGameGametypeRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.service.GameGametypeServiceDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
+import org.thehellnet.lanparty.manager.model.persistence.Game;
 import org.thehellnet.lanparty.manager.model.persistence.GameGametype;
+import org.thehellnet.lanparty.manager.repository.GameGametypeRepository;
 import org.thehellnet.lanparty.manager.service.crud.GameGametypeCrudServiceOLD;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,75 +25,41 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/public/v1/crud/gameGametype")
-public class GameGametypeCrudController {
+public class GameGametypeCrudController extends AbstractCrudController<GameGametype, GameGametypeRepository> {
 
     private static final Logger logger = LoggerFactory.getLogger(GameGametypeCrudController.class);
 
-    private final GameGametypeCrudServiceOLD gameGametypeCrudService;
-
-    @Autowired
-    public GameGametypeCrudController(GameGametypeCrudServiceOLD gameGametypeCrudService) {
-        this.gameGametypeCrudService = gameGametypeCrudService;
+    protected GameGametypeCrudController(GameGametypeRepository repository) {
+        super(repository);
     }
 
     @CheckToken
     @CheckRoles(Role.GAMEGAMETYPE_CREATE)
-    @RequestMapping(
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody CreateGameGametypeRequestDTO dto) {
-        GameGametypeServiceDTO serviceDTO = new GameGametypeServiceDTO(dto.game, dto.gametype, dto.tag);
-        GameGametype gameGametype = gameGametypeCrudService.create(serviceDTO);
-        return ResponseEntity.created(URI.create("")).body(gameGametype);
+    public ResponseEntity create(HttpServletRequest request, AppUser appUser, @RequestBody GameGametype dto) {
+        return createEntity(dto);
     }
 
     @CheckToken
     @CheckRoles(Role.GAMEGAMETYPE_READ)
-    @RequestMapping(
-            path = "{id}",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        GameGametype gameGametype = gameGametypeCrudService.read(id);
-        return ResponseEntity.ok(gameGametype);
+        return readEntity(id);
     }
 
     @CheckToken
     @CheckRoles(Role.GAMEGAMETYPE_READ)
-    @RequestMapping(
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
     public ResponseEntity read(HttpServletRequest request, AppUser appUser) {
-        List<GameGametype> gameGametypes = gameGametypeCrudService.readAll();
-        return ResponseEntity.ok(gameGametypes);
+        return readEntity();
     }
 
     @CheckToken
     @CheckRoles(Role.GAMEGAMETYPE_UPDATE)
-    @RequestMapping(
-            path = "{id}",
-            method = RequestMethod.PATCH,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody UpdateGameGametypeRequestDTO dto) {
-        GameGametypeServiceDTO serviceDTO = new GameGametypeServiceDTO(dto.game, dto.gametype, dto.tag);
-        GameGametype gameGametype = gameGametypeCrudService.update(id, serviceDTO);
-        return ResponseEntity.ok(gameGametype);
+    public ResponseEntity update(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id, @RequestBody GameGametype dto) {
+        return updateEntity(id, dto);
     }
 
     @CheckToken
     @CheckRoles(Role.GAMEGAMETYPE_DELETE)
-    @RequestMapping(
-            path = "{id}",
-            method = RequestMethod.DELETE
-    )
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
-        gameGametypeCrudService.delete(id);
-        return ResponseEntity.noContent().build();
+        return deleteEntity(id);
     }
 }

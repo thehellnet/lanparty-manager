@@ -52,17 +52,4 @@ public class AppUserCrudController extends AbstractCrudController<AppUser, AppUs
     public ResponseEntity delete(HttpServletRequest request, AppUser appUser, @PathVariable(value = "id") Long id) {
         return deleteEntity(id);
     }
-
-    @Override
-    protected void updateImpl(AppUser entity, AppUser dto) {
-        entity.setEmail(dto.getEmail());
-        entity.setPassword(dto.getPassword());
-        entity.setName(dto.getName());
-        entity.setBarcode(dto.getBarcode());
-    }
-
-    @Override
-    protected void updateImplElse(Long id, AppUser dto) {
-        dto.setId(id);
-    }
 }

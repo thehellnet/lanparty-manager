@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.thehellnet.lanparty.manager.api.v1.controller.AbstractController;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
+import org.thehellnet.lanparty.manager.model.persistence.AbstractEntity;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 
-public abstract class AbstractCrudController<T, S extends JpaRepository>
+public abstract class AbstractCrudController<T extends AbstractEntity, S extends JpaRepository>
         extends AbstractController
         implements CrudController<T> {
 
@@ -94,10 +95,10 @@ public abstract class AbstractCrudController<T, S extends JpaRepository>
         T entity = (T) repository
                 .findById(id)
                 .map(t -> {
-                    updateImpl((T) t, dto);
+                    ((T) t).updateFromEntity(dto);
                     return repository.save(t);
                 }).orElseGet(() -> {
-                    updateImplElse(id, dto);
+                    dto.setId(id);
                     return repository.save(dto);
                 });
         return ResponseEntity.ok(entity);
@@ -109,8 +110,4 @@ public abstract class AbstractCrudController<T, S extends JpaRepository>
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
-    protected abstract void updateImpl(T entity, T dto);
-
-    protected abstract void updateImplElse(Long id, T dto);
 }
