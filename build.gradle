@@ -45,6 +45,7 @@ def VERSIONS = [
         "logback"             : "1.2.3",
         "spring"              : "5.2.1.RELEASE",
         "spring-data-jpa"     : "2.2.1.RELEASE",
+        "spring-data-rest"    : "3.2.1.RELEASE",
         "jackson"             : "2.10.0",
         "postgresql"          : "42.2.8",
         "c3p0"                : "0.9.5.4",
@@ -86,12 +87,18 @@ dependencies {
     implementation group: "org.springframework", name: "spring-messaging", version: VERSIONS["spring"]
     implementation group: "org.springframework", name: "spring-websocket", version: VERSIONS["spring"]
 
+    implementation group: "org.springframework.security", name: "spring-security-core", version: VERSIONS["spring"]
+    implementation group: "org.springframework.security", name: "spring-security-config", version: VERSIONS["spring"]
+    implementation group: "org.springframework.security", name: "spring-security-web", version: VERSIONS["spring"]
+
     implementation group: "com.fasterxml.jackson.core", name: "jackson-core", version: VERSIONS["jackson"]
     implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: VERSIONS["jackson"]
     implementation group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: VERSIONS["jackson"]
     implementation group: "com.fasterxml.jackson.datatype", name: "jackson-datatype-joda", version: VERSIONS["jackson"]
 
     implementation group: "org.springframework.data", name: "spring-data-jpa", version: VERSIONS["spring-data-jpa"]
+    implementation group: "org.springframework.data", name: "spring-data-rest-core", version: VERSIONS["spring-data-rest"]
+    implementation group: "org.springframework.data", name: "spring-data-rest-webmvc", version: VERSIONS["spring-data-rest"]
 
     implementation group: "javax.xml.bind", name: "jaxb-api", version: VERSIONS["jaxb-api"]
     implementation group: "javax.servlet", name: "javax.servlet-api", version: VERSIONS["javax.servlet-api"]
