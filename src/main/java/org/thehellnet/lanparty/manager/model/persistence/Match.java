@@ -6,13 +6,12 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.thehellnet.lanparty.manager.model.constant.MatchStatus;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "match")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Match implements Serializable {
+public class Match extends AbstractEntity<Match> {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -165,6 +164,19 @@ public class Match implements Serializable {
 
     public void setGuestTeam(Team guestTeam) {
         this.guestTeam = guestTeam;
+    }
+
+    @Override
+    public void updateFromEntity(Match dto) {
+        name = dto.name;
+        tournament = dto.tournament;
+        status = dto.status;
+        playOrder = dto.playOrder;
+        server = dto.server;
+        gameMap = dto.gameMap;
+        gametype = dto.gametype;
+        localTeam = dto.localTeam;
+        guestTeam = dto.guestTeam;
     }
 
     @Override

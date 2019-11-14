@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -14,7 +13,7 @@ import java.util.Objects;
                 @UniqueConstraint(columnNames = {"tag", "game_id"})
         })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class GameMap implements Serializable {
+public class GameMap extends AbstractEntity<GameMap> {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -102,6 +101,14 @@ public class GameMap implements Serializable {
 
     public void setStock(Boolean stock) {
         this.stock = stock;
+    }
+
+    @Override
+    public void updateFromEntity(GameMap dto) {
+        tag = dto.tag;
+        name = dto.name;
+        game = dto.game;
+        stock = dto.stock;
     }
 
     @Override

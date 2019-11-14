@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.thehellnet.lanparty.manager.model.constant.Role;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -14,7 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "appuser")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class AppUser implements Serializable {
+public class AppUser extends AbstractEntity<AppUser> {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -122,6 +121,14 @@ public class AppUser implements Serializable {
 
     public void setAppUserRoles(Set<Role> appUserRoles) {
         this.appUserRoles = appUserRoles;
+    }
+
+    @Override
+    public void updateFromEntity(AppUser dto) {
+        email = dto.email;
+        password = dto.password;
+        name = dto.name;
+        barcode = dto.barcode;
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -12,7 +11,7 @@ import java.util.Set;
 @Entity
 @Table(name = "game")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Game implements Serializable {
+public class Game extends AbstractEntity<Game> {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -84,6 +83,14 @@ public class Game implements Serializable {
 
     public void setGameMaps(Set<GameMap> gameMaps) {
         this.gameMaps = gameMaps;
+    }
+
+    @Override
+    public void updateFromEntity(Game dto) {
+        tag = dto.tag;
+        name = dto.name;
+        gameGametypes = dto.gameGametypes;
+        gameMaps = dto.gameMaps;
     }
 
     @Override

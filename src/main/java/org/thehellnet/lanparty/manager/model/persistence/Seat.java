@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -18,7 +17,7 @@ import java.util.Objects;
         }
 )
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Seat implements Serializable {
+public class Seat extends AbstractEntity<Seat> {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -117,6 +116,15 @@ public class Seat implements Serializable {
 
     public void updateLastContact() {
         lastContact = DateTime.now();
+    }
+
+    @Override
+    public void updateFromEntity(Seat dto) {
+        name = dto.name;
+        ipAddress = dto.ipAddress;
+        tournament = dto.tournament;
+        lastContact = dto.lastContact;
+        player = dto.player;
     }
 
     @Override

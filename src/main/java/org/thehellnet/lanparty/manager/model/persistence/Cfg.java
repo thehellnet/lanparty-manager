@@ -5,13 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "cfg")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Cfg implements Serializable {
+public class Cfg extends AbstractEntity<Cfg> {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -77,6 +76,13 @@ public class Cfg implements Serializable {
 
     public void setCfgContent(String cfg) {
         this.cfgContent = cfg;
+    }
+
+    @Override
+    public void updateFromEntity(Cfg dto) {
+        player = dto.player;
+        game = dto.game;
+        cfgContent = dto.cfgContent;
     }
 
     @Override

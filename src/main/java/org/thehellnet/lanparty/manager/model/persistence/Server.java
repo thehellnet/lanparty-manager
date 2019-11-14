@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -14,7 +13,7 @@ import java.util.Objects;
                 @UniqueConstraint(columnNames = {"address", "port"})
         })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Server implements Serializable {
+public class Server extends AbstractEntity<Server> {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -146,6 +145,18 @@ public class Server implements Serializable {
 
     public void setLogParsingEnabled(Boolean logParsingEnabled) {
         this.logParsingEnabled = logParsingEnabled;
+    }
+
+    @Override
+    public void updateFromEntity(Server dto) {
+        tag = dto.tag;
+        name = dto.name;
+        game = dto.game;
+        address = dto.address;
+        port = dto.port;
+        rconPassword = dto.rconPassword;
+        logFile = dto.logFile;
+        logParsingEnabled = dto.logParsingEnabled;
     }
 
     @Override

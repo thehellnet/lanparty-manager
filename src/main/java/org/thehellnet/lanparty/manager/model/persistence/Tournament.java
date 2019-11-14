@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -16,7 +15,7 @@ import java.util.Set;
 @Table(name = "tournament")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonIdentityReference(alwaysAsId = true)
-public class Tournament implements Serializable {
+public class Tournament extends AbstractEntity<Tournament> {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -129,6 +128,17 @@ public class Tournament implements Serializable {
 
     public void setTeams(Set<Team> teams) {
         this.teams = teams;
+    }
+
+    @Override
+    public void updateFromEntity(Tournament dto) {
+        name = dto.name;
+        game = dto.game;
+        status = dto.status;
+        cfg = dto.cfg;
+        seats = dto.seats;
+        matches = dto.matches;
+        teams = dto.teams;
     }
 
     @Override
