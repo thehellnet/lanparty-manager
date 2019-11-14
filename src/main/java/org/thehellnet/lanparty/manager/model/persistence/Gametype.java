@@ -18,7 +18,7 @@ public class Gametype extends AbstractEntity<Gametype> {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gametype_id_seq")
     @SequenceGenerator(name = "gametype_id_seq", sequenceName = "gametype_id_seq")
-    private Long id;
+    private Long Id;
 
     @Basic
     @Column(name = "name", nullable = false, unique = true)
@@ -36,11 +36,11 @@ public class Gametype extends AbstractEntity<Gametype> {
     }
 
     public Long getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public String getName() {
@@ -70,14 +70,14 @@ public class Gametype extends AbstractEntity<Gametype> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Gametype gametype = (Gametype) o;
-        return id.equals(gametype.id) &&
+        return Id.equals(gametype.Id) &&
                 name.equals(gametype.name) &&
                 gameGametypes.equals(gametype.gameGametypes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(Id, name);
     }
 
     @Override

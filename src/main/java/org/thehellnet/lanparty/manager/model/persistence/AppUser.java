@@ -19,7 +19,7 @@ public class AppUser extends AbstractEntity<AppUser> {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
     @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq")
-    private Long id;
+    private Long Id;
 
     @Basic
     @Column(name = "email", nullable = false, unique = true)
@@ -68,11 +68,11 @@ public class AppUser extends AbstractEntity<AppUser> {
     }
 
     public Long getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public String getEmail() {
@@ -136,7 +136,7 @@ public class AppUser extends AbstractEntity<AppUser> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AppUser appUser = (AppUser) o;
-        return id.equals(appUser.id) &&
+        return Id.equals(appUser.Id) &&
                 email.equals(appUser.email) &&
                 password.equals(appUser.password) &&
                 Objects.equals(name, appUser.name) &&
@@ -147,7 +147,7 @@ public class AppUser extends AbstractEntity<AppUser> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(Id);
     }
 
     @Override

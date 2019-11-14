@@ -17,7 +17,7 @@ public class Match extends AbstractEntity<Match> {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "match_id_seq")
     @SequenceGenerator(name = "match_id_seq", sequenceName = "match_id_seq")
-    private Long id;
+    private Long Id;
 
     @Basic
     @Column(name = "name", nullable = false)
@@ -87,11 +87,11 @@ public class Match extends AbstractEntity<Match> {
     }
 
     public Long getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public String getName() {
@@ -184,7 +184,7 @@ public class Match extends AbstractEntity<Match> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Match match = (Match) o;
-        return id.equals(match.id) &&
+        return Id.equals(match.Id) &&
                 name.equals(match.name) &&
                 tournament.equals(match.tournament) &&
                 status == match.status &&
@@ -198,7 +198,7 @@ public class Match extends AbstractEntity<Match> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(Id);
     }
 
     @Override
