@@ -46,6 +46,7 @@ def VERSIONS = [
         "spring"              : "5.2.1.RELEASE",
         "spring-data-jpa"     : "2.2.1.RELEASE",
         "spring-data-rest"    : "3.2.1.RELEASE",
+        "spring-security-jwt" : "1.1.0.RELEASE",
         "jackson"             : "2.10.0",
         "postgresql"          : "42.2.8",
         "c3p0"                : "0.9.5.4",
@@ -90,6 +91,7 @@ dependencies {
     implementation group: "org.springframework.security", name: "spring-security-core", version: VERSIONS["spring"]
     implementation group: "org.springframework.security", name: "spring-security-config", version: VERSIONS["spring"]
     implementation group: "org.springframework.security", name: "spring-security-web", version: VERSIONS["spring"]
+    implementation group: "org.springframework.security", name: "spring-security-jwt", version: VERSIONS["spring-security-jwt"]
 
     implementation group: "com.fasterxml.jackson.core", name: "jackson-core", version: VERSIONS["jackson"]
     implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: VERSIONS["jackson"]

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.BarcodeToolRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.SaveCfgToolRequestDTO;
-import org.thehellnet.lanparty.manager.service.crud.CfgCrudServiceOLD;
-import org.thehellnet.lanparty.manager.service.crud.SeatCrudServiceOLD;
+import org.thehellnet.lanparty.manager.service.CfgService;
+import org.thehellnet.lanparty.manager.service.SeatService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -27,12 +27,12 @@ public class ToolController {
 
     private static final Logger logger = LoggerFactory.getLogger(ToolController.class);
 
-    private final SeatCrudServiceOLD seatCrudService;
-    private final CfgCrudServiceOLD cfgCrudService;
+    private final SeatService seatService;
+    private final CfgService cfgService;
 
-    public ToolController(SeatCrudServiceOLD seatCrudService, CfgCrudServiceOLD cfgCrudService) {
-        this.seatCrudService = seatCrudService;
-        this.cfgCrudService = cfgCrudService;
+    public ToolController(SeatService seatService, CfgService cfgService) {
+        this.seatService = seatService;
+        this.cfgService = cfgService;
     }
 
     @RequestMapping(path = "/ping")
@@ -46,7 +46,7 @@ public class ToolController {
         String remoteAddress = request.getRemoteAddr();
         logger.info("Welcome from tool at {}", remoteAddress);
 
-        seatCrudService.updateLastContact(remoteAddress);
+        seatService.updateLastContact(remoteAddress);
         return ResponseEntity.ok(new Object());
     }
 
@@ -55,7 +55,7 @@ public class ToolController {
         String remoteAddress = request.getRemoteAddr();
         logger.info("getCfg from tool at {} with barcode {}", remoteAddress, dto.barcode);
 
-        List<String> cfgLines = cfgCrudService.computeCfg(remoteAddress, dto.barcode);
+        List<String> cfgLines = cfgService.computeCfg(remoteAddress, dto.barcode);
         return ResponseEntity.ok(cfgLines);
     }
 
@@ -64,7 +64,7 @@ public class ToolController {
         String remoteAddress = request.getRemoteAddr();
         logger.info("saveCfg from tool at {} with barcode {} and {} lines in cfg", remoteAddress, dto.barcode, dto.cfgLines.size());
 
-        cfgCrudService.saveCfg(remoteAddress, dto.barcode, dto.cfgLines);
+        cfgService.saveCfg(remoteAddress, dto.barcode, dto.cfgLines);
         return ResponseEntity.ok(new Object());
     }
 }

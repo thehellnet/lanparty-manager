@@ -1,6 +1,5 @@
 package org.thehellnet.lanparty.manager.configuration;
 
-import org.dom4j.tree.AbstractEntity;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +12,8 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguratio
 @Import(RepositoryRestMvcConfiguration.class)
 public class RestConfiguration extends RepositoryRestMvcConfiguration {
 
+    public static final String API_BASE_PATH = "/api/public/rest";
+
     public RestConfiguration(ApplicationContext context, ObjectFactory<ConversionService> conversionService) {
         super(context, conversionService);
     }
@@ -20,6 +21,6 @@ public class RestConfiguration extends RepositoryRestMvcConfiguration {
     @Override
     public RepositoryRestConfiguration repositoryRestConfiguration() {
         return super.repositoryRestConfiguration()
-                .setBasePath("/api/public/rest");
+                .setBasePath(API_BASE_PATH);
     }
 }
