@@ -5,9 +5,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException;
-import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
+import org.thehellnet.lanparty.manager.model.persistence.Role;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository;
 import org.thehellnet.utility.EmailUtility;
@@ -49,9 +49,9 @@ public class LoginService extends AbstractService {
             throw new NotFoundException();
         }
 
-        if (!hasAllRoles(appUser, Role.ACTION_LOGIN)) {
-            throw new UnauthorizedException("User not authorized to login");
-        }
+//        if (!hasAllRoles(appUser, Role.ACTION_LOGIN)) {
+//            throw new UnauthorizedException("User not authorized to login");
+//        }
 
         return appUser;
     }
@@ -84,13 +84,13 @@ public class LoginService extends AbstractService {
         appUser = appUserRepository.getOne(appUser.getId());
 
         if (roles.length == 0) {
-            return appUser.getAppUserRoles().size() == 0;
+            return appUser.getRoles().size() == 0;
         }
 
         Map<Role, Boolean> roleBooleanMap = new HashMap<>();
 
         for (Role role : roles) {
-            roleBooleanMap.put(role, appUser.getAppUserRoles().contains(role));
+            roleBooleanMap.put(role, appUser.getRoles().contains(role));
         }
 
         for (Boolean item : roleBooleanMap.values()) {

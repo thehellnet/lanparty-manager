@@ -78,7 +78,7 @@ class LoginServiceTest extends ServiceSpecification {
     def "findByEmailAndPassword with exiting user"() {
         given:
         AppUser user = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        user.getAppUserRoles().add(Role.ACTION_LOGIN)
+        user.getRoles().add(Role.ACTION_LOGIN)
         appUserRepository.save(user)
 
         when:
@@ -217,7 +217,7 @@ class LoginServiceTest extends ServiceSpecification {
     def "hasAllRoles with one role in user: #roles | #result"(roles, result) {
         given:
         AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser.appUserRoles.add(Role.APPUSER_READ)
+        appUser.roles.add(Role.APPUSER_READ)
         appUser = appUserRepository.save(appUser)
 
         expect:
@@ -248,8 +248,8 @@ class LoginServiceTest extends ServiceSpecification {
     def "hasAllRoles with two roles in user: #roles | #result"(roles, result) {
         given:
         AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser.appUserRoles.add(Role.APPUSER_READ)
-        appUser.appUserRoles.add(Role.APPUSER_UPDATE)
+        appUser.roles.add(Role.APPUSER_READ)
+        appUser.roles.add(Role.APPUSER_UPDATE)
         appUser = appUserRepository.save(appUser)
 
         expect:
@@ -310,7 +310,7 @@ class LoginServiceTest extends ServiceSpecification {
     def "hasAnyRoles with one role in user: #roles | #result"(roles, result) {
         given:
         AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser.appUserRoles.add(Role.APPUSER_READ)
+        appUser.roles.add(Role.APPUSER_READ)
         appUser = appUserRepository.save(appUser)
 
         expect:
@@ -341,8 +341,8 @@ class LoginServiceTest extends ServiceSpecification {
     def "hasAnyRoles with two roles in user: #roles | #result"(roles, result) {
         given:
         AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser.appUserRoles.add(Role.APPUSER_READ)
-        appUser.appUserRoles.add(Role.APPUSER_DELETE)
+        appUser.roles.add(Role.APPUSER_READ)
+        appUser.roles.add(Role.APPUSER_DELETE)
         appUser = appUserRepository.save(appUser)
 
         expect:

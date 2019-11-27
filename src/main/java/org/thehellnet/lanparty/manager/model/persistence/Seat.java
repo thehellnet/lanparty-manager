@@ -17,7 +17,7 @@ import java.util.Objects;
         }
 )
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Seat extends AbstractEntity<Seat> {
+public class Seat extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -118,14 +118,6 @@ public class Seat extends AbstractEntity<Seat> {
         lastContact = DateTime.now();
     }
 
-    @Override
-    public void updateFromEntity(Seat dto) {
-        name = dto.name;
-        ipAddress = dto.ipAddress;
-        tournament = dto.tournament;
-        lastContact = dto.lastContact;
-        player = dto.player;
-    }
 
     @Override
     public boolean equals(Object o) {

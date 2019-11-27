@@ -3,7 +3,6 @@ package org.thehellnet.lanparty.manager.model.persistence;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.thehellnet.lanparty.manager.model.constant.Role;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -13,7 +12,7 @@ import java.util.Set;
 @Entity
 @Table(name = "appuser")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class AppUser extends AbstractEntity<AppUser> {
+public class AppUser extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -42,11 +41,12 @@ public class AppUser extends AbstractEntity<AppUser> {
     @OneToMany(mappedBy = "appUser", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<AppUserToken> appUserTokens = new HashSet<>();
 
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @JoinTable(name = "appuser_role", joinColumns = @JoinColumn(name = "appuser_id"))
-    @Column(name = "role", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Set<Role> appUserRoles = new HashSet<>();
+    @ManyToMany
+    @JoinTable(name = "appuser_role",
+            joinColumns = @JoinColumn(name = "appuser_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     public AppUser() {
     }
@@ -61,9 +61,9 @@ public class AppUser extends AbstractEntity<AppUser> {
         this.name = name;
     }
 
-    public AppUser(String email, String password, String name, Set<Role> appUserRoles, String barcode) {
+    public AppUser(String email, String password, String name, Set<Role> roles, String barcode) {
         this(email, password, name);
-        this.appUserRoles = appUserRoles;
+        this.roles = roles;
         this.barcode = barcode;
     }
 
@@ -115,20 +115,12 @@ public class AppUser extends AbstractEntity<AppUser> {
         this.appUserTokens = appUserTokens;
     }
 
-    public Set<Role> getAppUserRoles() {
-        return appUserRoles;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setAppUserRoles(Set<Role> appUserRoles) {
-        this.appUserRoles = appUserRoles;
-    }
-
-    @Override
-    public void updateFromEntity(AppUser dto) {
-        email = dto.email;
-        password = dto.password;
-        name = dto.name;
-        barcode = dto.barcode;
+    public void setRoles(Set<Role> appUserRoles) {
+        this.roles = appUserRoles;
     }
 
     @Override
@@ -142,7 +134,7 @@ public class AppUser extends AbstractEntity<AppUser> {
                 Objects.equals(name, appUser.name) &&
                 Objects.equals(barcode, appUser.barcode) &&
                 appUserTokens.equals(appUser.appUserTokens) &&
-                appUserRoles.equals(appUser.appUserRoles);
+                roles.equals(appUser.roles);
     }
 
     @Override

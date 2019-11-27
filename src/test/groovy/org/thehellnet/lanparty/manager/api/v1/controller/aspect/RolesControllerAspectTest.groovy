@@ -51,7 +51,7 @@ class RolesControllerAspectTest extends ContextSpecification {
     def "checkRoles for AppUserController.isTokenValid() with new user and minimum role"() {
         given:
         AppUser appUser = appUserRepository.findByEmail(APPUSER_EMAIL)
-        appUser.appUserRoles.add(Role.ACTION_LOGIN)
+        appUser.roles.add(Role.ACTION_LOGIN)
         appUserRepository.save(appUser)
 
         when:

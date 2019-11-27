@@ -12,7 +12,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "showcase")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Showcase extends AbstractEntity<Showcase> {
+public class Showcase extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -143,17 +143,6 @@ public class Showcase extends AbstractEntity<Showcase> {
 
     public void setLastContact(DateTime lastContact) {
         this.lastContact = lastContact;
-    }
-
-    @Override
-    public void updateFromEntity(Showcase dto) {
-        tag = dto.tag;
-        name = dto.name;
-        mode = dto.mode;
-        tournament = dto.tournament;
-        match = dto.match;
-        lastAddress = dto.lastAddress;
-        lastContact = dto.lastContact;
     }
 
     @Override

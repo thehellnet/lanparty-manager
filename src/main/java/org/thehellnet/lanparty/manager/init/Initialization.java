@@ -8,7 +8,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.utility.PasswordUtility;
@@ -19,6 +18,81 @@ import java.util.Map;
 @Component
 @Transactional
 public class Initialization {
+
+    private static final String[] PRIVILEGES = new String[]{
+            "ACTION_LOGIN",
+            "ACTION_APPUSER_CHANGE_PASSWORD",
+
+            "APPUSER_CREATE",
+            "APPUSER_READ",
+            "APPUSER_UPDATE",
+            "APPUSER_DELETE",
+
+            "APPUSERTOKEN_CREATE",
+            "APPUSERTOKEN_READ",
+            "APPUSERTOKEN_UPDATE",
+            "APPUSERTOKEN_DELETE",
+
+            "CFG_CREATE",
+            "CFG_READ",
+            "CFG_UPDATE",
+            "CFG_DELETE",
+
+            "GAME_CREATE",
+            "GAME_READ",
+            "GAME_UPDATE",
+            "GAME_DELETE",
+
+            "GAMEGAMETYPE_CREATE",
+            "GAMEGAMETYPE_READ",
+            "GAMEGAMETYPE_UPDATE",
+            "GAMEGAMETYPE_DELETE",
+
+            "GAMEMAP_CREATE",
+            "GAMEMAP_READ",
+            "GAMEMAP_UPDATE",
+            "GAMEMAP_DELETE",
+
+            "GAMETYPE_CREATE",
+            "GAMETYPE_READ",
+            "GAMETYPE_UPDATE",
+            "GAMETYPE_DELETE",
+
+            "MATCH_CREATE",
+            "MATCH_READ",
+            "MATCH_UPDATE",
+            "MATCH_DELETE",
+
+            "PLAYER_CREATE",
+            "PLAYER_READ",
+            "PLAYER_UPDATE",
+            "PLAYER_DELETE",
+
+            "SEAT_CREATE",
+            "SEAT_READ",
+            "SEAT_UPDATE",
+            "SEAT_DELETE",
+
+            "SERVER_CREATE",
+            "SERVER_READ",
+            "SERVER_UPDATE",
+            "SERVER_DELETE",
+
+            "SHOWCASE_CREATE",
+            "SHOWCASE_READ",
+            "SHOWCASE_UPDATE",
+            "SHOWCASE_DELETE",
+
+            "TEAM_CREATE",
+            "TEAM_READ",
+            "TEAM_UPDATE",
+            "TEAM_DELETE",
+
+            "TOURNAMENT_CREATE",
+            "TOURNAMENT_READ",
+            "TOURNAMENT_UPDATE",
+            "TOURNAMENT_DELETE",
+    };
 
     private static final String GAME_Q3A = "q3a";
     private static final String GAME_Q3UT4 = "q3ut4";
@@ -52,17 +126,22 @@ public class Initialization {
     private static final String GAMETYPE_HARVESTER = "Harvester";
 
     private static final Logger logger = LoggerFactory.getLogger(Initialization.class);
+
     private final ApplicationEventPublisher applicationEventPublisher;
+
+    private final PrivilegeRepository privilegeRepository;
     private final GameRepository gameRepository;
     private final GametypeRepository gametypeRepository;
     private final GameGametypeRepository gameGametypeRepository;
     private final GameMapRepository gameMapRepository;
     private final AppUserRepository appUserRepository;
+
     private boolean alreadyRun = false;
 
     @Autowired
-    public Initialization(ApplicationEventPublisher applicationEventPublisher, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
+    public Initialization(ApplicationEventPublisher applicationEventPublisher, PrivilegeRepository privilegeRepository, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
         this.applicationEventPublisher = applicationEventPublisher;
+        this.privilegeRepository = privilegeRepository;
         this.gameRepository = gameRepository;
         this.gametypeRepository = gametypeRepository;
         this.gameGametypeRepository = gameGametypeRepository;
@@ -80,18 +159,32 @@ public class Initialization {
 
         logger.info("Initializing database data");
 
+        checkPrivileges();
+
         checkGames();
         checkGametypes();
         checkGameGametypes();
         checkGameMaps();
 
         checkAppUsers();
-        checkAppUserRoles();
 
         logger.info("Database data initialization complete");
 
         InitializedEvent initializedEvent = new InitializedEvent(this);
         applicationEventPublisher.publishEvent(initializedEvent);
+    }
+
+    private void checkPrivileges() {
+        logger.debug("Checking privileges");
+
+        for (String privilegeName : PRIVILEGES) {
+            Privilege privilege = privilegeRepository.findByName(privilegeName);
+            if (privilege == null) {
+                privilege = new Privilege();
+            }
+            privilege.setName(privilegeName);
+            privilegeRepository.save(privilege);
+        }
     }
 
     private void checkGames() {
@@ -398,22 +491,6 @@ public class Initialization {
                 appUser = new AppUser(userEmail, hashedPassword);
                 appUserRepository.save(appUser);
             }
-        }
-    }
-
-    private void checkAppUserRoles() {
-        logger.debug("Checking user roles assigment");
-
-        Map<String, Role[]> userRoleMap = new HashMap<>();
-        userRoleMap.put("admin", Role.values());
-
-        for (String userEmail : userRoleMap.keySet()) {
-            AppUser appUser = appUserRepository.findByEmail(userEmail);
-            appUser.getAppUserRoles().clear();
-            for (Role role : userRoleMap.get(userEmail)) {
-                appUser.getAppUserRoles().add(role);
-            }
-            appUserRepository.save(appUser);
         }
     }
 

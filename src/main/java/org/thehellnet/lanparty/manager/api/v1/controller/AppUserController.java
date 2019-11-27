@@ -3,9 +3,6 @@ package org.thehellnet.lanparty.manager.api.v1.controller;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckRoles;
-import org.thehellnet.lanparty.manager.api.v1.controller.aspect.CheckToken;
-import org.thehellnet.lanparty.manager.model.constant.Role;
 import org.thehellnet.lanparty.manager.model.dto.request.appuser.LoginAppUserRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.appuser.LoginAppUserResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
@@ -42,8 +39,6 @@ public class AppUserController extends AbstractController {
         return ResponseEntity.ok(body);
     }
 
-    @CheckToken
-    @CheckRoles(Role.ACTION_LOGIN)
     @RequestMapping(
             path = "/isTokenValid",
             method = RequestMethod.GET

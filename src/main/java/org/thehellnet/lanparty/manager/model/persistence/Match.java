@@ -11,7 +11,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "match")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Match extends AbstractEntity<Match> {
+public class Match extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -164,19 +164,6 @@ public class Match extends AbstractEntity<Match> {
 
     public void setGuestTeam(Team guestTeam) {
         this.guestTeam = guestTeam;
-    }
-
-    @Override
-    public void updateFromEntity(Match dto) {
-        name = dto.name;
-        tournament = dto.tournament;
-        status = dto.status;
-        playOrder = dto.playOrder;
-        server = dto.server;
-        gameMap = dto.gameMap;
-        gametype = dto.gametype;
-        localTeam = dto.localTeam;
-        guestTeam = dto.guestTeam;
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "appuser_token")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class AppUserToken extends AbstractEntity<AppUserToken> {
+public class AppUserToken extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -83,12 +83,6 @@ public class AppUserToken extends AbstractEntity<AppUserToken> {
 
     public void setExpirationDateTime(DateTime expirationDateTime) {
         this.expirationDateTime = expirationDateTime;
-    }
-
-    @Override
-    public void updateFromEntity(AppUserToken dto) {
-        token = dto.token;
-        appUser = dto.appUser;
     }
 
     @Override

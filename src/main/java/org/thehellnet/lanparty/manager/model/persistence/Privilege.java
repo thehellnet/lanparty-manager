@@ -10,29 +10,25 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "gametype")
+@Table(name = "privilege")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Gametype extends AbstractEntity {
+public class Privilege extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gametype_id_seq")
-    @SequenceGenerator(name = "gametype_id_seq", sequenceName = "gametype_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "privilege_id_seq")
+    @SequenceGenerator(name = "privilege_id_seq", sequenceName = "privilege_id_seq")
     private Long Id;
 
     @Basic
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "gametype", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(mappedBy = "privileges")
     @JsonIdentityReference(alwaysAsId = true)
-    private Set<GameGametype> gameGametypes = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
-    public Gametype() {
-    }
-
-    public Gametype(String name) {
-        this.name = name;
+    public Privilege() {
     }
 
     public Long getId() {
@@ -40,7 +36,7 @@ public class Gametype extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        Id = id;
     }
 
     public String getName() {
@@ -51,27 +47,27 @@ public class Gametype extends AbstractEntity {
         this.name = name;
     }
 
-    public Set<GameGametype> getGameGametypes() {
-        return gameGametypes;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setGameGametypes(Set<GameGametype> gameGametypes) {
-        this.gameGametypes = gameGametypes;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Gametype gametype = (Gametype) o;
-        return Id.equals(gametype.Id) &&
-                name.equals(gametype.name) &&
-                gameGametypes.equals(gametype.gameGametypes);
+        Privilege privilege = (Privilege) o;
+        return Id.equals(privilege.Id) &&
+                name.equals(privilege.name) &&
+                roles.equals(privilege.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id, name);
+        return Objects.hash(Id);
     }
 
     @Override

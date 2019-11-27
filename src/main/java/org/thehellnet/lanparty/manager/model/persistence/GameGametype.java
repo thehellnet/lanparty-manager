@@ -13,7 +13,7 @@ import java.util.Objects;
                 @UniqueConstraint(columnNames = {"game_id", "gametype_id"})
         })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class GameGametype extends AbstractEntity<GameGametype> {
+public class GameGametype extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -74,13 +74,6 @@ public class GameGametype extends AbstractEntity<GameGametype> {
 
     public void setTag(String tag) {
         this.tag = tag;
-    }
-
-    @Override
-    public void updateFromEntity(GameGametype dto) {
-        game = dto.game;
-        gametype = dto.gametype;
-        tag = dto.tag;
     }
 
     @Override

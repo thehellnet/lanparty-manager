@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "tournament")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonIdentityReference(alwaysAsId = true)
-public class Tournament extends AbstractEntity<Tournament> {
+public class Tournament extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -128,17 +128,6 @@ public class Tournament extends AbstractEntity<Tournament> {
 
     public void setTeams(Set<Team> teams) {
         this.teams = teams;
-    }
-
-    @Override
-    public void updateFromEntity(Tournament dto) {
-        name = dto.name;
-        game = dto.game;
-        status = dto.status;
-        cfg = dto.cfg;
-        seats = dto.seats;
-        matches = dto.matches;
-        teams = dto.teams;
     }
 
     @Override

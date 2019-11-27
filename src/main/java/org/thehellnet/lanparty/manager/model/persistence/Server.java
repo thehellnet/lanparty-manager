@@ -13,7 +13,7 @@ import java.util.Objects;
                 @UniqueConstraint(columnNames = {"address", "port"})
         })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Server extends AbstractEntity<Server> {
+public class Server extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -145,18 +145,6 @@ public class Server extends AbstractEntity<Server> {
 
     public void setLogParsingEnabled(Boolean logParsingEnabled) {
         this.logParsingEnabled = logParsingEnabled;
-    }
-
-    @Override
-    public void updateFromEntity(Server dto) {
-        tag = dto.tag;
-        name = dto.name;
-        game = dto.game;
-        address = dto.address;
-        port = dto.port;
-        rconPassword = dto.rconPassword;
-        logFile = dto.logFile;
-        logParsingEnabled = dto.logParsingEnabled;
     }
 
     @Override
