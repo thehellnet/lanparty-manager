@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "appuser")
@@ -46,7 +44,7 @@ public class AppUser extends AbstractEntity {
             joinColumns = @JoinColumn(name = "appuser_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
-    private Set<Role> roles = new HashSet<>();
+    private List<Role> roles = new ArrayList<>();
 
     public AppUser() {
     }
@@ -61,7 +59,7 @@ public class AppUser extends AbstractEntity {
         this.name = name;
     }
 
-    public AppUser(String email, String password, String name, Set<Role> roles, String barcode) {
+    public AppUser(String email, String password, String name, List<Role> roles, String barcode) {
         this(email, password, name);
         this.roles = roles;
         this.barcode = barcode;
@@ -115,11 +113,11 @@ public class AppUser extends AbstractEntity {
         this.appUserTokens = appUserTokens;
     }
 
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> appUserRoles) {
+    public void setRoles(List<Role> appUserRoles) {
         this.roles = appUserRoles;
     }
 

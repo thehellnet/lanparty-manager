@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "player")
@@ -31,7 +29,7 @@ public class Player extends AbstractEntity {
 
     @OneToMany(mappedBy = "player", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JsonIdentityReference(alwaysAsId = true)
-    private Set<Cfg> cfgs = new HashSet<>();
+    private List<Cfg> cfgs = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = false)
@@ -80,11 +78,11 @@ public class Player extends AbstractEntity {
         this.appUser = appUser;
     }
 
-    public Set<Cfg> getCfgs() {
+    public List<Cfg> getCfgs() {
         return cfgs;
     }
 
-    public void setCfgs(Set<Cfg> cfgs) {
+    public void setCfgs(List<Cfg> cfgs) {
         this.cfgs = cfgs;
     }
 

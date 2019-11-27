@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "privilege")
@@ -26,7 +26,7 @@ public class Privilege extends AbstractEntity {
 
     @ManyToMany(mappedBy = "privileges")
     @JsonIdentityReference(alwaysAsId = true)
-    private Set<Role> roles = new HashSet<>();
+    private List<Role> roles = new ArrayList<>();
 
     public Privilege() {
     }
@@ -47,11 +47,11 @@ public class Privilege extends AbstractEntity {
         this.name = name;
     }
 
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 

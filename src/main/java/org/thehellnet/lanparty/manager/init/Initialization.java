@@ -20,9 +20,6 @@ import java.util.Map;
 public class Initialization {
 
     private static final String[] PRIVILEGES = new String[]{
-            "ACTION_LOGIN",
-            "ACTION_APPUSER_CHANGE_PASSWORD",
-
             "APPUSER_CREATE",
             "APPUSER_READ",
             "APPUSER_UPDATE",
@@ -94,6 +91,8 @@ public class Initialization {
             "TOURNAMENT_DELETE",
     };
 
+    private static final String ROLE_ADMIN = "ADMIN";
+
     private static final String GAME_Q3A = "q3a";
     private static final String GAME_Q3UT4 = "q3ut4";
     private static final String GAME_COD = "cod";
@@ -130,6 +129,7 @@ public class Initialization {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     private final PrivilegeRepository privilegeRepository;
+    private final RoleRepository roleRepository;
     private final GameRepository gameRepository;
     private final GametypeRepository gametypeRepository;
     private final GameGametypeRepository gameGametypeRepository;
@@ -139,9 +139,10 @@ public class Initialization {
     private boolean alreadyRun = false;
 
     @Autowired
-    public Initialization(ApplicationEventPublisher applicationEventPublisher, PrivilegeRepository privilegeRepository, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
+    public Initialization(ApplicationEventPublisher applicationEventPublisher, PrivilegeRepository privilegeRepository, RoleRepository roleRepository, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.privilegeRepository = privilegeRepository;
+        this.roleRepository = roleRepository;
         this.gameRepository = gameRepository;
         this.gametypeRepository = gametypeRepository;
         this.gameGametypeRepository = gameGametypeRepository;
@@ -149,6 +150,7 @@ public class Initialization {
         this.appUserRepository = appUserRepository;
     }
 
+    @Transactional
     @EventListener(ContextRefreshedEvent.class)
     public void onContextRefreshed() {
         if (alreadyRun) {
@@ -160,6 +162,7 @@ public class Initialization {
         logger.info("Initializing database data");
 
         checkPrivileges();
+        checkRoles();
 
         checkGames();
         checkGametypes();
@@ -185,6 +188,18 @@ public class Initialization {
             privilege.setName(privilegeName);
             privilegeRepository.save(privilege);
         }
+    }
+
+    private void checkRoles() {
+        logger.debug("Checking roles");
+
+        Role role = roleRepository.findByName(ROLE_ADMIN);
+        if (role == null) {
+            role = new Role();
+        }
+        role.setName(ROLE_ADMIN);
+        role.setPrivileges(privilegeRepository.findAll());
+        roleRepository.save(role);
     }
 
     private void checkGames() {
@@ -486,11 +501,17 @@ public class Initialization {
         for (String userEmail : userMap.keySet()) {
             AppUser appUser = appUserRepository.findByEmail(userEmail);
             if (appUser == null) {
-                String password = userMap.get(userEmail);
-                String hashedPassword = PasswordUtility.hash(password);
-                appUser = new AppUser(userEmail, hashedPassword);
-                appUserRepository.save(appUser);
+                appUser = new AppUser();
             }
+
+            appUser.setEmail(userEmail);
+
+            String password = userMap.get(userEmail);
+            String hashedPassword = PasswordUtility.hash(password);
+            appUser.setPassword(hashedPassword);
+
+            appUser.setRoles(roleRepository.findAll());
+            appUserRepository.save(appUser);
         }
     }
 

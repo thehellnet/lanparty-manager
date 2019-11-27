@@ -5,9 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "role")
@@ -26,7 +27,7 @@ public class Role extends AbstractEntity {
 
     @ManyToMany(mappedBy = "roles")
     @JsonIdentityReference(alwaysAsId = true)
-    private Set<AppUser> appUsers = new HashSet<>();
+    private List<AppUser> appUsers = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "role_privilege",
@@ -34,7 +35,7 @@ public class Role extends AbstractEntity {
             inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id")
     )
     @JsonIdentityReference(alwaysAsId = true)
-    private Set<Privilege> privileges = new HashSet<>();
+    private List<Privilege> privileges = new ArrayList<>();
 
     public Role() {
     }
@@ -55,19 +56,19 @@ public class Role extends AbstractEntity {
         this.name = name;
     }
 
-    public Set<AppUser> getAppUsers() {
+    public List<AppUser> getAppUsers() {
         return appUsers;
     }
 
-    public void setAppUsers(Set<AppUser> appUsers) {
+    public void setAppUsers(List<AppUser> appUsers) {
         this.appUsers = appUsers;
     }
 
-    public Set<Privilege> getPrivileges() {
+    public List<Privilege> getPrivileges() {
         return privileges;
     }
 
-    public void setPrivileges(Set<Privilege> privileges) {
+    public void setPrivileges(List<Privilege> privileges) {
         this.privileges = privileges;
     }
 

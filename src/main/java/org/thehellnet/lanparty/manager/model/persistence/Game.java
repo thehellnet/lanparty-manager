@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "game")
@@ -28,10 +28,10 @@ public class Game extends AbstractEntity {
     private String name;
 
     @OneToMany(mappedBy = "game", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    private Set<GameGametype> gameGametypes = new HashSet<>();
+    private List<GameGametype> gameGametypes = new ArrayList<>();
 
     @OneToMany(mappedBy = "game", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    private Set<GameMap> gameMaps = new HashSet<>();
+    private List<GameMap> gameMaps = new ArrayList<>();
 
     public Game() {
     }
@@ -69,19 +69,19 @@ public class Game extends AbstractEntity {
         this.name = name;
     }
 
-    public Set<GameGametype> getGameGametypes() {
+    public List<GameGametype> getGameGametypes() {
         return gameGametypes;
     }
 
-    public void setGameGametypes(Set<GameGametype> gameGametypes) {
+    public void setGameGametypes(List<GameGametype> gameGametypes) {
         this.gameGametypes = gameGametypes;
     }
 
-    public Set<GameMap> getGameMaps() {
+    public List<GameMap> getGameMaps() {
         return gameMaps;
     }
 
-    public void setGameMaps(Set<GameMap> gameMaps) {
+    public void setGameMaps(List<GameMap> gameMaps) {
         this.gameMaps = gameMaps;
     }
 

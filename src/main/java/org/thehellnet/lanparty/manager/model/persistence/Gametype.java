@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "gametype")
@@ -26,7 +24,7 @@ public class Gametype extends AbstractEntity {
 
     @OneToMany(mappedBy = "gametype", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JsonIdentityReference(alwaysAsId = true)
-    private Set<GameGametype> gameGametypes = new HashSet<>();
+    private List<GameGametype> gameGametypes = new ArrayList<>();
 
     public Gametype() {
     }
@@ -51,11 +49,11 @@ public class Gametype extends AbstractEntity {
         this.name = name;
     }
 
-    public Set<GameGametype> getGameGametypes() {
+    public List<GameGametype> getGameGametypes() {
         return gameGametypes;
     }
 
-    public void setGameGametypes(Set<GameGametype> gameGametypes) {
+    public void setGameGametypes(List<GameGametype> gameGametypes) {
         this.gameGametypes = gameGametypes;
     }
 

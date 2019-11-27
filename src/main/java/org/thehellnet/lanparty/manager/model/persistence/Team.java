@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 
 @Entity
@@ -35,15 +35,15 @@ public class Team extends AbstractEntity {
 
     @OneToMany(mappedBy = "team", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JsonIdentityReference(alwaysAsId = true)
-    private Set<Player> players = new HashSet<>();
+    private List<Player> players = new ArrayList<>();
 
     @OneToMany(mappedBy = "localTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JsonIdentityReference(alwaysAsId = true)
-    private Set<Match> localMatches = new HashSet<>();
+    private List<Match> localMatches = new ArrayList<>();
 
     @OneToMany(mappedBy = "guestTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JsonIdentityReference(alwaysAsId = true)
-    private Set<Match> guestMatches = new HashSet<>();
+    private List<Match> guestMatches = new ArrayList<>();
 
     public Team() {
     }
@@ -81,27 +81,27 @@ public class Team extends AbstractEntity {
         this.tournament = tournament;
     }
 
-    public Set<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(Set<Player> players) {
+    public void setPlayers(List<Player> players) {
         this.players = players;
     }
 
-    public Set<Match> getLocalMatches() {
+    public List<Match> getLocalMatches() {
         return localMatches;
     }
 
-    public void setLocalMatches(Set<Match> localMatches) {
+    public void setLocalMatches(List<Match> localMatches) {
         this.localMatches = localMatches;
     }
 
-    public Set<Match> getGuestMatches() {
+    public List<Match> getGuestMatches() {
         return guestMatches;
     }
 
-    public void setGuestMatches(Set<Match> guestMatches) {
+    public void setGuestMatches(List<Match> guestMatches) {
         this.guestMatches = guestMatches;
     }
 
