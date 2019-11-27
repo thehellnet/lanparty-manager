@@ -19,6 +19,10 @@ public class AppUser extends AbstractEntity {
     private Long Id;
 
     @Basic
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = Boolean.TRUE;
+
+    @Basic
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -71,6 +75,14 @@ public class AppUser extends AbstractEntity {
 
     public void setId(Long id) {
         this.Id = id;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getEmail() {
@@ -127,6 +139,7 @@ public class AppUser extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         AppUser appUser = (AppUser) o;
         return Id.equals(appUser.Id) &&
+                enabled.equals(appUser.enabled) &&
                 email.equals(appUser.email) &&
                 password.equals(appUser.password) &&
                 Objects.equals(name, appUser.name) &&
