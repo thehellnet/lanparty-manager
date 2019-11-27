@@ -38,23 +38,23 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 def VERSIONS = [
-        "tomcat"              : "9.0.27",
+        "tomcat"              : "9.0.29",
         "groovy"              : "2.5.8",
         "spock"               : "1.3-groovy-2.5",
         "slf4j"               : "1.7.29",
         "logback"             : "1.2.3",
         "spring"              : "5.2.1.RELEASE",
-        "spring-data-jpa"     : "2.2.1.RELEASE",
-        "spring-data-rest"    : "3.2.1.RELEASE",
-        "spring-security-jwt" : "1.1.0.RELEASE",
-        "jackson"             : "2.10.0",
+        "spring-data-jpa"     : "2.2.2.RELEASE",
+        "spring-data-rest"    : "3.2.2.RELEASE",
+        "jackson"             : "2.10.1",
         "postgresql"          : "42.2.8",
         "c3p0"                : "0.9.5.4",
-        "hibernate"           : "5.4.8.Final",
+        "hibernate"           : "5.4.9.Final",
         "hibernate-validator" : "6.1.0.Final",
         "json"                : "20190722",
         "snakeyaml"           : "1.25",
         "geoip2"              : "2.12.0",
+        "jjwt"                : "0.9.1",
         "jaxb-api"            : "2.3.1",
         "javax.servlet-api"   : "4.0.1",
         "aspectjweaver"       : "1.9.4",
@@ -63,6 +63,7 @@ def VERSIONS = [
         "joda-time-hibernate" : "1.4",
         "joda-convert"        : "2.2.1",
         "usertype.core"       : "7.0.0.CR1",
+        "bouncycastle"        : "1.64",
         "argon2-jvm"          : "2.6",
         "findbugs-annotations": "3.0.1"
 ]
@@ -91,7 +92,7 @@ dependencies {
     implementation group: "org.springframework.security", name: "spring-security-core", version: VERSIONS["spring"]
     implementation group: "org.springframework.security", name: "spring-security-config", version: VERSIONS["spring"]
     implementation group: "org.springframework.security", name: "spring-security-web", version: VERSIONS["spring"]
-    implementation group: "org.springframework.security", name: "spring-security-jwt", version: VERSIONS["spring-security-jwt"]
+    implementation group: "org.springframework.security", name: "spring-security-crypto", version: VERSIONS["spring"]
 
     implementation group: "com.fasterxml.jackson.core", name: "jackson-core", version: VERSIONS["jackson"]
     implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: VERSIONS["jackson"]
@@ -114,6 +115,7 @@ dependencies {
 
     implementation group: "org.json", name: "json", version: VERSIONS["json"]
     implementation group: "org.yaml", name: "snakeyaml", version: VERSIONS["snakeyaml"]
+    implementation group: "io.jsonwebtoken", name: "jjwt", version: VERSIONS["jjwt"]
 
     implementation group: "com.maxmind.geoip2", name: "geoip2", version: VERSIONS["geoip2"]
 
@@ -124,6 +126,7 @@ dependencies {
     implementation group: "org.joda", name: "joda-convert", version: VERSIONS["joda-convert"]
     implementation group: "org.jadira.usertype", name: "usertype.core", version: VERSIONS["usertype.core"]
 
+    implementation group: "org.bouncycastle", name: "bcprov-jdk15on", version: VERSIONS["bouncycastle"]
     implementation group: "de.mkammerer", name: "argon2-jvm", version: VERSIONS["argon2-jvm"]
 
     implementation group: "com.google.code.findbugs", name: "annotations", version: VERSIONS["findbugs-annotations"]

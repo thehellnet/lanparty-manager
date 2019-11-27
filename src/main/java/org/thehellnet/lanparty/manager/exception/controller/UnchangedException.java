@@ -3,7 +3,7 @@ package org.thehellnet.lanparty.manager.exception.controller;
 import org.springframework.http.HttpStatus;
 
 @ResponseStatus(HttpStatus.NO_CONTENT)
-public class UnchangedException extends ControllerException {
+public class UnchangedException extends LanPartyException {
 
     public UnchangedException() {
     }

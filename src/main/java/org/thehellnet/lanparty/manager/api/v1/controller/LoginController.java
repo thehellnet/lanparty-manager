@@ -13,12 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api/public/v1/appUser")
-public class AppUserController extends AbstractController {
+@RequestMapping(path = "/api/public")
+public class LoginController extends AbstractController {
 
     private final LoginService loginService;
 
-    public AppUserController(LoginService loginService) {
+    public LoginController(LoginService loginService) {
         this.loginService = loginService;
     }
 

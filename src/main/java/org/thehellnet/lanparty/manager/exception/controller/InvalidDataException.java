@@ -3,7 +3,7 @@ package org.thehellnet.lanparty.manager.exception.controller;
 import org.springframework.http.HttpStatus;
 
 @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-public class InvalidDataException extends ControllerException {
+public class InvalidDataException extends LanPartyException {
 
     public InvalidDataException() {
     }

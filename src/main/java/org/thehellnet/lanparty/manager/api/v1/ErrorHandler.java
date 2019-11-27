@@ -8,20 +8,22 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.thehellnet.lanparty.manager.exception.controller.ControllerException;
+import org.thehellnet.lanparty.manager.exception.controller.LanPartyException;
 import org.thehellnet.lanparty.manager.exception.controller.ResponseStatus;
 
 @ControllerAdvice
+@RestController
 public class ErrorHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity handleCrudException(RuntimeException e) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity handleRuntimeException(Exception e) {
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        if (e instanceof ControllerException) {
+        if (e instanceof LanPartyException) {
             ResponseStatus responseStatus = e.getClass().getAnnotation(ResponseStatus.class);
             if (responseStatus != null) {
                 httpStatus = responseStatus.value();

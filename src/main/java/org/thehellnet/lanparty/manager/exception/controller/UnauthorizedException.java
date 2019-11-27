@@ -3,7 +3,7 @@ package org.thehellnet.lanparty.manager.exception.controller;
 import org.springframework.http.HttpStatus;
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
-public class UnauthorizedException extends ControllerException {
+public class UnauthorizedException extends LanPartyException {
 
     public UnauthorizedException() {
     }

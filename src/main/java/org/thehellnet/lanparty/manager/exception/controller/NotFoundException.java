@@ -3,7 +3,7 @@ package org.thehellnet.lanparty.manager.exception.controller;
 import org.springframework.http.HttpStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class NotFoundException extends ControllerException {
+public class NotFoundException extends LanPartyException {
 
     public NotFoundException() {
     }

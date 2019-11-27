@@ -8,6 +8,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.thehellnet.lanparty.manager.model.constant.RoleName;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.utility.PasswordUtility;
@@ -90,8 +91,6 @@ public class Initialization {
             "TOURNAMENT_UPDATE",
             "TOURNAMENT_DELETE",
     };
-
-    private static final String ROLE_ADMIN = "ADMIN";
 
     private static final String GAME_Q3A = "q3a";
     private static final String GAME_Q3UT4 = "q3ut4";
@@ -193,11 +192,11 @@ public class Initialization {
     private void checkRoles() {
         logger.debug("Checking roles");
 
-        Role role = roleRepository.findByName(ROLE_ADMIN);
+        Role role = roleRepository.findByName(RoleName.ADMIN);
         if (role == null) {
             role = new Role();
         }
-        role.setName(ROLE_ADMIN);
+        role.setName(RoleName.ADMIN);
         role.setPrivileges(privilegeRepository.findAll());
         roleRepository.save(role);
     }
