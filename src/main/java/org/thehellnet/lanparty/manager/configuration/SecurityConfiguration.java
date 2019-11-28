@@ -12,7 +12,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.thehellnet.lanparty.manager.configuration.filter.AuthenticationFilter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -43,6 +49,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .anyRequest().fullyAuthenticated();
 
+        http.cors();
+
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
@@ -60,5 +68,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new Argon2PasswordEncoder();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        List<String> allowedOrigins = new ArrayList<>();
+        allowedOrigins.add("*");
+
+        List<String> allowedMethods = new ArrayList<>();
+        allowedMethods.add(HttpMethod.GET.name());
+        allowedMethods.add(HttpMethod.POST.name());
+        allowedMethods.add(HttpMethod.PATCH.name());
+        allowedMethods.add(HttpMethod.PUT.name());
+        allowedMethods.add(HttpMethod.DELETE.name());
+
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(allowedOrigins);
+        corsConfiguration.setAllowedMethods(allowedMethods);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
     }
 }
