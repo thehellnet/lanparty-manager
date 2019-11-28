@@ -33,6 +33,6 @@ public final class PasswordUtility {
             return false;
         }
 
-        return Argon2Factory.create().verify(hash, password);
+        return Argon2Factory.create().verify(hash, password.toCharArray());
     }
 }
