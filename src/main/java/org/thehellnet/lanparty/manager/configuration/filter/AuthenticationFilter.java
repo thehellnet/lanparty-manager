@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.configuration.security;
+package org.thehellnet.lanparty.manager.configuration.filter;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

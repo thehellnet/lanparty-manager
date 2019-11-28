@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.api.v1;
+package org.thehellnet.lanparty.manager.configuration.error;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -9,14 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.thehellnet.lanparty.manager.exception.controller.LanPartyException;
-import org.thehellnet.lanparty.manager.exception.controller.ResponseStatus;
 
 @ControllerAdvice
-@RestController
-public class ErrorHandler extends ResponseEntityExceptionHandler {
+public class ErrorHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
 

@@ -22,13 +22,6 @@ public class Role extends AbstractEntity {
     @ManyToMany(mappedBy = "roles")
     private List<AppUser> appUsers = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(name = "role_privilege",
-            joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id")
-    )
-    private List<Privilege> privileges = new ArrayList<>();
-
     public Role() {
     }
 
@@ -56,14 +49,6 @@ public class Role extends AbstractEntity {
         this.appUsers = appUsers;
     }
 
-    public List<Privilege> getPrivileges() {
-        return privileges;
-    }
-
-    public void setPrivileges(List<Privilege> privileges) {
-        this.privileges = privileges;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,8 +56,7 @@ public class Role extends AbstractEntity {
         Role role = (Role) o;
         return Id.equals(role.Id) &&
                 name.equals(role.name) &&
-                appUsers.equals(role.appUsers) &&
-                privileges.equals(role.privileges);
+                appUsers.equals(role.appUsers);
     }
 
     @Override

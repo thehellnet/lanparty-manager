@@ -28,6 +28,7 @@ public class SpringConfiguration implements WebApplicationInitializer {
         servletContext.addListener(new ContextLoaderListener(context));
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet(new GenericWebApplicationContext());
+        dispatcherServlet.setThrowExceptionIfNoHandlerFound(true);
         ServletRegistration.Dynamic servletRegistration = servletContext.addServlet("servlet", dispatcherServlet);
         servletRegistration.setLoadOnStartup(1);
         servletRegistration.addMapping("/*");

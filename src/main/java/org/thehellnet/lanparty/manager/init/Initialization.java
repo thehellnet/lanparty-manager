@@ -20,78 +20,6 @@ import java.util.Map;
 @Transactional
 public class Initialization {
 
-    private static final String[] PRIVILEGES = new String[]{
-            "APPUSER_CREATE",
-            "APPUSER_READ",
-            "APPUSER_UPDATE",
-            "APPUSER_DELETE",
-
-            "APPUSERTOKEN_CREATE",
-            "APPUSERTOKEN_READ",
-            "APPUSERTOKEN_UPDATE",
-            "APPUSERTOKEN_DELETE",
-
-            "CFG_CREATE",
-            "CFG_READ",
-            "CFG_UPDATE",
-            "CFG_DELETE",
-
-            "GAME_CREATE",
-            "GAME_READ",
-            "GAME_UPDATE",
-            "GAME_DELETE",
-
-            "GAMEGAMETYPE_CREATE",
-            "GAMEGAMETYPE_READ",
-            "GAMEGAMETYPE_UPDATE",
-            "GAMEGAMETYPE_DELETE",
-
-            "GAMEMAP_CREATE",
-            "GAMEMAP_READ",
-            "GAMEMAP_UPDATE",
-            "GAMEMAP_DELETE",
-
-            "GAMETYPE_CREATE",
-            "GAMETYPE_READ",
-            "GAMETYPE_UPDATE",
-            "GAMETYPE_DELETE",
-
-            "MATCH_CREATE",
-            "MATCH_READ",
-            "MATCH_UPDATE",
-            "MATCH_DELETE",
-
-            "PLAYER_CREATE",
-            "PLAYER_READ",
-            "PLAYER_UPDATE",
-            "PLAYER_DELETE",
-
-            "SEAT_CREATE",
-            "SEAT_READ",
-            "SEAT_UPDATE",
-            "SEAT_DELETE",
-
-            "SERVER_CREATE",
-            "SERVER_READ",
-            "SERVER_UPDATE",
-            "SERVER_DELETE",
-
-            "SHOWCASE_CREATE",
-            "SHOWCASE_READ",
-            "SHOWCASE_UPDATE",
-            "SHOWCASE_DELETE",
-
-            "TEAM_CREATE",
-            "TEAM_READ",
-            "TEAM_UPDATE",
-            "TEAM_DELETE",
-
-            "TOURNAMENT_CREATE",
-            "TOURNAMENT_READ",
-            "TOURNAMENT_UPDATE",
-            "TOURNAMENT_DELETE",
-    };
-
     private static final String[] ROLENAMES = new String[]{
             RoleName.USER,
             RoleName.ADMIN
@@ -132,7 +60,6 @@ public class Initialization {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    private final PrivilegeRepository privilegeRepository;
     private final RoleRepository roleRepository;
     private final GameRepository gameRepository;
     private final GametypeRepository gametypeRepository;
@@ -143,9 +70,8 @@ public class Initialization {
     private boolean alreadyRun = false;
 
     @Autowired
-    public Initialization(ApplicationEventPublisher applicationEventPublisher, PrivilegeRepository privilegeRepository, RoleRepository roleRepository, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
+    public Initialization(ApplicationEventPublisher applicationEventPublisher, RoleRepository roleRepository, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
         this.applicationEventPublisher = applicationEventPublisher;
-        this.privilegeRepository = privilegeRepository;
         this.roleRepository = roleRepository;
         this.gameRepository = gameRepository;
         this.gametypeRepository = gametypeRepository;
@@ -165,7 +91,6 @@ public class Initialization {
 
         logger.info("Initializing database data");
 
-        checkPrivileges();
         checkRoles();
 
         checkGames();
@@ -181,19 +106,6 @@ public class Initialization {
         applicationEventPublisher.publishEvent(initializedEvent);
     }
 
-    private void checkPrivileges() {
-        logger.debug("Checking privileges");
-
-        for (String privilegeName : PRIVILEGES) {
-            Privilege privilege = privilegeRepository.findByName(privilegeName);
-            if (privilege == null) {
-                privilege = new Privilege();
-            }
-            privilege.setName(privilegeName);
-            privilegeRepository.save(privilege);
-        }
-    }
-
     private void checkRoles() {
         logger.debug("Checking roles");
 
@@ -203,11 +115,6 @@ public class Initialization {
                 role = new Role();
             }
             role.setName(roleName);
-
-            if (roleName.equals(RoleName.ADMIN)) {
-                role.setPrivileges(privilegeRepository.findAll());
-            }
-
             roleRepository.save(role);
         }
     }
