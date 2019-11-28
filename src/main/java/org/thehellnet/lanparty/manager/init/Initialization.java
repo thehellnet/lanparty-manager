@@ -92,6 +92,11 @@ public class Initialization {
             "TOURNAMENT_DELETE",
     };
 
+    private static final String[] ROLENAMES = new String[]{
+            RoleName.USER,
+            RoleName.ADMIN
+    };
+
     private static final String GAME_Q3A = "q3a";
     private static final String GAME_Q3UT4 = "q3ut4";
     private static final String GAME_COD = "cod";
@@ -192,13 +197,19 @@ public class Initialization {
     private void checkRoles() {
         logger.debug("Checking roles");
 
-        Role role = roleRepository.findByName(RoleName.ADMIN);
-        if (role == null) {
-            role = new Role();
+        for (String roleName : ROLENAMES) {
+            Role role = roleRepository.findByName(roleName);
+            if (role == null) {
+                role = new Role();
+            }
+            role.setName(roleName);
+
+            if (roleName.equals(RoleName.ADMIN)) {
+                role.setPrivileges(privilegeRepository.findAll());
+            }
+
+            roleRepository.save(role);
         }
-        role.setName(RoleName.ADMIN);
-        role.setPrivileges(privilegeRepository.findAll());
-        roleRepository.save(role);
     }
 
     private void checkGames() {
