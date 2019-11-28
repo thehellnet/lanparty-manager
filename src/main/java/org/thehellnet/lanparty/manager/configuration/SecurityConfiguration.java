@@ -3,7 +3,6 @@ package org.thehellnet.lanparty.manager.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -27,14 +26,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .passwordEncoder(passwordEncoder())
-                .withUser("admin").password(passwordEncoder().encode("admin")).roles("ADMIN");
-    }
-
-    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -43,13 +34,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/api/public/login").permitAll();
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET,"/api/public/rest/**").hasRole("USER")
-                .antMatchers(HttpMethod.POST,"/api/public/rest/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PUT,"/api/public/rest/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PATCH,"/api/public/rest/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.DELETE,"/api/public/rest/**").hasRole("ADMIN");
+                .antMatchers(HttpMethod.GET, "/api/public/rest/**").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/api/public/rest/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/api/public/rest/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PATCH, "/api/public/rest/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/api/public/rest/**").hasRole("ADMIN");
 
-        http.authorizeRequests().anyRequest().fullyAuthenticated();
+        http.authorizeRequests()
+                .anyRequest().fullyAuthenticated();
 
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
