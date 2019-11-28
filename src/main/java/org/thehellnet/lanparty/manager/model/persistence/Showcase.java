@@ -1,8 +1,5 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.joda.time.DateTime;
 import org.thehellnet.lanparty.manager.model.constant.ShowcaseMode;
 
@@ -11,7 +8,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "showcase")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Showcase extends AbstractEntity {
 
     @Id
@@ -35,12 +31,10 @@ public class Showcase extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "tournament_id")
-    @JsonIdentityReference(alwaysAsId = true)
     private Tournament tournament;
 
     @ManyToOne
     @JoinColumn(name = "match_id")
-    @JsonIdentityReference(alwaysAsId = true)
     private Match match;
 
     @Basic

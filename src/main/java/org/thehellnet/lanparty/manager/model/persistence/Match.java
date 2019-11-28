@@ -1,8 +1,5 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.thehellnet.lanparty.manager.model.constant.MatchStatus;
 
 import javax.persistence.*;
@@ -10,7 +7,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "match")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Match extends AbstractEntity {
 
     @Id
@@ -25,7 +21,6 @@ public class Match extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "tournament_id", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true)
     private Tournament tournament;
 
     @Basic
@@ -39,27 +34,22 @@ public class Match extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "server_id")
-    @JsonIdentityReference(alwaysAsId = true)
     private Server server;
 
     @ManyToOne
     @JoinColumn(name = "gamemap_id")
-    @JsonIdentityReference(alwaysAsId = true)
     private GameMap gameMap;
 
     @ManyToOne
     @JoinColumn(name = "gametype_id")
-    @JsonIdentityReference(alwaysAsId = true)
     private Gametype gametype;
 
     @ManyToOne
     @JoinColumn(name = "local_team_id")
-    @JsonIdentityReference(alwaysAsId = true)
     private Team localTeam;
 
     @ManyToOne
     @JoinColumn(name = "guest_team_id")
-    @JsonIdentityReference(alwaysAsId = true)
     private Team guestTeam;
 
     public Match() {

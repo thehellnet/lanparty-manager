@@ -1,18 +1,12 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "role")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Role extends AbstractEntity {
 
     @Id
@@ -26,7 +20,6 @@ public class Role extends AbstractEntity {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    @JsonIdentityReference(alwaysAsId = true)
     private List<AppUser> appUsers = new ArrayList<>();
 
     @ManyToMany
@@ -34,7 +27,6 @@ public class Role extends AbstractEntity {
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id")
     )
-    @JsonIdentityReference(alwaysAsId = true)
     private List<Privilege> privileges = new ArrayList<>();
 
     public Role() {

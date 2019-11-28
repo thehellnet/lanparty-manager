@@ -1,9 +1,5 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +11,6 @@ import java.util.Objects;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"name"})
         })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Team extends AbstractEntity {
 
     @Id
@@ -30,19 +25,15 @@ public class Team extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "tournament_id", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true)
     private Tournament tournament;
 
     @OneToMany(mappedBy = "team", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JsonIdentityReference(alwaysAsId = true)
     private List<Player> players = new ArrayList<>();
 
     @OneToMany(mappedBy = "localTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JsonIdentityReference(alwaysAsId = true)
     private List<Match> localMatches = new ArrayList<>();
 
     @OneToMany(mappedBy = "guestTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JsonIdentityReference(alwaysAsId = true)
     private List<Match> guestMatches = new ArrayList<>();
 
     public Team() {

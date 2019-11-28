@@ -1,7 +1,5 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.joda.time.DateTime;
 import org.thehellnet.utility.TokenUtility;
 
@@ -10,7 +8,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "appuser_token")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class AppUserToken extends AbstractEntity {
 
     @Id

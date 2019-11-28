@@ -1,15 +1,12 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "gametype")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Gametype extends AbstractEntity {
 
     @Id
@@ -23,7 +20,6 @@ public class Gametype extends AbstractEntity {
     private String name;
 
     @OneToMany(mappedBy = "gametype", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JsonIdentityReference(alwaysAsId = true)
     private List<GameGametype> gameGametypes = new ArrayList<>();
 
     public Gametype() {

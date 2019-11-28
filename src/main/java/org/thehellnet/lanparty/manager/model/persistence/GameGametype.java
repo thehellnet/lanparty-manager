@@ -1,9 +1,5 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -12,7 +8,6 @@ import java.util.Objects;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"game_id", "gametype_id"})
         })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class GameGametype extends AbstractEntity {
 
     @Id
@@ -23,12 +18,10 @@ public class GameGametype extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true)
     private Game game;
 
     @ManyToOne
     @JoinColumn(name = "gametype_id", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true)
     private Gametype gametype;
 
     @Basic

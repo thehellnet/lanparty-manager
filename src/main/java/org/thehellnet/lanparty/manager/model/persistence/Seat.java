@@ -1,8 +1,5 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
@@ -16,7 +13,6 @@ import java.util.Objects;
                 @UniqueConstraint(columnNames = {"ip_address"}),
         }
 )
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Seat extends AbstractEntity {
 
     @Id
@@ -35,7 +31,6 @@ public class Seat extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "tournament_id", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true)
     private Tournament tournament;
 
     @Basic
@@ -44,7 +39,6 @@ public class Seat extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "player_id")
-    @JsonIdentityReference(alwaysAsId = true)
     private Player player;
 
     public Seat() {
