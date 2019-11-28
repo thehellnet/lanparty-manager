@@ -40,7 +40,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             if (appUser != null) {
                 List<Role> roles = appUserService.getAppUserRoles(appUser);
                 List<GrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(appUser.getEmail(), null, authorities);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(appUser, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
