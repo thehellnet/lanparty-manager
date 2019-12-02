@@ -2,15 +2,15 @@ package org.thehellnet.lanparty.manager.model.constant;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ShowcaseMode {
+public enum PaneMode {
 
-    SCORES("Display scores"),
-    MATCHES("Display matches and status"),
+    SCORES("Display tournament scores"),
+    MATCHES("Display tournament matches and status"),
     SINGLE_MATCH("Display summary of single match");
 
     private final String description;
 
-    ShowcaseMode(String description) {
+    PaneMode(String description) {
         this.description = description;
     }
 

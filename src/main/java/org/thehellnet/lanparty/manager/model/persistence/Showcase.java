@@ -1,9 +1,10 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import org.joda.time.DateTime;
-import org.thehellnet.lanparty.manager.model.constant.ShowcaseMode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -21,21 +22,8 @@ public class Showcase extends AbstractEntity {
     private String tag;
 
     @Basic
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name")
     private String name;
-
-    @Basic
-    @Column(name = "mode", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ShowcaseMode mode = ShowcaseMode.MATCHES;
-
-    @ManyToOne
-    @JoinColumn(name = "tournament_id")
-    private Tournament tournament;
-
-    @ManyToOne
-    @JoinColumn(name = "match_id")
-    private Match match;
 
     @Basic
     @Column(name = "last_address")
@@ -45,34 +33,14 @@ public class Showcase extends AbstractEntity {
     @Column(name = "last_contact")
     private DateTime lastContact;
 
+    @OneToMany(mappedBy = "showcase", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<Pane> panes = new ArrayList<>();
+
     public Showcase() {
     }
 
-    public Showcase(String tag, String name) {
+    public Showcase(String tag) {
         this.tag = tag;
-        this.name = name;
-    }
-
-    public Showcase(String tag, String name, Tournament tournament) {
-        this.tag = tag;
-        this.name = name;
-        this.tournament = tournament;
-    }
-
-    public Showcase(String tag, String name, Match match) {
-        this.tag = tag;
-        this.name = name;
-        this.match = match;
-    }
-
-    public Showcase(String tag, String name, ShowcaseMode mode, Tournament tournament, Match match, String lastAddress, DateTime lastContact) {
-        this.tag = tag;
-        this.name = name;
-        this.mode = mode;
-        this.tournament = tournament;
-        this.match = match;
-        this.lastAddress = lastAddress;
-        this.lastContact = lastContact;
     }
 
     public Long getId() {
@@ -80,7 +48,7 @@ public class Showcase extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        Id = id;
     }
 
     public String getTag() {
@@ -99,30 +67,6 @@ public class Showcase extends AbstractEntity {
         this.name = name;
     }
 
-    public ShowcaseMode getMode() {
-        return mode;
-    }
-
-    public void setMode(ShowcaseMode mode) {
-        this.mode = mode;
-    }
-
-    public Tournament getTournament() {
-        return tournament;
-    }
-
-    public void setTournament(Tournament tournament) {
-        this.tournament = tournament;
-    }
-
-    public Match getMatch() {
-        return match;
-    }
-
-    public void setMatch(Match match) {
-        this.match = match;
-    }
-
     public String getLastAddress() {
         return lastAddress;
     }
@@ -139,6 +83,18 @@ public class Showcase extends AbstractEntity {
         this.lastContact = lastContact;
     }
 
+    public List<Pane> getPanes() {
+        return panes;
+    }
+
+    public void setPanes(List<Pane> panes) {
+        this.panes = panes;
+    }
+
+    public void updateLastContact() {
+        lastContact = DateTime.now();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -146,12 +102,10 @@ public class Showcase extends AbstractEntity {
         Showcase showcase = (Showcase) o;
         return Id.equals(showcase.Id) &&
                 tag.equals(showcase.tag) &&
-                name.equals(showcase.name) &&
-                mode == showcase.mode &&
-                Objects.equals(tournament, showcase.tournament) &&
-                Objects.equals(match, showcase.match) &&
+                Objects.equals(name, showcase.name) &&
                 Objects.equals(lastAddress, showcase.lastAddress) &&
-                Objects.equals(lastContact, showcase.lastContact);
+                Objects.equals(lastContact, showcase.lastContact) &&
+                panes.equals(showcase.panes);
     }
 
     @Override

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.thehellnet.lanparty.manager.model.constant.ShowcaseMode;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.utility.PasswordUtility;
@@ -153,13 +152,13 @@ public class DevController {
         Match match = prepareMatch(MATCH_NAME, tournament, team1, team2);
         data.put("match", match);
 
-        Showcase showcase1 = prepareShowcase(SHOWCASE_1_TAG, SHOWCASE_1_NAME, ShowcaseMode.MATCHES, tournament, null);
+        Showcase showcase1 = prepareShowcase(SHOWCASE_1_TAG, SHOWCASE_1_NAME);
         data.put("showcase1", showcase1);
 
-        Showcase showcase2 = prepareShowcase(SHOWCASE_2_TAG, SHOWCASE_2_NAME, ShowcaseMode.SCORES, tournament, null);
+        Showcase showcase2 = prepareShowcase(SHOWCASE_2_TAG, SHOWCASE_2_NAME);
         data.put("showcase2", showcase2);
 
-        Showcase showcase3 = prepareShowcase(SHOWCASE_3_TAG, SHOWCASE_3_NAME, ShowcaseMode.SINGLE_MATCH, null, match);
+        Showcase showcase3 = prepareShowcase(SHOWCASE_3_TAG, SHOWCASE_3_NAME);
         data.put("showcase3", showcase3);
 
         return ResponseEntity.ok(data.toString());
@@ -230,16 +229,13 @@ public class DevController {
         return matchRepository.save(match);
     }
 
-    private Showcase prepareShowcase(String tag, String name, ShowcaseMode mode, Tournament tournament, Match match) {
+    private Showcase prepareShowcase(String tag, String name) {
         Showcase showcase = showcaseRepository.findByTag(tag);
         if (showcase == null) {
             showcase = new Showcase();
         }
         showcase.setTag(tag);
         showcase.setName(name);
-        showcase.setMode(mode);
-        showcase.setTournament(tournament);
-        showcase.setMatch(match);
         return showcaseRepository.save(showcase);
     }
 }

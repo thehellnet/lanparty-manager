@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.thehellnet.lanparty.manager.exception.controller.LanPartyException;
+import org.thehellnet.lanparty.manager.exception.LanPartyException;
 
 @ControllerAdvice
 public class ErrorHandler {

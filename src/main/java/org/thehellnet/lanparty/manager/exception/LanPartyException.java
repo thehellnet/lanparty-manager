@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.exception.controller;
+package org.thehellnet.lanparty.manager.exception;
 
 public abstract class LanPartyException extends RuntimeException {
 

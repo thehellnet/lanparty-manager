@@ -1,13 +1,13 @@
 package org.thehellnet.lanparty.manager.model.dto.request.showcase;
 
 import org.joda.time.DateTime;
-import org.thehellnet.lanparty.manager.model.constant.ShowcaseMode;
+import org.thehellnet.lanparty.manager.model.constant.PaneMode;
 
 public class CreateShowcaseRequestDTO extends ShowcaseRequestDTO {
 
     public String tag;
     public String name;
-    public ShowcaseMode mode;
+    public PaneMode mode;
     public Long tournament;
     public Long match;
     public String lastAddress;

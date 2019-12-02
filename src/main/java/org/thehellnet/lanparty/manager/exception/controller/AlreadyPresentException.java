@@ -2,6 +2,7 @@ package org.thehellnet.lanparty.manager.exception.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.thehellnet.lanparty.manager.exception.LanPartyException;
 
 @ResponseStatus(HttpStatus.CONFLICT)
 public class AlreadyPresentException extends LanPartyException {

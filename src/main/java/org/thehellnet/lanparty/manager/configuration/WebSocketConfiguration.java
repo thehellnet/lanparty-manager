@@ -1,27 +1,31 @@
 package org.thehellnet.lanparty.manager.configuration;
 
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.thehellnet.lanparty.manager.api.v1.wshandler.MatchScoresWSHandler;
+import org.thehellnet.lanparty.manager.api.v1.ws.ShowcaseWSHandler;
 
 @Configuration
 @EnableWebSocket
-@ComponentScan(basePackages = "org.thehellnet.lanparty.manager.api")
 public class WebSocketConfiguration implements WebSocketConfigurer {
 
-    private final MatchScoresWSHandler apiV1MatchScoresWSHandler;
+    public static final String WEBSOCKET_URL_SHOWCASE = "/api/public/ws/showcase";
 
-    public WebSocketConfiguration(MatchScoresWSHandler apiV1MatchScoresWSHandler) {
-        this.apiV1MatchScoresWSHandler = apiV1MatchScoresWSHandler;
+    private final ShowcaseWSHandler showcaseWSHandler;
+
+    public WebSocketConfiguration(ShowcaseWSHandler showcaseWSHandler) {
+        this.showcaseWSHandler = showcaseWSHandler;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry
-                .addHandler(apiV1MatchScoresWSHandler, "/match/scores")
+        registry.addHandler(showcaseWSHandler, WEBSOCKET_URL_SHOWCASE)
                 .setAllowedOrigins("*");
+
+        registry.addHandler(showcaseWSHandler, WEBSOCKET_URL_SHOWCASE)
+                .setAllowedOrigins("*")
+                .withSockJS();
     }
 }
