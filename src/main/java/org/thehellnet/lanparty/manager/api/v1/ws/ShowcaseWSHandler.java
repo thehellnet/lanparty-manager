@@ -1,6 +1,7 @@
 package org.thehellnet.lanparty.manager.api.v1.ws;
 
-import org.springframework.http.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -9,15 +10,18 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.thehellnet.lanparty.manager.exception.showcase.TagNotPresentException;
 import org.thehellnet.lanparty.manager.service.ShowcaseService;
 
-import java.util.List;
+import java.net.URI;
+import java.util.Objects;
 
 @Component
 public class ShowcaseWSHandler extends TextWebSocketHandler {
 
-    private static final String TAG_HEADER = "X-Showcase-Tag";
+    public static final String URL_PREFIX = "/api/public/ws/showcase";
+    public static final String URL = URL_PREFIX + "/**";
+
+    private static final Logger logger = LoggerFactory.getLogger(ShowcaseWSHandler.class);
 
     private final ShowcaseService showcaseService;
-
 
     public ShowcaseWSHandler(ShowcaseService showcaseService) {
         this.showcaseService = showcaseService;
@@ -31,7 +35,7 @@ public class ShowcaseWSHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        super.handleTextMessage(session, message);
+        logger.debug(message.getPayload());
     }
 
     @Override
@@ -41,18 +45,14 @@ public class ShowcaseWSHandler extends TextWebSocketHandler {
     }
 
     private String getTag(WebSocketSession session) {
-        HttpHeaders handshakeHeaders = session.getHandshakeHeaders();
+        URI sessionUri = session.getUri();
+        String url = Objects.requireNonNull(sessionUri).getPath();
+        String tag = url.split(URL_PREFIX)[1].substring(1);
 
-        if (!handshakeHeaders.containsKey(TAG_HEADER)) {
+        if (tag.length() == 0) {
             throw new TagNotPresentException();
         }
 
-        List<String> tagHeaders = handshakeHeaders.get(TAG_HEADER);
-        if (tagHeaders == null || tagHeaders.size() == 0) {
-            throw new TagNotPresentException();
-        }
-
-        return tagHeaders.get(0);
+        return tag;
     }
-
 }

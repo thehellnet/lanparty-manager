@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.thehellnet.lanparty.manager.api.v1.ws.ShowcaseWSHandler;
 import org.thehellnet.lanparty.manager.configuration.filter.AuthenticationFilter;
 
 import java.util.ArrayList;
@@ -37,10 +38,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll();
-        http.authorizeRequests().antMatchers("/api/public/login").permitAll();
 
-        http.authorizeRequests().antMatchers(WebSocketConfiguration.WEBSOCKET_URL_SHOWCASE).permitAll();
-        http.authorizeRequests().antMatchers(WebSocketConfiguration.WEBSOCKET_URL_SHOWCASE + "/**").permitAll();
+        http.authorizeRequests()
+                .antMatchers("/dev/**").permitAll()
+                .antMatchers("/api/public/login").permitAll()
+                .antMatchers(ShowcaseWSHandler.URL + "/**").permitAll();
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/public/rest/**").hasRole("USER")

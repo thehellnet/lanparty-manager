@@ -36,28 +36,30 @@ public class ShowcaseService extends AbstractService {
     }
 
     @Transactional
-    public Showcase updateInfos(String ipAddress, Showcase showcase) {
-        showcase = showcaseRepository.getOne(showcase.getId());
+    public void addShowcase(String tag, WebSocketSession webSocketSession) {
+        String ipAddress = Objects.requireNonNull(webSocketSession.getRemoteAddress()).getAddress().getHostAddress();
+
+        Showcase showcase = showcaseRepository.findByTag(tag);
+        if (showcase == null) {
+            showcase = new Showcase(tag);
+        }
+
+        showcase.setConnected(true);
         showcase.setLastAddress(ipAddress);
         showcase.updateLastContact();
         showcase = showcaseRepository.save(showcase);
-        return showcase;
-    }
 
-    public void addShowcase(String tag, WebSocketSession webSocketSession) {
-        String ipAddress = Objects.requireNonNull(webSocketSession.getRemoteAddress()).toString();
-        Showcase showcase = findByTag(tag);
-        showcase = updateInfos(ipAddress, showcase);
         sessions.put(showcase, webSocketSession);
 
         logger.info("Showcase {} added from {}", tag, ipAddress);
     }
 
+    @Transactional
     public void removeShowcase(String tag) {
         Showcase showcase = findByTag(tag);
-        if (!sessions.containsKey(showcase)) {
-            return;
-        }
+        showcase.setConnected(false);
+        showcase = showcaseRepository.save(showcase);
+
         sessions.remove(showcase);
 
         logger.info("Showcase {} removed", tag);

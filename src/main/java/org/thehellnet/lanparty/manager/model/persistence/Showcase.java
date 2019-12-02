@@ -13,8 +13,8 @@ public class Showcase extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_id_seq")
-    @SequenceGenerator(name = "team_id_seq", sequenceName = "team_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "showcase_id_seq")
+    @SequenceGenerator(name = "showcase_id_seq", sequenceName = "showcase_id_seq")
     private Long Id;
 
     @Basic
@@ -24,6 +24,10 @@ public class Showcase extends AbstractEntity {
     @Basic
     @Column(name = "name")
     private String name;
+
+    @Basic
+    @Column(name = "connected", nullable = false)
+    private Boolean connected = Boolean.FALSE;
 
     @Basic
     @Column(name = "last_address")
@@ -67,6 +71,14 @@ public class Showcase extends AbstractEntity {
         this.name = name;
     }
 
+    public Boolean getConnected() {
+        return connected;
+    }
+
+    public void setConnected(Boolean connected) {
+        this.connected = connected;
+    }
+
     public String getLastAddress() {
         return lastAddress;
     }
@@ -103,6 +115,7 @@ public class Showcase extends AbstractEntity {
         return Id.equals(showcase.Id) &&
                 tag.equals(showcase.tag) &&
                 Objects.equals(name, showcase.name) &&
+                connected.equals(showcase.connected) &&
                 Objects.equals(lastAddress, showcase.lastAddress) &&
                 Objects.equals(lastContact, showcase.lastContact) &&
                 panes.equals(showcase.panes);

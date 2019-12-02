@@ -6,13 +6,13 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "showcase")
+@Table(name = "pane")
 public class Pane extends AbstractEntity {
 
     @javax.persistence.Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_id_seq")
-    @SequenceGenerator(name = "team_id_seq", sequenceName = "team_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pane_id_seq")
+    @SequenceGenerator(name = "pane_id_seq", sequenceName = "pane_id_seq")
     private Long Id;
 
     @ManyToOne
