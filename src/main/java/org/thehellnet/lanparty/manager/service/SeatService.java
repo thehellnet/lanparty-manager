@@ -3,6 +3,7 @@ package org.thehellnet.lanparty.manager.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.model.persistence.Seat;
 import org.thehellnet.lanparty.manager.repository.SeatRepository;
 
@@ -19,6 +20,9 @@ public class SeatService extends AbstractService {
 
     public void updateLastContact(String address) {
         Seat seat = seatRepository.findByIpAddress(address);
+        if (seat == null) {
+            throw new NotFoundException();
+        }
 
         logger.info("Updating last contact for seat {}", seat.getName());
 

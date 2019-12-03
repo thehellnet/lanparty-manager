@@ -45,6 +45,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(ShowcaseWSHandler.URL + "/**").permitAll();
 
         http.authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/api/public/v1/tool/**").permitAll();
+
+        http.authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/public/rest/**").hasRole("USER")
                 .antMatchers(HttpMethod.POST, "/api/public/rest/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT, "/api/public/rest/**").hasRole("ADMIN")

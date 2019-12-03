@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException
 import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException
-import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.utility.PasswordUtility
 import spock.lang.Unroll
@@ -60,25 +59,9 @@ class LoginServiceTest extends ServiceSpecification {
         thrown NotFoundException
     }
 
-    def "findByEmailAndPassword with exiting user but without LOGIN role"() {
-        given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
-
-        and:
-        String email = APPUSER_EMAIL
-        String password = APPUSER_PASSWORD
-
-        when:
-        loginService.findByEmailAndPassword(email, password)
-
-        then:
-        thrown UnauthorizedException
-    }
-
     def "findByEmailAndPassword with exiting user"() {
         given:
         AppUser user = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        user.getRoles().add(Role.ACTION_LOGIN)
         appUserRepository.save(user)
 
         when:
@@ -181,192 +164,6 @@ class LoginServiceTest extends ServiceSpecification {
         input_email   | input_password
         APPUSER_EMAIL | null
         APPUSER_EMAIL | ""
-    }
-
-    @Unroll
-    def "hasAllRoles with no roles in user: #roles | #result"(roles, result) {
-        given:
-        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser = appUserRepository.save(appUser)
-
-        expect:
-        loginService.hasAllRoles(appUser, roles as Role[]) == result
-
-        where:
-        roles                                                                              | result
-        null                                                                               | false
-        []                                                                                 | true
-        [Role.APPUSER_CREATE]                                                              | false
-        [Role.APPUSER_READ]                                                                | false
-        [Role.APPUSER_UPDATE]                                                              | false
-        [Role.APPUSER_DELETE]                                                              | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ]                                           | false
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_DELETE]                                         | false
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE]                                           | false
-        [Role.APPUSER_READ, Role.APPUSER_DELETE]                                           | false
-        [Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_DELETE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                    | false
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE] | false
-    }
-
-    @Unroll
-    def "hasAllRoles with one role in user: #roles | #result"(roles, result) {
-        given:
-        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser.roles.add(Role.APPUSER_READ)
-        appUser = appUserRepository.save(appUser)
-
-        expect:
-        loginService.hasAllRoles(appUser, roles as Role[]) == result
-
-        where:
-        roles                                                                              | result
-        null                                                                               | false
-        []                                                                                 | false
-        [Role.APPUSER_CREATE]                                                              | false
-        [Role.APPUSER_READ]                                                                | true
-        [Role.APPUSER_UPDATE]                                                              | false
-        [Role.APPUSER_DELETE]                                                              | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ]                                           | false
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_DELETE]                                         | false
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE]                                           | false
-        [Role.APPUSER_READ, Role.APPUSER_DELETE]                                           | false
-        [Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_DELETE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                    | false
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE] | false
-    }
-
-    @Unroll
-    def "hasAllRoles with two roles in user: #roles | #result"(roles, result) {
-        given:
-        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser.roles.add(Role.APPUSER_READ)
-        appUser.roles.add(Role.APPUSER_UPDATE)
-        appUser = appUserRepository.save(appUser)
-
-        expect:
-        loginService.hasAllRoles(appUser, roles as Role[]) == result
-
-        where:
-        roles                                                                              | result
-        null                                                                               | false
-        []                                                                                 | false
-        [Role.APPUSER_CREATE]                                                              | false
-        [Role.APPUSER_READ]                                                                | true
-        [Role.APPUSER_UPDATE]                                                              | true
-        [Role.APPUSER_DELETE]                                                              | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ]                                           | false
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_DELETE]                                         | false
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE]                                           | true
-        [Role.APPUSER_READ, Role.APPUSER_DELETE]                                           | false
-        [Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_DELETE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                    | false
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE] | false
-    }
-
-    @Unroll
-    def "hasAnyRoles with no roles in user: #roles | #result"(roles, result) {
-        given:
-        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser = appUserRepository.save(appUser)
-
-        expect:
-        loginService.hasAnyRoles(appUser, roles as Role[]) == result
-
-        where:
-        roles                                                                              | result
-        null                                                                               | false
-        []                                                                                 | true
-        [Role.APPUSER_CREATE]                                                              | false
-        [Role.APPUSER_READ]                                                                | false
-        [Role.APPUSER_UPDATE]                                                              | false
-        [Role.APPUSER_DELETE]                                                              | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ]                                           | false
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_DELETE]                                         | false
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE]                                           | false
-        [Role.APPUSER_READ, Role.APPUSER_DELETE]                                           | false
-        [Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_DELETE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                    | false
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                      | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE] | false
-    }
-
-    @Unroll
-    def "hasAnyRoles with one role in user: #roles | #result"(roles, result) {
-        given:
-        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser.roles.add(Role.APPUSER_READ)
-        appUser = appUserRepository.save(appUser)
-
-        expect:
-        loginService.hasAnyRoles(appUser, roles as Role[]) == result
-
-        where:
-        roles                                                                              | result
-        null                                                                               | false
-        []                                                                                 | false
-        [Role.APPUSER_CREATE]                                                              | false
-        [Role.APPUSER_READ]                                                                | true
-        [Role.APPUSER_UPDATE]                                                              | false
-        [Role.APPUSER_DELETE]                                                              | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ]                                           | true
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_DELETE]                                         | false
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE]                                           | true
-        [Role.APPUSER_READ, Role.APPUSER_DELETE]                                           | true
-        [Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE]                      | true
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_DELETE]                      | true
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                    | false
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                      | true
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE] | true
-    }
-
-    @Unroll
-    def "hasAnyRoles with two roles in user: #roles | #result"(roles, result) {
-        given:
-        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
-        appUser.roles.add(Role.APPUSER_READ)
-        appUser.roles.add(Role.APPUSER_DELETE)
-        appUser = appUserRepository.save(appUser)
-
-        expect:
-        loginService.hasAnyRoles(appUser, roles as Role[]) == result
-
-        where:
-        roles                                                                              | result
-        null                                                                               | false
-        []                                                                                 | false
-        [Role.APPUSER_CREATE]                                                              | false
-        [Role.APPUSER_READ]                                                                | true
-        [Role.APPUSER_UPDATE]                                                              | false
-        [Role.APPUSER_DELETE]                                                              | true
-        [Role.APPUSER_CREATE, Role.APPUSER_READ]                                           | true
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE]                                         | false
-        [Role.APPUSER_CREATE, Role.APPUSER_DELETE]                                         | true
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE]                                           | true
-        [Role.APPUSER_READ, Role.APPUSER_DELETE]                                           | true
-        [Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                                         | true
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE]                      | true
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_DELETE]                      | true
-        [Role.APPUSER_CREATE, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                    | true
-        [Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE]                      | true
-        [Role.APPUSER_CREATE, Role.APPUSER_READ, Role.APPUSER_UPDATE, Role.APPUSER_DELETE] | true
     }
 
     def "newToken with valid user"() {

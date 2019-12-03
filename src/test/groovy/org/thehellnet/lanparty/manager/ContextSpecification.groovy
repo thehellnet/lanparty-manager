@@ -11,7 +11,6 @@ import org.thehellnet.lanparty.manager.configuration.JacksonConfiguration
 import org.thehellnet.lanparty.manager.configuration.PersistenceConfiguration
 import org.thehellnet.lanparty.manager.configuration.SpringConfiguration
 import org.thehellnet.lanparty.manager.configuration.WebSocketConfiguration
-import org.thehellnet.lanparty.manager.model.constant.Role
 import org.thehellnet.lanparty.manager.model.persistence.*
 import org.thehellnet.lanparty.manager.repository.*
 import spock.lang.Specification
@@ -38,7 +37,6 @@ abstract class ContextSpecification extends Specification {
     protected static final String APPUSER_EMAIL_NEW = "emailnew@email.com"
     protected static final String APPUSER_PASSWORD_NEW = "password_new"
     protected static final String APPUSER_NAME_NEW = "Name2"
-    protected static final String[] APPUSER_ROLES_NEW = [Role.ACTION_LOGIN.name, Role.ACTION_APPUSER_CHANGE_PASSWORD.name] as String[]
     protected static final String APPUSER_BARCODE_NEW = "9876543210"
 
     protected static final String APPUSERTOKEN = "0123456789abcdef"
@@ -103,7 +101,7 @@ abstract class ContextSpecification extends Specification {
     protected AppUser createAppUser() {
         AppUser appUser = appUserRepository.findByEmail(APPUSER_EMAIL)
         if (appUser == null) {
-            appUser = new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, [] as Set<Role>, APPUSER_BARCODE)
+            appUser = new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, [] as List<Role>, APPUSER_BARCODE)
             appUser = appUserRepository.save(appUser)
         }
         return appUser
