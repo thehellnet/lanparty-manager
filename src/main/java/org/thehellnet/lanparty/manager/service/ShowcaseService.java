@@ -25,7 +25,7 @@ public class ShowcaseService extends AbstractService {
 
     private final ShowcaseRepository showcaseRepository;
 
-    private Map<Showcase, WebSocketSession> sessions = new HashMap<>();
+    private Map<Long, WebSocketSession> sessions = new HashMap<>();
 
     public ShowcaseService(ShowcaseRepository showcaseRepository) {
         this.showcaseRepository = showcaseRepository;
@@ -55,7 +55,7 @@ public class ShowcaseService extends AbstractService {
             showcase.updateLastContact();
             showcase = showcaseRepository.save(showcase);
 
-            sessions.put(showcase, webSocketSession);
+            sessions.put(showcase.getId(), webSocketSession);
 
             logger.info("Showcase {} added from {}", tag, ipAddress);
         }
@@ -68,7 +68,7 @@ public class ShowcaseService extends AbstractService {
             showcase.setConnected(false);
             showcase = showcaseRepository.save(showcase);
 
-            sessions.remove(showcase);
+            sessions.remove(showcase.getId());
 
             logger.info("Showcase {} removed", tag);
         }
@@ -77,8 +77,8 @@ public class ShowcaseService extends AbstractService {
     @Scheduled(fixedDelay = 2000)
     public void sendToAllShowcases() {
         synchronized (SYNC) {
-            sessions.forEach((showcase, webSocketSession) -> {
-                logger.info("Sendig to {}", showcase);
+            sessions.forEach((showcaseId, webSocketSession) -> {
+                logger.info("Sending to {}", showcaseId);
 
                 TextMessage message = new TextMessage("Hi");
 
