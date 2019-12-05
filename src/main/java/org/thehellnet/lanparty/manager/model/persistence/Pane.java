@@ -9,7 +9,7 @@ import java.util.Objects;
 @Table(name = "pane")
 public class Pane extends AbstractEntity {
 
-    @javax.persistence.Id
+    @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pane_id_seq")
     @SequenceGenerator(name = "pane_id_seq", sequenceName = "pane_id_seq")

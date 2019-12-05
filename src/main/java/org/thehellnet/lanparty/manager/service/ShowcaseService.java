@@ -1,22 +1,29 @@
 package org.thehellnet.lanparty.manager.service;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
+import org.thehellnet.lanparty.manager.model.persistence.Pane;
 import org.thehellnet.lanparty.manager.model.persistence.Showcase;
+import org.thehellnet.lanparty.manager.model.protocol.Command;
+import org.thehellnet.lanparty.manager.model.protocol.CommandParser;
+import org.thehellnet.lanparty.manager.model.protocol.ShowcaseNoun;
 import org.thehellnet.lanparty.manager.repository.ShowcaseRepository;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 @Service
+@Transactional
 public class ShowcaseService extends AbstractService {
 
     private static final Logger logger = LoggerFactory.getLogger(ShowcaseService.class);
@@ -74,20 +81,74 @@ public class ShowcaseService extends AbstractService {
         }
     }
 
-    @Scheduled(fixedDelay = 2000)
-    public void sendToAllShowcases() {
-        synchronized (SYNC) {
-            sessions.forEach((showcaseId, webSocketSession) -> {
-                logger.info("Sending to {}", showcaseId);
+//    @Scheduled(fixedDelay = 2000)
+//    public void sendToAllShowcases() {
+//        synchronized (SYNC) {
+//            sessions.forEach((showcaseId, webSocketSession) -> {
+//                logger.info("Sending to {}", showcaseId);
+//
+//                TextMessage message = new TextMessage("Hi");
+//
+//                try {
+//                    webSocketSession.sendMessage(message);
+//                } catch (IOException e) {
+//                    logger.error(e.getMessage());
+//                }
+//            });
+//        }
+//    }
 
-                TextMessage message = new TextMessage("Hi");
+    public void parseMessage(String tag, String message) {
+        Showcase showcase = findByTag(tag);
+        logger.debug("Message from {}: {}", showcase, message);
 
-                try {
-                    webSocketSession.sendMessage(message);
-                } catch (IOException e) {
-                    logger.error(e.getMessage());
-                }
-            });
+        CommandParser commandParser = new CommandParser(message);
+        Command command = commandParser.parse();
+
+        parseCommand(showcase, command);
+    }
+
+    public void parseCommand(Showcase showcase, Command command) {
+        showcase = showcaseRepository.findById(showcase.getId()).orElseThrow();
+
+        JSONObject response;
+
+        if (command.getNoun() == ShowcaseNoun.TEST) {
+            switch (command.getVerb()) {
+                case PING:
+                    response = new JSONObject();
+                    response.put("ping", "pong");
+                    send(showcase, response);
+                    break;
+
+                case TEXT:
+                    response = new JSONObject();
+                    response.put("text", command.getArgs().getString("text"));
+                    send(showcase, response);
+                    break;
+            }
+
+        } else if (command.getNoun() == ShowcaseNoun.PANE) {
+            switch (command.getVerb()) {
+                case GET:
+                    List<Pane> panes = showcase.getPanes();
+                    response = new JSONObject();
+                    response.put("panes", panes);
+                    send(showcase, response);
+                    break;
+            }
+        }
+    }
+
+    private void send(Showcase showcase, JSONObject response) {
+        WebSocketSession webSocketSession = sessions.get(showcase.getId());
+        String message = response.toString();
+        TextMessage textMessage = new TextMessage(message);
+
+        try {
+            webSocketSession.sendMessage(textMessage);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
         }
     }
 }

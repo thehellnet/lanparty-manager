@@ -35,7 +35,9 @@ public class ShowcaseWSHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        logger.debug(message.getPayload());
+        String tag = getTag(session);
+        String messagePayload = message.getPayload();
+        showcaseService.parseMessage(tag, messagePayload);
     }
 
     @Override
