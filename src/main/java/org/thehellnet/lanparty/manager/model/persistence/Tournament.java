@@ -1,6 +1,7 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.joda.time.DateTime;
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus;
 
 import javax.persistence.*;
@@ -19,12 +20,36 @@ public class Tournament extends AbstractEntity {
     private Long Id;
 
     @Basic
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = true;
+
+    @Basic
     @Column(name = "name", nullable = false)
     private String name;
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
+
+    @Basic
+    @Column(name = "start_datetime", nullable = false)
+    private DateTime startDateTime;
+
+    @Basic
+    @Column(name = "end_datetime", nullable = false)
+    private DateTime endDateTime;
+
+    @Basic
+    @Column(name = "registration_enabled", nullable = false)
+    private Boolean registrationEnabled = true;
+
+    @Basic
+    @Column(name = "start_registration_datetime", nullable = false)
+    private DateTime startRegistrationDateTime;
+
+    @Basic
+    @Column(name = "end_registration_datetime", nullable = false)
+    private DateTime endRegistrationDateTime;
 
     @Basic
     @Column(name = "status", nullable = false)
@@ -69,6 +94,14 @@ public class Tournament extends AbstractEntity {
         this.Id = id;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public String getName() {
         return name;
     }
@@ -85,6 +118,46 @@ public class Tournament extends AbstractEntity {
         this.game = game;
     }
 
+    public DateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(DateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public DateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(DateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
+    public Boolean getRegistrationEnabled() {
+        return registrationEnabled;
+    }
+
+    public void setRegistrationEnabled(Boolean registrationEnabled) {
+        this.registrationEnabled = registrationEnabled;
+    }
+
+    public DateTime getStartRegistrationDateTime() {
+        return startRegistrationDateTime;
+    }
+
+    public void setStartRegistrationDateTime(DateTime startRegistrationDateTime) {
+        this.startRegistrationDateTime = startRegistrationDateTime;
+    }
+
+    public DateTime getEndRegistrationDateTime() {
+        return endRegistrationDateTime;
+    }
+
+    public void setEndRegistrationDateTime(DateTime endRegistrationDateTime) {
+        this.endRegistrationDateTime = endRegistrationDateTime;
+    }
+
     public TournamentStatus getStatus() {
         return status;
     }
@@ -98,7 +171,7 @@ public class Tournament extends AbstractEntity {
     }
 
     public void setCfg(String cfg) {
-        this.cfg = cfg;
+        this.cfg = cfg != null ? cfg : "";
     }
 
     public List<Seat> getSeats() {
@@ -131,8 +204,14 @@ public class Tournament extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         Tournament that = (Tournament) o;
         return Id.equals(that.Id) &&
+                enabled == that.enabled &&
                 name.equals(that.name) &&
                 game.equals(that.game) &&
+                startDateTime.equals(that.startDateTime) &&
+                endDateTime.equals(that.endDateTime) &&
+                registrationEnabled == that.registrationEnabled &&
+                startRegistrationDateTime.equals(that.startRegistrationDateTime) &&
+                endRegistrationDateTime.equals(that.endRegistrationDateTime) &&
                 status == that.status &&
                 cfg.equals(that.cfg) &&
                 seats.equals(that.seats) &&

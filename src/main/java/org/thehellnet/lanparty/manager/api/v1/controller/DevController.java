@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.api.v1.controller;
 
+import org.joda.time.DateTime;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.thehellnet.utility.PasswordUtility;
 
 @Controller
 @RequestMapping(path = "/dev")
+@Transactional
 public class DevController {
 
     private static final String APPUSER_1_EMAIL = "user1@domain.tdl";
@@ -22,9 +24,12 @@ public class DevController {
     private static final String APPUSER_2_EMAIL = "user2@domain.tdl";
     private static final String APPUSER_2_PASSWORD = "password2";
 
-    private static final String GAME_TAG = "cod4";
+    private static final String GAME_TAG_COD4 = "cod4";
+    private static final String GAME_TAG_LOL = "lol";
 
-    private static final String TOURNAMENT_NAME = "Test tournament";
+    private static final String TOURNAMENT_1_NAME = "Call of Duty 4 tournament";
+    private static final String TOURNAMENT_2_NAME = "League of Legends - 5v5";
+    private static final String TOURNAMENT_3_NAME = "League of Legends - 1v1";
 
     private static final String SEAT_1_NAME = "Test seat 1";
     private static final String SEAT_1_ADDRESS = "0.0.0.0";
@@ -125,22 +130,31 @@ public class DevController {
         AppUser appUser2 = prepareAppUser(APPUSER_2_EMAIL, APPUSER_2_PASSWORD);
         data.put("appUser2", appUser2);
 
-        Game game = gameRepository.findByTag(GAME_TAG);
-        data.put("game", game);
+        Game codGame = gameRepository.findByTag(GAME_TAG_COD4);
+        data.put("codGame", codGame);
 
-        Tournament tournament = prepareTournament(TOURNAMENT_NAME, game, TOURNAMENT_CFG);
-        data.put("tournament", tournament);
+        Game lolGame = gameRepository.findByTag(GAME_TAG_LOL);
+        data.put("lolGame", lolGame);
 
-        Seat seat1 = prepareSeat(tournament, SEAT_1_ADDRESS, SEAT_1_NAME);
+        Tournament tournament1 = prepareTournament(TOURNAMENT_1_NAME, codGame, TOURNAMENT_CFG);
+        data.put("tournament1", tournament1);
+
+        Tournament tournament2 = prepareTournament(TOURNAMENT_2_NAME, lolGame,null);
+        data.put("tournament2", tournament2);
+
+        Tournament tournament3 = prepareTournament(TOURNAMENT_3_NAME, lolGame,null);
+        data.put("tournament3", tournament3);
+
+        Seat seat1 = prepareSeat(tournament1, SEAT_1_ADDRESS, SEAT_1_NAME);
         data.put("seat1", seat1);
 
-        Seat seat2 = prepareSeat(tournament, SEAT_2_ADDRESS, SEAT_2_NAME);
+        Seat seat2 = prepareSeat(tournament1, SEAT_2_ADDRESS, SEAT_2_NAME);
         data.put("seat2", seat2);
 
-        Team team1 = prepareTeam(TEAM_1_NAME, tournament);
+        Team team1 = prepareTeam(TEAM_1_NAME, tournament1);
         data.put("team1", team1);
 
-        Team team2 = prepareTeam(TEAM_2_NAME, tournament);
+        Team team2 = prepareTeam(TEAM_2_NAME, tournament1);
         data.put("team2", team1);
 
         Player player1 = preparePlayer(appUser1, team1, PLAYER_1_NICKNAME);
@@ -149,7 +163,7 @@ public class DevController {
         Player player2 = preparePlayer(appUser2, team2, PLAYER_2_NICKNAME);
         data.put("player2", player2);
 
-        Match match = prepareMatch(MATCH_NAME, tournament, team1, team2);
+        Match match = prepareMatch(MATCH_NAME, tournament1, team1, team2);
         data.put("match", match);
 
         Showcase showcase1 = prepareShowcase(SHOWCASE_1_TAG, SHOWCASE_1_NAME);
@@ -182,6 +196,13 @@ public class DevController {
         tournament.setName(name);
         tournament.setGame(game);
         tournament.setCfg(cfg);
+
+        DateTime now = DateTime.now();
+        tournament.setStartRegistrationDateTime(now);
+        tournament.setEndRegistrationDateTime(now.plusHours(1));
+        tournament.setStartDateTime(now.plusHours(1).plusMinutes(15));
+        tournament.setEndDateTime(now.plusHours(1).plusMinutes(45));
+
         return tournamentRepository.save(tournament);
     }
 
