@@ -50,6 +50,10 @@ public class AppUser extends AbstractEntity {
     public AppUser() {
     }
 
+    public AppUser(String email) {
+        this.email = email;
+    }
+
     public AppUser(String email, String password) {
         this.email = email;
         this.password = password;

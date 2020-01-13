@@ -13,17 +13,11 @@ import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.utility.PasswordUtility;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Component
 @Transactional
 public class Initialization {
-
-    private static final String[] ROLENAMES = new String[]{
-            RoleName.USER,
-            RoleName.ADMIN
-    };
 
     private static final String PLATFORM_PC = "pc";
     private static final String PLATFORM_RPI = "rpi";
@@ -109,14 +103,13 @@ public class Initialization {
         logger.info("Initializing database data");
 
         checkRoles();
+        checkAppUsers();
 
         checkPlatforms();
         checkGames();
         checkGametypes();
         checkGameGametypes();
         checkGameMaps();
-
-        checkAppUsers();
 
         logger.info("Database data initialization complete");
 
@@ -127,14 +120,14 @@ public class Initialization {
     private void checkRoles() {
         logger.info("Checking roles");
 
-        for (String roleName : ROLENAMES) {
-            Role role = roleRepository.findByName(roleName);
-            if (role == null) {
-                role = new Role();
-            }
-            role.setName(roleName);
-            roleRepository.save(role);
-        }
+        persistRole(RoleName.USER);
+        persistRole(RoleName.ADMIN);
+    }
+
+    private void checkAppUsers() {
+        logger.info("Checking users");
+
+        persistAppUser("admin", "admin");
     }
 
     private void checkPlatforms() {
@@ -404,31 +397,18 @@ public class Initialization {
         persistGameMap(GAME_CODWAW, "mp_suburban", "Upheaval", true);
     }
 
-    private void checkAppUsers() {
-        logger.info("Checking users");
+    private void persistRole(String name) {
+        logger.debug("Persist Role '{}'", name);
 
-        Map<String, String> userMap = new HashMap<>();
-        userMap.put("admin", "admin");
-
-        for (String userEmail : userMap.keySet()) {
-            AppUser appUser = appUserRepository.findByEmail(userEmail);
-            if (appUser == null) {
-                appUser = new AppUser();
-            }
-
-            appUser.setEmail(userEmail);
-
-            String password = userMap.get(userEmail);
-            String hashedPassword = PasswordUtility.hash(password);
-            appUser.setPassword(hashedPassword);
-
-            appUser.setRoles(roleRepository.findAll());
-            appUserRepository.save(appUser);
+        Role role = roleRepository.findByName(name);
+        if (role == null) {
+            role = new Role(name);
         }
+        roleRepository.save(role);
     }
 
     private void persistPlatform(String tag, String name) {
-        logger.debug("Persist platform '{}' '{}'", tag, name);
+        logger.debug("Persist Platform '{}' '{}'", tag, name);
 
         Platform platform = platformRepository.findByTag(tag);
         if (platform == null) {
@@ -436,6 +416,20 @@ public class Initialization {
         }
         platform.setName(name);
         platformRepository.save(platform);
+    }
+
+    private void persistAppUser(String email, String password) {
+        logger.debug("Persist AppUser '{}'", email);
+
+        List<Role> roles = roleRepository.findAll();
+        AppUser appUser = appUserRepository.findByEmail(email);
+        if (appUser == null) {
+            appUser = new AppUser(email);
+            String hashedPassword = PasswordUtility.hash(password);
+            appUser.setPassword(hashedPassword);
+            appUser.setRoles(roles);
+            appUserRepository.save(appUser);
+        }
     }
 
     private void persistGame(String tag, String name, String platformTag) {
