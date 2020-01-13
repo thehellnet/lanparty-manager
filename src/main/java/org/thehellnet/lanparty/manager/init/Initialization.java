@@ -25,6 +25,13 @@ public class Initialization {
             RoleName.ADMIN
     };
 
+    private static final String PLATFORM_PC = "pc";
+    private static final String PLATFORM_RPI = "rpi";
+    private static final String PLATFORM_PS4 = "ps";
+    private static final String PLATFORM_XBOX = "xbox";
+    private static final String PLATFORM_SWITCH = "switch";
+    private static final String PLATFORM_MOBILE = "mobile";
+
     private static final String GAME_Q3A = "q3a";
     private static final String GAME_Q3UT4 = "q3ut4";
     private static final String GAME_COD = "cod";
@@ -32,6 +39,12 @@ public class Initialization {
     private static final String GAME_COD4 = "cod4";
     private static final String GAME_CODWAW = "codwaw";
     private static final String GAME_LOL = "lol";
+    private static final String GAME_RS = "rs";
+    private static final String GAME_FN = "fn";
+    private static final String GAME_FIFA20 = "fifa20";
+    private static final String GAME_TEKKEN7 = "tekken7";
+    private static final String GAME_HS = "hs";
+    private static final String GAME_SSB = "ssb";
 
     private static final String GAMETYPE_DEATHMATCH = "Deathmatch";
     private static final String GAMETYPE_TEAM_DEATHMATCH = "Team Deathmatch";
@@ -55,12 +68,15 @@ public class Initialization {
     private static final String GAMETYPE_ONE_FLAG_CTF = "One flag CTF";
     private static final String GAMETYPE_OVERLOAD = "Overload";
     private static final String GAMETYPE_HARVESTER = "Harvester";
+    private static final String GAMETYPE_1V1 = "1v1";
+    private static final String GAMETYPE_5V5 = "5v5";
 
     private static final Logger logger = LoggerFactory.getLogger(Initialization.class);
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
     private final RoleRepository roleRepository;
+    private final PlatformRepository platformRepository;
     private final GameRepository gameRepository;
     private final GametypeRepository gametypeRepository;
     private final GameGametypeRepository gameGametypeRepository;
@@ -70,9 +86,10 @@ public class Initialization {
     private boolean alreadyRun = false;
 
     @Autowired
-    public Initialization(ApplicationEventPublisher applicationEventPublisher, RoleRepository roleRepository, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
+    public Initialization(ApplicationEventPublisher applicationEventPublisher, RoleRepository roleRepository, PlatformRepository platformRepository, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.roleRepository = roleRepository;
+        this.platformRepository = platformRepository;
         this.gameRepository = gameRepository;
         this.gametypeRepository = gametypeRepository;
         this.gameGametypeRepository = gameGametypeRepository;
@@ -93,6 +110,7 @@ public class Initialization {
 
         checkRoles();
 
+        checkPlatforms();
         checkGames();
         checkGametypes();
         checkGameGametypes();
@@ -107,7 +125,7 @@ public class Initialization {
     }
 
     private void checkRoles() {
-        logger.debug("Checking roles");
+        logger.info("Checking roles");
 
         for (String roleName : ROLENAMES) {
             Role role = roleRepository.findByName(roleName);
@@ -119,298 +137,275 @@ public class Initialization {
         }
     }
 
+    private void checkPlatforms() {
+        logger.info("Checking platforms");
+
+        persistPlatform(PLATFORM_PC, "PC Windows");
+        persistPlatform(PLATFORM_RPI, "Raspberry Pi");
+        persistPlatform(PLATFORM_PS4, "PlayStation 4");
+        persistPlatform(PLATFORM_XBOX, "Xbox");
+        persistPlatform(PLATFORM_SWITCH, "Nintendo Switch");
+        persistPlatform(PLATFORM_MOBILE, "Personal Mobile device");
+    }
+
     private void checkGames() {
-        logger.debug("Checking games");
+        logger.info("Checking games");
 
-        Map<String, String> gameMap = new HashMap<>();
-        gameMap.put(GAME_Q3A, "Quake III Arena");
-        gameMap.put(GAME_Q3UT4, "Urban Terror");
-        gameMap.put(GAME_COD, "Call of Duty");
-        gameMap.put(GAME_COD2, "Call of Duty 2");
-        gameMap.put(GAME_COD4, "Call of Duty 4: Modern Warfare");
-        gameMap.put(GAME_CODWAW, "Call of Duty: World at War");
-        gameMap.put(GAME_LOL, "League of Legends");
-
-        for (String tag : gameMap.keySet()) {
-            Game game = gameRepository.findByTag(tag);
-            if (game == null) {
-                game = new Game(tag, gameMap.get(tag));
-                gameRepository.save(game);
-            }
-        }
+        persistGame(GAME_Q3A, "Quake III Arena", PLATFORM_PC);
+        persistGame(GAME_Q3UT4, "Urban Terror", PLATFORM_PC);
+        persistGame(GAME_COD, "Call of Duty", PLATFORM_PC);
+        persistGame(GAME_COD2, "Call of Duty 2", PLATFORM_PC);
+        persistGame(GAME_COD4, "Call of Duty 4: Modern Warfare", PLATFORM_PC);
+        persistGame(GAME_CODWAW, "Call of Duty: World at War", PLATFORM_PC);
+        persistGame(GAME_LOL, "League of Legends", PLATFORM_PC);
+        persistGame(GAME_RS, "Tom Clancy's Rainbow Six Siege", PLATFORM_PS4);
+        persistGame(GAME_FN, "Fortnite", PLATFORM_PC);
+        persistGame(GAME_FIFA20, "FIFA 20", PLATFORM_PS4);
+        persistGame(GAME_TEKKEN7, "Tekken 7", PLATFORM_PS4);
+        persistGame(GAME_HS, "Hearthstone", PLATFORM_MOBILE);
+        persistGame(GAME_SSB, "Super Smash Bros", PLATFORM_SWITCH);
     }
 
     private void checkGametypes() {
-        logger.debug("Checking gametypes");
+        logger.info("Checking gametypes");
 
-        String[] gametypeNames = {
-                GAMETYPE_DEATHMATCH,
-                GAMETYPE_TEAM_DEATHMATCH,
-                GAMETYPE_HEADQUARTERS,
-                GAMETYPE_SEARCH_AND_DESTROY,
-                GAMETYPE_BEHIND_ENEMY_LINES,
-                GAMETYPE_RETRIEVAL,
-                GAMETYPE_CAPTURE_THE_FLAG,
-                GAMETYPE_DOMINATION,
-                GAMETYPE_SABOTAGE,
-                GAMETYPE_BOMB_MODE,
-                GAMETYPE_TEAM_SURVIVOR,
-                GAMETYPE_FOLLOW_THE_LEADER,
-                GAMETYPE_CAPTURE_AND_HOLD,
-                GAMETYPE_JUMP_TRAINING,
-                GAMETYPE_FREEZE_TAG,
-                GAMETYPE_LAST_MAN_STANDING,
-                GAMETYPE_TOTAL_WAR,
-                GAMETYPE_TOURNAMENT,
-                GAMETYPE_SINGLE_PLAYER,
-                GAMETYPE_ONE_FLAG_CTF,
-                GAMETYPE_OVERLOAD,
-                GAMETYPE_HARVESTER
-        };
-
-        for (String gametypeName : gametypeNames) {
-            Gametype gametype = gametypeRepository.findByName(gametypeName);
-            if (gametype == null) {
-                gametype = new Gametype(gametypeName);
-                gametypeRepository.save(gametype);
-            }
-        }
+        persistGametype(GAMETYPE_DEATHMATCH);
+        persistGametype(GAMETYPE_TEAM_DEATHMATCH);
+        persistGametype(GAMETYPE_HEADQUARTERS);
+        persistGametype(GAMETYPE_SEARCH_AND_DESTROY);
+        persistGametype(GAMETYPE_BEHIND_ENEMY_LINES);
+        persistGametype(GAMETYPE_RETRIEVAL);
+        persistGametype(GAMETYPE_CAPTURE_THE_FLAG);
+        persistGametype(GAMETYPE_DOMINATION);
+        persistGametype(GAMETYPE_SABOTAGE);
+        persistGametype(GAMETYPE_BOMB_MODE);
+        persistGametype(GAMETYPE_TEAM_SURVIVOR);
+        persistGametype(GAMETYPE_FOLLOW_THE_LEADER);
+        persistGametype(GAMETYPE_CAPTURE_AND_HOLD);
+        persistGametype(GAMETYPE_JUMP_TRAINING);
+        persistGametype(GAMETYPE_FREEZE_TAG);
+        persistGametype(GAMETYPE_LAST_MAN_STANDING);
+        persistGametype(GAMETYPE_TOTAL_WAR);
+        persistGametype(GAMETYPE_TOURNAMENT);
+        persistGametype(GAMETYPE_SINGLE_PLAYER);
+        persistGametype(GAMETYPE_ONE_FLAG_CTF);
+        persistGametype(GAMETYPE_OVERLOAD);
+        persistGametype(GAMETYPE_HARVESTER);
+        persistGametype(GAMETYPE_1V1);
+        persistGametype(GAMETYPE_5V5);
     }
 
     private void checkGameGametypes() {
-        logger.debug("Checking game gametypes");
+        logger.info("Checking game gametypes");
 
-        Map<String, String> gametypeTags = new HashMap<>();
+        persistGameGametype(GAME_Q3A, GAMETYPE_DEATHMATCH, "0");
+        persistGameGametype(GAME_Q3A, GAMETYPE_TOURNAMENT, "1");
+        persistGameGametype(GAME_Q3A, GAMETYPE_SINGLE_PLAYER, "2");
+        persistGameGametype(GAME_Q3A, GAMETYPE_TEAM_DEATHMATCH, "3");
+        persistGameGametype(GAME_Q3A, GAMETYPE_CAPTURE_THE_FLAG, "4");
+        persistGameGametype(GAME_Q3A, GAMETYPE_ONE_FLAG_CTF, "5");
+        persistGameGametype(GAME_Q3A, GAMETYPE_OVERLOAD, "6");
+        persistGameGametype(GAME_Q3A, GAMETYPE_HARVESTER, "7");
 
-        gametypeTags.put(GAMETYPE_DEATHMATCH, "0");
-        gametypeTags.put(GAMETYPE_TOURNAMENT, "1");
-        gametypeTags.put(GAMETYPE_SINGLE_PLAYER, "2");
-        gametypeTags.put(GAMETYPE_TEAM_DEATHMATCH, "3");
-        gametypeTags.put(GAMETYPE_CAPTURE_THE_FLAG, "4");
-        gametypeTags.put(GAMETYPE_ONE_FLAG_CTF, "5");
-        gametypeTags.put(GAMETYPE_OVERLOAD, "6");
-        gametypeTags.put(GAMETYPE_HARVESTER, "7");
-        persistGameGametypes(gametypeTags, GAME_Q3A);
+        persistGameGametype(GAME_Q3UT4, GAMETYPE_DEATHMATCH, "0");
+        persistGameGametype(GAME_Q3UT4, GAMETYPE_TEAM_DEATHMATCH, "3");
+        persistGameGametype(GAME_Q3UT4, GAMETYPE_TEAM_SURVIVOR, "4");
+        persistGameGametype(GAME_Q3UT4, GAMETYPE_FOLLOW_THE_LEADER, "5");
+        persistGameGametype(GAME_Q3UT4, GAMETYPE_CAPTURE_AND_HOLD, "6");
+        persistGameGametype(GAME_Q3UT4, GAMETYPE_CAPTURE_THE_FLAG, "7");
+        persistGameGametype(GAME_Q3UT4, GAMETYPE_BOMB_MODE, "8");
+        persistGameGametype(GAME_Q3UT4, GAMETYPE_JUMP_TRAINING, "9");
+        persistGameGametype(GAME_Q3UT4, GAMETYPE_FREEZE_TAG, "10");
 
-        gametypeTags.clear();
-        gametypeTags.put(GAMETYPE_DEATHMATCH, "0");
-        gametypeTags.put(GAMETYPE_TEAM_DEATHMATCH, "3");
-        gametypeTags.put(GAMETYPE_TEAM_SURVIVOR, "4");
-        gametypeTags.put(GAMETYPE_FOLLOW_THE_LEADER, "5");
-        gametypeTags.put(GAMETYPE_CAPTURE_AND_HOLD, "6");
-        gametypeTags.put(GAMETYPE_CAPTURE_THE_FLAG, "7");
-        gametypeTags.put(GAMETYPE_BOMB_MODE, "8");
-        gametypeTags.put(GAMETYPE_JUMP_TRAINING, "9");
-        gametypeTags.put(GAMETYPE_FREEZE_TAG, "10");
-        persistGameGametypes(gametypeTags, GAME_Q3UT4);
+        persistGameGametype(GAME_COD, GAMETYPE_DEATHMATCH, "dm");
+        persistGameGametype(GAME_COD, GAMETYPE_TEAM_DEATHMATCH, "tdm");
+        persistGameGametype(GAME_COD, GAMETYPE_HEADQUARTERS, "hq");
+        persistGameGametype(GAME_COD, GAMETYPE_SEARCH_AND_DESTROY, "sd");
+        persistGameGametype(GAME_COD, GAMETYPE_BEHIND_ENEMY_LINES, "bel");
+        persistGameGametype(GAME_COD, GAMETYPE_RETRIEVAL, "ret");
 
-        gametypeTags.clear();
-        gametypeTags.put(GAMETYPE_DEATHMATCH, "dm");
-        gametypeTags.put(GAMETYPE_TEAM_DEATHMATCH, "tdm");
-        gametypeTags.put(GAMETYPE_HEADQUARTERS, "hq");
-        gametypeTags.put(GAMETYPE_SEARCH_AND_DESTROY, "sd");
-        gametypeTags.put(GAMETYPE_BEHIND_ENEMY_LINES, "bel");
-        gametypeTags.put(GAMETYPE_RETRIEVAL, "ret");
-        persistGameGametypes(gametypeTags, GAME_COD);
+        persistGameGametype(GAME_COD2, GAMETYPE_DEATHMATCH, "dm");
+        persistGameGametype(GAME_COD2, GAMETYPE_TEAM_DEATHMATCH, "tdm");
+        persistGameGametype(GAME_COD2, GAMETYPE_HEADQUARTERS, "hq");
+        persistGameGametype(GAME_COD2, GAMETYPE_SEARCH_AND_DESTROY, "sd");
+        persistGameGametype(GAME_COD2, GAMETYPE_CAPTURE_THE_FLAG, "ctf");
 
-        gametypeTags.clear();
-        gametypeTags.put(GAMETYPE_DEATHMATCH, "dm");
-        gametypeTags.put(GAMETYPE_TEAM_DEATHMATCH, "tdm");
-        gametypeTags.put(GAMETYPE_HEADQUARTERS, "hq");
-        gametypeTags.put(GAMETYPE_SEARCH_AND_DESTROY, "sd");
-        gametypeTags.put(GAMETYPE_CAPTURE_THE_FLAG, "ctf");
-        persistGameGametypes(gametypeTags, GAME_COD2);
+        persistGameGametype(GAME_COD4, GAMETYPE_DEATHMATCH, "dm");
+        persistGameGametype(GAME_COD4, GAMETYPE_TEAM_DEATHMATCH, "war");
+        persistGameGametype(GAME_COD4, GAMETYPE_HEADQUARTERS, "koth");
+        persistGameGametype(GAME_COD4, GAMETYPE_SEARCH_AND_DESTROY, "sd");
+        persistGameGametype(GAME_COD4, GAMETYPE_DOMINATION, "dom");
+        persistGameGametype(GAME_COD4, GAMETYPE_SABOTAGE, "sab");
 
-        gametypeTags.clear();
-        gametypeTags.put(GAMETYPE_DEATHMATCH, "dm");
-        gametypeTags.put(GAMETYPE_TEAM_DEATHMATCH, "war");
-        gametypeTags.put(GAMETYPE_HEADQUARTERS, "koth");
-        gametypeTags.put(GAMETYPE_SEARCH_AND_DESTROY, "sd");
-        gametypeTags.put(GAMETYPE_DOMINATION, "dom");
-        gametypeTags.put(GAMETYPE_SABOTAGE, "sab");
-        persistGameGametypes(gametypeTags, GAME_COD4);
+        persistGameGametype(GAME_CODWAW, GAMETYPE_DEATHMATCH, "dm");
+        persistGameGametype(GAME_CODWAW, GAMETYPE_TEAM_DEATHMATCH, "tdm");
+        persistGameGametype(GAME_CODWAW, GAMETYPE_HEADQUARTERS, "koth");
+        persistGameGametype(GAME_CODWAW, GAMETYPE_SEARCH_AND_DESTROY, "sd");
+        persistGameGametype(GAME_CODWAW, GAMETYPE_DOMINATION, "dom");
+        persistGameGametype(GAME_CODWAW, GAMETYPE_SABOTAGE, "sab");
+        persistGameGametype(GAME_CODWAW, GAMETYPE_CAPTURE_THE_FLAG, "ctf");
+        persistGameGametype(GAME_CODWAW, GAMETYPE_TOTAL_WAR, "twar");
 
-        gametypeTags.clear();
-        gametypeTags.put(GAMETYPE_DEATHMATCH, "dm");
-        gametypeTags.put(GAMETYPE_TEAM_DEATHMATCH, "tdm");
-        gametypeTags.put(GAMETYPE_HEADQUARTERS, "koth");
-        gametypeTags.put(GAMETYPE_SEARCH_AND_DESTROY, "sd");
-        gametypeTags.put(GAMETYPE_DOMINATION, "dom");
-        gametypeTags.put(GAMETYPE_SABOTAGE, "sab");
-        gametypeTags.put(GAMETYPE_CAPTURE_THE_FLAG, "ctf");
-        gametypeTags.put(GAMETYPE_TOTAL_WAR, "twar");
-        persistGameGametypes(gametypeTags, GAME_CODWAW);
+        persistGameGametype(GAME_LOL, GAMETYPE_1V1, GAMETYPE_1V1);
+        persistGameGametype(GAME_LOL, GAMETYPE_5V5, GAMETYPE_5V5);
     }
 
     private void checkGameMaps() {
-        logger.debug("Checking game maps");
+        logger.info("Checking game maps");
 
-        Map<String, String> gameMaps = new HashMap<>();
+        persistGameMap(GAME_Q3A, "q3dm0", "Introduction", true);
+        persistGameMap(GAME_Q3A, "q3dm1", "Arena Gate", true);
+        persistGameMap(GAME_Q3A, "q3dm2", "House of Pain", true);
+        persistGameMap(GAME_Q3A, "q3dm3", "Arena of Death", true);
+        persistGameMap(GAME_Q3A, "q3dm4", "Place of Many Deaths", true);
+        persistGameMap(GAME_Q3A, "q3dm5", "The Forgotten Place", true);
+        persistGameMap(GAME_Q3A, "q3dm6", "The Camping Grounds", true);
+        persistGameMap(GAME_Q3A, "q3dm7", "Temple of Retribution", true);
+        persistGameMap(GAME_Q3A, "q3dm8", "Brimstone Abbey", true);
+        persistGameMap(GAME_Q3A, "q3dm9", "Hero's Keep", true);
+        persistGameMap(GAME_Q3A, "q3dm10", "The Nameless Place", true);
+        persistGameMap(GAME_Q3A, "q3dm11", "Deva Station", true);
+        persistGameMap(GAME_Q3A, "q3dm12", "The Dredwerkz", true);
+        persistGameMap(GAME_Q3A, "q3dm13", "Lost World", true);
+        persistGameMap(GAME_Q3A, "q3dm14", "Grim Dungeons", true);
+        persistGameMap(GAME_Q3A, "q3dm15", "Demon Keep", true);
+        persistGameMap(GAME_Q3A, "q3dm16", "Bouncy Map", true);
+        persistGameMap(GAME_Q3A, "q3dm17", "The Longest Yard", true);
+        persistGameMap(GAME_Q3A, "q3dm18", "Space Chamber", true);
+        persistGameMap(GAME_Q3A, "q3dm19", "Apocalypse Void", true);
+        persistGameMap(GAME_Q3A, "q3tourney1", "Power Station 0218", true);
+        persistGameMap(GAME_Q3A, "q3tourney2", "The Proving Grounds", true);
+        persistGameMap(GAME_Q3A, "q3tourney3", "Hell's Gate", true);
+        persistGameMap(GAME_Q3A, "q3tourney4", "Vertical Vengeance", true);
+        persistGameMap(GAME_Q3A, "q3tourney5", "Fatal Instinct", true);
+        persistGameMap(GAME_Q3A, "q3tourney6", "The Very End of You", true);
+        persistGameMap(GAME_Q3A, "q3ctf1", "Dueling Keeps", true);
+        persistGameMap(GAME_Q3A, "q3ctf2", "Troubled Waters", true);
+        persistGameMap(GAME_Q3A, "q3ctf3", "The Stronghold", true);
+        persistGameMap(GAME_Q3A, "q3ctf4", "Space CTF", true);
 
-        gameMaps.put("q3dm0", "Introduction");
-        gameMaps.put("q3dm1", "Arena Gate");
-        gameMaps.put("q3dm2", "House of Pain");
-        gameMaps.put("q3dm3", "Arena of Death");
-        gameMaps.put("q3dm4", "Place of Many Deaths");
-        gameMaps.put("q3dm5", "The Forgotten Place");
-        gameMaps.put("q3dm6", "The Camping Grounds");
-        gameMaps.put("q3dm7", "Temple of Retribution");
-        gameMaps.put("q3dm8", "Brimstone Abbey");
-        gameMaps.put("q3dm9", "Hero's Keep");
-        gameMaps.put("q3dm10", "The Nameless Place");
-        gameMaps.put("q3dm11", "Deva Station");
-        gameMaps.put("q3dm12", "The Dredwerkz");
-        gameMaps.put("q3dm13", "Lost World");
-        gameMaps.put("q3dm14", "Grim Dungeons");
-        gameMaps.put("q3dm15", "Demon Keep");
-        gameMaps.put("q3dm16", "Bouncy Map");
-        gameMaps.put("q3dm17", "The Longest Yard");
-        gameMaps.put("q3dm18", "Space Chamber");
-        gameMaps.put("q3dm19", "Apocalypse Void");
-        gameMaps.put("q3tourney1", "Power Station 0218");
-        gameMaps.put("q3tourney2", "The Proving Grounds");
-        gameMaps.put("q3tourney3", "Hell's Gate");
-        gameMaps.put("q3tourney4", "Vertical Vengeance");
-        gameMaps.put("q3tourney5", "Fatal Instinct");
-        gameMaps.put("q3tourney6", "The Very End of You");
-        gameMaps.put("q3ctf1", "Dueling Keeps");
-        gameMaps.put("q3ctf2", "Troubled Waters");
-        gameMaps.put("q3ctf3", "The Stronghold");
-        gameMaps.put("q3ctf4", "Space CTF");
-        persisitGameMap(gameMaps, GAME_Q3A);
+        persistGameMap(GAME_Q3UT4, "ut4_abbey", "Abbey", true);
+        persistGameMap(GAME_Q3UT4, "ut4_abbeyctf", "Abbey CTF", true);
+        persistGameMap(GAME_Q3UT4, "ut4_algiers", "Algiers", true);
+        persistGameMap(GAME_Q3UT4, "ut4_ambush", "Ambush", true);
+        persistGameMap(GAME_Q3UT4, "ut4_austria", "Austria", true);
+        persistGameMap(GAME_Q3UT4, "ut4_bohemia", "Bohemia", true);
+        persistGameMap(GAME_Q3UT4, "ut4_casa", "Casa", true);
+        persistGameMap(GAME_Q3UT4, "ut4_cascade", "Cascade", true);
+        persistGameMap(GAME_Q3UT4, "ut4_commune", "Commune", true);
+        persistGameMap(GAME_Q3UT4, "ut4_company", "Company", true);
+        persistGameMap(GAME_Q3UT4, "ut4_crossing", "Crossing", true);
+        persistGameMap(GAME_Q3UT4, "ut4_docks", "Docks", true);
+        persistGameMap(GAME_Q3UT4, "ut4_dressingroom", "Dressing Room", true);
+        persistGameMap(GAME_Q3UT4, "ut4_eagle", "Eagle", true);
+        persistGameMap(GAME_Q3UT4, "ut4_elgin", "Elgin", true);
+        persistGameMap(GAME_Q3UT4, "ut4_ghosttown_rc4", "Ghost Town", true);
+        persistGameMap(GAME_Q3UT4, "ut4_harbortown", "Harbor Town", true);
+        persistGameMap(GAME_Q3UT4, "ut4_horror", "Horror", true);
+        persistGameMap(GAME_Q3UT4, "ut4_jumpents", "Jumpents", true);
+        persistGameMap(GAME_Q3UT4, "ut4_kingdom", "Kingdom", true);
+        persistGameMap(GAME_Q3UT4, "ut4_mandolin", "Mandolin", true);
+        persistGameMap(GAME_Q3UT4, "ut4_maya", "Maya", true);
+        persistGameMap(GAME_Q3UT4, "ut4_oildepot", "Oil Depot", true);
+        persistGameMap(GAME_Q3UT4, "ut4_prague", "Prague", true);
+        persistGameMap(GAME_Q3UT4, "ut4_raiders", "Raiders", true);
+        persistGameMap(GAME_Q3UT4, "ut4_ramelle", "Ramelle", true);
+        persistGameMap(GAME_Q3UT4, "ut4_ricochet", "Ricochet", true);
+        persistGameMap(GAME_Q3UT4, "ut4_riyadh", "Riyadh", true);
+        persistGameMap(GAME_Q3UT4, "ut4_sanc", "Sanctuary", true);
+        persistGameMap(GAME_Q3UT4, "ut4_snoppis", "Snoppis", true);
+        persistGameMap(GAME_Q3UT4, "ut4_suburbs", "Suburbs", true);
+        persistGameMap(GAME_Q3UT4, "ut4_subway", "Subway", true);
+        persistGameMap(GAME_Q3UT4, "ut4_swim", "Swim", true);
+        persistGameMap(GAME_Q3UT4, "ut4_thingley", "Thingley", true);
+        persistGameMap(GAME_Q3UT4, "ut4_tombs", "Tombs", true);
+        persistGameMap(GAME_Q3UT4, "ut4_toxic", "Toxic", true);
+        persistGameMap(GAME_Q3UT4, "ut4_tunis", "Tunis", true);
+        persistGameMap(GAME_Q3UT4, "ut4_turnpike", "Turnpike", true);
+        persistGameMap(GAME_Q3UT4, "ut4_uptown", "Uptown", true);
 
-        gameMaps.clear();
-        gameMaps.put("ut4_abbey", "Abbey");
-        gameMaps.put("ut4_abbeyctf", "Abbey CTF");
-        gameMaps.put("ut4_algiers", "Algiers");
-        gameMaps.put("ut4_ambush", "Ambush");
-        gameMaps.put("ut4_austria", "Austria");
-        gameMaps.put("ut4_bohemia", "Bohemia");
-        gameMaps.put("ut4_casa", "Casa");
-        gameMaps.put("ut4_cascade", "Cascade");
-        gameMaps.put("ut4_commune", "Commune");
-        gameMaps.put("ut4_company", "Company");
-        gameMaps.put("ut4_crossing", "Crossing");
-        gameMaps.put("ut4_docks", "Docks");
-        gameMaps.put("ut4_dressingroom", "Dressing Room");
-        gameMaps.put("ut4_eagle", "Eagle");
-        gameMaps.put("ut4_elgin", "Elgin");
-        gameMaps.put("ut4_ghosttown_rc4", "Ghost Town");
-        gameMaps.put("ut4_harbortown", "Harbor Town");
-        gameMaps.put("ut4_horror", "Horror");
-        gameMaps.put("ut4_jumpents", "Jumpents");
-        gameMaps.put("ut4_kingdom", "Kingdom");
-        gameMaps.put("ut4_mandolin", "Mandolin");
-        gameMaps.put("ut4_maya", "Maya");
-        gameMaps.put("ut4_oildepot", "Oil Depot");
-        gameMaps.put("ut4_prague", "Prague");
-        gameMaps.put("ut4_raiders", "Raiders");
-        gameMaps.put("ut4_ramelle", "Ramelle");
-        gameMaps.put("ut4_ricochet", "Ricochet");
-        gameMaps.put("ut4_riyadh", "Riyadh");
-        gameMaps.put("ut4_sanc", "Sanctuary");
-        gameMaps.put("ut4_snoppis", "Snoppis");
-        gameMaps.put("ut4_suburbs", "Suburbs");
-        gameMaps.put("ut4_subway", "Subway");
-        gameMaps.put("ut4_swim", "Swim");
-        gameMaps.put("ut4_thingley", "Thingley");
-        gameMaps.put("ut4_tombs", "Tombs");
-        gameMaps.put("ut4_toxic", "Toxic");
-        gameMaps.put("ut4_tunis", "Tunis");
-        gameMaps.put("ut4_turnpike", "Turnpike");
-        gameMaps.put("ut4_uptown", "Uptown");
-        persisitGameMap(gameMaps, GAME_Q3UT4);
+        persistGameMap(GAME_COD, "mp_bocage", "Bocage", true);
+        persistGameMap(GAME_COD, "mp_brecourt", "Brecourt", true);
+        persistGameMap(GAME_COD, "mp_carentan", "Carentan", true);
+        persistGameMap(GAME_COD, "mp_chateau", "Chateau", true);
+        persistGameMap(GAME_COD, "mp_dawnville", "Dawnville", true);
+        persistGameMap(GAME_COD, "mp_depot", "Depot", true);
+        persistGameMap(GAME_COD, "mp_harbor", "Harbor", true);
+        persistGameMap(GAME_COD, "mp_hurtgen", "Hurtgen", true);
+        persistGameMap(GAME_COD, "mp_neuville", "Neuville", true);
+        persistGameMap(GAME_COD, "mp_pavlov", "Pavlov", true);
+        persistGameMap(GAME_COD, "mp_powcamp", "POW Camp", true);
+        persistGameMap(GAME_COD, "mp_railyard", "Railyard", true);
+        persistGameMap(GAME_COD, "mp_rocket", "Rocket", true);
+        persistGameMap(GAME_COD, "mp_ship", "Ship", true);
+        persistGameMap(GAME_COD, "mp_stalingrad", "Stalingrad", true);
+        persistGameMap(GAME_COD, "mp_tigertown", "Tigertown", true);
 
-        gameMaps.clear();
-        gameMaps.put("mp_bocage", "Bocage");
-        gameMaps.put("mp_brecourt", "Brecourt");
-        gameMaps.put("mp_carentan", "Carentan");
-        gameMaps.put("mp_chateau", "Chateau");
-        gameMaps.put("mp_dawnville", "Dawnville");
-        gameMaps.put("mp_depot", "Depot");
-        gameMaps.put("mp_harbor", "Harbor");
-        gameMaps.put("mp_hurtgen", "Hurtgen");
-        gameMaps.put("mp_neuville", "Neuville");
-        gameMaps.put("mp_pavlov", "Pavlov");
-        gameMaps.put("mp_powcamp", "POW Camp");
-        gameMaps.put("mp_railyard", "Railyard");
-        gameMaps.put("mp_rocket", "Rocket");
-        gameMaps.put("mp_ship", "Ship");
-        gameMaps.put("mp_stalingrad", "Stalingrad");
-        gameMaps.put("mp_tigertown", "Tigertown");
-        persisitGameMap(gameMaps, GAME_COD);
+        persistGameMap(GAME_COD2, "mp_breakout", "Villers-Bocage", true);
+        persistGameMap(GAME_COD2, "mp_brecourt", "Brecourt", true);
+        persistGameMap(GAME_COD2, "mp_burgundy", "Burgundy", true);
+        persistGameMap(GAME_COD2, "mp_carentan", "Carentan", true);
+        persistGameMap(GAME_COD2, "mp_dawnville", "Sainte-Mère-Eglise", true);
+        persistGameMap(GAME_COD2, "mp_decoy", "El Alemein", true);
+        persistGameMap(GAME_COD2, "mp_farmhouse", "Beltot", true);
+        persistGameMap(GAME_COD2, "mp_harbor", "Rostov", true);
+        persistGameMap(GAME_COD2, "mp_leningrad", "Leningrad", true);
+        persistGameMap(GAME_COD2, "mp_matmata", "Matmata", true);
+        persistGameMap(GAME_COD2, "mp_moscow", "Moscow", true);
+        persistGameMap(GAME_COD2, "mp_rhine", "Wallendar", true);
+        persistGameMap(GAME_COD2, "mp_railyard", "Stalingrad", true);
+        persistGameMap(GAME_COD2, "mp_toujane", "Toujane", true);
+        persistGameMap(GAME_COD2, "mp_trainstation", "Caen", true);
 
-        gameMaps.clear();
-        gameMaps.put("mp_breakout", "Villers-Bocage");
-        gameMaps.put("mp_brecourt", "Brecourt");
-        gameMaps.put("mp_burgundy", "Burgundy");
-        gameMaps.put("mp_carentan", "Carentan");
-        gameMaps.put("mp_dawnville", "Sainte-Mère-Eglise");
-        gameMaps.put("mp_decoy", "El Alemein");
-        gameMaps.put("mp_farmhouse", "Beltot");
-        gameMaps.put("mp_harbor", "Rostov");
-        gameMaps.put("mp_leningrad", "Leningrad");
-        gameMaps.put("mp_matmata", "Matmata");
-        gameMaps.put("mp_moscow", "Moscow");
-        gameMaps.put("mp_rhine", "Wallendar");
-        gameMaps.put("mp_railyard", "Stalingrad");
-        gameMaps.put("mp_toujane", "Toujane");
-        gameMaps.put("mp_trainstation", "Caen");
-        persisitGameMap(gameMaps, GAME_COD2);
+        persistGameMap(GAME_COD4, "mp_ambush", "Ambush", true);
+        persistGameMap(GAME_COD4, "mp_backlot", "Backlot", true);
+        persistGameMap(GAME_COD4, "mp_bloc", "Bloc", true);
+        persistGameMap(GAME_COD4, "mp_bog", "Bog", true);
+        persistGameMap(GAME_COD4, "mp_broadcast", "Broadcast", true);
+        persistGameMap(GAME_COD4, "mp_carentan", "Chinatown", true);
+        persistGameMap(GAME_COD4, "mp_countdown", "Countdown", true);
+        persistGameMap(GAME_COD4, "mp_crash", "Crash", true);
+        persistGameMap(GAME_COD4, "mp_crash_snow", "Crash winter", true);
+        persistGameMap(GAME_COD4, "mp_creek", "Creek", true);
+        persistGameMap(GAME_COD4, "mp_crossfire", "Crossfire", true);
+        persistGameMap(GAME_COD4, "mp_citystreets", "District", true);
+        persistGameMap(GAME_COD4, "mp_farm", "Downpour", true);
+        persistGameMap(GAME_COD4, "mp_killhouse", "Killhouse", true);
+        persistGameMap(GAME_COD4, "mp_overgrown", "Overgrown", true);
+        persistGameMap(GAME_COD4, "mp_pipeline", "Pipeline", true);
+        persistGameMap(GAME_COD4, "mp_shipment", "Shipment", true);
+        persistGameMap(GAME_COD4, "mp_showdown", "Showdown", true);
+        persistGameMap(GAME_COD4, "mp_strike", "Strike", true);
+        persistGameMap(GAME_COD4, "mp_vacant", "Vacant", true);
+        persistGameMap(GAME_COD4, "mp_cargoship", "Wet Work", true);
 
-        gameMaps.clear();
-        gameMaps.put("mp_ambush", "Ambush");
-        gameMaps.put("mp_backlot", "Backlot");
-        gameMaps.put("mp_bloc", "Bloc");
-        gameMaps.put("mp_bog", "Bog");
-        gameMaps.put("mp_broadcast", "Broadcast");
-        gameMaps.put("mp_carentan", "Chinatown");
-        gameMaps.put("mp_countdown", "Countdown");
-        gameMaps.put("mp_crash", "Crash");
-        gameMaps.put("mp_crash_snow", "Crash winter");
-        gameMaps.put("mp_creek", "Creek");
-        gameMaps.put("mp_crossfire", "Crossfire");
-        gameMaps.put("mp_citystreets", "District");
-        gameMaps.put("mp_farm", "Downpour");
-        gameMaps.put("mp_killhouse", "Killhouse");
-        gameMaps.put("mp_overgrown", "Overgrown");
-        gameMaps.put("mp_pipeline", "Pipeline");
-        gameMaps.put("mp_shipment", "Shipment");
-        gameMaps.put("mp_showdown", "Showdown");
-        gameMaps.put("mp_strike", "Strike");
-        gameMaps.put("mp_vacant", "Vacant");
-        gameMaps.put("mp_cargoship", "Wet Work");
-        persisitGameMap(gameMaps, GAME_COD4);
-
-        gameMaps.clear();
-        gameMaps.put("mp_airfield", "Airfield");
-        gameMaps.put("mp_asylum", "Asylum");
-        gameMaps.put("mp_kwai", "Banzai");
-        gameMaps.put("mp_drum", "Battery");
-        gameMaps.put("mp_bgate", "Breach");
-        gameMaps.put("mp_castle", "Castle");
-        gameMaps.put("mp_shrine", "Cliffside");
-        gameMaps.put("mp_stalingrad", "Corrosion");
-        gameMaps.put("mp_courtyard", "Courtyard");
-        gameMaps.put("mp_dome", "Dome");
-        gameMaps.put("mp_downfall", "Downfall");
-        gameMaps.put("mp_hangar", "Hangar");
-        gameMaps.put("mp_kneedeep", "Knee Deep");
-        gameMaps.put("mp_makin", "Makin");
-        gameMaps.put("mp_makin_day", "Makin Day");
-        gameMaps.put("mp_nachtfeuer", "Nightfire");
-        gameMaps.put("mp_outskirts", "Outskirt");
-        gameMaps.put("mp_vodka", "Revolution");
-        gameMaps.put("mp_roundhouse", "Roundhouse");
-        gameMaps.put("mp_seelow", "Seelow");
-        gameMaps.put("mp_subway", "Station");
-        gameMaps.put("mp_docks", "Sub Pens");
-        gameMaps.put("mp_suburban", "Upheaval");
-        persisitGameMap(gameMaps, GAME_CODWAW);
+        persistGameMap(GAME_CODWAW, "mp_airfield", "Airfield", true);
+        persistGameMap(GAME_CODWAW, "mp_asylum", "Asylum", true);
+        persistGameMap(GAME_CODWAW, "mp_kwai", "Banzai", true);
+        persistGameMap(GAME_CODWAW, "mp_drum", "Battery", true);
+        persistGameMap(GAME_CODWAW, "mp_bgate", "Breach", true);
+        persistGameMap(GAME_CODWAW, "mp_castle", "Castle", true);
+        persistGameMap(GAME_CODWAW, "mp_shrine", "Cliffside", true);
+        persistGameMap(GAME_CODWAW, "mp_stalingrad", "Corrosion", true);
+        persistGameMap(GAME_CODWAW, "mp_courtyard", "Courtyard", true);
+        persistGameMap(GAME_CODWAW, "mp_dome", "Dome", true);
+        persistGameMap(GAME_CODWAW, "mp_downfall", "Downfall", true);
+        persistGameMap(GAME_CODWAW, "mp_hangar", "Hangar", true);
+        persistGameMap(GAME_CODWAW, "mp_kneedeep", "Knee Deep", true);
+        persistGameMap(GAME_CODWAW, "mp_makin", "Makin", true);
+        persistGameMap(GAME_CODWAW, "mp_makin_day", "Makin Day", true);
+        persistGameMap(GAME_CODWAW, "mp_nachtfeuer", "Nightfire", true);
+        persistGameMap(GAME_CODWAW, "mp_outskirts", "Outskirt", true);
+        persistGameMap(GAME_CODWAW, "mp_vodka", "Revolution", true);
+        persistGameMap(GAME_CODWAW, "mp_roundhouse", "Roundhouse", true);
+        persistGameMap(GAME_CODWAW, "mp_seelow", "Seelow", true);
+        persistGameMap(GAME_CODWAW, "mp_subway", "Station", true);
+        persistGameMap(GAME_CODWAW, "mp_docks", "Sub Pens", true);
+        persistGameMap(GAME_CODWAW, "mp_suburban", "Upheaval", true);
     }
 
     private void checkAppUsers() {
-        logger.debug("Checking users");
+        logger.info("Checking users");
 
         Map<String, String> userMap = new HashMap<>();
         userMap.put("admin", "admin");
@@ -432,24 +427,64 @@ public class Initialization {
         }
     }
 
-    private void persistGameGametypes(Map<String, String> gametypeTags, String gameTag) {
-        Game game = gameRepository.findByTag(gameTag);
+    private void persistPlatform(String tag, String name) {
+        logger.debug("Persist platform '{}' '{}'", tag, name);
 
-        for (String gametypeTag : gametypeTags.keySet()) {
-            Gametype gametype = gametypeRepository.findByName(gametypeTag);
-            if (gameGametypeRepository.findByGameAndGametype(game, gametype) == null) {
-                gameGametypeRepository.save(new GameGametype(game, gametype, gametypeTags.get(gametypeTag)));
-            }
+        Platform platform = platformRepository.findByTag(tag);
+        if (platform == null) {
+            platform = new Platform(tag);
         }
+        platform.setName(name);
+        platformRepository.save(platform);
     }
 
-    private void persisitGameMap(Map<String, String> gameMaps, String gameTag) {
-        Game game = gameRepository.findByTag(gameTag);
+    private void persistGame(String tag, String name, String platformTag) {
+        logger.debug("Persist Game '{}' '{}' '{}'", tag, name, platformTag);
 
-        for (String mapTag : gameMaps.keySet()) {
-            if (gameMapRepository.findByTagAndGame(mapTag, game) == null) {
-                gameMapRepository.save(new GameMap(mapTag, gameMaps.get(mapTag), game, true));
-            }
+        Platform platform = platformRepository.findByTag(platformTag);
+        Game game = gameRepository.findByTag(tag);
+        if (game == null) {
+            game = new Game(tag);
         }
+        game.setName(name);
+        game.setPlatform(platform);
+        gameRepository.save(game);
+    }
+
+    private void persistGametype(String name) {
+        logger.debug("Persist Gametype '{}'", name);
+
+        Gametype gametype = gametypeRepository.findByName(name);
+        if (gametype == null) {
+            gametype = new Gametype(name);
+        }
+        gametypeRepository.save(gametype);
+    }
+
+    private void persistGameGametype(String gameTag, String gametypeTag, String tag) {
+        logger.debug("Persist GameGametype '{}' '{}' '{}'", gameTag, gametypeTag, tag);
+
+        Game game = gameRepository.findByTag(gameTag);
+        Gametype gametype = gametypeRepository.findByName(gametypeTag);
+        GameGametype gameGametype = gameGametypeRepository.findByGameAndGametype(game, gametype);
+        if (gameGametype == null) {
+            gameGametype = new GameGametype(game, gametype);
+        }
+        gameGametype.setTag(tag);
+        gameGametypeRepository.save(gameGametype);
+    }
+
+    private void persistGameMap(String gameTag, String tag, String name, boolean stock) {
+        logger.debug("Persist GameMap '{}' '{}' '{}' '{}'", gameTag, tag, name, stock);
+
+        Game game = gameRepository.findByTag(gameTag);
+        GameMap gameMap = gameMapRepository.findByTagAndGame(tag, game);
+        if (gameMap == null) {
+            gameMap = new GameMap(tag);
+        }
+        gameMap.setName(name);
+        gameMap.setGame(game);
+        gameMap.setStock(stock);
+        gameMapRepository.save(gameMap);
     }
 }

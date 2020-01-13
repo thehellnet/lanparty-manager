@@ -31,6 +31,11 @@ public class GameGametype extends AbstractEntity {
     public GameGametype() {
     }
 
+    public GameGametype(Game game, Gametype gametype) {
+        this.game = game;
+        this.gametype = gametype;
+    }
+
     public GameGametype(Game game, Gametype gametype, String tag) {
         this.game = game;
         this.gametype = gametype;

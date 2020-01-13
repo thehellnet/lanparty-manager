@@ -23,6 +23,10 @@ public class Game extends AbstractEntity {
     @Column(name = "name")
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "platform_id", nullable = false)
+    private Platform platform;
+
     @OneToMany(mappedBy = "game", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<GameGametype> gameGametypes = new ArrayList<>();
 
@@ -65,6 +69,14 @@ public class Game extends AbstractEntity {
         this.name = name;
     }
 
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
+    }
+
     public List<GameGametype> getGameGametypes() {
         return gameGametypes;
     }
@@ -89,6 +101,7 @@ public class Game extends AbstractEntity {
         return Id.equals(game.Id) &&
                 tag.equals(game.tag) &&
                 Objects.equals(name, game.name) &&
+                platform.equals(game.platform) &&
                 gameGametypes.equals(game.gameGametypes) &&
                 gameMaps.equals(game.gameMaps);
     }
