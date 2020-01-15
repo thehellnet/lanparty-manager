@@ -1,6 +1,7 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.util.*;
@@ -17,7 +18,7 @@ public class AppUser extends AbstractEntity {
 
     @Basic
     @Column(name = "enabled", nullable = false)
-    private Boolean enabled = Boolean.TRUE;
+    private Boolean enabled = Boolean.FALSE;
 
     @Basic
     @Column(name = "email", nullable = false, unique = true)
@@ -31,6 +32,14 @@ public class AppUser extends AbstractEntity {
     @Basic
     @Column(name = "name")
     private String name;
+
+    @Basic
+    @Column(name = "nickname")
+    private String nickname;
+
+    @Basic
+    @Column(name = "last_login_ts")
+    private DateTime lastLogin;
 
     @Basic
     @Column(name = "barcode", unique = true)
@@ -62,6 +71,11 @@ public class AppUser extends AbstractEntity {
     public AppUser(String email, String password, String name) {
         this(email, password);
         this.name = name;
+    }
+
+    public AppUser(String email, String password, String name, String nickname) {
+        this(email, password, name);
+        this.nickname = nickname;
     }
 
     public AppUser(String email, String password, String name, List<Role> roles, String barcode) {
@@ -110,6 +124,22 @@ public class AppUser extends AbstractEntity {
         this.name = name;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public DateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(DateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
     public String getBarcode() {
         return barcode;
     }
@@ -134,6 +164,10 @@ public class AppUser extends AbstractEntity {
         this.roles = appUserRoles;
     }
 
+    public void updateLastLogin() {
+        lastLogin = DateTime.now();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -144,6 +178,8 @@ public class AppUser extends AbstractEntity {
                 email.equals(appUser.email) &&
                 password.equals(appUser.password) &&
                 Objects.equals(name, appUser.name) &&
+                Objects.equals(nickname, appUser.nickname) &&
+                Objects.equals(lastLogin, appUser.lastLogin) &&
                 Objects.equals(barcode, appUser.barcode) &&
                 appUserTokens.equals(appUser.appUserTokens) &&
                 roles.equals(appUser.roles);

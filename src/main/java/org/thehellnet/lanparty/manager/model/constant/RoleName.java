@@ -1,6 +1,17 @@
 package org.thehellnet.lanparty.manager.model.constant;
 
-public final class RoleName {
-    public static final String USER = "ROLE_USER";
-    public static final String ADMIN = "ROLE_ADMIN";
+public enum RoleName {
+
+    PUBLIC,
+    USER,
+    ADMIN;
+
+    public String getValue() {
+        return String.format("ROLE_%s", this.name());
+    }
+
+    @Override
+    public String toString() {
+        return getValue();
+    }
 }

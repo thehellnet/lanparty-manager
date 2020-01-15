@@ -7,6 +7,8 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,6 +22,16 @@ public class ErrorHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity handleResourceNotFoundException(ResourceNotFoundException e) {
         return prepareResponseEntity(e, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        return prepareResponseEntity(e, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity handleMethodArgumentNotValidException(AccessDeniedException e) {
+        return prepareResponseEntity(e, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
@@ -43,7 +55,7 @@ public class ErrorHandler {
             responseBody.put("message", e.getMessage());
         }
 
-        logger.debug(String.format("StatusCode: %d - Message: %s", httpStatus.value(), e.getMessage()));
+        logger.debug(String.format("StatusCode: %d - Exception: %s -  Message: %s", httpStatus.value(), e.getClass().getSimpleName(), e.getMessage()));
 
         return ResponseEntity
                 .status(httpStatus)

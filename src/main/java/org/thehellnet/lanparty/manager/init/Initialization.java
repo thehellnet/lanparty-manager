@@ -25,6 +25,7 @@ public class Initialization {
     private static final String PLATFORM_XBOX = "xbox";
     private static final String PLATFORM_SWITCH = "switch";
     private static final String PLATFORM_MOBILE = "mobile";
+    private static final String PLATFORM_3DS = "3ds";
 
     private static final String GAME_Q3A = "q3a";
     private static final String GAME_Q3UT4 = "q3ut4";
@@ -38,7 +39,10 @@ public class Initialization {
     private static final String GAME_FIFA20 = "fifa20";
     private static final String GAME_TEKKEN7 = "tekken7";
     private static final String GAME_HS = "hs";
-    private static final String GAME_SSB = "ssb";
+    private static final String GAME_MARIOKART = "mariokart";
+    private static final String GAME_SSBROS = "ssbros";
+    private static final String GAME_POKEMON = "pokemon";
+    private static final String GAME_JUSTDANCE = "justdance";
 
     private static final String GAMETYPE_DEATHMATCH = "Deathmatch";
     private static final String GAMETYPE_TEAM_DEATHMATCH = "Team Deathmatch";
@@ -120,8 +124,9 @@ public class Initialization {
     private void checkRoles() {
         logger.info("Checking roles");
 
-        persistRole(RoleName.USER);
-        persistRole(RoleName.ADMIN);
+        for (RoleName roleName : RoleName.values()) {
+            persistRole(roleName);
+        }
     }
 
     private void checkAppUsers() {
@@ -139,6 +144,7 @@ public class Initialization {
         persistPlatform(PLATFORM_XBOX, "Xbox");
         persistPlatform(PLATFORM_SWITCH, "Nintendo Switch");
         persistPlatform(PLATFORM_MOBILE, "Personal Mobile device");
+        persistPlatform(PLATFORM_3DS, "Nientendo 2DS/3DS");
     }
 
     private void checkGames() {
@@ -156,7 +162,10 @@ public class Initialization {
         persistGame(GAME_FIFA20, "FIFA 20", PLATFORM_PS4);
         persistGame(GAME_TEKKEN7, "Tekken 7", PLATFORM_PS4);
         persistGame(GAME_HS, "Hearthstone", PLATFORM_MOBILE);
-        persistGame(GAME_SSB, "Super Smash Bros", PLATFORM_SWITCH);
+        persistGame(GAME_MARIOKART, "Mario Kart 8 Deluxe", PLATFORM_SWITCH);
+        persistGame(GAME_SSBROS, "Super Smash Bros", PLATFORM_SWITCH);
+        persistGame(GAME_POKEMON, "Pokémon VGC Premier Challenge", PLATFORM_3DS);
+        persistGame(GAME_JUSTDANCE, "Just Dance", PLATFORM_SWITCH);
     }
 
     private void checkGametypes() {
@@ -397,12 +406,12 @@ public class Initialization {
         persistGameMap(GAME_CODWAW, "mp_suburban", "Upheaval", true);
     }
 
-    private void persistRole(String name) {
-        logger.debug("Persist Role '{}'", name);
+    private void persistRole(RoleName roleName) {
+        logger.debug("Persist Role '{}'", roleName);
 
-        Role role = roleRepository.findByName(name);
+        Role role = roleRepository.findByName(roleName.getValue());
         if (role == null) {
-            role = new Role(name);
+            role = new Role(roleName.getValue());
         }
         roleRepository.save(role);
     }
@@ -422,14 +431,16 @@ public class Initialization {
         logger.debug("Persist AppUser '{}'", email);
 
         List<Role> roles = roleRepository.findAll();
+
         AppUser appUser = appUserRepository.findByEmail(email);
         if (appUser == null) {
             appUser = new AppUser(email);
             String hashedPassword = PasswordUtility.hash(password);
             appUser.setPassword(hashedPassword);
-            appUser.setRoles(roles);
-            appUserRepository.save(appUser);
         }
+        appUser.setEnabled(true);
+        appUser.setRoles(roles);
+        appUserRepository.save(appUser);
     }
 
     private void persistGame(String tag, String name, String platformTag) {

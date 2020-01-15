@@ -2,6 +2,7 @@ package org.thehellnet.lanparty.manager.api.v1.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.thehellnet.lanparty.manager.model.dto.request.appuser.LoginAppUserRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.response.appuser.LoginAppUserResponseDTO;
@@ -13,12 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api/public")
-public class LoginController extends AbstractController {
+@RequestMapping(path = "/api/public/v1/user")
+public class AppUserController extends AbstractController {
 
     private final LoginService loginService;
 
-    public LoginController(LoginService loginService) {
+    public AppUserController(LoginService loginService) {
         this.loginService = loginService;
     }
 
@@ -28,6 +29,7 @@ public class LoginController extends AbstractController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @PreAuthorize("permitAll()")
     public ResponseEntity login(@RequestBody LoginAppUserRequestDTO dto) {
         AppUser appUser = loginService.findByEmailAndPassword(dto.email, dto.password);
         AppUserToken appUserToken = loginService.newToken(appUser);
@@ -43,6 +45,7 @@ public class LoginController extends AbstractController {
             path = "/isTokenValid",
             method = RequestMethod.GET
     )
+    @PreAuthorize("isFullyAuthenticated()")
     public ResponseEntity isTokenValid(HttpServletRequest request, AppUser appUser) {
         return ResponseEntity.noContent().build();
     }

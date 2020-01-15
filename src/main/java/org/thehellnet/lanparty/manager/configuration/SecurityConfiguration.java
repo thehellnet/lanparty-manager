@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.thehellnet.lanparty.manager.api.v1.ws.ShowcaseWSHandler;
 import org.thehellnet.lanparty.manager.configuration.filter.AuthenticationFilter;
+import org.thehellnet.lanparty.manager.model.constant.RoleName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,32 +35,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.cors();
         http.csrf().disable();
+
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll();
 
         http.authorizeRequests()
                 .antMatchers("/dev/**").permitAll()
-                .antMatchers("/api/public/login").permitAll()
                 .antMatchers(ShowcaseWSHandler.URL + "/**").permitAll();
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/api/public/v1/tool/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/public/v1/registration/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/public/v1/registration/**").permitAll();
+                .antMatchers("/api/public/v1/**").permitAll();
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/public/rest/**").hasRole("USER")
-                .antMatchers(HttpMethod.POST, "/api/public/rest/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PUT, "/api/public/rest/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PATCH, "/api/public/rest/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/api/public/rest/**").hasRole("ADMIN");
-
-        http.authorizeRequests()
-                .anyRequest().fullyAuthenticated();
-
-        http.cors();
+                .antMatchers("/api/public/rest/**").fullyAuthenticated()
+                .antMatchers(HttpMethod.GET, "/api/public/rest/**").hasRole(RoleName.USER.name())
+                .antMatchers(HttpMethod.POST, "/api/public/rest/**").hasRole(RoleName.ADMIN.name())
+                .antMatchers(HttpMethod.PUT, "/api/public/rest/**").hasRole(RoleName.ADMIN.name())
+                .antMatchers(HttpMethod.PATCH, "/api/public/rest/**").hasRole(RoleName.ADMIN.name())
+                .antMatchers(HttpMethod.DELETE, "/api/public/rest/**").hasRole(RoleName.ADMIN.name());
 
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
