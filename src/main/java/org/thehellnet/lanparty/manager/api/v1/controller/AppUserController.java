@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api/public/v1/user")
+@RequestMapping(path = "/api/public/v1/appUser")
 public class AppUserController extends AbstractController {
 
     private final LoginService loginService;
