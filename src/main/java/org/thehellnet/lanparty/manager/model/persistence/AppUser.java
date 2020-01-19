@@ -2,6 +2,7 @@ package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.joda.time.DateTime;
+import org.springframework.data.rest.core.annotation.Description;
 
 import javax.persistence.*;
 import java.util.*;
@@ -18,6 +19,7 @@ public class AppUser extends AbstractEntity {
 
     @Basic
     @Column(name = "enabled", nullable = false)
+    @Description("User enabled or not")
     private Boolean enabled = Boolean.FALSE;
 
     @Basic
