@@ -127,7 +127,7 @@ dependencies {
     implementation group: "org.jadira.usertype", name: "usertype.core", version: VERSIONS["usertype.core"]
 
     implementation group: "org.bouncycastle", name: "bcprov-jdk15on", version: VERSIONS["bouncycastle"]
-    implementation group: "de.mkammerer", name: "argon2-jvm", version: VERSIONS["argon2-jvm"]
+    implementation group: "de.mkammerer", name: "argon2-jvm-nolibs", version: VERSIONS["argon2-jvm"]
 
     implementation group: "com.google.code.findbugs", name: "annotations", version: VERSIONS["findbugs-annotations"]
 
