@@ -32,6 +32,7 @@ abstract class ContextSpecification extends Specification {
     protected static final String APPUSER_EMAIL = "email@email.com"
     protected static final String APPUSER_PASSWORD = "password"
     protected static final String APPUSER_NAME = "Name"
+    protected static final String APPUSER_NICKNAME = "Nickname"
     protected static final String APPUSER_BARCODE = "0123456789"
 
     protected static final String APPUSER_EMAIL_NEW = "emailnew@email.com"

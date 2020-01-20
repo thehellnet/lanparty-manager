@@ -3,8 +3,11 @@ package org.thehellnet.lanparty.manager.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException
+import org.thehellnet.lanparty.manager.model.dto.request.auth.ConfirmAuthRequestDTO
 import org.thehellnet.lanparty.manager.model.dto.request.auth.LoginAuthRequestDTO
+import org.thehellnet.lanparty.manager.model.dto.request.auth.RegisterAuthRequestDTO
 import org.thehellnet.lanparty.manager.model.dto.response.auth.LoginAuthResponseDTO
+import org.thehellnet.lanparty.manager.model.dto.response.auth.RegisterAuthResponseDTO
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.utility.PasswordUtility
 import spock.lang.Unroll
@@ -261,5 +264,78 @@ class AuthServiceTest extends ServiceSpecification {
         then:
         noExceptionThrown()
         responseDTO.expiration.isAfterNow()
+    }
+
+    def "register new user"() {
+        given:
+        RegisterAuthRequestDTO requestDTO = new RegisterAuthRequestDTO();
+        requestDTO.email = APPUSER_EMAIL
+        requestDTO.password = APPUSER_PASSWORD
+        requestDTO.name = APPUSER_NAME
+        requestDTO.nickname = APPUSER_NICKNAME
+
+        when:
+        RegisterAuthResponseDTO responseDTO = authService.register(requestDTO)
+
+        then:
+        noExceptionThrown()
+        responseDTO.email == APPUSER_EMAIL
+        responseDTO.name == APPUSER_NAME
+        responseDTO.nickname == APPUSER_NICKNAME
+
+        and:
+        appUserRepository.findAll().size() == 2
+
+        when:
+        AppUser appUser = appUserRepository.findByEmail(APPUSER_EMAIL)
+
+        then:
+        !appUser.enabled
+    }
+
+    def "register and confirm new user"() {
+        given:
+        RegisterAuthRequestDTO requestDTO = new RegisterAuthRequestDTO();
+        requestDTO.email = APPUSER_EMAIL
+        requestDTO.password = APPUSER_PASSWORD
+        requestDTO.name = APPUSER_NAME
+        requestDTO.nickname = APPUSER_NICKNAME
+
+        when:
+        RegisterAuthResponseDTO responseDTO = authService.register(requestDTO)
+
+        then:
+        noExceptionThrown()
+        responseDTO.email == APPUSER_EMAIL
+        responseDTO.name == APPUSER_NAME
+        responseDTO.nickname == APPUSER_NICKNAME
+
+        and:
+        appUserRepository.findAll().size() == 2
+
+        when:
+        AppUser appUser = appUserRepository.findByEmail(APPUSER_EMAIL)
+
+        then:
+        !appUser.enabled
+
+        when:
+        ConfirmAuthRequestDTO confirmAuthRequestDTO = new ConfirmAuthRequestDTO();
+        confirmAuthRequestDTO.email = APPUSER_EMAIL
+        confirmAuthRequestDTO.confirmCode = appUser.confirmCode
+
+        and:
+        authService.confirm(confirmAuthRequestDTO)
+
+        then:
+        noExceptionThrown()
+
+        when:
+        appUser = appUserRepository.findByEmail(APPUSER_EMAIL)
+
+        then:
+        appUser.enabled
+        appUser.confirmCode == null
+        appUser.confirmTs != null && appUser.confirmTs.isBeforeNow()
     }
 }
