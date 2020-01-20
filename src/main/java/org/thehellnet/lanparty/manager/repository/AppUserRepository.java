@@ -7,7 +7,7 @@ import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
-    AppUser findByEmail(String email);
+    AppUser findByEnabledTrueAndEmail(String email);
 
     AppUser findByEnabledFalseAndEmailAndConfirmCode(String email, String conformCode);
 

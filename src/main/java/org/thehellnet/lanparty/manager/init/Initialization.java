@@ -432,7 +432,7 @@ public class Initialization {
 
         List<Role> roles = roleRepository.findAll();
 
-        AppUser appUser = appUserRepository.findByEmail(email);
+        AppUser appUser = appUserRepository.findByEnabledTrueAndEmail(email);
         if (appUser == null) {
             appUser = new AppUser(email);
             String hashedPassword = PasswordUtility.hash(password);

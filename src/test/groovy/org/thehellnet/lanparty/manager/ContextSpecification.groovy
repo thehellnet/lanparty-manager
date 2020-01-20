@@ -99,7 +99,7 @@ abstract class ContextSpecification extends Specification {
 
     @Transactional
     protected AppUser createAppUser() {
-        AppUser appUser = appUserRepository.findByEmail(APPUSER_EMAIL)
+        AppUser appUser = appUserRepository.findByEnabledTrueAndEmail(APPUSER_EMAIL)
         if (appUser == null) {
             appUser = new AppUser(APPUSER_EMAIL, APPUSER_PASSWORD, APPUSER_NAME, [] as List<Role>, APPUSER_BARCODE)
             appUser = appUserRepository.save(appUser)

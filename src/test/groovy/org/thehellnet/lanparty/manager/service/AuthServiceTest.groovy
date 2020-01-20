@@ -3,6 +3,8 @@ package org.thehellnet.lanparty.manager.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException
+import org.thehellnet.lanparty.manager.model.dto.request.auth.LoginAuthRequestDTO
+import org.thehellnet.lanparty.manager.model.dto.response.auth.LoginAuthResponseDTO
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.utility.PasswordUtility
 import spock.lang.Unroll
@@ -17,23 +19,36 @@ class AuthServiceTest extends ServiceSpecification {
         String email = "admin"
 
         when:
-        AppUser appUser = authService.findByEmail(email)
+        AppUser appUser = authService.findByEnabledTrueAndEmail(email)
 
         then:
         appUser != null
         appUser.email == "admin"
     }
 
-    def "findByEmail with exiting email"() {
+    def "findByEmail with exiting email activated"() {
         given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+        AppUser user = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        user.enabled = true
+        appUserRepository.save(user)
 
         when:
-        AppUser appUser = authService.findByEmail(APPUSER_EMAIL)
+        AppUser appUser = authService.findByEnabledTrueAndEmail(APPUSER_EMAIL)
 
         then:
         appUser != null
         appUser.email == APPUSER_EMAIL
+    }
+
+    def "findByEmail with exiting email not activated"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+
+        when:
+        authService.findByEnabledTrueAndEmail(APPUSER_EMAIL)
+
+        then:
+        thrown NotFoundException
     }
 
     def "findByEmail with not exiting email"() {
@@ -41,7 +56,7 @@ class AuthServiceTest extends ServiceSpecification {
         String email = APPUSER_EMAIL
 
         when:
-        authService.findByEmail(email)
+        authService.findByEnabledTrueAndEmail(email)
 
         then:
         thrown NotFoundException
@@ -52,7 +67,7 @@ class AuthServiceTest extends ServiceSpecification {
         String email = "not_valid_email"
 
         when:
-        authService.findByEmail(email)
+        authService.findByEnabledTrueAndEmail(email)
 
         then:
         thrown NotFoundException
@@ -61,10 +76,11 @@ class AuthServiceTest extends ServiceSpecification {
     def "findByEmailAndPassword with exiting user"() {
         given:
         AppUser user = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        user.enabled = true
         appUserRepository.save(user)
 
         when:
-        AppUser appUser = authService.findByEmailAndPassword(APPUSER_EMAIL, APPUSER_PASSWORD)
+        AppUser appUser = authService.findByEnabledTrueAndEmailAndPassword(APPUSER_EMAIL, APPUSER_PASSWORD)
 
         then:
         appUser != null
@@ -78,7 +94,7 @@ class AuthServiceTest extends ServiceSpecification {
         String password = "admin"
 
         when:
-        AppUser appUser = authService.findByEmailAndPassword(email, password)
+        AppUser appUser = authService.findByEnabledTrueAndEmailAndPassword(email, password)
 
         then:
         appUser != null
@@ -91,7 +107,7 @@ class AuthServiceTest extends ServiceSpecification {
         String password = APPUSER_PASSWORD
 
         when:
-        authService.findByEmailAndPassword(email, password)
+        authService.findByEnabledTrueAndEmailAndPassword(email, password)
 
         then:
         thrown NotFoundException
@@ -100,7 +116,7 @@ class AuthServiceTest extends ServiceSpecification {
     @Unroll
     def "findByEmailAndPassword with email #input_email and password #input_password and not exiting user"(String input_email, String input_password) {
         when:
-        authService.findByEmailAndPassword(input_email, input_password)
+        authService.findByEnabledTrueAndEmailAndPassword(input_email, input_password)
 
         then:
         thrown NotFoundException
@@ -127,7 +143,7 @@ class AuthServiceTest extends ServiceSpecification {
         String password = APPUSER_PASSWORD
 
         when:
-        authService.findByEmailAndPassword(email, password)
+        authService.findByEnabledTrueAndEmailAndPassword(email, password)
 
         then:
         thrown NotFoundException
@@ -142,7 +158,7 @@ class AuthServiceTest extends ServiceSpecification {
         String password = "wrong_password"
 
         when:
-        authService.findByEmailAndPassword(email, password)
+        authService.findByEnabledTrueAndEmailAndPassword(email, password)
 
         then:
         thrown NotFoundException
@@ -154,7 +170,7 @@ class AuthServiceTest extends ServiceSpecification {
         appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         when:
-        authService.findByEmailAndPassword(input_email, input_password)
+        authService.findByEnabledTrueAndEmailAndPassword(input_email, input_password)
 
         then:
         thrown NotFoundException
@@ -185,5 +201,65 @@ class AuthServiceTest extends ServiceSpecification {
 
         then:
         thrown InvalidDataException
+    }
+
+    def "login with invalid user"() {
+        given:
+        LoginAuthRequestDTO requestDTO = new LoginAuthRequestDTO()
+        requestDTO.email = "invalid"
+        requestDTO.password = "notvalid"
+
+        when:
+        LoginAuthResponseDTO responseDTO = authService.login(requestDTO)
+
+        then:
+        thrown NotFoundException
+    }
+
+    def "login with admin user"() {
+        given:
+        LoginAuthRequestDTO requestDTO = new LoginAuthRequestDTO()
+        requestDTO.email = "admin"
+        requestDTO.password = "admin"
+
+        when:
+        LoginAuthResponseDTO responseDTO = authService.login(requestDTO)
+
+        then:
+        noExceptionThrown()
+        responseDTO.expiration.isAfterNow()
+    }
+
+    def "login with new created user"() {
+        given:
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
+
+        when:
+        LoginAuthRequestDTO requestDTO = new LoginAuthRequestDTO()
+        requestDTO.email = APPUSER_EMAIL
+        requestDTO.password = APPUSER_PASSWORD
+
+        authService.login(requestDTO)
+
+        then:
+        thrown NotFoundException
+    }
+
+    def "login with new created user enabled"() {
+        given:
+        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD))
+        appUser.enabled = true
+        appUserRepository.save(appUser)
+
+        when:
+        LoginAuthRequestDTO requestDTO = new LoginAuthRequestDTO()
+        requestDTO.email = APPUSER_EMAIL
+        requestDTO.password = APPUSER_PASSWORD
+
+        LoginAuthResponseDTO responseDTO = authService.login(requestDTO)
+
+        then:
+        noExceptionThrown()
+        responseDTO.expiration.isAfterNow()
     }
 }

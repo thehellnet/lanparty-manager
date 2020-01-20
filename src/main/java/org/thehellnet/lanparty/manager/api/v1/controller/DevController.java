@@ -179,7 +179,7 @@ public class DevController {
     }
 
     private AppUser prepareAppUser(String email, String password) {
-        AppUser appUser = appUserRepository.findByEmail(email);
+        AppUser appUser = appUserRepository.findByEnabledTrueAndEmail(email);
         if (appUser == null) {
             appUser = new AppUser();
         }

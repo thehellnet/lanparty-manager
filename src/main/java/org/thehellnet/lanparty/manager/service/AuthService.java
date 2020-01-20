@@ -38,12 +38,12 @@ public class AuthService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public AppUser findByEmail(String email) {
+    public AppUser findByEnabledTrueAndEmail(String email) {
         if (!EmailUtility.validateForLogin(email)) {
             throw new NotFoundException();
         }
 
-        AppUser appUser = appUserRepository.findByEmail(email);
+        AppUser appUser = appUserRepository.findByEnabledTrueAndEmail(email);
         if (appUser == null) {
             throw new NotFoundException();
         }
@@ -52,8 +52,8 @@ public class AuthService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public AppUser findByEmailAndPassword(String email, String password) {
-        AppUser appUser = findByEmail(email);
+    public AppUser findByEnabledTrueAndEmailAndPassword(String email, String password) {
+        AppUser appUser = findByEnabledTrueAndEmail(email);
         if (!PasswordUtility.verify(appUser.getPassword(), password)) {
             throw new NotFoundException();
         }
@@ -87,7 +87,7 @@ public class AuthService extends AbstractService {
 
     @Transactional
     public LoginAuthResponseDTO login(LoginAuthRequestDTO requestDTO) {
-        AppUser appUser = findByEmailAndPassword(requestDTO.email, requestDTO.password);
+        AppUser appUser = findByEnabledTrueAndEmailAndPassword(requestDTO.email, requestDTO.password);
         AppUserToken appUserToken = newToken(appUser);
 
         LoginAuthResponseDTO responseDTO = new LoginAuthResponseDTO();
@@ -99,7 +99,7 @@ public class AuthService extends AbstractService {
 
     @Transactional
     public RegisterAuthResponseDTO register(RegisterAuthRequestDTO requestDTO) {
-        AppUser appUser = appUserRepository.findByEmail(requestDTO.email);
+        AppUser appUser = appUserRepository.findByEnabledTrueAndEmail(requestDTO.email);
         if (appUser != null) {
             throw new AlreadyPresentException();
         }
