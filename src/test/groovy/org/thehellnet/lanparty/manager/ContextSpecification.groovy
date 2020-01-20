@@ -7,10 +7,7 @@ import org.springframework.test.context.web.AnnotationConfigWebContextLoader
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
-import org.thehellnet.lanparty.manager.configuration.JacksonConfiguration
-import org.thehellnet.lanparty.manager.configuration.PersistenceConfiguration
-import org.thehellnet.lanparty.manager.configuration.SpringConfiguration
-import org.thehellnet.lanparty.manager.configuration.WebSocketConfiguration
+import org.thehellnet.lanparty.manager.configuration.*
 import org.thehellnet.lanparty.manager.model.persistence.*
 import org.thehellnet.lanparty.manager.repository.*
 import spock.lang.Specification
@@ -19,9 +16,14 @@ import spock.lang.Specification
 @ContextConfiguration(
         loader = AnnotationConfigWebContextLoader,
         classes = [
-                SpringConfiguration,
-                PersistenceConfiguration,
+                EmailConfiguration,
                 JacksonConfiguration,
+                MvcConfiguration,
+                PersistenceConfiguration,
+                RestConfiguration,
+                SecurityConfiguration,
+                SpringConfiguration,
+                ThreadsConfiguration,
                 WebSocketConfiguration
         ]
 )
