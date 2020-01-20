@@ -38,26 +38,27 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 def VERSIONS = [
-        "tomcat"              : "9.0.29",
-        "groovy"              : "2.5.8",
-        "spock"               : "1.3-groovy-2.5",
-        "slf4j"               : "1.7.29",
+        "tomcat"              : "9.0.30",
+        "groovy"              : "2.5.9",
+        "spock"               : "2.0-M1-groovy-2.5",
+        "slf4j"               : "1.7.30",
         "logback"             : "1.2.3",
-        "spring"              : "5.2.1.RELEASE",
-        "spring-data-jpa"     : "2.2.2.RELEASE",
-        "spring-data-rest"    : "3.2.2.RELEASE",
+        "spring"              : "5.2.3.RELEASE",
+        "spring-data-jpa"     : "2.2.4.RELEASE",
+        "spring-data-rest"    : "3.2.4.RELEASE",
         "jackson"             : "2.10.1",
-        "postgresql"          : "42.2.8",
-        "c3p0"                : "0.9.5.4",
-        "hibernate"           : "5.4.9.Final",
-        "hibernate-validator" : "6.1.0.Final",
+        "postgresql"          : "42.2.9",
+        "c3p0"                : "0.9.5.5",
+        "hibernate"           : "5.4.10.Final",
+        "hibernate-validator" : "6.1.1.Final",
         "json"                : "20190722",
         "snakeyaml"           : "1.25",
-        "geoip2"              : "2.12.0",
+        "geoip2"              : "2.13.0",
         "jjwt"                : "0.9.1",
         "jaxb-api"            : "2.3.1",
         "javax.servlet-api"   : "4.0.1",
-        "aspectjweaver"       : "1.9.4",
+        "javax.mail-api"      : "1.6.2",
+        "aspectjweaver"       : "1.9.5",
         "commons-io"          : "2.6",
         "joda-time"           : "2.10.5",
         "joda-time-hibernate" : "1.4",
@@ -82,6 +83,7 @@ dependencies {
     implementation group: "org.springframework", name: "spring-core", version: VERSIONS["spring"]
     implementation group: "org.springframework", name: "spring-test", version: VERSIONS["spring"]
     implementation group: "org.springframework", name: "spring-context", version: VERSIONS["spring"]
+    implementation group: "org.springframework", name: "spring-context-support", version: VERSIONS["spring"]
     implementation group: "org.springframework", name: "spring-beans", version: VERSIONS["spring"]
     implementation group: "org.springframework", name: "spring-web", version: VERSIONS["spring"]
     implementation group: "org.springframework", name: "spring-webmvc", version: VERSIONS["spring"]
@@ -105,6 +107,7 @@ dependencies {
 
     implementation group: "javax.xml.bind", name: "jaxb-api", version: VERSIONS["jaxb-api"]
     implementation group: "javax.servlet", name: "javax.servlet-api", version: VERSIONS["javax.servlet-api"]
+    implementation group: "javax.mail", name: "javax.mail-api", version: VERSIONS["javax.mail-api"]
 
     implementation group: "org.aspectj", name: "aspectjweaver", version: VERSIONS["aspectjweaver"]
 
