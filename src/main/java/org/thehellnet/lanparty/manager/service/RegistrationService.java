@@ -29,10 +29,10 @@ public class RegistrationService extends AbstractService {
             jsonObject.put("id", tournament.getId());
             jsonObject.put("name", tournament.getName());
             jsonObject.put("game", tournament.getGame().getName());
-            jsonObject.put("start", tournament.getStartDateTime());
-            jsonObject.put("end", tournament.getEndDateTime());
-            jsonObject.put("registration_start", tournament.getStartRegistrationDateTime());
-            jsonObject.put("registration_end", tournament.getEndRegistrationDateTime());
+            jsonObject.put("start", tournament.getStartTs());
+            jsonObject.put("end", tournament.getEndTs());
+            jsonObject.put("registration_start", tournament.getStartRegistrationTs());
+            jsonObject.put("registration_end", tournament.getEndRegistrationTs());
             jsonArray.put(jsonObject);
         }
 

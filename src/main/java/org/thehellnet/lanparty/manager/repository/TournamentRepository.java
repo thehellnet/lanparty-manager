@@ -16,6 +16,6 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
             "FROM Tournament t " +
             "WHERE t.enabled = TRUE " +
             "AND t.registrationEnabled = TRUE " +
-            "ORDER BY t.startDateTime ASC")
+            "ORDER BY t.startTs ASC")
     List<Tournament> findRegistrables();
 }

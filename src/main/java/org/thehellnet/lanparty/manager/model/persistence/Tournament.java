@@ -32,24 +32,24 @@ public class Tournament extends AbstractEntity {
     private Game game;
 
     @Basic
-    @Column(name = "start_datetime", nullable = false)
-    private DateTime startDateTime;
+    @Column(name = "start_ts", nullable = false)
+    private DateTime startTs = DateTime.now();
 
     @Basic
-    @Column(name = "end_datetime", nullable = false)
-    private DateTime endDateTime;
+    @Column(name = "end_ts", nullable = false)
+    private DateTime endTs = DateTime.now();
 
     @Basic
     @Column(name = "registration_enabled", nullable = false)
     private Boolean registrationEnabled = true;
 
     @Basic
-    @Column(name = "start_registration_datetime", nullable = false)
-    private DateTime startRegistrationDateTime;
+    @Column(name = "start_registration_ts", nullable = false)
+    private DateTime startRegistrationTs = DateTime.now();
 
     @Basic
-    @Column(name = "end_registration_datetime", nullable = false)
-    private DateTime endRegistrationDateTime;
+    @Column(name = "end_registration_ts", nullable = false)
+    private DateTime endRegistrationTs = DateTime.now();
 
     @Basic
     @Column(name = "status", nullable = false)
@@ -118,20 +118,20 @@ public class Tournament extends AbstractEntity {
         this.game = game;
     }
 
-    public DateTime getStartDateTime() {
-        return startDateTime;
+    public DateTime getStartTs() {
+        return startTs;
     }
 
-    public void setStartDateTime(DateTime startDateTime) {
-        this.startDateTime = startDateTime;
+    public void setStartTs(DateTime startTs) {
+        this.startTs = startTs;
     }
 
-    public DateTime getEndDateTime() {
-        return endDateTime;
+    public DateTime getEndTs() {
+        return endTs;
     }
 
-    public void setEndDateTime(DateTime endDateTime) {
-        this.endDateTime = endDateTime;
+    public void setEndTs(DateTime endTs) {
+        this.endTs = endTs;
     }
 
     public Boolean getRegistrationEnabled() {
@@ -142,20 +142,20 @@ public class Tournament extends AbstractEntity {
         this.registrationEnabled = registrationEnabled;
     }
 
-    public DateTime getStartRegistrationDateTime() {
-        return startRegistrationDateTime;
+    public DateTime getStartRegistrationTs() {
+        return startRegistrationTs;
     }
 
-    public void setStartRegistrationDateTime(DateTime startRegistrationDateTime) {
-        this.startRegistrationDateTime = startRegistrationDateTime;
+    public void setStartRegistrationTs(DateTime startRegistrationTs) {
+        this.startRegistrationTs = startRegistrationTs;
     }
 
-    public DateTime getEndRegistrationDateTime() {
-        return endRegistrationDateTime;
+    public DateTime getEndRegistrationTs() {
+        return endRegistrationTs;
     }
 
-    public void setEndRegistrationDateTime(DateTime endRegistrationDateTime) {
-        this.endRegistrationDateTime = endRegistrationDateTime;
+    public void setEndRegistrationTs(DateTime endRegistrationTs) {
+        this.endRegistrationTs = endRegistrationTs;
     }
 
     public TournamentStatus getStatus() {
@@ -207,11 +207,11 @@ public class Tournament extends AbstractEntity {
                 enabled == that.enabled &&
                 name.equals(that.name) &&
                 game.equals(that.game) &&
-                startDateTime.equals(that.startDateTime) &&
-                endDateTime.equals(that.endDateTime) &&
+                startTs.equals(that.startTs) &&
+                endTs.equals(that.endTs) &&
                 registrationEnabled == that.registrationEnabled &&
-                startRegistrationDateTime.equals(that.startRegistrationDateTime) &&
-                endRegistrationDateTime.equals(that.endRegistrationDateTime) &&
+                startRegistrationTs.equals(that.startRegistrationTs) &&
+                endRegistrationTs.equals(that.endRegistrationTs) &&
                 status == that.status &&
                 cfg.equals(that.cfg) &&
                 seats.equals(that.seats) &&

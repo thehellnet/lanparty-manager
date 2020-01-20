@@ -198,10 +198,10 @@ public class DevController {
         tournament.setCfg(cfg);
 
         DateTime now = DateTime.now();
-        tournament.setStartRegistrationDateTime(now);
-        tournament.setEndRegistrationDateTime(now.plusHours(1));
-        tournament.setStartDateTime(now.plusHours(1).plusMinutes(15));
-        tournament.setEndDateTime(now.plusHours(1).plusMinutes(45));
+        tournament.setStartRegistrationTs(now);
+        tournament.setEndRegistrationTs(now.plusHours(1));
+        tournament.setStartTs(now.plusHours(1).plusMinutes(15));
+        tournament.setEndTs(now.plusHours(1).plusMinutes(45));
 
         return tournamentRepository.save(tournament);
     }
