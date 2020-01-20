@@ -10,14 +10,14 @@ import spock.lang.Unroll
 class AuthServiceTest extends ServiceSpecification {
 
     @Autowired
-    private AuthService loginService
+    private AuthService authService
 
     def "findByEmail with admin"() {
         given:
         String email = "admin"
 
         when:
-        AppUser appUser = loginService.findByEmail(email)
+        AppUser appUser = authService.findByEmail(email)
 
         then:
         appUser != null
@@ -29,7 +29,7 @@ class AuthServiceTest extends ServiceSpecification {
         appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         when:
-        AppUser appUser = loginService.findByEmail(APPUSER_EMAIL)
+        AppUser appUser = authService.findByEmail(APPUSER_EMAIL)
 
         then:
         appUser != null
@@ -41,7 +41,7 @@ class AuthServiceTest extends ServiceSpecification {
         String email = APPUSER_EMAIL
 
         when:
-        loginService.findByEmail(email)
+        authService.findByEmail(email)
 
         then:
         thrown NotFoundException
@@ -52,7 +52,7 @@ class AuthServiceTest extends ServiceSpecification {
         String email = "not_valid_email"
 
         when:
-        loginService.findByEmail(email)
+        authService.findByEmail(email)
 
         then:
         thrown NotFoundException
@@ -64,7 +64,7 @@ class AuthServiceTest extends ServiceSpecification {
         appUserRepository.save(user)
 
         when:
-        AppUser appUser = loginService.findByEmailAndPassword(APPUSER_EMAIL, APPUSER_PASSWORD)
+        AppUser appUser = authService.findByEmailAndPassword(APPUSER_EMAIL, APPUSER_PASSWORD)
 
         then:
         appUser != null
@@ -78,7 +78,7 @@ class AuthServiceTest extends ServiceSpecification {
         String password = "admin"
 
         when:
-        AppUser appUser = loginService.findByEmailAndPassword(email, password)
+        AppUser appUser = authService.findByEmailAndPassword(email, password)
 
         then:
         appUser != null
@@ -91,7 +91,7 @@ class AuthServiceTest extends ServiceSpecification {
         String password = APPUSER_PASSWORD
 
         when:
-        loginService.findByEmailAndPassword(email, password)
+        authService.findByEmailAndPassword(email, password)
 
         then:
         thrown NotFoundException
@@ -100,7 +100,7 @@ class AuthServiceTest extends ServiceSpecification {
     @Unroll
     def "findByEmailAndPassword with email #input_email and password #input_password and not exiting user"(String input_email, String input_password) {
         when:
-        loginService.findByEmailAndPassword(input_email, input_password)
+        authService.findByEmailAndPassword(input_email, input_password)
 
         then:
         thrown NotFoundException
@@ -127,7 +127,7 @@ class AuthServiceTest extends ServiceSpecification {
         String password = APPUSER_PASSWORD
 
         when:
-        loginService.findByEmailAndPassword(email, password)
+        authService.findByEmailAndPassword(email, password)
 
         then:
         thrown NotFoundException
@@ -142,7 +142,7 @@ class AuthServiceTest extends ServiceSpecification {
         String password = "wrong_password"
 
         when:
-        loginService.findByEmailAndPassword(email, password)
+        authService.findByEmailAndPassword(email, password)
 
         then:
         thrown NotFoundException
@@ -154,7 +154,7 @@ class AuthServiceTest extends ServiceSpecification {
         appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         when:
-        loginService.findByEmailAndPassword(input_email, input_password)
+        authService.findByEmailAndPassword(input_email, input_password)
 
         then:
         thrown NotFoundException
@@ -173,7 +173,7 @@ class AuthServiceTest extends ServiceSpecification {
         appUserTokenRepository.findByAppUser(appUser).size() == 0
 
         when:
-        loginService.newToken(appUser)
+        authService.newToken(appUser)
 
         then:
         appUserTokenRepository.findByAppUser(appUser).size() == 1
@@ -181,7 +181,7 @@ class AuthServiceTest extends ServiceSpecification {
 
     def "newToken with invalid user"() {
         when:
-        loginService.newToken(null)
+        authService.newToken(null)
 
         then:
         thrown InvalidDataException
