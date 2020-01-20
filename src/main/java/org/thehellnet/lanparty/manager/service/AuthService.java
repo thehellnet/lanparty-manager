@@ -2,14 +2,21 @@ package org.thehellnet.lanparty.manager.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thehellnet.lanparty.manager.exception.controller.AlreadyPresentException;
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
-import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException;
+import org.thehellnet.lanparty.manager.model.constant.RoleName;
+import org.thehellnet.lanparty.manager.model.dto.request.auth.ConfirmAuthRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.auth.LoginAuthRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.request.auth.RegisterAuthRequestDTO;
+import org.thehellnet.lanparty.manager.model.dto.response.auth.LoginAuthResponseDTO;
+import org.thehellnet.lanparty.manager.model.dto.response.auth.RegisterAuthResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.model.persistence.Role;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository;
+import org.thehellnet.lanparty.manager.repository.RoleRepository;
 import org.thehellnet.utility.EmailUtility;
 import org.thehellnet.utility.PasswordUtility;
 import org.thehellnet.utility.TokenUtility;
@@ -18,14 +25,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class LoginService extends AbstractService {
+public class AuthService extends AbstractService {
 
     private final AppUserRepository appUserRepository;
     private final AppUserTokenRepository appUserTokenRepository;
+    private final RoleRepository roleRepository;
 
-    public LoginService(AppUserRepository appUserRepository, AppUserTokenRepository appUserTokenRepository) {
+    public AuthService(AppUserRepository appUserRepository, AppUserTokenRepository appUserTokenRepository, RoleRepository roleRepository) {
         this.appUserRepository = appUserRepository;
         this.appUserTokenRepository = appUserTokenRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Transactional(readOnly = true)
@@ -74,6 +83,52 @@ public class LoginService extends AbstractService {
 
         String token = TokenUtility.generate();
         return appUserTokenRepository.save(new AppUserToken(token, appUser));
+    }
+
+    @Transactional
+    public LoginAuthResponseDTO login(LoginAuthRequestDTO requestDTO) {
+        AppUser appUser = findByEmailAndPassword(requestDTO.email, requestDTO.password);
+        AppUserToken appUserToken = newToken(appUser);
+
+        LoginAuthResponseDTO responseDTO = new LoginAuthResponseDTO();
+        responseDTO.id = appUserToken.getId();
+        responseDTO.token = appUserToken.getToken();
+        responseDTO.expiration = appUserToken.getExpirationDateTime();
+        return responseDTO;
+    }
+
+    @Transactional
+    public RegisterAuthResponseDTO register(RegisterAuthRequestDTO requestDTO) {
+        AppUser appUser = appUserRepository.findByEmail(requestDTO.email);
+        if (appUser != null) {
+            throw new AlreadyPresentException();
+        }
+
+        String hashedPassword = PasswordUtility.hash(requestDTO.password);
+        appUser = new AppUser(requestDTO.email, hashedPassword, requestDTO.name, requestDTO.nickname);
+
+        Role publicRole = roleRepository.findByRoleName(RoleName.PUBLIC);
+        appUser.getRoles().add(publicRole);
+
+        appUser = appUserRepository.save(appUser);
+
+        RegisterAuthResponseDTO responseDTO = new RegisterAuthResponseDTO();
+        responseDTO.email = appUser.getEmail();
+        responseDTO.name = appUser.getName();
+        responseDTO.nickname = appUser.getNickname();
+
+        return responseDTO;
+    }
+
+    @Transactional
+    public void confirm(ConfirmAuthRequestDTO requestDTO) {
+        AppUser appUser = appUserRepository.findByEnabledFalseAndEmailAndConfirmCode(requestDTO.email, requestDTO.confirmCode);
+        if (appUser == null) {
+            throw new NotFoundException();
+        }
+
+        appUser.confirm();
+        appUserRepository.save(appUser);
     }
 
     private boolean hasRoles(AppUser appUser, boolean all, Role[] roles) {

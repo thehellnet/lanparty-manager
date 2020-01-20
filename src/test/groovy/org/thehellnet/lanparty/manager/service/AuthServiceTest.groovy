@@ -3,15 +3,14 @@ package org.thehellnet.lanparty.manager.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException
-import org.thehellnet.lanparty.manager.exception.controller.UnauthorizedException
 import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.utility.PasswordUtility
 import spock.lang.Unroll
 
-class LoginServiceTest extends ServiceSpecification {
+class AuthServiceTest extends ServiceSpecification {
 
     @Autowired
-    private LoginService loginService
+    private AuthService loginService
 
     def "findByEmail with admin"() {
         given:

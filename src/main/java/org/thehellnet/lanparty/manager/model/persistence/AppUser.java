@@ -23,6 +23,10 @@ public class AppUser extends AbstractEntity {
     private Boolean enabled = Boolean.FALSE;
 
     @Basic
+    @Column(name = "confirm_code")
+    private String confirmCode;
+
+    @Basic
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -36,12 +40,20 @@ public class AppUser extends AbstractEntity {
     private String name;
 
     @Basic
-    @Column(name = "nickname")
+    @Column(name = "nickname", unique = true)
     private String nickname;
 
     @Basic
+    @Column(name = "register_ts", nullable = false)
+    private DateTime registerTs = DateTime.now();
+
+    @Basic
+    @Column(name = "confirm_ts")
+    private DateTime confirmTs;
+
+    @Basic
     @Column(name = "last_login_ts")
-    private DateTime lastLogin;
+    private DateTime lastLoginTs;
 
     @Basic
     @Column(name = "barcode", unique = true)
@@ -102,6 +114,14 @@ public class AppUser extends AbstractEntity {
         this.enabled = enabled;
     }
 
+    public String getConfirmCode() {
+        return confirmCode;
+    }
+
+    public void setConfirmCode(String confirmCode) {
+        this.confirmCode = confirmCode;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -134,12 +154,28 @@ public class AppUser extends AbstractEntity {
         this.nickname = nickname;
     }
 
-    public DateTime getLastLogin() {
-        return lastLogin;
+    public DateTime getRegisterTs() {
+        return registerTs;
     }
 
-    public void setLastLogin(DateTime lastLogin) {
-        this.lastLogin = lastLogin;
+    public void setRegisterTs(DateTime registerTs) {
+        this.registerTs = registerTs;
+    }
+
+    public DateTime getConfirmTs() {
+        return confirmTs;
+    }
+
+    public void setConfirmTs(DateTime confirmTs) {
+        this.confirmTs = confirmTs;
+    }
+
+    public DateTime getLastLoginTs() {
+        return lastLoginTs;
+    }
+
+    public void setLastLoginTs(DateTime lastLoginTs) {
+        this.lastLoginTs = lastLoginTs;
     }
 
     public String getBarcode() {
@@ -167,7 +203,13 @@ public class AppUser extends AbstractEntity {
     }
 
     public void updateLastLogin() {
-        lastLogin = DateTime.now();
+        lastLoginTs = DateTime.now();
+    }
+
+    public void confirm() {
+        enabled = true;
+        confirmCode = null;
+        confirmTs = DateTime.now();
     }
 
     @Override
@@ -177,11 +219,14 @@ public class AppUser extends AbstractEntity {
         AppUser appUser = (AppUser) o;
         return Id.equals(appUser.Id) &&
                 enabled.equals(appUser.enabled) &&
+                Objects.equals(confirmCode, appUser.confirmCode) &&
                 email.equals(appUser.email) &&
                 password.equals(appUser.password) &&
                 Objects.equals(name, appUser.name) &&
                 Objects.equals(nickname, appUser.nickname) &&
-                Objects.equals(lastLogin, appUser.lastLogin) &&
+                registerTs.equals(appUser.registerTs) &&
+                Objects.equals(confirmTs, appUser.confirmTs) &&
+                Objects.equals(lastLoginTs, appUser.lastLoginTs) &&
                 Objects.equals(barcode, appUser.barcode) &&
                 appUserTokens.equals(appUser.appUserTokens) &&
                 roles.equals(appUser.roles);
