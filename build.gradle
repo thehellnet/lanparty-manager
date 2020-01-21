@@ -65,6 +65,7 @@ def VERSIONS = [
         "javax.activation"    : "1.1.1",
         "aspectjweaver"       : "1.9.5",
         "commons-io"          : "2.6",
+        "thymeleaf"           : "3.0.11.RELEASE",
         "joda-time"           : "2.10.5",
         "joda-time-hibernate" : "1.4",
         "joda-convert"        : "2.2.1",
@@ -131,6 +132,8 @@ dependencies {
     implementation group: "com.maxmind.geoip2", name: "geoip2", version: VERSIONS["geoip2"]
 
     implementation group: "commons-io", name: "commons-io", version: VERSIONS["commons-io"]
+
+    implementation group: "org.thymeleaf", name: "thymeleaf", version: VERSIONS["thymeleaf"]
 
     implementation group: "joda-time", name: "joda-time", version: VERSIONS["joda-time"]
     implementation group: "joda-time", name: "joda-time-hibernate", version: VERSIONS["joda-time-hibernate"]
