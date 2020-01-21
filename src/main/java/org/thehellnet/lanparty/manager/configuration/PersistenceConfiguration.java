@@ -20,7 +20,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class PersistenceConfiguration {
 
-    private final PersistenceParams params = YmlUtility.loadFromResources("configuration/persistence.yml", PersistenceParams.class);
+    private final PersistenceParams params = YmlUtility.getInstance("configuration/persistence.yml", PersistenceParams.class).loadFromResources();
 
     @Bean(name = "dataSource")
     public DataSource getDataSource() {

@@ -34,6 +34,6 @@ public class EmailConfiguration {
 
     @Bean
     public MailParams getMailParams() {
-        return YmlUtility.loadFromResources("configuration/mail.yml", MailParams.class);
+        return YmlUtility.getInstance("configuration/mail.yml", MailParams.class).loadFromResources();
     }
 }
