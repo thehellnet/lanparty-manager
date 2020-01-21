@@ -4,26 +4,30 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.thehellnet.lanparty.manager.configuration.params.MailParams;
+import org.thehellnet.utility.YmlUtility;
 
 import java.util.Properties;
 
 @Configuration
 public class EmailConfiguration {
 
+    private final MailParams params = YmlUtility.loadFromResources("configuration/mail.yml", MailParams.class);
+
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl javaMailSenderImpl = new JavaMailSenderImpl();
 
-        javaMailSenderImpl.setHost("");
-        javaMailSenderImpl.setPort(25);
-        javaMailSenderImpl.setUsername("");
-        javaMailSenderImpl.setPassword("");
+        javaMailSenderImpl.setHost(params.getHost());
+        javaMailSenderImpl.setPort(params.getPort());
+        javaMailSenderImpl.setUsername(params.getUsername());
+        javaMailSenderImpl.setPassword(params.getPassword());
 
-        Properties props = javaMailSenderImpl.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtps");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
+        Properties properties = javaMailSenderImpl.getJavaMailProperties();
+        properties.put("mail.transport.protocol", params.isEnableSsl() ? "smtps" : "smtp");
+        properties.put("mail.smtp.auth", params.isEnableAuth() ? "true" : "false");
+        properties.put("mail.smtp.starttls.enable", params.isEnableTls() ? "true" : "false");
+        properties.put("mail.debug", params.isEnableDebug() ? "true" : "false");
 
         return javaMailSenderImpl;
     }
