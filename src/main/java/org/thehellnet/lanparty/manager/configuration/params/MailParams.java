@@ -7,6 +7,8 @@ public class MailParams {
     private String username = "";
     private String password = "";
 
+    private String from = "";
+
     private boolean enableSsl = false;
     private boolean enableTls = false;
     private boolean enableAuth = false;
@@ -42,6 +44,14 @@ public class MailParams {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
     }
 
     public boolean isEnableSsl() {

@@ -12,23 +12,28 @@ import java.util.Properties;
 @Configuration
 public class EmailConfiguration {
 
-    private final MailParams params = YmlUtility.loadFromResources("configuration/mail.yml", MailParams.class);
-
     @Bean
     public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl javaMailSenderImpl = new JavaMailSenderImpl();
+        MailParams params = getMailParams();
 
+        JavaMailSenderImpl javaMailSenderImpl = new JavaMailSenderImpl();
         javaMailSenderImpl.setHost(params.getHost());
         javaMailSenderImpl.setPort(params.getPort());
         javaMailSenderImpl.setUsername(params.getUsername());
         javaMailSenderImpl.setPassword(params.getPassword());
 
         Properties properties = javaMailSenderImpl.getJavaMailProperties();
+        properties.put("mail.smtp.from", params.getFrom());
         properties.put("mail.transport.protocol", params.isEnableSsl() ? "smtps" : "smtp");
         properties.put("mail.smtp.auth", params.isEnableAuth() ? "true" : "false");
         properties.put("mail.smtp.starttls.enable", params.isEnableTls() ? "true" : "false");
         properties.put("mail.debug", params.isEnableDebug() ? "true" : "false");
 
         return javaMailSenderImpl;
+    }
+
+    @Bean
+    public MailParams getMailParams() {
+        return YmlUtility.loadFromResources("configuration/mail.yml", MailParams.class);
     }
 }

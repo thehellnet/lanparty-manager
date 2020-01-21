@@ -35,6 +35,10 @@ jacocoTestReport {
     }
 }
 
+test {
+    useJUnitPlatform()
+}
+
 check.dependsOn jacocoTestReport
 
 def VERSIONS = [
@@ -56,8 +60,9 @@ def VERSIONS = [
         "geoip2"              : "2.13.0",
         "jjwt"                : "0.9.1",
         "jaxb-api"            : "2.3.1",
-        "javax.servlet-api"   : "4.0.1",
-        "javax.mail-api"      : "1.6.2",
+        "javax.servlet"       : "4.0.1",
+        "javax.mail"          : "1.6.2",
+        "javax.activation"    : "1.1.1",
         "aspectjweaver"       : "1.9.5",
         "commons-io"          : "2.6",
         "joda-time"           : "2.10.5",
@@ -106,8 +111,11 @@ dependencies {
     implementation group: "org.springframework.data", name: "spring-data-rest-webmvc", version: VERSIONS["spring-data-rest"]
 
     implementation group: "javax.xml.bind", name: "jaxb-api", version: VERSIONS["jaxb-api"]
-    implementation group: "javax.servlet", name: "javax.servlet-api", version: VERSIONS["javax.servlet-api"]
-    implementation group: "javax.mail", name: "javax.mail-api", version: VERSIONS["javax.mail-api"]
+    implementation group: "javax.servlet", name: "javax.servlet-api", version: VERSIONS["javax.servlet"]
+    implementation group: "javax.mail", name: "javax.mail-api", version: VERSIONS["javax.mail"]
+    implementation group: "javax.activation", name: "activation", version: VERSIONS["javax.activation"]
+
+    implementation group: "com.sun.mail", name: "javax.mail", version: VERSIONS["javax.mail"]
 
     implementation group: "org.aspectj", name: "aspectjweaver", version: VERSIONS["aspectjweaver"]
 
