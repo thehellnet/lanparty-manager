@@ -3,6 +3,7 @@ package org.thehellnet.lanparty.manager.model.persistence;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.joda.time.DateTime;
 import org.springframework.data.rest.core.annotation.Description;
+import org.thehellnet.utility.ConfirmCodeUtility;
 
 import javax.persistence.*;
 import java.util.*;
@@ -204,6 +205,10 @@ public class AppUser extends AbstractEntity {
 
     public void updateLastLogin() {
         lastLoginTs = DateTime.now();
+    }
+
+    public void generateConfirmCode() {
+        confirmCode = ConfirmCodeUtility.generate();
     }
 
     public void confirm() {

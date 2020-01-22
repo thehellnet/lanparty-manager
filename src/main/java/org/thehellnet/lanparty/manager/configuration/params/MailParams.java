@@ -14,6 +14,8 @@ public class MailParams {
     private boolean enableAuth = false;
     private boolean enableDebug = false;
 
+    private String linkPrefix = "";
+
     public String getHost() {
         return host;
     }
@@ -84,5 +86,13 @@ public class MailParams {
 
     public void setEnableDebug(boolean enableDebug) {
         this.enableDebug = enableDebug;
+    }
+
+    public String getLinkPrefix() {
+        return linkPrefix;
+    }
+
+    public void setLinkPrefix(String linkPrefix) {
+        this.linkPrefix = linkPrefix;
     }
 }

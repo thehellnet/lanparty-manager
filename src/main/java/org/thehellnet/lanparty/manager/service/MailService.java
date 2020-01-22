@@ -26,6 +26,10 @@ public class MailService {
         this.mailParams = mailParams;
     }
 
+    public String computeUrl(String endpoint) {
+        return String.format("%s%s", mailParams.getLinkPrefix(), endpoint);
+    }
+
     public void send(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(mailParams.getFrom());

@@ -4,11 +4,15 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public final class ResourceUtility {
+
+    private static final String[] LOCAL_RESOURCES_PATH = new String[]{
+            PathUtility.join("/opt", "lanparty", "manager"),
+            PathUtility.join(System.getProperty("user.home"), "lanparty", "manager")
+    };
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceUtility.class);
 
@@ -27,7 +31,31 @@ public final class ResourceUtility {
             return null;
         }
 
-        return ResourceUtility.class.getClassLoader().getResourceAsStream(path);
+        InputStream inputStream = null;
+
+        for (String searchPath : LOCAL_RESOURCES_PATH) {
+            String filePath = PathUtility.join(searchPath, path);
+            File file = new File(filePath);
+
+            if (file.exists() && file.canRead()) {
+                FileInputStream fileInputStream;
+
+                try {
+                    fileInputStream = new FileInputStream(file);
+                } catch (FileNotFoundException e) {
+                    logger.warn("File found but unable to get InputStream");
+                    continue;
+                }
+
+                inputStream = fileInputStream;
+            }
+        }
+
+        if (inputStream == null) {
+            inputStream = ResourceUtility.class.getClassLoader().getResourceAsStream(path);
+        }
+
+        return inputStream;
     }
 
     public String getResourceContent() {
@@ -35,7 +63,7 @@ public final class ResourceUtility {
             return null;
         }
 
-        InputStream inputStream = ResourceUtility.class.getClassLoader().getResourceAsStream(path);
+        InputStream inputStream = getResource();
         if (inputStream == null) {
             logger.error("Resource {} not found", path);
             return null;

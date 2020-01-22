@@ -14,6 +14,7 @@ import org.thehellnet.lanparty.manager.model.dto.response.auth.RegisterAuthRespo
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.model.persistence.Role;
+import org.thehellnet.lanparty.manager.model.template.AppUserRegistrationConfirmTemplate;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository;
 import org.thehellnet.lanparty.manager.repository.RoleRepository;
@@ -21,6 +22,7 @@ import org.thehellnet.utility.EmailUtility;
 import org.thehellnet.utility.PasswordUtility;
 import org.thehellnet.utility.TokenUtility;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,10 +33,15 @@ public class AuthService extends AbstractService {
     private final AppUserTokenRepository appUserTokenRepository;
     private final RoleRepository roleRepository;
 
-    public AuthService(AppUserRepository appUserRepository, AppUserTokenRepository appUserTokenRepository, RoleRepository roleRepository) {
+    private final TemplateService templateService;
+    private final MailService mailService;
+
+    public AuthService(AppUserRepository appUserRepository, AppUserTokenRepository appUserTokenRepository, RoleRepository roleRepository, TemplateService templateService, MailService mailService) {
         this.appUserRepository = appUserRepository;
         this.appUserTokenRepository = appUserTokenRepository;
         this.roleRepository = roleRepository;
+        this.templateService = templateService;
+        this.mailService = mailService;
     }
 
     @Transactional(readOnly = true)
@@ -110,7 +117,17 @@ public class AuthService extends AbstractService {
         Role publicRole = roleRepository.findByRoleName(RoleName.PUBLIC);
         appUser.getRoles().add(publicRole);
 
+        appUser.generateConfirmCode();
+
         appUser = appUserRepository.save(appUser);
+
+        String confirmCode = String.format("%s|%s", appUser.getEmail(), appUser.getConfirmCode());
+        String confirmCodeUrl = Base64.getUrlEncoder().encodeToString(confirmCode.getBytes());
+        String endpoint = String.format("/api/public/v1/auth/confirm/%s", confirmCodeUrl);
+        String link = mailService.computeUrl(endpoint);
+        AppUserRegistrationConfirmTemplate template = new AppUserRegistrationConfirmTemplate(appUser, link);
+        String mailBody = templateService.render(template);
+        mailService.sendHtml(appUser.getEmail(), "Conferma registrazione", mailBody);
 
         RegisterAuthResponseDTO responseDTO = new RegisterAuthResponseDTO();
         responseDTO.email = appUser.getEmail();

@@ -15,6 +15,5 @@ public class RegisterAuthRequestDTO extends AuthRequestDTO {
     @NotEmpty
     public String name;
 
-    @NotEmpty
     public String nickname;
 }
