@@ -9,7 +9,7 @@ class ResourceUtilityTest extends Specification {
         String path = "configuration/persistence.yml"
 
         when:
-        InputStream inputStream = ResourceUtility.getResource(path)
+        InputStream inputStream = ResourceUtility.getInstance(path).getResource()
 
         then:
         inputStream != null
