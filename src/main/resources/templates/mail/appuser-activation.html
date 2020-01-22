@@ -5,8 +5,22 @@
     <title th:remove="all">Attivazione account</title>
 </head>
 <body>
-<p th:text="${name}">
-    Hello, Peter Static!
-</p>
+<div>
+    <div>
+        <h1>Ciao <span th:text="${appUser.name}">Mario Rossi</span>,</h1>
+    </div>
+    <div>
+        <p>Grazie per esserti registrato sul nostro portale.</p>
+    </div>
+    <div>
+        <p>Per completare la registrazione devi confermare la tua e-mail.<br/>
+            Clicca nel link qui sotto:</p>
+    </div>
+    <div>
+        <a th:href="${link}" th:text="${link}" href="https://tournaments.thehellnet.org/confirm/abcd1234">
+            https://tournaments.thehellnet.org/confirm/abcd1234
+        </a>
+    </div>
+</div>
 </body>
 </html>
