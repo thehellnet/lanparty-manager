@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.thehellnet.lanparty.manager.model.persistence.annotation.Hidden;
 import org.thehellnet.utility.StringUtility;
 
 import javax.persistence.*;
@@ -69,7 +70,10 @@ public class MetadataUtility {
     public JSONObject computeClass(Class<?> entityClass) {
         JSONArray fields = new JSONArray();
 
-        for (Field field : entityClass.getDeclaredFields()) {
+        List<Field> fieldList = new ArrayList<>(Arrays.asList(entityClass.getDeclaredFields()));
+        fieldList.addAll(Arrays.asList(entityClass.getSuperclass().getDeclaredFields()));
+
+        for (Field field : fieldList) {
             String type = null;
 
             Annotation[] annotations = field.getAnnotations();
@@ -99,11 +103,17 @@ public class MetadataUtility {
 
             Boolean nullable = null;
             Boolean unique = null;
+            boolean hidden = false;
 
             Column columnAnnotation = field.getAnnotation(Column.class);
             if (columnAnnotation != null) {
                 nullable = columnAnnotation.nullable();
                 unique = columnAnnotation.unique();
+            }
+
+            Hidden hiddenAnnotation = field.getAnnotation(Hidden.class);
+            if (hiddenAnnotation != null) {
+                hidden = true;
             }
 
             JSONObject fieldObj = new JSONObject();
@@ -113,6 +123,7 @@ public class MetadataUtility {
             fieldObj.put("class", StringUtility.firstLetterLowercase(className));
             fieldObj.put("nullable", nullable != null ? nullable : JSONObject.NULL);
             fieldObj.put("unique", unique != null ? unique : JSONObject.NULL);
+            fieldObj.put("hidden", hidden);
             fields.put(fieldObj);
         }
 
