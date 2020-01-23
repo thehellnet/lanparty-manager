@@ -20,16 +20,16 @@ class MailServiceTest extends ServiceSpecification {
 //        noExceptionThrown()
 //    }
 //
-    def "sendHtml"() {
-        given:
-        String to = ""
-        String subject = "Test"
-        String body = "<h1>Test</h1><br /><p>Prova</p>"
-
-        when:
-        mailService.sendHtml(to, subject, body)
-
-        then:
-        noExceptionThrown()
-    }
+//    def "sendHtml"() {
+//        given:
+//        String to = ""
+//        String subject = "Test"
+//        String body = "<h1>Test</h1><br /><p>Prova</p>"
+//
+//        when:
+//        mailService.sendHtml(to, subject, body)
+//
+//        then:
+//        noExceptionThrown()
+//    }
 }
