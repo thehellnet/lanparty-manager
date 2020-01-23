@@ -116,8 +116,10 @@ public class MetadataUtility {
                 hidden = true;
             }
 
+            String name = field.getName().toLowerCase().equals("id") ? field.getName().toLowerCase() : field.getName();
+
             JSONObject fieldObj = new JSONObject();
-            fieldObj.put("name", field.getName());
+            fieldObj.put("name", name);
             fieldObj.put("title", computeTitle(field.getName()));
             fieldObj.put("type", type);
             fieldObj.put("class", StringUtility.firstLetterLowercase(className));
