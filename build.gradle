@@ -155,4 +155,6 @@ dependencies {
     testImplementation group: "org.spockframework", name: "spock-spring", version: VERSIONS["spock"]
 
     testImplementation group: "org.springframework", name: "spring-test", version: VERSIONS["spring"]
+
+    testImplementation group: "org.springframework.security", name: "spring-security-test", version: VERSIONS["spring"]
 }
