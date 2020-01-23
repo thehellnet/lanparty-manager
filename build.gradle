@@ -64,6 +64,7 @@ def VERSIONS = [
         "javax.mail"          : "1.6.2",
         "javax.activation"    : "1.1.1",
         "aspectjweaver"       : "1.9.5",
+        "reflections"         : "0.9.12",
         "commons-io"          : "2.6",
         "thymeleaf"           : "3.0.11.RELEASE",
         "joda-time"           : "2.10.5",
@@ -119,6 +120,7 @@ dependencies {
     implementation group: "com.sun.mail", name: "javax.mail", version: VERSIONS["javax.mail"]
 
     implementation group: "org.aspectj", name: "aspectjweaver", version: VERSIONS["aspectjweaver"]
+    implementation group: "org.reflections", name: "reflections", version: VERSIONS["reflections"]
 
     runtimeOnly group: "org.postgresql", name: "postgresql", version: VERSIONS["postgresql"]
     implementation group: "org.hibernate", name: "hibernate-core", version: VERSIONS["hibernate"]

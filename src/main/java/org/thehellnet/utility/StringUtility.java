@@ -29,6 +29,18 @@ public final class StringUtility {
         return getString(items, " ");
     }
 
+    public static String firstLetterLowercase(String input) {
+        if (input == null) {
+            return null;
+        }
+
+        if (input.length() == 0) {
+            return "";
+        }
+
+        return input.substring(0, 1).toLowerCase() + input.substring(1);
+    }
+
     private static List<String> getStrings(String rawText, String regex) {
         if (rawText == null) {
             return null;

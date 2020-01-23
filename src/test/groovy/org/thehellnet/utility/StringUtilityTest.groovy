@@ -1,6 +1,7 @@
 package org.thehellnet.utility
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class StringUtilityTest extends Specification {
 
@@ -144,5 +145,24 @@ class StringUtilityTest extends Specification {
                 assert false
             }
         }
+    }
+
+    @Unroll
+    def "firstLetterLowercase #input #expected"(String input, String expected) {
+        when:
+        String actual = StringUtility.firstLetterLowercase(input)
+
+        then:
+        actual == expected
+
+        where:
+        input  | expected
+        null   | null
+        ""     | ""
+        "test" | "test"
+        "Test" | "test"
+        "TEST" | "tEST"
+        "tEST" | "tEST"
+        "TeSt" | "teSt"
     }
 }
