@@ -6,7 +6,6 @@ import javax.validation.constraints.NotEmpty;
 public class LoginAuthRequestDTO extends AuthRequestDTO {
 
     @NotEmpty
-    @Email
     public String email;
 
     @NotEmpty
