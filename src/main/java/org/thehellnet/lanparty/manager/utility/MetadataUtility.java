@@ -38,11 +38,7 @@ public class MetadataUtility {
     }
 
     public JSONArray compute() {
-        Reflections reflections = new Reflections("org.thehellnet.lanparty.manager.model.persistence");
-        Set<Class<?>> entityClassSet = reflections.getTypesAnnotatedWith(Entity.class);
-
-        List<Class<?>> entityClasses = new ArrayList<>(entityClassSet);
-        entityClasses.sort(Comparator.comparing(Class::getSimpleName));
+        List<Class<?>> entityClasses = getClasses();
 
         JSONArray metadata = new JSONArray();
 
@@ -52,6 +48,22 @@ public class MetadataUtility {
         }
 
         return metadata;
+    }
+
+    public Class<?> search(String name) {
+        if (name == null || name.equals("")) {
+            return null;
+        }
+
+        List<Class<?>> entityClasses = getClasses();
+
+        for (Class<?> entityClass : entityClasses) {
+            if (entityClass.getSimpleName().equals(name)) {
+                return entityClass;
+            }
+        }
+
+        return null;
     }
 
     public JSONObject computeClass(Class<?> entityClass) {
@@ -124,5 +136,14 @@ public class MetadataUtility {
         }
 
         return stringJoiner.toString();
+    }
+
+    private List<Class<?>> getClasses() {
+        Reflections reflections = new Reflections("org.thehellnet.lanparty.manager.model.persistence");
+        Set<Class<?>> entityClassSet = reflections.getTypesAnnotatedWith(Entity.class);
+
+        List<Class<?>> entityClasses = new ArrayList<>(entityClassSet);
+        entityClasses.sort(Comparator.comparing(Class::getSimpleName));
+        return entityClasses;
     }
 }
