@@ -31,7 +31,7 @@ public class ConfigController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @PreAuthorize("permitAll()")
-    public ResponseEntity metadata(@RequestParam(name = "entityName") String entityName) {
+    public ResponseEntity metadata(@PathVariable(name = "entityName") String entityName) {
         String className = entityName.substring(0, entityName.length() - 1);
         className = className.substring(0, 1).toUpperCase() + className.substring(1);
 
