@@ -9,7 +9,6 @@ import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +46,7 @@ public class MetadataUtility {
             for (Field field : entityClass.getDeclaredFields()) {
                 String type = null;
 
-                List<Annotation> annotations = Arrays.asList(field.getAnnotations());
+                Annotation[] annotations = field.getAnnotations();
 
                 for (Class<?> clazz : FIELD_TYPES) {
                     for (Annotation annotation : annotations) {
