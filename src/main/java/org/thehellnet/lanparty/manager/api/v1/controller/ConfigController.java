@@ -22,7 +22,7 @@ public class ConfigController {
     )
     @PreAuthorize("permitAll()")
     public ResponseEntity metadata() {
-        JSONArray jsonArray = MetadataUtility.getInstance().compute();
-        return ResponseEntity.ok(jsonArray.toString());
+        JSONArray responseBody = MetadataUtility.getInstance().compute();
+        return ResponseEntity.ok(responseBody.toString());
     }
 }

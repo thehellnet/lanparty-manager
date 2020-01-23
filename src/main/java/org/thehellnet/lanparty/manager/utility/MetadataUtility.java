@@ -95,7 +95,7 @@ public class MetadataUtility {
             }
 
             JSONObject fieldObj = new JSONObject();
-            fieldObj.put("name", field.getName());
+            fieldObj.put("name", String.format("%ss", field.getName()));
             fieldObj.put("title", computeTitle(field.getName()));
             fieldObj.put("type", type);
             fieldObj.put("class", StringUtility.firstLetterLowercase(className));
