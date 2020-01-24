@@ -88,7 +88,7 @@ dependencies {
     runtimeOnly group: "ch.qos.logback", name: "logback-classic", version: VERSIONS["logback"]
 
     implementation group: "org.springframework", name: "spring-core", version: VERSIONS["spring"]
-    implementation group: "org.springframework", name: "spring-test", version: VERSIONS["spring"]
+    implementation group: "org.springframework", name: "spring-aspects", version: VERSIONS["spring"]
     implementation group: "org.springframework", name: "spring-context", version: VERSIONS["spring"]
     implementation group: "org.springframework", name: "spring-context-support", version: VERSIONS["spring"]
     implementation group: "org.springframework", name: "spring-beans", version: VERSIONS["spring"]

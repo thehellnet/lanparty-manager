@@ -3,6 +3,7 @@ package org.thehellnet.lanparty.manager.configuration;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -18,6 +19,7 @@ import java.util.Properties;
 @Configuration
 @EnableJpaRepositories(basePackages = "org.thehellnet.lanparty.manager.repository")
 @EnableTransactionManagement
+@EnableJpaAuditing
 public class PersistenceConfiguration {
 
     private final PersistenceParams params = YmlUtility.getInstance("configuration/persistence.yml", PersistenceParams.class).loadFromResources();
