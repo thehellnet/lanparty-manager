@@ -50,7 +50,7 @@ def VERSIONS = [
         "spring"              : "5.2.1.RELEASE",
         "spring-data-jpa"     : "2.2.4.RELEASE",
         "spring-data-rest"    : "3.2.4.RELEASE",
-        "jackson"             : "2.10.1",
+        "jackson"             : "2.10.2",
         "postgresql"          : "42.2.9",
         "c3p0"                : "0.9.5.5",
         "hibernate"           : "5.4.10.Final",
@@ -107,6 +107,7 @@ dependencies {
     implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: VERSIONS["jackson"]
     implementation group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: VERSIONS["jackson"]
     implementation group: "com.fasterxml.jackson.datatype", name: "jackson-datatype-joda", version: VERSIONS["jackson"]
+    implementation group: "com.fasterxml.jackson.jaxrs", name: "jackson-jaxrs-json-provider", version: VERSIONS["jackson"]
 
     implementation group: "org.springframework.data", name: "spring-data-jpa", version: VERSIONS["spring-data-jpa"]
     implementation group: "org.springframework.data", name: "spring-data-rest-core", version: VERSIONS["spring-data-rest"]
@@ -124,6 +125,7 @@ dependencies {
 
     runtimeOnly group: "org.postgresql", name: "postgresql", version: VERSIONS["postgresql"]
     implementation group: "org.hibernate", name: "hibernate-core", version: VERSIONS["hibernate"]
+    implementation group: "org.hibernate", name: "hibernate-envers", version: VERSIONS["hibernate"]
     implementation group: "org.hibernate.validator", name: "hibernate-validator", version: VERSIONS["hibernate-validator"]
     implementation group: "com.mchange", name: "c3p0", version: VERSIONS["c3p0"]
 
