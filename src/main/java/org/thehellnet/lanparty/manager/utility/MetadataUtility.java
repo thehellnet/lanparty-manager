@@ -6,6 +6,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thehellnet.lanparty.manager.model.persistence.annotation.Hidden;
+import org.thehellnet.lanparty.manager.model.persistence.annotation.Visibility;
 import org.thehellnet.utility.StringUtility;
 
 import javax.persistence.*;
@@ -104,6 +105,7 @@ public class MetadataUtility {
             Boolean nullable = null;
             Boolean unique = null;
             boolean hidden = false;
+            String visibility = Visibility.Size.EXTRA_SMALL.toString();
 
             Column columnAnnotation = field.getAnnotation(Column.class);
             if (columnAnnotation != null) {
@@ -116,6 +118,11 @@ public class MetadataUtility {
                 hidden = true;
             }
 
+            Visibility visibilityAnnotation = field.getAnnotation(Visibility.class);
+            if (visibilityAnnotation != null) {
+                visibility = visibilityAnnotation.toString();
+            }
+
             String name = field.getName().toLowerCase().equals("id") ? field.getName().toLowerCase() : field.getName();
 
             JSONObject fieldObj = new JSONObject();
@@ -126,6 +133,7 @@ public class MetadataUtility {
             fieldObj.put("nullable", nullable != null ? nullable : JSONObject.NULL);
             fieldObj.put("unique", unique != null ? unique : JSONObject.NULL);
             fieldObj.put("hidden", hidden);
+            fieldObj.put("visibility", visibility);
             fields.put(fieldObj);
         }
 
