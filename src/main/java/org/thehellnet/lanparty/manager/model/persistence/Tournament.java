@@ -202,14 +202,15 @@ public class Tournament extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Tournament that = (Tournament) o;
         return Id.equals(that.Id) &&
-                enabled == that.enabled &&
+                enabled.equals(that.enabled) &&
                 name.equals(that.name) &&
                 game.equals(that.game) &&
                 startTs.equals(that.startTs) &&
                 endTs.equals(that.endTs) &&
-                registrationEnabled == that.registrationEnabled &&
+                registrationEnabled.equals(that.registrationEnabled) &&
                 startRegistrationTs.equals(that.startRegistrationTs) &&
                 endRegistrationTs.equals(that.endRegistrationTs) &&
                 status == that.status &&
@@ -221,7 +222,7 @@ public class Tournament extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

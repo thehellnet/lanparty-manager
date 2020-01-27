@@ -86,6 +86,7 @@ public class AppUserToken extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         AppUserToken that = (AppUserToken) o;
         return Id.equals(that.Id) &&
                 token.equals(that.token) &&
@@ -96,7 +97,7 @@ public class AppUserToken extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id, token);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

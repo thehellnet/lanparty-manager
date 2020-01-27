@@ -100,6 +100,7 @@ public class Team extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Team team = (Team) o;
         return Id.equals(team.Id) &&
                 name.equals(team.name) &&
@@ -111,7 +112,7 @@ public class Team extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

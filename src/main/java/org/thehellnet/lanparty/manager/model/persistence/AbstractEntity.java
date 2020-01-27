@@ -9,6 +9,7 @@ import org.thehellnet.lanparty.manager.model.persistence.annotation.Hidden;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
@@ -36,6 +37,11 @@ public abstract class AbstractEntity implements Serializable {
     @JoinColumn(name = "last_modified_by")
     @LastModifiedBy
     protected AppUser lastModifiedBy;
+
+    @Hidden
+    @Basic
+    @Column(name = "active", nullable = false)
+    protected Boolean active = Boolean.TRUE;
 
     @Hidden
     @Transient
@@ -80,5 +86,22 @@ public abstract class AbstractEntity implements Serializable {
 
     public String getFriendlyName() {
         return friendlyName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractEntity that = (AbstractEntity) o;
+        return createdTs.equals(that.createdTs) &&
+                createdBy.equals(that.createdBy) &&
+                Objects.equals(lastModifiedTs, that.lastModifiedTs) &&
+                Objects.equals(lastModifiedBy, that.lastModifiedBy) &&
+                active.equals(that.active);
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
     }
 }

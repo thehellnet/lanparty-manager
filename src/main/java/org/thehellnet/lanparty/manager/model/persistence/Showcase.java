@@ -111,6 +111,7 @@ public class Showcase extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Showcase showcase = (Showcase) o;
         return Id.equals(showcase.Id) &&
                 tag.equals(showcase.tag) &&
@@ -123,7 +124,7 @@ public class Showcase extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

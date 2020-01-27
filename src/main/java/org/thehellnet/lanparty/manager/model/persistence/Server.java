@@ -145,6 +145,7 @@ public class Server extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Server server = (Server) o;
         return Id.equals(server.Id) &&
                 tag.equals(server.tag) &&
@@ -159,7 +160,7 @@ public class Server extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id, tag);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

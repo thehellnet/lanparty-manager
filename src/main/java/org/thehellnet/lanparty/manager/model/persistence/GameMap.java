@@ -101,6 +101,7 @@ public class GameMap extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         GameMap gameMap = (GameMap) o;
         return Id.equals(gameMap.Id) &&
                 tag.equals(gameMap.tag) &&
@@ -111,7 +112,7 @@ public class GameMap extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

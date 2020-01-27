@@ -112,11 +112,11 @@ public class Seat extends AbstractEntity {
         lastContact = DateTime.now();
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Seat seat = (Seat) o;
         return Id.equals(seat.Id) &&
                 name.equals(seat.name) &&
@@ -128,7 +128,7 @@ public class Seat extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

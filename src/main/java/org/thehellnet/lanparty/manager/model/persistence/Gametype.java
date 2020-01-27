@@ -57,6 +57,7 @@ public class Gametype extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Gametype gametype = (Gametype) o;
         return Id.equals(gametype.Id) &&
                 name.equals(gametype.name) &&
@@ -65,7 +66,7 @@ public class Gametype extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id, name);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

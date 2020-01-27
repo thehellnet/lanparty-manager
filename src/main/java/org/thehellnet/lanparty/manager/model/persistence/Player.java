@@ -92,6 +92,7 @@ public class Player extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Player player = (Player) o;
         return Id.equals(player.Id) &&
                 nickname.equals(player.nickname) &&
@@ -102,7 +103,7 @@ public class Player extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

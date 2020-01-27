@@ -71,6 +71,7 @@ public class Platform extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Platform platform = (Platform) o;
         return Id.equals(platform.Id) &&
                 tag.equals(platform.tag) &&
@@ -80,7 +81,7 @@ public class Platform extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

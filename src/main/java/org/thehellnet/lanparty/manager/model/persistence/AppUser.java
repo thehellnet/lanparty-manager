@@ -221,6 +221,7 @@ public class AppUser extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         AppUser appUser = (AppUser) o;
         return Id.equals(appUser.Id) &&
                 enabled.equals(appUser.enabled) &&
@@ -239,7 +240,7 @@ public class AppUser extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

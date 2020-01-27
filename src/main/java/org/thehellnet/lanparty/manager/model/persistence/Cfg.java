@@ -75,16 +75,17 @@ public class Cfg extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Cfg cfg1 = (Cfg) o;
-        return Id.equals(cfg1.Id) &&
-                player.equals(cfg1.player) &&
-                game.equals(cfg1.game) &&
-                cfgContent.equals(cfg1.cfgContent);
+        if (!super.equals(o)) return false;
+        Cfg cfg = (Cfg) o;
+        return Id.equals(cfg.Id) &&
+                player.equals(cfg.player) &&
+                game.equals(cfg.game) &&
+                cfgContent.equals(cfg.cfgContent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

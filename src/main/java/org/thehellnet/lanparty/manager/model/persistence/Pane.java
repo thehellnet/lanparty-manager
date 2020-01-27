@@ -91,6 +91,7 @@ public class Pane extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Pane pane = (Pane) o;
         return Id.equals(pane.Id) &&
                 showcase.equals(pane.showcase) &&
@@ -102,7 +103,7 @@ public class Pane extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override

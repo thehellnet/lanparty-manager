@@ -57,6 +57,7 @@ public class Role extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Role role = (Role) o;
         return Id.equals(role.Id) &&
                 name.equals(role.name) &&
@@ -65,7 +66,7 @@ public class Role extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(super.hashCode(), Id);
     }
 
     @Override
