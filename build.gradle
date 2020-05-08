@@ -42,22 +42,23 @@ test {
 check.dependsOn jacocoTestReport
 
 def VERSIONS = [
-        "tomcat"              : "9.0.30",
-        "groovy"              : "2.5.9",
-        "spock"               : "2.0-M1-groovy-2.5",
+        "tomcat"              : "9.0.34",
+        "groovy"              : "3.0.3",
+        "spock"               : "2.0-M2-groovy-3.0",
         "slf4j"               : "1.7.30",
         "logback"             : "1.2.3",
-        "spring"              : "5.2.1.RELEASE",
-        "spring-data-jpa"     : "2.2.4.RELEASE",
-        "spring-data-rest"    : "3.2.4.RELEASE",
-        "jackson"             : "2.10.2",
-        "postgresql"          : "42.2.9",
+        "spring"              : "5.2.6.RELEASE",
+        "spring-security"     : "5.3.2.RELEASE",
+        "spring-data-jpa"     : "2.2.7.RELEASE",
+        "spring-data-rest"    : "3.2.7.RELEASE",
+        "jackson"             : "2.11.0",
+        "postgresql"          : "42.2.12",
         "c3p0"                : "0.9.5.5",
-        "hibernate"           : "5.4.10.Final",
-        "hibernate-validator" : "6.1.1.Final",
+        "hibernate"           : "5.4.15.Final",
+        "hibernate-validator" : "6.1.5.Final",
         "json"                : "20190722",
-        "snakeyaml"           : "1.25",
-        "geoip2"              : "2.13.0",
+        "snakeyaml"           : "1.26",
+        "geoip2"              : "2.13.1",
         "jjwt"                : "0.9.1",
         "jaxb-api"            : "2.3.1",
         "javax.servlet"       : "4.0.1",
@@ -67,12 +68,12 @@ def VERSIONS = [
         "reflections"         : "0.9.12",
         "commons-io"          : "2.6",
         "thymeleaf"           : "3.0.11.RELEASE",
-        "joda-time"           : "2.10.5",
+        "joda-time"           : "2.10.6",
         "joda-time-hibernate" : "1.4",
         "joda-convert"        : "2.2.1",
         "usertype.core"       : "7.0.0.CR1",
-        "bouncycastle"        : "1.64",
-        "argon2-jvm"          : "2.6",
+        "bouncycastle"        : "1.65",
+        "argon2-jvm"          : "2.7",
         "findbugs-annotations": "3.0.1"
 ]
 
@@ -98,10 +99,10 @@ dependencies {
     implementation group: "org.springframework", name: "spring-messaging", version: VERSIONS["spring"]
     implementation group: "org.springframework", name: "spring-websocket", version: VERSIONS["spring"]
 
-    implementation group: "org.springframework.security", name: "spring-security-core", version: VERSIONS["spring"]
-    implementation group: "org.springframework.security", name: "spring-security-config", version: VERSIONS["spring"]
-    implementation group: "org.springframework.security", name: "spring-security-web", version: VERSIONS["spring"]
-    implementation group: "org.springframework.security", name: "spring-security-crypto", version: VERSIONS["spring"]
+    implementation group: "org.springframework.security", name: "spring-security-core", version: VERSIONS["spring-security"]
+    implementation group: "org.springframework.security", name: "spring-security-config", version: VERSIONS["spring-security"]
+    implementation group: "org.springframework.security", name: "spring-security-web", version: VERSIONS["spring-security"]
+    implementation group: "org.springframework.security", name: "spring-security-crypto", version: VERSIONS["spring-security"]
 
     implementation group: "com.fasterxml.jackson.core", name: "jackson-core", version: VERSIONS["jackson"]
     implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: VERSIONS["jackson"]
@@ -145,7 +146,7 @@ dependencies {
     implementation group: "org.jadira.usertype", name: "usertype.core", version: VERSIONS["usertype.core"]
 
     implementation group: "org.bouncycastle", name: "bcprov-jdk15on", version: VERSIONS["bouncycastle"]
-    implementation group: "de.mkammerer", name: "argon2-jvm-nolibs", version: VERSIONS["argon2-jvm"]
+    implementation group: "de.mkammerer", name: "argon2-jvm", version: VERSIONS["argon2-jvm"]
 
     implementation group: "com.google.code.findbugs", name: "annotations", version: VERSIONS["findbugs-annotations"]
 
@@ -158,5 +159,5 @@ dependencies {
 
     testImplementation group: "org.springframework", name: "spring-test", version: VERSIONS["spring"]
 
-    testImplementation group: "org.springframework.security", name: "spring-security-test", version: VERSIONS["spring"]
+    testImplementation group: "org.springframework.security", name: "spring-security-test", version: VERSIONS["spring-security"]
 }
