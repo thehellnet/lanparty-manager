@@ -60,7 +60,8 @@ public class MetadataUtility {
         List<Class<?>> entityClasses = getClasses();
 
         for (Class<?> entityClass : entityClasses) {
-            if (entityClass.getSimpleName().equals(name)) {
+            String classSimpleName = entityClass.getSimpleName();
+            if (similar(classSimpleName, name)) {
                 return entityClass;
             }
         }
@@ -166,5 +167,25 @@ public class MetadataUtility {
         List<Class<?>> entityClasses = new ArrayList<>(entityClassSet);
         entityClasses.sort(Comparator.comparing(Class::getSimpleName));
         return entityClasses;
+    }
+
+    static boolean similar(String className, String name) {
+        if (className == null || className.length() == 0) {
+            return false;
+        }
+
+        if (name == null || name.length() == 0) {
+            return false;
+        }
+
+        if (className.equalsIgnoreCase(name)) {
+            return true;
+        } else if (name.length() > 1 && className.equalsIgnoreCase(name.substring(0, name.length() - 1))) {
+            return true;
+        } else if (name.length() > 2 && className.equalsIgnoreCase(name.substring(0, name.length() - 2))) {
+            return true;
+        }
+
+        return false;
     }
 }
