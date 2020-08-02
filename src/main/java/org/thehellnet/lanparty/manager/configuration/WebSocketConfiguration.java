@@ -8,7 +8,7 @@ import org.thehellnet.lanparty.manager.api.v1.ws.ShowcaseWSHandler;
 
 @Configuration
 @EnableWebSocket
-public class WebSocketConfiguration implements WebSocketConfigurer {
+public class WebSocketConfiguration implements TestAwareConfiguration, WebSocketConfigurer {
 
     private final ShowcaseWSHandler showcaseWSHandler;
 

@@ -13,7 +13,7 @@ import java.util.concurrent.Executor;
 @Configuration
 @EnableScheduling
 @EnableAsync
-public class ThreadsConfiguration {
+public class ThreadsConfiguration implements TestAwareConfiguration {
 
     @Bean
     public TaskScheduler taskScheduler() {

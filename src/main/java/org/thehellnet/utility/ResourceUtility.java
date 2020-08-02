@@ -27,27 +27,33 @@ public final class ResourceUtility {
     }
 
     public InputStream getResource() {
+        return getResource(false);
+    }
+
+    public InputStream getResource(boolean internalOnly) {
         if (path == null || path.length() == 0) {
             return null;
         }
 
         InputStream inputStream = null;
 
-        for (String searchPath : LOCAL_RESOURCES_PATH) {
-            String filePath = PathUtility.join(searchPath, path);
-            File file = new File(filePath);
+        if (!internalOnly) {
+            for (String searchPath : LOCAL_RESOURCES_PATH) {
+                String filePath = PathUtility.join(searchPath, path);
+                File file = new File(filePath);
 
-            if (file.exists() && file.canRead()) {
-                FileInputStream fileInputStream;
+                if (file.exists() && file.canRead()) {
+                    FileInputStream fileInputStream;
 
-                try {
-                    fileInputStream = new FileInputStream(file);
-                } catch (FileNotFoundException e) {
-                    logger.warn("File found but unable to get InputStream");
-                    continue;
+                    try {
+                        fileInputStream = new FileInputStream(file);
+                    } catch (FileNotFoundException e) {
+                        logger.warn("File found but unable to get InputStream");
+                        continue;
+                    }
+
+                    inputStream = fileInputStream;
                 }
-
-                inputStream = fileInputStream;
             }
         }
 

@@ -1,5 +1,7 @@
 package org.thehellnet.lanparty.manager
 
+import com.icegreen.greenmail.util.GreenMail
+import com.icegreen.greenmail.util.ServerSetup
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
@@ -10,6 +12,7 @@ import org.springframework.web.context.WebApplicationContext
 import org.thehellnet.lanparty.manager.configuration.*
 import org.thehellnet.lanparty.manager.model.persistence.*
 import org.thehellnet.lanparty.manager.repository.*
+import spock.lang.Shared
 import spock.lang.Specification
 
 @WebAppConfiguration
@@ -99,6 +102,21 @@ abstract class ContextSpecification extends Specification {
 
     @Autowired
     protected CfgRepository cfgRepository
+
+    @Shared
+    private GreenMail greenMail
+
+    @SuppressWarnings("unused")
+    def setupSpec() {
+        ServerSetup serverSetup = new ServerSetup(2525, "localhost", "smtp");
+        greenMail = new GreenMail(serverSetup)
+        greenMail.start()
+    }
+
+    @SuppressWarnings("unused")
+    def cleanupSpec() {
+        greenMail.stop()
+    }
 
     @Transactional
     protected AppUser createAppUser() {

@@ -14,7 +14,7 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @Import(RepositoryRestMvcConfiguration.class)
-public class RestConfiguration extends RepositoryRestMvcConfiguration {
+public class RestConfiguration extends RepositoryRestMvcConfiguration implements TestAwareConfiguration {
 
     public static final String API_BASE_PATH = "/api/public/rest";
 

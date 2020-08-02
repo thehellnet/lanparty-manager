@@ -1,0 +1,10 @@
+host: "127.0.0.1"
+port: 2525
+username: ""
+password: ""
+from: "info@lanparty.tdl"
+enableSsl: false
+enableTls: false
+enableAuth: false
+enableDebug: false
+linkPrefix: "http://127.0.0.1:9080/"

@@ -1,31 +1,46 @@
 package org.thehellnet.lanparty.manager.configuration;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.auditing.DateTimeProvider;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.thehellnet.lanparty.manager.configuration.params.PersistenceParams;
+import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.utility.YmlUtility;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Properties;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "org.thehellnet.lanparty.manager.repository")
 @EnableTransactionManagement
-@EnableJpaAuditing
-public class PersistenceConfiguration {
+@EnableJpaRepositories(basePackages = "org.thehellnet.lanparty.manager.repository")
+@EnableJpaAuditing(dateTimeProviderRef = "auditDateTimeProvider")
+public class PersistenceConfiguration implements TestAwareConfiguration {
 
-    private final PersistenceParams params = YmlUtility.getInstance("configuration/persistence.yml", PersistenceParams.class).loadFromResources();
+    private final PersistenceParams params = YmlUtility.getInstance("configuration/persistence.yml", PersistenceParams.class).loadFromResources(runningTest);
+
+    private static final Logger logger = LoggerFactory.getLogger(PersistenceConfiguration.class);
 
     @Bean(name = "dataSource")
     public DataSource getDataSource() {
+        logger.info("Init dataSource Bean");
+        logger.debug("Database server: URL: {} - Username: {}", params.getJdbcUrl(), params.getUsername());
+
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
 
         try {
@@ -66,6 +81,24 @@ public class PersistenceConfiguration {
         return new HibernateJpaVendorAdapter();
     }
 
+    @Bean("auditDateTimeProvider")
+    public DateTimeProvider getAuditDateTimeProvider() {
+        return () -> Optional.of(LocalDateTime.now(Clock.systemUTC()));
+    }
+
+    @Bean("auditorProvider")
+    public AuditorAware<AppUser> getAuditorProvider() {
+        return () -> {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return Optional.empty();
+            }
+
+            return Optional.of((AppUser) authentication.getPrincipal());
+        };
+    }
+
     private Properties getHibernateProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", params.getDialect());
@@ -77,6 +110,7 @@ public class PersistenceConfiguration {
         properties.put("hibernate.c3p0.max_statements", 60);
 //        properties.put("hibernate.enable_lazy_load_no_trans", true);
         properties.put("jadira.usertype.autoRegisterUserTypes", "true");
+        properties.put("org.hibernate.envers.audit_table_suffix", "_audit");
         return properties;
     }
 }

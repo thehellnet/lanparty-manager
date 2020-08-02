@@ -1,17 +1,20 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.envers.Audited;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.thehellnet.lanparty.manager.model.persistence.annotation.Hidden;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Objects;
 
 @MappedSuperclass
+@Audited
+@EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractEntity implements Serializable {
 
     @Hidden
@@ -47,61 +50,24 @@ public abstract class AbstractEntity implements Serializable {
     @Transient
     protected String friendlyName;
 
-    @PostLoad
-    protected void postLoad() {
-        this.friendlyName = this.toString();
+    public Boolean getActive() {
+        return active;
     }
 
-    public DateTime getCreatedTs() {
-        return createdTs;
-    }
-
-    public void setCreatedTs(DateTime createdTs) {
-        this.createdTs = createdTs;
-    }
-
-    public AppUser getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(AppUser createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public DateTime getLastModifiedTs() {
-        return lastModifiedTs;
-    }
-
-    public void setLastModifiedTs(DateTime lastModifiedTs) {
-        this.lastModifiedTs = lastModifiedTs;
-    }
-
-    public AppUser getLastModifiedBy() {
-        return lastModifiedBy;
-    }
-
-    public void setLastModifiedBy(AppUser lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public String getFriendlyName() {
         return friendlyName;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AbstractEntity that = (AbstractEntity) o;
-        return createdTs.equals(that.createdTs) &&
-                createdBy.equals(that.createdBy) &&
-                Objects.equals(lastModifiedTs, that.lastModifiedTs) &&
-                Objects.equals(lastModifiedBy, that.lastModifiedBy) &&
-                active.equals(that.active);
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
     }
 
-    @Override
-    public int hashCode() {
-        return 0;
+    @PostLoad
+    protected void postLoad() {
+        this.friendlyName = this.toString();
     }
 }

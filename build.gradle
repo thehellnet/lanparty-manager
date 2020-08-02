@@ -37,6 +37,8 @@ jacocoTestReport {
 
 test {
     useJUnitPlatform()
+
+    systemProperty "org.thehellnet.lanparty.manager.testenabled", "true"
 }
 
 check.dependsOn jacocoTestReport
@@ -74,7 +76,8 @@ def VERSIONS = [
         "usertype.core"       : "7.0.0.CR1",
         "bouncycastle"        : "1.66",
         "argon2-jvm"          : "2.7",
-        "findbugs-annotations": "3.0.1"
+        "findbugs-annotations": "3.0.1",
+        "greenmail"           : "1.5.14"
 ]
 
 dependencies {
@@ -160,4 +163,7 @@ dependencies {
     testImplementation group: "org.springframework", name: "spring-test", version: VERSIONS["spring"]
 
     testImplementation group: "org.springframework.security", name: "spring-security-test", version: VERSIONS["spring-security"]
+
+    testImplementation group: "com.icegreen", name: "greenmail", version: VERSIONS["greenmail"]
+
 }
