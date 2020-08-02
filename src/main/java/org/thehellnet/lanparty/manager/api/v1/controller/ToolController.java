@@ -55,6 +55,7 @@ public class ToolController {
         String remoteAddress = request.getRemoteAddr();
         logger.info("getCfg from tool at {} with barcode {}", remoteAddress, dto.barcode);
 
+        seatService.updatePlayer(remoteAddress, dto.barcode);
         List<String> cfgLines = cfgService.computeCfg(remoteAddress, dto.barcode);
         return ResponseEntity.ok(cfgLines);
     }
