@@ -84,7 +84,14 @@ public class Initialization {
     private boolean alreadyRun = false;
 
     @Autowired
-    public Initialization(ApplicationEventPublisher applicationEventPublisher, RoleRepository roleRepository, PlatformRepository platformRepository, GameRepository gameRepository, GametypeRepository gametypeRepository, GameGametypeRepository gameGametypeRepository, GameMapRepository gameMapRepository, AppUserRepository appUserRepository) {
+    public Initialization(ApplicationEventPublisher applicationEventPublisher,
+                          RoleRepository roleRepository,
+                          PlatformRepository platformRepository,
+                          GameRepository gameRepository,
+                          GametypeRepository gametypeRepository,
+                          GameGametypeRepository gameGametypeRepository,
+                          GameMapRepository gameMapRepository,
+                          AppUserRepository appUserRepository) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.roleRepository = roleRepository;
         this.platformRepository = platformRepository;

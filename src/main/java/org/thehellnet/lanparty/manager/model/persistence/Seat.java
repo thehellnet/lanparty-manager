@@ -10,7 +10,7 @@ import java.util.Objects;
         name = "seat",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"name", "tournament_id"}),
-                @UniqueConstraint(columnNames = {"ip_address"}),
+                @UniqueConstraint(columnNames = {"ip_address"})
         }
 )
 public class Seat extends AbstractEntity {
