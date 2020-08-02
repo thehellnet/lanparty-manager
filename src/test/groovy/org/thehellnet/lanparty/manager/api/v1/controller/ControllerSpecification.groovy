@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.thehellnet.lanparty.manager.ContextSpecification
+import org.thehellnet.lanparty.manager.model.persistence.Player
 
 abstract class ControllerSpecification extends ContextSpecification {
 
@@ -50,9 +51,13 @@ abstract class ControllerSpecification extends ContextSpecification {
         token = response.getString("token")
     }
 
-    protected static void validateResponseAsJsonResponse(JSONObject response) {
-        assert response.has("success")
-        assert response.has("data")
-        assert response.has("errors")
+    protected boolean "Player is in one seat only"(Player player) {
+        return seatRepository.findAllByPlayer(player).size() == 1
+    }
+
+    protected static boolean validateResponseAsJsonResponse(JSONObject response) {
+        return response.has("success")
+                && response.has("data")
+                && response.has("errors")
     }
 }

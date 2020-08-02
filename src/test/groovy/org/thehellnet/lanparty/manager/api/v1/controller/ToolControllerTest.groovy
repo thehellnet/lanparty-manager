@@ -5,6 +5,9 @@ import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.CustomMockMvcRequestBuilders
+import org.thehellnet.lanparty.manager.model.persistence.AppUser
+import org.thehellnet.lanparty.manager.model.persistence.Player
+import org.thehellnet.lanparty.manager.model.persistence.Tournament
 import org.thehellnet.utility.StringUtility
 
 class ToolControllerTest extends ControllerSpecification {
@@ -125,8 +128,12 @@ class ToolControllerTest extends ControllerSpecification {
 
     def "getCfg with existing seat and existing barcode"() {
         given:
+        AppUser appUser = appUserRepository.findByBarcode(PLAYER_BARCODE)
+        Tournament tournament = createTournament()
+        Player player = playerRepository.findByAppUserAndTournament(appUser, tournament)
+
         JSONObject requestBody = new JSONObject()
-        requestBody.put("barcode", PLAYER_BARCODE)
+        requestBody.put("barcode", appUser.barcode)
 
         when:
         def rawResponse = mockMvc
@@ -140,6 +147,7 @@ class ToolControllerTest extends ControllerSpecification {
         then:
         rawResponse.status == HttpStatus.OK.value()
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
+        "Player is in one seat only"(player);
 
         when:
         JSONArray response = new JSONArray(rawResponse.contentAsString)
