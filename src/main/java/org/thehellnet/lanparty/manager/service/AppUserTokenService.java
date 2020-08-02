@@ -4,7 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
+import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository;
+import org.thehellnet.lanparty.manager.repository.PlayerRepository;
+import org.thehellnet.lanparty.manager.repository.SeatRepository;
 import org.thehellnet.utility.TokenUtility;
 
 @Service
@@ -12,7 +15,11 @@ public class AppUserTokenService extends AbstractService {
 
     private final AppUserTokenRepository appUserTokenRepository;
 
-    public AppUserTokenService(AppUserTokenRepository appUserTokenRepository) {
+    public AppUserTokenService(SeatRepository seatRepository,
+                               PlayerRepository playerRepository,
+                               AppUserRepository appUserRepository,
+                               AppUserTokenRepository appUserTokenRepository) {
+        super(seatRepository, playerRepository, appUserRepository);
         this.appUserTokenRepository = appUserTokenRepository;
     }
 

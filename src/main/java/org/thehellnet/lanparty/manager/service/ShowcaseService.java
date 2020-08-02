@@ -3,8 +3,8 @@ package org.thehellnet.lanparty.manager.service;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -14,6 +14,9 @@ import org.thehellnet.lanparty.manager.model.persistence.Showcase;
 import org.thehellnet.lanparty.manager.model.protocol.Command;
 import org.thehellnet.lanparty.manager.model.protocol.CommandParser;
 import org.thehellnet.lanparty.manager.model.protocol.ShowcaseNoun;
+import org.thehellnet.lanparty.manager.repository.AppUserRepository;
+import org.thehellnet.lanparty.manager.repository.PlayerRepository;
+import org.thehellnet.lanparty.manager.repository.SeatRepository;
 import org.thehellnet.lanparty.manager.repository.ShowcaseRepository;
 
 import java.io.IOException;
@@ -32,9 +35,14 @@ public class ShowcaseService extends AbstractService {
 
     private final ShowcaseRepository showcaseRepository;
 
-    private Map<Long, WebSocketSession> sessions = new HashMap<>();
+    private final Map<Long, WebSocketSession> sessions = new HashMap<>();
 
-    public ShowcaseService(ShowcaseRepository showcaseRepository) {
+    @Autowired
+    public ShowcaseService(SeatRepository seatRepository,
+                           PlayerRepository playerRepository,
+                           AppUserRepository appUserRepository,
+                           ShowcaseRepository showcaseRepository) {
+        super(seatRepository, playerRepository, appUserRepository);
         this.showcaseRepository = showcaseRepository;
     }
 

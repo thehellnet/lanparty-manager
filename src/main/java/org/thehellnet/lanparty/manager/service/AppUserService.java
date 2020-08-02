@@ -1,11 +1,14 @@
 package org.thehellnet.lanparty.manager.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Role;
 import org.thehellnet.lanparty.manager.repository.AppUserRepository;
+import org.thehellnet.lanparty.manager.repository.PlayerRepository;
+import org.thehellnet.lanparty.manager.repository.SeatRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +16,11 @@ import java.util.List;
 @Service
 public class AppUserService extends AbstractService {
 
-    private final AppUserRepository appUserRepository;
-
-    public AppUserService(AppUserRepository appUserRepository) {
-        this.appUserRepository = appUserRepository;
+    @Autowired
+    public AppUserService(SeatRepository seatRepository,
+                          PlayerRepository playerRepository,
+                          AppUserRepository appUserRepository) {
+        super(seatRepository, playerRepository, appUserRepository);
     }
 
     @Transactional(readOnly = true)
@@ -40,5 +44,4 @@ public class AppUserService extends AbstractService {
 
         return appUser;
     }
-
 }

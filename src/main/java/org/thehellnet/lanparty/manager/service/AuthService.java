@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.controller.AlreadyPresentException;
@@ -15,9 +16,7 @@ import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.AppUserToken;
 import org.thehellnet.lanparty.manager.model.persistence.Role;
 import org.thehellnet.lanparty.manager.model.template.AppUserRegistrationConfirmTemplate;
-import org.thehellnet.lanparty.manager.repository.AppUserRepository;
-import org.thehellnet.lanparty.manager.repository.AppUserTokenRepository;
-import org.thehellnet.lanparty.manager.repository.RoleRepository;
+import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.utility.EmailUtility;
 import org.thehellnet.utility.PasswordUtility;
 import org.thehellnet.utility.TokenUtility;
@@ -29,15 +28,21 @@ import java.util.Map;
 @Service
 public class AuthService extends AbstractService {
 
-    private final AppUserRepository appUserRepository;
     private final AppUserTokenRepository appUserTokenRepository;
     private final RoleRepository roleRepository;
 
     private final TemplateService templateService;
     private final MailService mailService;
 
-    public AuthService(AppUserRepository appUserRepository, AppUserTokenRepository appUserTokenRepository, RoleRepository roleRepository, TemplateService templateService, MailService mailService) {
-        this.appUserRepository = appUserRepository;
+    @Autowired
+    public AuthService(SeatRepository seatRepository,
+                       PlayerRepository playerRepository,
+                       AppUserRepository appUserRepository,
+                       AppUserTokenRepository appUserTokenRepository,
+                       RoleRepository roleRepository,
+                       TemplateService templateService,
+                       MailService mailService) {
+        super(seatRepository, playerRepository, appUserRepository);
         this.appUserTokenRepository = appUserTokenRepository;
         this.roleRepository = roleRepository;
         this.templateService = templateService;
