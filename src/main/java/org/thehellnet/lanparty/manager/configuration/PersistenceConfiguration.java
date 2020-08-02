@@ -95,7 +95,14 @@ public class PersistenceConfiguration implements TestAwareConfiguration {
                 return Optional.empty();
             }
 
-            return Optional.of((AppUser) authentication.getPrincipal());
+            Object principal = authentication.getPrincipal();
+
+            if (!(principal instanceof AppUser)) {
+                logger.warn("Principal is not AppUser: {} - {}", principal.getClass().getName(), principal);
+                return Optional.empty();
+            }
+
+            return Optional.of((AppUser) principal);
         };
     }
 

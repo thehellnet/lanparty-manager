@@ -55,7 +55,8 @@ public class ErrorHandler {
             responseBody.put("message", e.getMessage());
         }
 
-        logger.debug(String.format("StatusCode: %d - Exception: %s -  Message: %s", httpStatus.value(), e.getClass().getSimpleName(), e.getMessage()));
+        logger.error(String.format("StatusCode: %d - Exception: %s -  Message: %s", httpStatus.value(), e.getClass().getSimpleName(), e.getMessage()));
+        e.printStackTrace();
 
         return ResponseEntity
                 .status(httpStatus)
