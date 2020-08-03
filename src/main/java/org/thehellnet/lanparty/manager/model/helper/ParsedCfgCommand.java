@@ -1,16 +1,25 @@
 package org.thehellnet.lanparty.manager.model.helper;
 
+import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandSerializer;
+
+import java.util.List;
 import java.util.Objects;
 
 public class ParsedCfgCommand {
 
-    public static final ParsedCfgCommand UNBINDALL = new ParsedCfgCommand("unbindall");
-    public static final ParsedCfgCommand BIND_EXEC = new ParsedCfgCommand("bind", ".", "exec lanpartytool");
-    public static final ParsedCfgCommand BIND_DUMP = new ParsedCfgCommand("bind", ",", "writeconfig lanpartydump");
+    public static final List<String> ONE_PARAMS_ACTIONS = List.of(
+            "unbindall"
+    );
 
-    private String action = "";
-    private String param = "";
-    private String args = "";
+    public static final List<String> TWO_PARAMS_ACTIONS = List.of(
+            "name",
+            "sensitivity",
+            "say"
+    );
+
+    private String action = null;
+    private String param = null;
+    private String args = null;
 
     public ParsedCfgCommand() {
     }
@@ -37,6 +46,10 @@ public class ParsedCfgCommand {
 
     public static ParsedCfgCommand prepareName(String name) {
         return new ParsedCfgCommand("name", name);
+    }
+
+    public static ParsedCfgCommand prepareSay(String message, Object... args) {
+        return prepareSay(String.format(message, args));
     }
 
     public static ParsedCfgCommand prepareSay(String message) {
@@ -105,7 +118,7 @@ public class ParsedCfgCommand {
     }
 
     private String clean(String input) {
-        return input != null ? input.trim() : "";
+        return input == null ? null : input.trim();
     }
 
     @Override
@@ -114,32 +127,22 @@ public class ParsedCfgCommand {
         if (o == null || getClass() != o.getClass()) return false;
         ParsedCfgCommand that = (ParsedCfgCommand) o;
         return action.equals(that.action) &&
-                param.equals(that.param) &&
-                args.equals(that.args);
+                ((param == null && that.param == null) || Objects.equals(param, that.param)) &&
+                ((args == null && that.args == null) || Objects.equals(args, that.args));
     }
 
     @Override
     public int hashCode() {
-        switch (action) {
-            case "unbindall":
-            case "name":
-            case "sensitivity":
-            case "say":
-                return Objects.hash(action);
-
-            default:
-                return Objects.hash(action, param);
+        if (ONE_PARAMS_ACTIONS.contains(action)
+                || TWO_PARAMS_ACTIONS.contains(action)) {
+            return Objects.hash(action);
         }
 
+        return Objects.hash(action, param);
     }
 
     @Override
     public String toString() {
-        String string = String.format("%s %s", action, param);
-        if (args.length() > 0) {
-            string += String.format(" \"%s\"", args);
-        }
-
-        return string.trim();
+        return ParsedCfgCommandSerializer.serializeCommand(this);
     }
 }
