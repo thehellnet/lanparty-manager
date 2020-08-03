@@ -60,6 +60,8 @@ abstract class ContextSpecification extends Specification {
 
     protected final static String SEAT_ADDRESS = "1.2.3.4"
     protected final static String SEAT_NAME = "Test seat"
+    protected final static String SEAT_ADDRESS_2 = "2.3.4.5"
+    protected final static String SEAT_NAME_2 = "Test seat 2"
 
     protected final static String TEAM_NAME = "Test team"
 
@@ -151,6 +153,17 @@ abstract class ContextSpecification extends Specification {
     }
 
     @Transactional
+    protected Seat createSeat2() {
+        Seat seat = seatRepository.findByIpAddress(SEAT_ADDRESS_2)
+        if (seat == null) {
+            Tournament tournament = createTournament()
+            seat = new Seat(name: SEAT_NAME_2, ipAddress: SEAT_ADDRESS_2, tournament: tournament)
+            seat = seatRepository.save(seat)
+        }
+        return seat
+    }
+
+    @Transactional
     protected Team createTeam() {
         Team team = teamRepository.findByName(TEAM_NAME)
         if (team == null) {
@@ -193,5 +206,10 @@ abstract class ContextSpecification extends Specification {
             player = playerRepository.save(player)
         }
         return player
+    }
+
+    @Transactional(readOnly = true)
+    protected boolean "Player is in one seat only"(Player player) {
+        return seatRepository.findAllByPlayer(player).size() == 1
     }
 }

@@ -442,7 +442,7 @@ public class Initialization {
         AppUser appUser = appUserRepository.findByEnabledTrueAndEmail(email);
         if (appUser == null) {
             appUser = new AppUser(email);
-            String hashedPassword = PasswordUtility.hash(password);
+            String hashedPassword = PasswordUtility.newInstance().hash(password);
             appUser.setPassword(hashedPassword);
         }
         appUser.setEnabled(true);

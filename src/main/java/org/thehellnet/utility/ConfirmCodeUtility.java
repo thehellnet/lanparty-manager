@@ -30,7 +30,7 @@ public final class ConfirmCodeUtility {
 
         byte[] bytes = secureRandom.generateSeed(2048);
         String inputString = new String(bytes);
-        String data = PasswordUtility.hash(inputString);
+        String data = PasswordUtility.newInstance().hash(inputString);
         messageDigest.update(data.getBytes());
 
         byte[] digest = messageDigest.digest();

@@ -139,10 +139,10 @@ public class DevController {
         Tournament tournament1 = prepareTournament(TOURNAMENT_1_NAME, codGame, TOURNAMENT_CFG);
         data.put("tournament1", tournament1);
 
-        Tournament tournament2 = prepareTournament(TOURNAMENT_2_NAME, lolGame,null);
+        Tournament tournament2 = prepareTournament(TOURNAMENT_2_NAME, lolGame, null);
         data.put("tournament2", tournament2);
 
-        Tournament tournament3 = prepareTournament(TOURNAMENT_3_NAME, lolGame,null);
+        Tournament tournament3 = prepareTournament(TOURNAMENT_3_NAME, lolGame, null);
         data.put("tournament3", tournament3);
 
         Seat seat1 = prepareSeat(tournament1, SEAT_1_ADDRESS, SEAT_1_NAME);
@@ -184,7 +184,7 @@ public class DevController {
             appUser = new AppUser();
         }
         appUser.setEmail(email);
-        appUser.setPassword(PasswordUtility.hash(password));
+        appUser.setPassword(PasswordUtility.newInstance().hash(password));
         return appUserRepository.save(appUser);
     }
 

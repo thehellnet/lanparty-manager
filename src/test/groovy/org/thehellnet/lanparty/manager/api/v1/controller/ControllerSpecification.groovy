@@ -51,10 +51,6 @@ abstract class ControllerSpecification extends ContextSpecification {
         token = response.getString("token")
     }
 
-    protected boolean "Player is in one seat only"(Player player) {
-        return seatRepository.findAllByPlayer(player).size() == 1
-    }
-
     protected static boolean validateResponseAsJsonResponse(JSONObject response) {
         return response.has("success")
                 && response.has("data")
