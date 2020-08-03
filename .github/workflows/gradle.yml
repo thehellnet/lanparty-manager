@@ -17,6 +17,6 @@ jobs:
       - name: Prepare OS
         run: sudo apt install postgresql openjdk-11-jdk
       - name: Create Test database
-        run: sudo postgres -c "PGPASSWORD=\"test\" createuser --no-password test && createdb --owner=test test"
+        run: sudo su postgres -c "PGPASSWORD=\"test\" createuser --no-password test && createdb --owner=test test"
       - name: Build with Gradle and run tests
         run: ./gradlew check
