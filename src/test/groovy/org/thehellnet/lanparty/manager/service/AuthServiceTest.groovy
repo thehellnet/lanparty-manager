@@ -31,7 +31,7 @@ class AuthServiceTest extends ServiceSpecification {
 
     def "findByEmail with exiting email activated"() {
         given:
-        AppUser user = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        AppUser user = new AppUser(APPUSER_EMAIL, PasswordUtility.newInstance().hash(APPUSER_PASSWORD), APPUSER_NAME)
         user.enabled = true
         appUserRepository.save(user)
 
@@ -45,7 +45,7 @@ class AuthServiceTest extends ServiceSpecification {
 
     def "findByEmail with exiting email not activated"() {
         given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.newInstance().hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         when:
         authService.findByEnabledTrueAndEmail(APPUSER_EMAIL)
@@ -78,7 +78,7 @@ class AuthServiceTest extends ServiceSpecification {
 
     def "findByEmailAndPassword with exiting user"() {
         given:
-        AppUser user = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME)
+        AppUser user = new AppUser(APPUSER_EMAIL, PasswordUtility.newInstance().hash(APPUSER_PASSWORD), APPUSER_NAME)
         user.enabled = true
         appUserRepository.save(user)
 
@@ -139,7 +139,7 @@ class AuthServiceTest extends ServiceSpecification {
 
     def "findByEmailAndPassword with not exiting user but wrong email"() {
         given:
-        appUserRepository.save(new AppUser("not_email", PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+        appUserRepository.save(new AppUser("not_email", PasswordUtility.newInstance().hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         and:
         String email = "not_email"
@@ -154,7 +154,7 @@ class AuthServiceTest extends ServiceSpecification {
 
     def "findByEmailAndPassword with not exiting user but wrong password"() {
         given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.newInstance().hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         and:
         String email = APPUSER_EMAIL
@@ -170,7 +170,7 @@ class AuthServiceTest extends ServiceSpecification {
     @Unroll
     def "findByEmailAndPassword with email #input_email and password #input_password and exiting user"(String input_email, String input_password) {
         given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.newInstance().hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         when:
         authService.findByEnabledTrueAndEmailAndPassword(input_email, input_password)
@@ -186,7 +186,7 @@ class AuthServiceTest extends ServiceSpecification {
 
     def "newToken with valid user"() {
         when:
-        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD), APPUSER_NAME))
+        AppUser appUser = appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.newInstance().hash(APPUSER_PASSWORD), APPUSER_NAME))
 
         then:
         appUserTokenRepository.findByAppUser(appUser).size() == 0
@@ -235,7 +235,7 @@ class AuthServiceTest extends ServiceSpecification {
 
     def "login with new created user"() {
         given:
-        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD)))
+        appUserRepository.save(new AppUser(APPUSER_EMAIL, PasswordUtility.newInstance().hash(APPUSER_PASSWORD)))
 
         when:
         LoginAuthRequestDTO requestDTO = new LoginAuthRequestDTO()
@@ -250,7 +250,7 @@ class AuthServiceTest extends ServiceSpecification {
 
     def "login with new created user enabled"() {
         given:
-        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.hash(APPUSER_PASSWORD))
+        AppUser appUser = new AppUser(APPUSER_EMAIL, PasswordUtility.newInstance().hash(APPUSER_PASSWORD))
         appUser.enabled = true
         appUserRepository.save(appUser)
 
