@@ -8,7 +8,7 @@ class EmailUtilityTest extends Specification {
     @Unroll
     def "validate #expected with \"#input\""(String input, boolean expected) {
         given:
-        boolean actual = EmailUtility.validate(input)
+        boolean actual = EmailUtility.newInstance(input).validate()
 
         expect:
         actual == expected
@@ -44,7 +44,7 @@ class EmailUtilityTest extends Specification {
     @Unroll
     def "validateForLogin #expected with \"#input\""(String input, boolean expected) {
         given:
-        boolean actual = EmailUtility.validateForLogin(input)
+        boolean actual = EmailUtility.newInstance(input).validateForLogin()
 
         expect:
         actual == expected
@@ -80,7 +80,7 @@ class EmailUtilityTest extends Specification {
     @Unroll
     def "checkNullOrEmpty #expected with \"#input\""(String input, boolean expected) {
         given:
-        boolean actual = EmailUtility.checkNullOrEmpty(input)
+        boolean actual = EmailUtility.newInstance(input).checkNullOrEmpty()
 
         expect:
         actual == expected

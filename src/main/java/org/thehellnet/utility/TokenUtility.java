@@ -14,7 +14,6 @@ public final class TokenUtility {
     public static final int LENGTH = 16;
 
     private static final int OFFSET = 19;
-
     private static final int EXIPRATION_DAYS = 1;
 
     private static final Logger logger = LoggerFactory.getLogger(TokenUtility.class);
@@ -33,7 +32,7 @@ public final class TokenUtility {
 
         byte[] bytes = secureRandom.generateSeed(1024);
         String inputString = new String(bytes);
-        String data = PasswordUtility.hash(inputString);
+        String data = PasswordUtility.newInstance().hash(inputString);
         messageDigest.update(data.getBytes());
 
         byte[] digest = messageDigest.digest();

@@ -51,7 +51,7 @@ public class AuthService extends AbstractService {
 
     @Transactional(readOnly = true)
     public AppUser findByEnabledTrueAndEmail(String email) {
-        if (!EmailUtility.validateForLogin(email)) {
+        if (!EmailUtility.newInstance(email).validateForLogin()) {
             throw new NotFoundException();
         }
 
@@ -66,7 +66,7 @@ public class AuthService extends AbstractService {
     @Transactional(readOnly = true)
     public AppUser findByEnabledTrueAndEmailAndPassword(String email, String password) {
         AppUser appUser = findByEnabledTrueAndEmail(email);
-        if (!PasswordUtility.verify(appUser.getPassword(), password)) {
+        if (!PasswordUtility.newInstance().verify(appUser.getPassword(), password)) {
             throw new NotFoundException();
         }
 
@@ -116,7 +116,7 @@ public class AuthService extends AbstractService {
             throw new AlreadyPresentException();
         }
 
-        String hashedPassword = PasswordUtility.hash(requestDTO.password);
+        String hashedPassword = PasswordUtility.newInstance().hash(requestDTO.password);
         appUser = new AppUser(requestDTO.email, hashedPassword, requestDTO.name, requestDTO.nickname);
 
         Role publicRole = roleRepository.findByRoleName(RoleName.PUBLIC);

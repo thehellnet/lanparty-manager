@@ -6,16 +6,26 @@ public final class EmailUtility {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
 
-    public static boolean validate(String email) {
-        if (checkNullOrEmpty(email)) {
+    private final String email;
+
+    private EmailUtility(String email) {
+        this.email = email;
+    }
+
+    public static EmailUtility newInstance(String email) {
+        return new EmailUtility(email);
+    }
+
+    public boolean validate() {
+        if (checkNullOrEmpty()) {
             return false;
         }
 
-        return matches(email);
+        return matches();
     }
 
-    public static boolean validateForLogin(String email) {
-        if (checkNullOrEmpty(email)) {
+    public boolean validateForLogin() {
+        if (checkNullOrEmpty()) {
             return false;
         }
 
@@ -23,10 +33,10 @@ public final class EmailUtility {
             return true;
         }
 
-        return matches(email);
+        return matches();
     }
 
-    static boolean checkNullOrEmpty(String email) {
+    boolean checkNullOrEmpty() {
         if (email == null) {
             return true;
         }
@@ -34,7 +44,7 @@ public final class EmailUtility {
         return email.strip().length() == 0;
     }
 
-    private static boolean matches(String email) {
+    private boolean matches() {
         return EMAIL_PATTERN.matcher(email.strip()).matches();
     }
 }
