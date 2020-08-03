@@ -22,6 +22,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install OpenJDK 11
-        run: sudo apt install openjdk-11-jdk
+        uses: actions/setup-java@v1
+        with:
+          java-version: "11"
       - name: Build with Gradle and run tests
         run: ./gradlew check
