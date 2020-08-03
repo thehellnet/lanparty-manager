@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.configuration;
+package org.thehellnet.lanparty.manager.configuration.mixin;
 
 public interface TestAwareConfiguration {
 

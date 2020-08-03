@@ -5,6 +5,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.thehellnet.lanparty.manager.api.v1.ws.ShowcaseWSHandler;
+import org.thehellnet.lanparty.manager.configuration.mixin.TestAwareConfiguration;
 
 @Configuration
 @EnableWebSocket

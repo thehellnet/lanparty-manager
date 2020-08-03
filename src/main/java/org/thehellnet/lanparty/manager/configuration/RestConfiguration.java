@@ -11,6 +11,7 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguratio
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.thehellnet.lanparty.manager.configuration.mixin.TestAwareConfiguration;
 
 @Configuration
 @Import(RepositoryRestMvcConfiguration.class)

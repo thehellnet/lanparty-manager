@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.thehellnet.lanparty.manager.configuration.mixin.TestAwareConfiguration;
 import org.thehellnet.lanparty.manager.configuration.params.MailParams;
 import org.thehellnet.utility.YmlUtility;
 

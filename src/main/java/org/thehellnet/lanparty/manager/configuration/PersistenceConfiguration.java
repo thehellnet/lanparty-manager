@@ -15,6 +15,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.thehellnet.lanparty.manager.configuration.mixin.TestAwareConfiguration;
 import org.thehellnet.lanparty.manager.configuration.params.PersistenceParams;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.utility.YmlUtility;

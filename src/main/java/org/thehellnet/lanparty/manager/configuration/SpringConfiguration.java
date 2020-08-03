@@ -9,6 +9,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.thehellnet.lanparty.manager.configuration.mixin.TestAwareConfiguration;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;

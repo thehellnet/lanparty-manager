@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.thehellnet.lanparty.manager.api.v1.ws.ShowcaseWSHandler;
 import org.thehellnet.lanparty.manager.configuration.filter.AuthenticationFilter;
+import org.thehellnet.lanparty.manager.configuration.mixin.TestAwareConfiguration;
 import org.thehellnet.lanparty.manager.model.constant.RoleName;
 
 import java.util.ArrayList;
