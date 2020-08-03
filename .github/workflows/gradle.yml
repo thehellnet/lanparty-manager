@@ -11,12 +11,19 @@ jobs:
   check:
     name: "Run all tests"
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Prepare OS
         run: sudo apt install postgresql openjdk-11-jdk
-      - name: Create Test database
-        run: sudo su postgres -c "PGPASSWORD=\"test\" createuser --no-password test && createdb --owner=test test"
+      - name: Create PostgreSQL test user
+        run: PGPASSWORD="postgres" createuser --host=postgres --port=5432 --username=postgres --no-password test
+      - name: Create PostgreSQL test database
+        run: PGPASSWORD="postgres" createdb --host=postgres --port=5432 --username=postgres --no-password --owner=test test
       - name: Build with Gradle and run tests
         run: ./gradlew check
