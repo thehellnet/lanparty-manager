@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.model.helper;
 
+import org.thehellnet.lanparty.manager.exception.model.InvalidDataException;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandSerializer;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class ParsedCfgCommand {
     private String param = null;
     private String args = null;
 
-    public ParsedCfgCommand() {
+    private ParsedCfgCommand() {
     }
 
     public ParsedCfgCommand(ParsedCfgCommand other) {
@@ -31,7 +32,7 @@ public class ParsedCfgCommand {
     }
 
     public ParsedCfgCommand(String action) {
-        this.action = clean(action);
+        this.action = clean(Objects.requireNonNull(action));
     }
 
     public ParsedCfgCommand(String action, String param) {
@@ -45,7 +46,11 @@ public class ParsedCfgCommand {
     }
 
     public static ParsedCfgCommand prepareName(String name) {
-        return new ParsedCfgCommand("name", name);
+        if (name == null || name.length() == 0) {
+            throw new InvalidDataException();
+        }
+
+        return new ParsedCfgCommand("name", null, name);
     }
 
     public static ParsedCfgCommand prepareSay(String message, Object... args) {
@@ -53,7 +58,11 @@ public class ParsedCfgCommand {
     }
 
     public static ParsedCfgCommand prepareSay(String message) {
-        return new ParsedCfgCommand("say", message);
+        if (message == null || message.length() == 0) {
+            throw new InvalidDataException();
+        }
+
+        return new ParsedCfgCommand("say", null, message);
     }
 
     public String getAction() {

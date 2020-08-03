@@ -12,8 +12,10 @@ import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.CfgRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.repository.SeatRepository;
-import org.thehellnet.lanparty.manager.utility.cfg.CfgUtility;
-import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfg;
+import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandMerger;
+import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandParser;
+import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandSanitizer;
+import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandSerializer;
 import org.thehellnet.utility.StringUtility;
 
 import java.util.List;
@@ -44,19 +46,19 @@ public class CfgService extends AbstractService {
         Player player = tokenData.getPlayer();
 
         String tournamentCfg = tournament.getCfg();
-        List<ParsedCfgCommand> tournamentCfgCommands = CfgUtility.parseCfgFromString(tournamentCfg);
-        tournamentCfgCommands = CfgUtility.removeSpecialCommands(tournamentCfgCommands);
+        List<ParsedCfgCommand> tournamentCfgCommands = new ParsedCfgCommandParser(tournamentCfg).parse();
+        tournamentCfgCommands = new ParsedCfgCommandSanitizer(tournamentCfgCommands).removeSpecials();
 
         Cfg cfg = cfgRepository.findByPlayerAndGame(player, tournament.getGame());
-        String playerCfg = cfg != null ? cfg.getCfgContent() : null;
+        List<ParsedCfgCommand> playerCfgCommands = new ParsedCfgCommandParser(cfg.getCfgContent()).parse();
+        playerCfgCommands = new ParsedCfgCommandSanitizer(playerCfgCommands).removeSpecials();
 
-        List<ParsedCfgCommand> playerCfgCommands = CfgUtility.parseCfgFromString(playerCfg);
-        playerCfgCommands = CfgUtility.removeSpecialCommands(playerCfgCommands);
+        List<ParsedCfgCommand> seatCfgCommands = new ParsedCfgCommandMerger(playerCfgCommands).mergeWithTournamentCfg(tournamentCfgCommands);
+        seatCfgCommands = new ParsedCfgCommandSanitizer(seatCfgCommands).ensureMinimals();
 
-        List<ParsedCfgCommand> commands = CfgUtility.mergeTournamentWithPlayer(tournamentCfgCommands, playerCfgCommands);
+        seatCfgCommands.add(ParsedCfgCommand.prepareName(player.getNickname()));
 
-        ParsedCfg parsedCfg = new ParsedCfg(commands, player.getNickname());
-        return parsedCfg.toStringList();
+        return new ParsedCfgCommandSerializer(seatCfgCommands).serializeLines();
     }
 
     @Transactional

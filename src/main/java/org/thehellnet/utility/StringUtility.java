@@ -51,6 +51,8 @@ public final class StringUtility {
         String[] rawLines = rawText.trim().split(regex);
         for (String rawLine : rawLines) {
             String line = rawLine.trim();
+            line = line.replaceAll("^'", "");
+            line = line.replaceAll("'$", "");
             if (line.length() > 0) {
                 lines.add(line);
             }

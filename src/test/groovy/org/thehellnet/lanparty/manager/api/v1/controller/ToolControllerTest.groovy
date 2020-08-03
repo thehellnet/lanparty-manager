@@ -18,9 +18,10 @@ class ToolControllerTest extends ControllerSpecification {
             "bind SPACE \"+gostand\"\n" +
             "bind 4 \"+smoke\"\n" +
             "bind H \"say Ciao\"\n" +
+            "bind P \"quit\"\n" +
             "bind . \"exec lanpartytool\"\n" +
             "bind , \"writeconfig lanpartydump\"\n" +
-            "name Testplayer"
+            "name \"Testplayer\""
 
     def setup() {
         createTournament()
@@ -147,7 +148,7 @@ class ToolControllerTest extends ControllerSpecification {
         then:
         rawResponse.status == HttpStatus.OK.value()
         MediaType.parseMediaType(rawResponse.contentType) == MediaType.APPLICATION_JSON
-        "Player is in one seat only"(player);
+        "Player is in one seat only"(player)
 
         when:
         JSONArray response = new JSONArray(rawResponse.contentAsString)

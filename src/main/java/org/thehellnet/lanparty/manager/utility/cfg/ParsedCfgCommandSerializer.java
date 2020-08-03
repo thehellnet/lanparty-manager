@@ -18,8 +18,12 @@ public class ParsedCfgCommandSerializer {
     }
 
     public String serialize() {
+        return StringUtility.joinLines(serializeLines());
+    }
+
+    public List<String> serializeLines() {
         if (cfgCommands == null) {
-            return "";
+            return new ArrayList<>();
         }
 
         List<String> cfgLines = new ArrayList<>();
@@ -31,7 +35,7 @@ public class ParsedCfgCommandSerializer {
             }
         }
 
-        return StringUtility.joinLines(cfgLines);
+        return cfgLines;
     }
 
     public static String serializeCommand(ParsedCfgCommand parsedCfgCommand) {

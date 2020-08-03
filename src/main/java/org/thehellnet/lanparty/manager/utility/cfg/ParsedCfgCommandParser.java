@@ -4,7 +4,9 @@ import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.utility.StringUtility;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand.ONE_PARAMS_ACTIONS;
 import static org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand.TWO_PARAMS_ACTIONS;
@@ -18,7 +20,7 @@ public class ParsedCfgCommandParser {
     }
 
     public List<ParsedCfgCommand> parse() {
-        List<ParsedCfgCommand> parsedCfgCommands = new ArrayList<>();
+        Map<Integer, ParsedCfgCommand> parsedCfgCommands = new LinkedHashMap<>();
 
         List<String> cfgLines = StringUtility.splitLines(cfg);
 
@@ -26,12 +28,12 @@ public class ParsedCfgCommandParser {
             for (String cfgLine : cfgLines) {
                 ParsedCfgCommand parsedCfgCommand = parseCommand(cfgLine);
                 if (parsedCfgCommand != null) {
-                    parsedCfgCommands.add(parsedCfgCommand);
+                    parsedCfgCommands.put(parsedCfgCommand.hashCode(), parsedCfgCommand);
                 }
             }
         }
 
-        return parsedCfgCommands;
+        return new ArrayList<>(parsedCfgCommands.values());
     }
 
     public static ParsedCfgCommand parseCommand(String command) {

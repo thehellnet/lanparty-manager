@@ -38,7 +38,7 @@ public class SeatService extends AbstractService {
     }
 
     @Transactional
-    public void updatePlayer(String remoteAddress, String barcode) {
+    public void updatePlayerInSeats(String remoteAddress, String barcode) {
         TokenData tokenData = getTokenData(remoteAddress, barcode);
 
         Seat seat = tokenData.getSeat();

@@ -59,6 +59,7 @@ def VERSIONS = [
         "hibernate"           : "5.4.19.Final",
         "hibernate-validator" : "6.1.5.Final",
         "json"                : "20200518",
+        "guava"               : "29.0-jre",
         "snakeyaml"           : "1.26",
         "geoip2"              : "2.14.0",
         "jjwt"                : "0.9.1",
@@ -69,6 +70,7 @@ def VERSIONS = [
         "aspectjweaver"       : "1.9.6",
         "reflections"         : "0.9.12",
         "commons-io"          : "2.7",
+        "commons-lang"        : "3.11",
         "thymeleaf"           : "3.0.11.RELEASE",
         "joda-time"           : "2.10.6",
         "joda-time-hibernate" : "1.4",
@@ -134,12 +136,14 @@ dependencies {
     implementation group: "com.mchange", name: "c3p0", version: VERSIONS["c3p0"]
 
     implementation group: "org.json", name: "json", version: VERSIONS["json"]
+    implementation group: "com.google.guava", name: "guava", version: VERSIONS["guava"]
     implementation group: "org.yaml", name: "snakeyaml", version: VERSIONS["snakeyaml"]
     implementation group: "io.jsonwebtoken", name: "jjwt", version: VERSIONS["jjwt"]
 
     implementation group: "com.maxmind.geoip2", name: "geoip2", version: VERSIONS["geoip2"]
 
     implementation group: "commons-io", name: "commons-io", version: VERSIONS["commons-io"]
+    implementation group: "org.apache.commons", name: "commons-lang3", version: VERSIONS["commons-lang"]
 
     implementation group: "org.thymeleaf", name: "thymeleaf", version: VERSIONS["thymeleaf"]
 
