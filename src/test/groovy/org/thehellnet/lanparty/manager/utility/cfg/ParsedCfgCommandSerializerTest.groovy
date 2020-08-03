@@ -26,7 +26,6 @@ class ParsedCfgCommandSerializerTest extends Specification {
         new ParsedCfgCommand("say", null, "ciao ciao")    | "say \"ciao ciao\""
         new ParsedCfgCommand("say", null, "ciao ciao")    | "say \"ciao ciao\""
         new ParsedCfgCommand("sensitivity", null, "23")   | "sensitivity \"23\""
-        new ParsedCfgCommand("one")                       | null
         new ParsedCfgCommand("one", "two")                | "one two"
         new ParsedCfgCommand("one", "two", "three")       | "one two \"three\""
         new ParsedCfgCommand("one", "two", " three")      | "one two \"three\""
