@@ -51,10 +51,6 @@ public class ParsedCfgCommandParser {
         }
 
         String action = items.get(0).trim();
-        if (action.length() == 0) {
-            return null;
-        }
-
         ParsedCfgCommand parsedCfgCommand = new ParsedCfgCommand(action);
 
         if (!ONE_PARAMS_ACTIONS.contains(parsedCfgCommand.getAction()) && items.size() > 1) {
