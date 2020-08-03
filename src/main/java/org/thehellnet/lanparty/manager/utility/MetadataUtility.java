@@ -35,7 +35,7 @@ public class MetadataUtility {
     private MetadataUtility() {
     }
 
-    public static MetadataUtility getInstance() {
+    public static MetadataUtility newInstance() {
         return new MetadataUtility();
     }
 

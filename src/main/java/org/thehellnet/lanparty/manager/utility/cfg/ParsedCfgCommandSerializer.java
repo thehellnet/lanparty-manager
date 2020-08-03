@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.utility.cfg;
 
+import org.thehellnet.lanparty.manager.exception.model.InvalidDataException;
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.utility.StringUtility;
 
@@ -46,14 +47,14 @@ public class ParsedCfgCommandSerializer {
         if (ONE_PARAMS_ACTIONS.contains(parsedCfgCommand.getAction())) {
             return parsedCfgCommand.getAction();
         } else if (TWO_PARAMS_ACTIONS.contains(parsedCfgCommand.getAction())) {
-            if (parsedCfgCommand.getArgs().length() > 0) {
-                return String.format("%s \"%s\"", parsedCfgCommand.getAction(), parsedCfgCommand.getArgs());
+            if (parsedCfgCommand.getArgs() == null || parsedCfgCommand.getArgs().length() == 0) {
+                throw new InvalidDataException("Two params command with no args");
             }
-            return parsedCfgCommand.getAction();
+            return String.format("%s \"%s\"", parsedCfgCommand.getAction(), parsedCfgCommand.getArgs());
         }
 
         if (parsedCfgCommand.getParam() == null) {
-            return null;
+            throw new InvalidDataException("Null param command");
         }
 
         String command = String.format("%s %s", parsedCfgCommand.getAction(), parsedCfgCommand.getParam());
@@ -61,11 +62,6 @@ public class ParsedCfgCommandSerializer {
             command += String.format(" \"%s\"", parsedCfgCommand.getArgs());
         }
 
-        String strippedCommand = command.strip();
-        if (strippedCommand.length() == 0) {
-            return null;
-        }
-
-        return strippedCommand;
+        return command.strip();
     }
 }

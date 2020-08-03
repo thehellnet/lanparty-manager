@@ -21,7 +21,7 @@ public class ConfigController {
     )
     @PreAuthorize("permitAll()")
     public ResponseEntity metadata() {
-        JSONArray responseBody = MetadataUtility.getInstance().compute();
+        JSONArray responseBody = MetadataUtility.newInstance().compute();
         return ResponseEntity.ok(responseBody.toString());
     }
 
@@ -32,7 +32,7 @@ public class ConfigController {
     )
     @PreAuthorize("permitAll()")
     public ResponseEntity metadata(@PathVariable(name = "entityName") String entityName) {
-        MetadataUtility metadataUtility = MetadataUtility.getInstance();
+        MetadataUtility metadataUtility = MetadataUtility.newInstance();
         Class<?> entityClass = metadataUtility.search(entityName);
         if (entityClass == null) {
             throw new NotFoundException(String.format("Class not found using name %s", entityName));
