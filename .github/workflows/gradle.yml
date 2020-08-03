@@ -1,6 +1,3 @@
-# This workflow will build a Java project with Gradle
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
 name: Check
 on:
   push:
@@ -15,15 +12,16 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Prepare OS
-        run: sudo apt install postgresql openjdk-11-jdk
-      - name: Create PostgreSQL test user
-        run: PGPASSWORD="postgres" createuser --host=postgres --port=5432 --username=postgres --no-password test
-      - name: Create PostgreSQL test database
-        run: PGPASSWORD="postgres" createdb --host=postgres --port=5432 --username=postgres --no-password --owner=test test
+      - name: Install OpenJDK 11
+        run: sudo apt install openjdk-11-jdk
       - name: Build with Gradle and run tests
         run: ./gradlew check
