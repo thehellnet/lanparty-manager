@@ -2,8 +2,11 @@ package org.thehellnet.lanparty.manager.runner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.thehellnet.lanparty.manager.model.message.ServerLogLine;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
 import org.thehellnet.lanparty.manager.repository.ServerRepository;
 import org.thehellnet.utility.log.LogTailer;
@@ -19,52 +22,20 @@ public class LogParsingRunner extends AbstractRunner implements Runner {
 
     private static final Logger logger = LoggerFactory.getLogger(LogParsingRunner.class);
 
-    private final Object SYNC = new Object();
-
     private final ServerRepository serverRepository;
+    private final JmsTemplate jmsTemplate;
 
     private Map<Server, LogTailer> logTailers = new HashMap<>();
 
-    public LogParsingRunner(ServerRepository serverRepository) {
+    @Autowired
+    public LogParsingRunner(ServerRepository serverRepository,
+                            JmsTemplate jmsTemplate) {
         this.serverRepository = serverRepository;
-    }
-
-    @Override
-    public void start() {
-        synchronized (SYNC) {
-            startLogParsing();
-        }
-    }
-
-    @Override
-    public void stop() {
-        synchronized (SYNC) {
-            stopLogParsing();
-        }
-    }
-
-    @Override
-    public void restart() {
-        stop();
-        start();
+        this.jmsTemplate = jmsTemplate;
     }
 
     @Override
     protected void startRunner() {
-        start();
-    }
-
-    @Override
-    protected void stopRunner() {
-        stop();
-    }
-
-    @Transactional(readOnly = true)
-    protected List<Server> readServers() {
-        return serverRepository.findByLogParsingEnabledIsTrue();
-    }
-
-    private void startLogParsing() {
         logger.info("START");
 
         List<Server> serverList = readServers();
@@ -72,14 +43,13 @@ public class LogParsingRunner extends AbstractRunner implements Runner {
         for (Server thnOlgServer : serverList) {
             logger.debug("Starting new LogTailer for server {}", thnOlgServer);
 
-            if (thnOlgServer.getLogFile() == null
-                    || thnOlgServer.getLogFile().length() == 0) {
+            if (thnOlgServer.getLogFile() == null || thnOlgServer.getLogFile().length() == 0) {
                 logger.warn("Empty logFile path for server {}", thnOlgServer);
-                return;
+                continue;
             }
 
             File logFile = new File(thnOlgServer.getLogFile());
-            LogTailer logTailer = new LogTailer(logFile, line -> runLogLineParser(thnOlgServer, line));
+            LogTailer logTailer = new LogTailer(logFile, line -> sendServerLogLineMessage(thnOlgServer, line));
             logTailer.start();
 
             logger.debug("Adding LogTailer for server {}", thnOlgServer);
@@ -87,12 +57,8 @@ public class LogParsingRunner extends AbstractRunner implements Runner {
         }
     }
 
-    private void runLogLineParser(Server thnOlgServer, String line) {
-//        Thread thread = new Thread(() -> lineParsingService.parseLine(thnOlgServer, line));
-//        thread.start();
-    }
-
-    private void stopLogParsing() {
+    @Override
+    protected void stopRunner() {
         logger.info("STOP");
 
         Set<Server> servers = logTailers.keySet();
@@ -106,6 +72,15 @@ public class LogParsingRunner extends AbstractRunner implements Runner {
             logger.debug("Removing LogTailer for server {}", thnOlgServer);
             logTailers.remove(thnOlgServer);
         }
+    }
 
+    @Transactional(readOnly = true)
+    protected List<Server> readServers() {
+        return serverRepository.findByLogParsingEnabledIsTrue();
+    }
+
+    private void sendServerLogLineMessage(Server thnOlgServer, String line) {
+        final ServerLogLine serverLogLine = new ServerLogLine(thnOlgServer, line);
+        jmsTemplate.send(session -> session.createObjectMessage(serverLogLine));
     }
 }
