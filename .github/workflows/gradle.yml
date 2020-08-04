@@ -31,5 +31,7 @@ jobs:
         run: ./gradlew war
       - name: Run tests
         run: ./gradlew check
+      - name: Run Sonarqube
+        run: ./gradlew sonarqube
       - name: Send reports to CodeCov
         run: bash <(curl -s https://codecov.io/bash)

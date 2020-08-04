@@ -46,7 +46,6 @@ sonarqube {
 
 check.dependsOn {
     jacocoTestReport
-    sonarqube
 }
 
 def VERSIONS = [
