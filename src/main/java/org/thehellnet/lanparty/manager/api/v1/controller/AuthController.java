@@ -16,7 +16,7 @@ import javax.validation.Valid;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/public/v1/auth")
-public class AuthController extends AbstractController {
+public class AuthController {
 
     private final AuthService authService;
 
@@ -24,47 +24,41 @@ public class AuthController extends AbstractController {
         this.authService = authService;
     }
 
-    @RequestMapping(
+    @PostMapping(
             path = "/login",
-            method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @PreAuthorize("permitAll()")
-    public ResponseEntity login(@RequestBody @Valid LoginAuthRequestDTO requestDTO) {
+    public ResponseEntity<LoginAuthResponseDTO> login(@RequestBody @Valid LoginAuthRequestDTO requestDTO) {
         LoginAuthResponseDTO responseDTO = authService.login(requestDTO);
         return ResponseEntity.ok(responseDTO);
     }
 
-    @RequestMapping(
-            path = "/isTokenValid",
-            method = RequestMethod.GET
-    )
+    @GetMapping(path = "/isTokenValid")
     @PreAuthorize("isFullyAuthenticated()")
-    public ResponseEntity isTokenValid() {
+    public ResponseEntity<Void> isTokenValid() {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(
+    @PostMapping(
             path = "/register",
-            method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @PreAuthorize("permitAll()")
-    public ResponseEntity register(@RequestBody @Valid RegisterAuthRequestDTO dto) {
+    public ResponseEntity<RegisterAuthResponseDTO> register(@RequestBody @Valid RegisterAuthRequestDTO dto) {
         RegisterAuthResponseDTO responseDTO = authService.register(dto);
         return ResponseEntity.ok(responseDTO);
     }
 
-    @RequestMapping(
+    @PostMapping(
             path = "/confirm",
-            method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @PreAuthorize("permitAll()")
-    public ResponseEntity confirm(@RequestBody @Valid ConfirmAuthRequestDTO dto) {
+    public ResponseEntity<Void> confirm(@RequestBody @Valid ConfirmAuthRequestDTO dto) {
         authService.confirm(dto);
         return ResponseEntity.noContent().build();
     }

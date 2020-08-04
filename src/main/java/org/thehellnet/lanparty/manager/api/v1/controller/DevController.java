@@ -6,8 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
@@ -103,7 +103,14 @@ public class DevController {
     private final MatchRepository matchRepository;
     private final ShowcaseRepository showcaseRepository;
 
-    public DevController(AppUserRepository appUserRepository, GameRepository gameRepository, TournamentRepository tournamentRepository, SeatRepository seatRepository, TeamRepository teamRepository, PlayerRepository playerRepository, MatchRepository matchRepository, ShowcaseRepository showcaseRepository) {
+    public DevController(AppUserRepository appUserRepository,
+                         GameRepository gameRepository,
+                         TournamentRepository tournamentRepository,
+                         SeatRepository seatRepository,
+                         TeamRepository teamRepository,
+                         PlayerRepository playerRepository,
+                         MatchRepository matchRepository,
+                         ShowcaseRepository showcaseRepository) {
         this.appUserRepository = appUserRepository;
         this.gameRepository = gameRepository;
         this.tournamentRepository = tournamentRepository;
@@ -115,13 +122,12 @@ public class DevController {
     }
 
     @Transactional
-    @RequestMapping(
+    @GetMapping(
             path = "/generateDemoData",
-            method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public ResponseEntity generateDemoData() {
+    public ResponseEntity<String> generateDemoData() {
         JSONObject data = new JSONObject();
 
         AppUser appUser1 = prepareAppUser(APPUSER_1_EMAIL, APPUSER_1_PASSWORD);
@@ -185,6 +191,7 @@ public class DevController {
         }
         appUser.setEmail(email);
         appUser.setPassword(PasswordUtility.newInstance().hash(password));
+        appUser.setEnabled(true);
         return appUserRepository.save(appUser);
     }
 

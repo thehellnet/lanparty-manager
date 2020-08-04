@@ -14,24 +14,22 @@ import org.thehellnet.lanparty.manager.utility.MetadataUtility;
 @RequestMapping(path = "/api/public/v1/config")
 public class ConfigController {
 
-    @RequestMapping(
+    @GetMapping(
             path = "/metadata",
-            method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @PreAuthorize("permitAll()")
-    public ResponseEntity metadata() {
+    public ResponseEntity<String> metadata() {
         JSONArray responseBody = MetadataUtility.newInstance().compute();
         return ResponseEntity.ok(responseBody.toString());
     }
 
-    @RequestMapping(
+    @GetMapping(
             path = "/metadata/{entityName}",
-            method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @PreAuthorize("permitAll()")
-    public ResponseEntity metadata(@PathVariable(name = "entityName") String entityName) {
+    public ResponseEntity<String> metadata(@PathVariable(name = "entityName") String entityName) {
         MetadataUtility metadataUtility = MetadataUtility.newInstance();
         Class<?> entityClass = metadataUtility.search(entityName);
         if (entityClass == null) {
