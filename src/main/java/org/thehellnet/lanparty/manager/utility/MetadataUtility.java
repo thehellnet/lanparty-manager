@@ -82,12 +82,8 @@ public class MetadataUtility {
 
             for (Class<?> clazz : FIELD_TYPES) {
                 for (Annotation annotation : annotations) {
-                    if (annotation.annotationType().getSimpleName().equals(clazz.getSimpleName())) {
+                    if (annotation.annotationType().isAssignableFrom(clazz)) {
                         type = clazz.getSimpleName();
-                        break;
-                    }
-
-                    if (type != null) {
                         break;
                     }
                 }

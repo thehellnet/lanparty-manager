@@ -38,21 +38,21 @@ public final class ResourceUtility {
         InputStream inputStream = null;
 
         if (!internalOnly) {
+            File file = null;
+
             for (String searchPath : LOCAL_RESOURCES_PATH) {
                 String filePath = PathUtility.join(searchPath, path);
-                File file = new File(filePath);
+                file = new File(filePath);
+                if (!file.exists() || !file.canRead()) {
+                    break;
+                }
+            }
 
-                if (file.exists() && file.canRead()) {
-                    FileInputStream fileInputStream;
-
-                    try {
-                        fileInputStream = new FileInputStream(file);
-                    } catch (FileNotFoundException e) {
-                        logger.warn("File found but unable to get InputStream");
-                        continue;
-                    }
-
-                    inputStream = fileInputStream;
+            if (file != null) {
+                try {
+                    inputStream = new FileInputStream(file);
+                } catch (FileNotFoundException e) {
+                    logger.warn("File found but unable to get InputStream");
                 }
             }
         }

@@ -60,7 +60,7 @@ public abstract class AbstractService {
     }
 
     @Transactional(readOnly = true)
-    protected TokenData getTokenData(String remoteAddress, String barcode) {
+    public TokenData getTokenData(String remoteAddress, String barcode) {
         Seat seat = seatRepository.findByIpAddress(remoteAddress);
         if (seat == null) {
             throw new NotFoundException("Seat not found");
@@ -89,18 +89,16 @@ public abstract class AbstractService {
     }
 
     protected static String[] parseStringList(Object object, boolean required) {
-        if (object != null) {
-            if (object instanceof List) {
-                @SuppressWarnings("unchecked")
-                List<String> stringList = (List<String>) object;
-                return stringList.toArray(new String[0]);
-            }
+        if (object instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<String> stringList = (List<String>) object;
+            return stringList.toArray(new String[0]);
         }
 
         if (required) {
             throw new InvalidDataException("Invalid string list");
         }
 
-        return null;
+        return new String[0];
     }
 }

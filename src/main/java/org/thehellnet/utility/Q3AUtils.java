@@ -1,5 +1,7 @@
 package org.thehellnet.utility;
 
+import org.thehellnet.utility.exception.InvalidValueException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +16,7 @@ public final class Q3AUtils {
     }
 
     public static String removeDoubleQuotes(String input) {
-        return input.replaceAll("^\"|\"$", "");
+        return input.replaceAll("(^\")|(\"$)", "");
     }
 
     public static String tagToColor(String message) {
@@ -22,7 +24,8 @@ public final class Q3AUtils {
         Matcher matcher = pattern.matcher(message.trim());
         StringBuffer stringBuffer = new StringBuffer();
         while (matcher.find()) {
-            switch (matcher.group().toLowerCase()) {
+            String value = matcher.group().toLowerCase();
+            switch (value) {
                 case "${black}":
                     matcher.appendReplacement(stringBuffer, "^0");
                     break;
@@ -47,6 +50,8 @@ public final class Q3AUtils {
                 case "${white}":
                     matcher.appendReplacement(stringBuffer, "^7");
                     break;
+                default:
+                    throw new InvalidValueException(String.format("Value not valid: %s", value));
             }
         }
         matcher.appendTail(stringBuffer);

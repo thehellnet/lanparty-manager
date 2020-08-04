@@ -40,6 +40,7 @@ public class LogTailer {
         try {
             thread.join();
         } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
         }
     }
 

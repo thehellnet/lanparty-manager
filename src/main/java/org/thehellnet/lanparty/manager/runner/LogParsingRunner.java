@@ -5,10 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.model.message.ServerLogLine;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
-import org.thehellnet.lanparty.manager.repository.ServerRepository;
+import org.thehellnet.lanparty.manager.service.ServerService;
 import org.thehellnet.utility.log.LogTailer;
 
 import java.io.File;
@@ -22,15 +21,15 @@ public class LogParsingRunner extends AbstractRunner implements Runner {
 
     private static final Logger logger = LoggerFactory.getLogger(LogParsingRunner.class);
 
-    private final ServerRepository serverRepository;
+    private final ServerService serverService;
     private final JmsTemplate jmsTemplate;
 
-    private Map<Server, LogTailer> logTailers = new HashMap<>();
+    private final Map<Server, LogTailer> logTailers = new HashMap<>();
 
     @Autowired
-    public LogParsingRunner(ServerRepository serverRepository,
+    public LogParsingRunner(ServerService serverService,
                             JmsTemplate jmsTemplate) {
-        this.serverRepository = serverRepository;
+        this.serverService = serverService;
         this.jmsTemplate = jmsTemplate;
     }
 
@@ -38,7 +37,7 @@ public class LogParsingRunner extends AbstractRunner implements Runner {
     protected void startRunner() {
         logger.info("START");
 
-        List<Server> serverList = readServers();
+        List<Server> serverList = serverService.getLogEnabledServers();
 
         for (Server thnOlgServer : serverList) {
             logger.debug("Starting new LogTailer for server {}", thnOlgServer);
@@ -72,11 +71,6 @@ public class LogParsingRunner extends AbstractRunner implements Runner {
             logger.debug("Removing LogTailer for server {}", thnOlgServer);
             logTailers.remove(thnOlgServer);
         }
-    }
-
-    @Transactional(readOnly = true)
-    protected List<Server> readServers() {
-        return serverRepository.findByLogParsingEnabledIsTrue();
     }
 
     private void sendServerLogLineMessage(Server thnOlgServer, String line) {

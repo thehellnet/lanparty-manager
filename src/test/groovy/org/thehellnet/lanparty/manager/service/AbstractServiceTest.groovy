@@ -10,7 +10,7 @@ class AbstractServiceTest extends Specification {
         Object input = null
 
         when:
-        String[] actual = AbstractService.parseStringList(input)
+        AbstractService.parseStringList(input)
 
         then:
         thrown InvalidDataException
@@ -24,7 +24,7 @@ class AbstractServiceTest extends Specification {
         String[] actual = AbstractService.parseStringList(input, false)
 
         then:
-        actual == null
+        actual.length == 0
     }
 
     def "parseStringList with string input"() {
@@ -32,7 +32,7 @@ class AbstractServiceTest extends Specification {
         Object input = ""
 
         when:
-        String[] actual = AbstractService.parseStringList(input)
+        AbstractService.parseStringList(input)
 
         then:
         thrown InvalidDataException
@@ -46,7 +46,7 @@ class AbstractServiceTest extends Specification {
         String[] actual = AbstractService.parseStringList(input, false)
 
         then:
-        actual == null
+        actual.length == 0
     }
 
     def "parseStringList with empty input"() {
