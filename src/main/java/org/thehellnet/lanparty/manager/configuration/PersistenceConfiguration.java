@@ -47,7 +47,7 @@ public class PersistenceConfiguration implements TestAwareConfiguration {
         try {
             dataSource.setDriverClass(params.getDriverClass());
         } catch (PropertyVetoException e) {
-            e.printStackTrace();
+            logger.error("Unable to initialize database driver");
             return null;
         }
 
