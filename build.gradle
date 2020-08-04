@@ -1,19 +1,14 @@
-group "org.thehellnet.lanparty"
-version "0.8.0"
-
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven { url "http://repository.atricore.org/m2-release-repository" }
-    }
+plugins {
+    id "java"
+    id "groovy"
+    id "idea"
+    id "war"
+    id "jacoco"
+    id "org.sonarqube" version "3.0"
 }
 
-apply plugin: "java"
-apply plugin: "groovy"
-apply plugin: "idea"
-apply plugin: "war"
-apply plugin: "jacoco"
+group "org.thehellnet.lanparty"
+version "0.8.0"
 
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
@@ -41,7 +36,18 @@ test {
     systemProperty "org.thehellnet.lanparty.manager.testenabled", "true"
 }
 
-check.dependsOn jacocoTestReport
+sonarqube {
+    properties {
+        property "sonar.projectKey", "thehellnet_lanparty-manager"
+        property "sonar.organization", "thehellnet"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
+check.dependsOn {
+    jacocoTestReport
+    sonarqube
+}
 
 def VERSIONS = [
         "tomcat"              : "9.0.37",
