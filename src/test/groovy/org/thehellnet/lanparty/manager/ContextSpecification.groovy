@@ -68,8 +68,6 @@ abstract class ContextSpecification extends Specification {
     protected final static String PLAYER_NICKNAME = "Testplayer"
     protected final static String PLAYER_NICKNAME_NEW = "Testplayer new"
 
-    protected final static String PLAYER_BARCODE = "0123456789"
-
     protected final static String PLAYER_CFG = "bind H \"say Ciao\""
 
     protected final static String CFG = "unbindall\n" +
