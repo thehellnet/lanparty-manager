@@ -66,7 +66,8 @@ public final class Q3AUtils {
         Matcher matcher = pattern.matcher(message.trim());
         StringBuffer stringBuffer = new StringBuffer();
         while (matcher.find()) {
-            switch (matcher.group().toLowerCase()) {
+            String value = matcher.group().toLowerCase();
+            switch (value) {
                 case "^0":
                     matcher.appendReplacement(stringBuffer, "\\${black}");
                     break;
@@ -91,6 +92,8 @@ public final class Q3AUtils {
                 case "^7":
                     matcher.appendReplacement(stringBuffer, "\\${white}");
                     break;
+                default:
+                    throw new InvalidValueException(String.format("Value not valid: %s", value));
             }
         }
         matcher.appendTail(stringBuffer);

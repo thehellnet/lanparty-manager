@@ -1,10 +1,19 @@
 package org.thehellnet.utility;
 
+import org.apache.commons.codec.binary.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
 public final class StringUtility {
+
+    private static final Logger logger = LoggerFactory.getLogger(StringUtility.class);
 
     private StringUtility() {
     }
@@ -42,6 +51,28 @@ public final class StringUtility {
         }
 
         return input.substring(0, 1).toLowerCase() + input.substring(1);
+    }
+
+    public static String randomString(int seed, int offset, int length) {
+        MessageDigest messageDigest;
+
+        try {
+            messageDigest = MessageDigest.getInstance("SHA-512");
+        } catch (NoSuchAlgorithmException e) {
+            logger.error(e.getMessage());
+            return null;
+        }
+
+        SecureRandom secureRandom = new SecureRandom();
+
+        byte[] bytes = secureRandom.generateSeed(seed);
+        String inputString = new String(bytes);
+        String data = PasswordUtility.newInstance().hash(inputString);
+        messageDigest.update(data.getBytes());
+
+        byte[] digest = messageDigest.digest();
+        String hexString = Hex.encodeHexString(digest);
+        return String.valueOf(hexString.subSequence(offset, offset + length));
     }
 
     private static List<String> getStrings(String rawText, String regex) {
