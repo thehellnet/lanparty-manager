@@ -16,6 +16,9 @@ public final class ConfirmCodeUtility {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfirmCodeUtility.class);
 
+    private ConfirmCodeUtility() {
+    }
+
     public static String generate() {
         MessageDigest messageDigest;
 

@@ -20,22 +20,22 @@ public class ErrorHandler {
     private static final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity handleResourceNotFoundException(ResourceNotFoundException e) {
+    public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException e) {
         return prepareResponseEntity(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         return prepareResponseEntity(e, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity handleMethodArgumentNotValidException(AccessDeniedException e) {
+    public ResponseEntity<String> handleMethodArgumentNotValidException(AccessDeniedException e) {
         return prepareResponseEntity(e, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity handleRuntimeException(Exception e) {
+    public ResponseEntity<String> handleRuntimeException(Exception e) {
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
         if (e instanceof LanPartyException) {
@@ -48,7 +48,7 @@ public class ErrorHandler {
         return prepareResponseEntity(e, httpStatus);
     }
 
-    private ResponseEntity prepareResponseEntity(Exception e, HttpStatus httpStatus) {
+    private ResponseEntity<String> prepareResponseEntity(Exception e, HttpStatus httpStatus) {
         JSONObject responseBody = new JSONObject();
 
         if (e.getMessage() != null && e.getMessage().length() > 0) {

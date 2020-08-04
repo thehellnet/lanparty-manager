@@ -4,6 +4,9 @@ import java.io.File;
 
 public final class PathUtility {
 
+    private PathUtility() {
+    }
+
     public static String join(String... items) {
         String finalPath = "";
 

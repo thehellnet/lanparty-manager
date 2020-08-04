@@ -6,6 +6,9 @@ import java.util.StringJoiner;
 
 public final class StringUtility {
 
+    private StringUtility() {
+    }
+
     public static List<String> splitLines(String rawText) {
         return getStrings(rawText, "\\R");
     }
@@ -66,7 +69,7 @@ public final class StringUtility {
             return null;
         }
 
-        if (lines.size() == 0) {
+        if (lines.isEmpty()) {
             return "";
         }
 

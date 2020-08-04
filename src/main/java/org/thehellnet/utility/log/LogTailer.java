@@ -12,8 +12,8 @@ public class LogTailer {
     private static final Logger logger = LoggerFactory.getLogger(LogTailer.class);
     private static final long DELAY_MILLIS = 1000;
 
-    private LineHandler lineHandler;
-    private Tailer tailer;
+    private final LineHandler lineHandler;
+    private final Tailer tailer;
     private Thread thread;
 
     public LogTailer(File logFile, LineHandler lineHandler) {
@@ -32,8 +32,9 @@ public class LogTailer {
     public void stop() {
         logger.debug("Stopping logTailer for {}", tailer.getFile());
 
-        thread.interrupt();
         tailer.stop();
+        thread.interrupt();
+        thread = null;
     }
 
     public void join() {

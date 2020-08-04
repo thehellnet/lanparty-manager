@@ -18,6 +18,9 @@ public final class TokenUtility {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenUtility.class);
 
+    private TokenUtility() {
+    }
+
     public static String generate() {
         MessageDigest messageDigest;
 

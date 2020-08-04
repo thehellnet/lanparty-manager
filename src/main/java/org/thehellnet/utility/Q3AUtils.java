@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 
 public final class Q3AUtils {
 
+    private Q3AUtils() {
+    }
+
     public static String removeColorCodes(String input) {
         return input.trim().replaceAll("(\\^[0-9])+", "");
     }
