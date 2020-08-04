@@ -1,6 +1,8 @@
 package org.thehellnet.lanparty.manager.exception.model;
 
-public class InvalidDataException extends ModelException {
+import org.thehellnet.lanparty.manager.exception.LanPartyException;
+
+public class InvalidDataException extends LanPartyException {
 
     public InvalidDataException() {
     }
