@@ -1,6 +1,5 @@
 package org.thehellnet.lanparty.manager.utility.cfg
 
-import org.thehellnet.lanparty.manager.exception.model.InvalidDataException
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -43,7 +42,7 @@ class ParsedCfgCommandSerializerTest extends Specification {
         ParsedCfgCommandSerializer.serializeCommand(input)
 
         then:
-        thrown InvalidDataException
+        thrown InvalidModelDataException
     }
 
     def "serializeCommand with null param command"() {
@@ -54,7 +53,7 @@ class ParsedCfgCommandSerializerTest extends Specification {
         ParsedCfgCommandSerializer.serializeCommand(input)
 
         then:
-        thrown InvalidDataException
+        thrown InvalidModelDataException
     }
 
     def "serialize with null input"() {

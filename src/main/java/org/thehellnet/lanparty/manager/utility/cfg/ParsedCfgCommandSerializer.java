@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.utility.cfg;
 
-import org.thehellnet.lanparty.manager.exception.model.InvalidDataException;
+import org.thehellnet.lanparty.manager.exception.InvalidDataException;
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.utility.StringUtility;
 

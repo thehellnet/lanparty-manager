@@ -16,7 +16,7 @@ public final class YmlUtility<T> {
     }
 
     public static <T> YmlUtility<T> getInstance(String path, Class<T> type) {
-        return new YmlUtility<T>(path, type);
+        return new YmlUtility<>(path, type);
     }
 
     public T loadFromResources() {

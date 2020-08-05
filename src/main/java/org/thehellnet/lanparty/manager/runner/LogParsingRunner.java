@@ -8,8 +8,10 @@ import org.springframework.stereotype.Component;
 import org.thehellnet.lanparty.manager.model.message.ServerLogLine;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
 import org.thehellnet.lanparty.manager.service.ServerService;
+import org.thehellnet.lanparty.manager.settings.JmsSettings;
 import org.thehellnet.utility.log.LogTailer;
 
+import javax.jms.ConnectionFactory;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -22,15 +24,18 @@ public class LogParsingRunner extends AbstractRunner implements Runner {
     private static final Logger logger = LoggerFactory.getLogger(LogParsingRunner.class);
 
     private final ServerService serverService;
-    private final JmsTemplate jmsTemplate;
+    private final ConnectionFactory connectionFactory;
 
     private final Map<Server, LogTailer> logTailers = new HashMap<>();
 
+    private JmsTemplate jmsTemplate;
+
     @Autowired
-    public LogParsingRunner(ServerService serverService,
-                            JmsTemplate jmsTemplate) {
+    public LogParsingRunner(ServerService serverService, ConnectionFactory connectionFactory) {
         this.serverService = serverService;
-        this.jmsTemplate = jmsTemplate;
+        this.connectionFactory = connectionFactory;
+
+        initJmsTemplate();
     }
 
     @Override
@@ -40,7 +45,7 @@ public class LogParsingRunner extends AbstractRunner implements Runner {
         List<Server> serverList = serverService.getLogEnabledServers();
 
         for (Server thnOlgServer : serverList) {
-            logger.debug("Starting new LogTailer for server {}", thnOlgServer);
+            logger.debug("Starting LogTailer for server \"{}\": {}", thnOlgServer, thnOlgServer.getLogFile());
 
             if (thnOlgServer.getLogFile() == null || thnOlgServer.getLogFile().length() == 0) {
                 logger.warn("Empty logFile path for server {}", thnOlgServer);
@@ -73,7 +78,13 @@ public class LogParsingRunner extends AbstractRunner implements Runner {
         }
     }
 
+    private void initJmsTemplate() {
+        jmsTemplate = new JmsTemplate(this.connectionFactory);
+        jmsTemplate.setDefaultDestinationName(JmsSettings.JMS_PATH_LOG_PARSING);
+    }
+
     private void sendServerLogLineMessage(Server thnOlgServer, String line) {
+        logger.debug("New line from {}: {}", thnOlgServer, line);
         final ServerLogLine serverLogLine = new ServerLogLine(thnOlgServer, line);
         jmsTemplate.send(session -> session.createObjectMessage(serverLogLine));
     }

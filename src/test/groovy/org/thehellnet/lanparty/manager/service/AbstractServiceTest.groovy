@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.service
 
-import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
+import org.thehellnet.lanparty.manager.exception.InvalidDataException
 import spock.lang.Specification
 
 class AbstractServiceTest extends Specification {

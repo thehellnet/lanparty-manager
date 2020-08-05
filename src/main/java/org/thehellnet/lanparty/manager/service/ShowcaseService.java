@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
-import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
+import org.thehellnet.lanparty.manager.exception.NotFoundException;
 import org.thehellnet.lanparty.manager.model.persistence.Pane;
 import org.thehellnet.lanparty.manager.model.persistence.Showcase;
 import org.thehellnet.lanparty.manager.model.protocol.Command;

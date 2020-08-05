@@ -37,10 +37,11 @@ public class PersistenceConfiguration implements TestAwareConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(PersistenceConfiguration.class);
 
-    @Bean(name = "dataSource")
+    @Bean("dataSource")
     public DataSource getDataSource() {
         logger.info("Init dataSource Bean");
-        logger.debug("Database server: URL: {} - Username: {}", params.getJdbcUrl(), params.getUsername());
+        logger.debug("Database server: URL: {} - Username: {} - Hbm2ddlhi: {}",
+                params.getJdbcUrl(), params.getUsername(), params.getHbm2ddl());
 
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
 
@@ -60,7 +61,7 @@ public class PersistenceConfiguration implements TestAwareConfiguration {
         return dataSource;
     }
 
-    @Bean(name = "entityManagerFactory")
+    @Bean("entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean getLocalContainerEntityManagerFactoryBean() {
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setPackagesToScan("org.thehellnet.lanparty.manager.model.persistence");
@@ -70,14 +71,14 @@ public class PersistenceConfiguration implements TestAwareConfiguration {
         return entityManagerFactory;
     }
 
-    @Bean(name = "transactionManager")
+    @Bean("transactionManager")
     public JpaTransactionManager getJpaTransactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(getLocalContainerEntityManagerFactoryBean().getObject());
         return transactionManager;
     }
 
-    @Bean(name = "hibernateJpaAutoConfiguration")
+    @Bean("hibernateJpaAutoConfiguration")
     public HibernateJpaVendorAdapter getHibernateJpaVendorAdapter() {
         return new HibernateJpaVendorAdapter();
     }

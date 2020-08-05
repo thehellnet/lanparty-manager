@@ -1,8 +1,8 @@
 package org.thehellnet.lanparty.manager.service
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException
-import org.thehellnet.lanparty.manager.exception.controller.NotFoundException
+import org.thehellnet.lanparty.manager.exception.InvalidDataException
+import org.thehellnet.lanparty.manager.exception.NotFoundException
 import org.thehellnet.lanparty.manager.model.dto.request.auth.ConfirmAuthRequestDTO
 import org.thehellnet.lanparty.manager.model.dto.request.auth.LoginAuthRequestDTO
 import org.thehellnet.lanparty.manager.model.dto.request.auth.RegisterAuthRequestDTO

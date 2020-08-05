@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
+import org.thehellnet.lanparty.manager.exception.NotFoundException;
 import org.thehellnet.lanparty.manager.utility.MetadataUtility;
 
 @RestController

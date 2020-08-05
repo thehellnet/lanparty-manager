@@ -3,7 +3,7 @@ package org.thehellnet.lanparty.manager.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
+import org.thehellnet.lanparty.manager.exception.InvalidDataException;
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.lanparty.manager.model.persistence.Cfg;
 import org.thehellnet.lanparty.manager.model.persistence.Player;
@@ -15,7 +15,6 @@ import org.thehellnet.lanparty.manager.repository.SeatRepository;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandMerger;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandParser;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandSanitizer;
-import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandSerializer;
 import org.thehellnet.utility.StringUtility;
 
 import java.util.List;
@@ -35,7 +34,7 @@ public class CfgService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> computeCfg(String remoteAddress, String barcode) {
+    public List<ParsedCfgCommand> computeCfg(String remoteAddress, String barcode) {
         if (remoteAddress == null || remoteAddress.length() == 0
                 || barcode == null || barcode.length() == 0) {
             throw new InvalidDataException("Invalid remote address or barcode");
@@ -49,8 +48,14 @@ public class CfgService extends AbstractService {
         List<ParsedCfgCommand> tournamentCfgCommands = new ParsedCfgCommandParser(tournamentCfg).parse();
         tournamentCfgCommands = new ParsedCfgCommandSanitizer(tournamentCfgCommands).removeSpecials();
 
+        String playerCfgContent = "";
+
         Cfg cfg = cfgRepository.findByPlayerAndGame(player, tournament.getGame());
-        List<ParsedCfgCommand> playerCfgCommands = new ParsedCfgCommandParser(cfg.getCfgContent()).parse();
+        if (cfg != null) {
+            playerCfgContent = cfg.getCfgContent();
+        }
+
+        List<ParsedCfgCommand> playerCfgCommands = new ParsedCfgCommandParser(playerCfgContent).parse();
         playerCfgCommands = new ParsedCfgCommandSanitizer(playerCfgCommands).removeSpecials();
 
         List<ParsedCfgCommand> seatCfgCommands = new ParsedCfgCommandMerger(playerCfgCommands).mergeWithTournamentCfg(tournamentCfgCommands);
@@ -58,7 +63,7 @@ public class CfgService extends AbstractService {
 
         seatCfgCommands.add(ParsedCfgCommand.prepareName(player.getNickname()));
 
-        return new ParsedCfgCommandSerializer(seatCfgCommands).serializeLines();
+        return seatCfgCommands;
     }
 
     @Transactional

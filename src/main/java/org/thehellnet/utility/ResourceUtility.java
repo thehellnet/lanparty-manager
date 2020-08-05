@@ -43,7 +43,7 @@ public final class ResourceUtility {
             for (String searchPath : LOCAL_RESOURCES_PATH) {
                 String filePath = PathUtility.join(searchPath, path);
                 file = new File(filePath);
-                if (!file.exists() || !file.canRead()) {
+                if (file.exists() || file.canRead()) {
                     break;
                 }
             }

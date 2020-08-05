@@ -2,8 +2,8 @@ package org.thehellnet.lanparty.manager.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.thehellnet.lanparty.manager.exception.controller.InvalidDataException;
-import org.thehellnet.lanparty.manager.exception.controller.NotFoundException;
+import org.thehellnet.lanparty.manager.exception.InvalidDataException;
+import org.thehellnet.lanparty.manager.exception.NotFoundException;
 import org.thehellnet.lanparty.manager.model.persistence.AppUser;
 import org.thehellnet.lanparty.manager.model.persistence.Player;
 import org.thehellnet.lanparty.manager.model.persistence.Seat;

@@ -1,6 +1,5 @@
 package org.thehellnet.lanparty.manager.model.helper
 
-import org.thehellnet.lanparty.manager.exception.model.InvalidDataException
 import org.thehellnet.lanparty.manager.settings.CfgSettings
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -68,7 +67,7 @@ class ParsedCfgCommandTest extends Specification {
         ParsedCfgCommand.prepareName(input)
 
         then:
-        thrown InvalidDataException
+        thrown InvalidModelDataException
     }
 
     def "prepareName with empty"() {
@@ -79,7 +78,7 @@ class ParsedCfgCommandTest extends Specification {
         ParsedCfgCommand.prepareName(input)
 
         then:
-        thrown InvalidDataException
+        thrown InvalidModelDataException
     }
 
     def "prepareName with valid"() {
@@ -102,7 +101,7 @@ class ParsedCfgCommandTest extends Specification {
         ParsedCfgCommand.prepareSay(input)
 
         then:
-        thrown InvalidDataException
+        thrown InvalidModelDataException
     }
 
     def "prepareSay with empty"() {
@@ -113,7 +112,7 @@ class ParsedCfgCommandTest extends Specification {
         ParsedCfgCommand.prepareSay(input)
 
         then:
-        thrown InvalidDataException
+        thrown InvalidModelDataException
     }
 
     def "prepareSay with valid"() {

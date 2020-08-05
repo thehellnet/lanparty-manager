@@ -2,7 +2,7 @@ package org.thehellnet.lanparty.manager.service
 
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
-import org.thehellnet.lanparty.manager.exception.controller.NotFoundException
+import org.thehellnet.lanparty.manager.exception.NotFoundException
 import org.thehellnet.lanparty.manager.model.persistence.Player
 import org.thehellnet.lanparty.manager.model.persistence.Seat
 import spock.lang.Unroll

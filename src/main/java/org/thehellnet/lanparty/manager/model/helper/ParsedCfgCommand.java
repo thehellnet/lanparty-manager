@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.model.helper;
 
-import org.thehellnet.lanparty.manager.exception.model.InvalidDataException;
+import org.thehellnet.lanparty.manager.exception.InvalidDataException;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandSerializer;
 
 import java.util.List;

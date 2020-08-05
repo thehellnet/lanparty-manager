@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.BarcodeToolRequestDTO;
 import org.thehellnet.lanparty.manager.model.dto.request.tool.SaveCfgToolRequestDTO;
+import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.lanparty.manager.service.CfgService;
 import org.thehellnet.lanparty.manager.service.SeatService;
+import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandSerializer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -57,7 +59,8 @@ public class ToolController {
         seatService.updateLastContact(remoteAddress);
         seatService.updatePlayerInSeats(remoteAddress, dto.barcode);
 
-        List<String> cfgLines = cfgService.computeCfg(remoteAddress, dto.barcode);
+        List<ParsedCfgCommand> cfgCommands = cfgService.computeCfg(remoteAddress, dto.barcode);
+        List<String> cfgLines = new ParsedCfgCommandSerializer(cfgCommands).serializeLines();
         return ResponseEntity.ok(cfgLines);
     }
 
