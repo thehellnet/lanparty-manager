@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.utility.logline;
+package org.thehellnet.lanparty.manager.model.logline;
 
 public enum LineEvent {
 

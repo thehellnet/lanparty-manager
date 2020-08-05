@@ -1,7 +1,7 @@
-package org.thehellnet.lanparty.manager.utility.logline;
+package org.thehellnet.lanparty.manager.model.logline;
 
 import org.thehellnet.lanparty.manager.exception.logline.LogLineParserException;
-import org.thehellnet.lanparty.manager.utility.logline.line.LogLine;
+import org.thehellnet.lanparty.manager.model.logline.line.LogLine;
 
 public abstract class AbstractLogLineParser implements LogLineParser {
 

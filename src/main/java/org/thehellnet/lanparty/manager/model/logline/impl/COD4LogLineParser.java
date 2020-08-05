@@ -1,8 +1,8 @@
-package org.thehellnet.lanparty.manager.utility.logline.impl;
+package org.thehellnet.lanparty.manager.model.logline.impl;
 
 import org.thehellnet.lanparty.manager.exception.logline.LogLineParserException;
-import org.thehellnet.lanparty.manager.utility.logline.AbstractLogLineParser;
-import org.thehellnet.lanparty.manager.utility.logline.line.LogLine;
+import org.thehellnet.lanparty.manager.model.logline.AbstractLogLineParser;
+import org.thehellnet.lanparty.manager.model.logline.line.LogLine;
 import org.thehellnet.utility.StringUtility;
 
 import java.util.List;

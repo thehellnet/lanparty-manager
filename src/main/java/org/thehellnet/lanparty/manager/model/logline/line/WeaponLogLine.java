@@ -1,18 +1,18 @@
-package org.thehellnet.lanparty.manager.utility.logline.line;
+package org.thehellnet.lanparty.manager.model.logline.line;
 
 import org.joda.time.DateTime;
-import org.thehellnet.lanparty.manager.utility.logline.LineEvent;
+import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
 import java.util.Objects;
 
-public class SayLogLine extends LogLine {
+public class WeaponLogLine extends LogLine {
 
     private String guid;
     private int num;
     private String nick;
-    private String message;
+    private String weapon;
 
-    public SayLogLine(DateTime dateTime, int uptime, LineEvent lineEvent) {
+    public WeaponLogLine(DateTime dateTime, int uptime, LineEvent lineEvent) {
         super(dateTime, uptime, lineEvent);
     }
 
@@ -40,12 +40,12 @@ public class SayLogLine extends LogLine {
         this.nick = nick;
     }
 
-    public String getMessage() {
-        return message;
+    public String getWeapon() {
+        return weapon;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setWeapon(String weapon) {
+        this.weapon = weapon;
     }
 
     @Override
@@ -53,15 +53,15 @@ public class SayLogLine extends LogLine {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        SayLogLine that = (SayLogLine) o;
+        WeaponLogLine that = (WeaponLogLine) o;
         return num == that.num &&
                 Objects.equals(guid, that.guid) &&
                 Objects.equals(nick, that.nick) &&
-                Objects.equals(message, that.message);
+                Objects.equals(weapon, that.weapon);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), guid, num, nick, message);
+        return Objects.hash(super.hashCode(), guid, num, nick, weapon);
     }
 }

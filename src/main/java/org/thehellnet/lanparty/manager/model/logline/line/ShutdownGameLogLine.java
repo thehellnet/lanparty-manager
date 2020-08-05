@@ -1,7 +1,7 @@
-package org.thehellnet.lanparty.manager.utility.logline.line;
+package org.thehellnet.lanparty.manager.model.logline.line;
 
 import org.joda.time.DateTime;
-import org.thehellnet.lanparty.manager.utility.logline.LineEvent;
+import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
 public class ShutdownGameLogLine extends LogLine {
 
