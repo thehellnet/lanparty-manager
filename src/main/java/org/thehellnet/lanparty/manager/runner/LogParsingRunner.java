@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-public class LogParsingRunner extends AbstractRunner implements Runner {
+public class LogParsingRunner extends AbstractRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(LogParsingRunner.class);
 

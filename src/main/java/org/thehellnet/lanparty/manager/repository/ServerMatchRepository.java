@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface ServerMatchRepository extends JpaRepository<ServerMatch, Long> {
 
-    List<ServerMatch> findAllByServer(Server server);
+    List<ServerMatch> findAllByServerOrderByStartTsDesc(Server server);
 
     @Query("SELECT sm " +
             "FROM ServerMatch sm " +

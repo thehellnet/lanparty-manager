@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.thehellnet.lanparty.manager.init.InitializedEvent;
 
 @Component
-public abstract class AbstractRunner implements Runner {
+public abstract class AbstractRunner {
 
     private final Object SYNC = new Object();
 
@@ -22,7 +22,6 @@ public abstract class AbstractRunner implements Runner {
         stop();
     }
 
-    @Override
     public void start() {
         synchronized (SYNC) {
             if (running) {
@@ -34,7 +33,6 @@ public abstract class AbstractRunner implements Runner {
         }
     }
 
-    @Override
     public void stop() {
         synchronized (SYNC) {
             if (!running) {
@@ -46,7 +44,6 @@ public abstract class AbstractRunner implements Runner {
         }
     }
 
-    @Override
     public void restart() {
         stop();
         start();

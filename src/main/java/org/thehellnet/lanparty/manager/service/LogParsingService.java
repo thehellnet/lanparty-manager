@@ -72,6 +72,7 @@ public class LogParsingService {
 
     @Transactional
     public void closeRunningServerMatch(Server server) {
+        logger.info("Closing all running server matches");
         List<ServerMatch> runningServerMatches = serverMatchRepository.findAllRunningByServer(server);
         for (ServerMatch serverMatch : runningServerMatches) {
             serverMatch.close();
