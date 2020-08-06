@@ -7,12 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@LineEventType(LineEvent.INIT_GAME)
 public class InitGameLogLine extends LogLine {
 
     private final Map<String, Object> params = new HashMap<>();
 
-    public InitGameLogLine(DateTime dateTime, int uptime, LineEvent lineEvent) {
-        super(dateTime, uptime, lineEvent);
+    public InitGameLogLine(DateTime dateTime, int uptime) {
+        super(dateTime, uptime);
     }
 
     public Map<String, Object> getParams() {

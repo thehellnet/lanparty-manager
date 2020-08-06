@@ -5,14 +5,15 @@ import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
 import java.util.Objects;
 
+@LineEventType(LineEvent.JOIN)
 public class JoinLogLine extends LogLine {
 
     private String guid;
     private int num;
     private String nick;
 
-    public JoinLogLine(DateTime dateTime, int uptime, LineEvent lineEvent) {
-        super(dateTime, uptime, lineEvent);
+    public JoinLogLine(DateTime dateTime, int uptime) {
+        super(dateTime, uptime);
     }
 
     public String getGuid() {

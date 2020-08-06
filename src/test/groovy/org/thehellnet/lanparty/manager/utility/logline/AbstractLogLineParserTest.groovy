@@ -1,10 +1,72 @@
-package org.thehellnet.lanparty.manager.model.logline
+package org.thehellnet.lanparty.manager.utility.logline
 
 import org.thehellnet.lanparty.manager.exception.logline.LogLineParserException
+import org.thehellnet.lanparty.manager.utility.logline.AbstractLogLineParser
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class AbstractLogLineParserTest extends Specification {
+
+    @Unroll
+    def "validate: \"#input\" - Exception thrown"(String input) {
+        when:
+        AbstractLogLineParser.validate(input)
+
+        then:
+        thrown LogLineParserException
+
+        where:
+        input | _
+        null  | _
+        ""    | _
+    }
+
+    @Unroll
+    def "validate: \"#input\""(String input) {
+        when:
+        AbstractLogLineParser.validate(input)
+
+        then:
+        noExceptionThrown()
+
+        where:
+        input                                                                  | _
+        " "                                                                    | _
+        "1615:51 Weapon;51f393127bd69a6317ba9c374a222cc1;1;[hnt]theory;mp5_mp" | _
+    }
+
+    @Unroll
+    def "splitItems: \"#input\" - Exception thrown"(String input) {
+        when:
+        AbstractLogLineParser.splitItems(input)
+
+        then:
+        thrown LogLineParserException
+
+        where:
+        input | _
+        null  | _
+        ""    | _
+        " "   | _
+    }
+
+    @Unroll
+    def "splitItems: \"#input\" - #expected"(String input, String[] expected) {
+        when:
+        String[] actual = AbstractLogLineParser.splitItems(input)
+
+        then:
+        actual == expected
+
+        where:
+        input                                                                                                                              | expected
+        "a"                                                                                                                                | ["a"]
+        ";"                                                                                                                                | ["", ""]
+        "a;"                                                                                                                               | ["a", ""]
+        ";a"                                                                                                                               | ["", "a"]
+        "a;a"                                                                                                                              | ["a", "a"]
+        "K;4ae423d8025cecb67a2decac0e7cbcd2;3;;Cosmo;5e33cd23356ac8c7301a465351fda263;4;;Sandro;m1014_mp;19;MOD_PISTOL_BULLET;torso_upper" | ["K", "4ae423d8025cecb67a2decac0e7cbcd2", "3", "", "Cosmo", "5e33cd23356ac8c7301a465351fda263", "4", "", "Sandro", "m1014_mp", "19", "MOD_PISTOL_BULLET", "torso_upper"]
+    }
 
     @Unroll
     def "parseTime: \"#input\" - Exception thrown"(String input) {
@@ -43,38 +105,5 @@ class AbstractLogLineParserTest extends Specification {
         "1:01" | 61
         "1:59" | 119
         "2:00" | 120
-    }
-
-    @Unroll
-    def "splitItems: \"#input\" - Exception thrown"(String input) {
-        when:
-        AbstractLogLineParser.splitItems(input)
-
-        then:
-        thrown LogLineParserException
-
-        where:
-        input | _
-        null  | _
-        ""    | _
-        " "   | _
-    }
-
-    @Unroll
-    def "splitItems: \"#input\" - #expected"(String input, String[] expected) {
-        when:
-        String[] actual = AbstractLogLineParser.splitItems(input)
-
-        then:
-        actual == expected
-
-        where:
-        input                                                                                                                              | expected
-        "a"                                                                                                                                | ["a"]
-        ";"                                                                                                                                | ["", ""]
-        "a;"                                                                                                                               | ["a", ""]
-        ";a"                                                                                                                               | ["", "a"]
-        "a;a"                                                                                                                              | ["a", "a"]
-        "K;4ae423d8025cecb67a2decac0e7cbcd2;3;;Cosmo;5e33cd23356ac8c7301a465351fda263;4;;Sandro;m1014_mp;19;MOD_PISTOL_BULLET;torso_upper" | ["K", "4ae423d8025cecb67a2decac0e7cbcd2", "3", "", "Cosmo", "5e33cd23356ac8c7301a465351fda263", "4", "", "Sandro", "m1014_mp", "19", "MOD_PISTOL_BULLET", "torso_upper"]
     }
 }

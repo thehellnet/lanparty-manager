@@ -5,6 +5,7 @@ import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
 import java.util.Objects;
 
+@LineEventType(LineEvent.DAMAGE)
 public class DamageLogLine extends LogLine {
 
     private String affectedGuid;
@@ -22,8 +23,8 @@ public class DamageLogLine extends LogLine {
     private String bullet;
     private String zone;
 
-    public DamageLogLine(DateTime dateTime, int uptime, LineEvent lineEvent) {
-        super(dateTime, uptime, lineEvent);
+    public DamageLogLine(DateTime dateTime, int uptime) {
+        super(dateTime, uptime);
     }
 
     public String getAffectedGuid() {

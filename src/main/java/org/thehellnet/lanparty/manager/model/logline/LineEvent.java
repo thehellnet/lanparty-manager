@@ -2,8 +2,14 @@ package org.thehellnet.lanparty.manager.model.logline;
 
 public enum LineEvent {
 
-    INIT_GAME("InitGame - Start of match"),
-    SHUTDOWN_GAME("ShutdownGame - End of match");
+    INIT_GAME("Start of match"),
+    SHUTDOWN_GAME("End of match"),
+    JOIN("Player join match"),
+    QUIT("Player quits"),
+    DAMAGE("Player inflict damage"),
+    KILL("Player kills"),
+    SAY("Player says"),
+    WEAPON("Weapon");
 
     private final String description;
 

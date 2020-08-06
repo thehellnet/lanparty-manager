@@ -5,6 +5,7 @@ import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
 import java.util.Objects;
 
+@LineEventType(LineEvent.SAY)
 public class SayLogLine extends LogLine {
 
     private String guid;
@@ -12,8 +13,8 @@ public class SayLogLine extends LogLine {
     private String nick;
     private String message;
 
-    public SayLogLine(DateTime dateTime, int uptime, LineEvent lineEvent) {
-        super(dateTime, uptime, lineEvent);
+    public SayLogLine(DateTime dateTime, int uptime) {
+        super(dateTime, uptime);
     }
 
     public String getGuid() {

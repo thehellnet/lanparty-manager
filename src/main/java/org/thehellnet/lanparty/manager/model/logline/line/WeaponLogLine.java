@@ -5,6 +5,7 @@ import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
 import java.util.Objects;
 
+@LineEventType(LineEvent.WEAPON)
 public class WeaponLogLine extends LogLine {
 
     private String guid;
@@ -12,8 +13,8 @@ public class WeaponLogLine extends LogLine {
     private String nick;
     private String weapon;
 
-    public WeaponLogLine(DateTime dateTime, int uptime, LineEvent lineEvent) {
-        super(dateTime, uptime, lineEvent);
+    public WeaponLogLine(DateTime dateTime, int uptime) {
+        super(dateTime, uptime);
     }
 
     public String getGuid() {

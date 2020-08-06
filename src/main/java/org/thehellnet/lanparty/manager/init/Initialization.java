@@ -16,59 +16,11 @@ import org.thehellnet.utility.PasswordUtility;
 
 import java.util.List;
 
+import static org.thehellnet.lanparty.manager.model.constant.Tags.*;
+
 @Component
 @Transactional
 public class Initialization {
-
-    private static final String PLATFORM_PC = "pc";
-    private static final String PLATFORM_RPI = "rpi";
-    private static final String PLATFORM_PS4 = "ps";
-    private static final String PLATFORM_XBOX = "xbox";
-    private static final String PLATFORM_SWITCH = "switch";
-    private static final String PLATFORM_MOBILE = "mobile";
-    private static final String PLATFORM_3DS = "3ds";
-
-    private static final String GAME_Q3A = "q3a";
-    private static final String GAME_Q3UT4 = "q3ut4";
-    private static final String GAME_COD = "cod";
-    private static final String GAME_COD2 = "cod2";
-    private static final String GAME_COD4 = "cod4";
-    private static final String GAME_CODWAW = "codwaw";
-    private static final String GAME_LOL = "lol";
-    private static final String GAME_RS = "rs";
-    private static final String GAME_FN = "fn";
-    private static final String GAME_FIFA20 = "fifa20";
-    private static final String GAME_TEKKEN7 = "tekken7";
-    private static final String GAME_HS = "hs";
-    private static final String GAME_MARIOKART = "mariokart";
-    private static final String GAME_SSBROS = "ssbros";
-    private static final String GAME_POKEMON = "pokemon";
-    private static final String GAME_JUSTDANCE = "justdance";
-
-    private static final String GAMETYPE_DEATHMATCH = "Deathmatch";
-    private static final String GAMETYPE_TEAM_DEATHMATCH = "Team Deathmatch";
-    private static final String GAMETYPE_HEADQUARTERS = "Headquarters";
-    private static final String GAMETYPE_SEARCH_AND_DESTROY = "Search and Destroy";
-    private static final String GAMETYPE_BEHIND_ENEMY_LINES = "Behind enemy lines";
-    private static final String GAMETYPE_RETRIEVAL = "Retrieval";
-    private static final String GAMETYPE_CAPTURE_THE_FLAG = "Capture the flag";
-    private static final String GAMETYPE_DOMINATION = "Domination";
-    private static final String GAMETYPE_SABOTAGE = "Sabotage";
-    private static final String GAMETYPE_BOMB_MODE = "Bomb mode";
-    private static final String GAMETYPE_TEAM_SURVIVOR = "Team survivor";
-    private static final String GAMETYPE_FOLLOW_THE_LEADER = "Follow the leader";
-    private static final String GAMETYPE_CAPTURE_AND_HOLD = "Capture and hold";
-    private static final String GAMETYPE_JUMP_TRAINING = "Jump training";
-    private static final String GAMETYPE_FREEZE_TAG = "Freeze tag";
-    private static final String GAMETYPE_LAST_MAN_STANDING = "Last man standing";
-    private static final String GAMETYPE_TOTAL_WAR = "Total war";
-    private static final String GAMETYPE_TOURNAMENT = "Tournament";
-    private static final String GAMETYPE_SINGLE_PLAYER = "Single player";
-    private static final String GAMETYPE_ONE_FLAG_CTF = "One flag CTF";
-    private static final String GAMETYPE_OVERLOAD = "Overload";
-    private static final String GAMETYPE_HARVESTER = "Harvester";
-    private static final String GAMETYPE_1V1 = "1v1";
-    private static final String GAMETYPE_5V5 = "5v5";
 
     private static final Logger logger = LoggerFactory.getLogger(Initialization.class);
 
