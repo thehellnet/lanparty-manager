@@ -82,6 +82,9 @@ abstract class ContextSpecification extends Specification {
     protected final static String SERVER_TAG = "test"
     protected final static String SERVER_GAME_TAG = Tags.GAME_COD4
 
+    protected static final String GAMETYPE_TAG = "war"
+    protected static final String GAMEMAP_TAG = "mp_backlot"
+
     @Autowired
     protected WebApplicationContext webApplicationContext
 
@@ -111,6 +114,18 @@ abstract class ContextSpecification extends Specification {
 
     @Autowired
     protected ServerRepository serverRepository
+
+    @Autowired
+    protected ServerMatchRepository serverMatchRepository
+
+    @Autowired
+    protected ServerMatchPlayerRepository serverMatchPlayerRepository
+
+    @Autowired
+    protected GametypeRepository gametypeRepository
+
+    @Autowired
+    protected GameMapRepository gameMapRepository
 
     @Shared
     private GreenMail greenMail

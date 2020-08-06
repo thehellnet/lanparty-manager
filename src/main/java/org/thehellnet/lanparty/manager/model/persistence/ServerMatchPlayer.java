@@ -42,6 +42,16 @@ public class ServerMatchPlayer extends AbstractEntity {
     public ServerMatchPlayer() {
     }
 
+    public ServerMatchPlayer(ServerMatch serverMatch) {
+        this.serverMatch = serverMatch;
+    }
+
+    public ServerMatchPlayer(ServerMatch serverMatch, String guid, int num) {
+        this.serverMatch = serverMatch;
+        this.guid = guid;
+        this.num = num;
+    }
+
     public Long getId() {
         return Id;
     }

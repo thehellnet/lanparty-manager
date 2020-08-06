@@ -12,10 +12,7 @@ import org.thehellnet.lanparty.manager.exception.LanPartyException;
 import org.thehellnet.lanparty.manager.model.logline.line.*;
 import org.thehellnet.lanparty.manager.model.message.ServerLogLine;
 import org.thehellnet.lanparty.manager.model.persistence.*;
-import org.thehellnet.lanparty.manager.repository.GameMapRepository;
-import org.thehellnet.lanparty.manager.repository.GametypeRepository;
-import org.thehellnet.lanparty.manager.repository.ServerMatchRepository;
-import org.thehellnet.lanparty.manager.repository.ServerRepository;
+import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.lanparty.manager.settings.JmsSettings;
 import org.thehellnet.lanparty.manager.utility.logline.LogLineParser;
 import org.thehellnet.lanparty.manager.utility.logline.LogLineParserFactory;
@@ -30,18 +27,25 @@ public class LogParsingService {
 
     private final ServerRepository serverRepository;
     private final ServerMatchRepository serverMatchRepository;
+    private final ServerMatchPlayerRepository serverMatchPlayerRepository;
     private final GametypeRepository gametypeRepository;
     private final GameMapRepository gameMapRepository;
+
+    private final ServerMatchPlayerService serverMatchPlayerService;
 
     @Autowired
     public LogParsingService(ServerRepository serverRepository,
                              ServerMatchRepository serverMatchRepository,
+                             ServerMatchPlayerRepository serverMatchPlayerRepository,
                              GametypeRepository gametypeRepository,
-                             GameMapRepository gameMapRepository) {
+                             GameMapRepository gameMapRepository,
+                             ServerMatchPlayerService serverMatchPlayerService) {
         this.serverRepository = serverRepository;
         this.serverMatchRepository = serverMatchRepository;
+        this.serverMatchPlayerRepository = serverMatchPlayerRepository;
         this.gametypeRepository = gametypeRepository;
         this.gameMapRepository = gameMapRepository;
+        this.serverMatchPlayerService = serverMatchPlayerService;
     }
 
     @JmsListener(destination = JmsSettings.JMS_PATH_LOG_PARSING)
@@ -73,6 +77,7 @@ public class LogParsingService {
     @Transactional
     public void closeRunningServerMatch(Server server) {
         logger.info("Closing all running server matches");
+
         List<ServerMatch> runningServerMatches = serverMatchRepository.findAllRunningByServer(server);
         for (ServerMatch serverMatch : runningServerMatches) {
             serverMatch.close();
@@ -82,6 +87,8 @@ public class LogParsingService {
 
     @Transactional
     public ServerMatch createNewServerMatch(Server server, InitGameLogLine initGameLogLine) {
+        logger.info("Creating new server match");
+
         String gametypeTag = initGameLogLine.getGametypeTag();
         String mapTag = initGameLogLine.getMapTag();
 
@@ -143,11 +150,27 @@ public class LogParsingService {
     }
 
     private void parseJoinLogLine(Server server, JoinLogLine joinLogLine) {
-        throw new UnsupportedOperationException();
+        ServerMatch serverMatch = serverMatchRepository.findFirstByServerAndEndTsNullOrderByStartTsDesc(server);
+        ServerMatchPlayer serverMatchPlayer = serverMatchPlayerService.ensureServerMatchPlayerExists(serverMatch, joinLogLine);
+
+        serverMatchPlayer.setJoinTs(joinLogLine.getDateTime());
+        serverMatchPlayer = serverMatchPlayerRepository.save(serverMatchPlayer);
+
+        logger.debug("ServerMatchPlayer {} joined at {}", serverMatchPlayer, serverMatchPlayer.getJoinTs());
     }
 
     private void parseQuitLogLine(Server server, QuitLogLine quitLogLine) {
-        throw new UnsupportedOperationException();
+        ServerMatch serverMatch = serverMatchRepository.findFirstByServerAndEndTsNullOrderByStartTsDesc(server);
+
+        ServerMatchPlayer serverMatchPlayer = serverMatchPlayerRepository.findByServerMatchAndGuidAndNum(serverMatch, quitLogLine.getGuid(), quitLogLine.getNum());
+        if (serverMatchPlayer == null) {
+            return;
+        }
+
+        serverMatchPlayer.setQuitTs(quitLogLine.getDateTime());
+        serverMatchPlayer = serverMatchPlayerRepository.save(serverMatchPlayer);
+
+        logger.debug("ServerMatchPlayer {} quit at {}", serverMatchPlayer, serverMatchPlayer.getQuitTs());
     }
 
     private void parseDamageLogLine(Server server, DamageLogLine damageLogLine) {

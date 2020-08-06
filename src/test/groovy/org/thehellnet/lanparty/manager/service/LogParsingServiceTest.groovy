@@ -6,24 +6,12 @@ import org.springframework.messaging.Message
 import org.thehellnet.lanparty.manager.model.logline.line.InitGameLogLine
 import org.thehellnet.lanparty.manager.model.message.ServerLogLine
 import org.thehellnet.lanparty.manager.model.persistence.*
-import org.thehellnet.lanparty.manager.repository.GameMapRepository
-import org.thehellnet.lanparty.manager.repository.GametypeRepository
-import org.thehellnet.lanparty.manager.repository.ServerMatchRepository
 
 class LogParsingServiceTest extends ServiceSpecification {
 
     private static final String GAMETYPE_TAG = "war"
     private static final String GAMEMAP_TAG = "mp_backlot"
     private static final int LOG_LINE_UPTIME = 0;
-
-    @Autowired
-    private ServerMatchRepository serverMatchRepository
-
-    @Autowired
-    private GametypeRepository gametypeRepository
-
-    @Autowired
-    private GameMapRepository gameMapRepository
 
     @Autowired
     private LogParsingService logParsingService;
@@ -494,15 +482,5 @@ class LogParsingServiceTest extends ServiceSpecification {
         serverMatch.gametype == gametype
         serverMatch.gameMap == gameMap
         serverMatch.endTs != null
-    }
-
-    private ServerMatch generateServerMatch(boolean closed = false, DateTime startTs = DateTime.now()) {
-        ServerMatch serverMatch = new ServerMatch(server, gametype, gameMap)
-        serverMatch.startTs = startTs
-        if (closed) {
-            serverMatch.close()
-        }
-
-        return serverMatchRepository.save(serverMatch)
     }
 }
