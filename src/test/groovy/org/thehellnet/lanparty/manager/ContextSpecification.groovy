@@ -10,6 +10,7 @@ import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 import org.thehellnet.lanparty.manager.configuration.*
+import org.thehellnet.lanparty.manager.model.constant.Tags
 import org.thehellnet.lanparty.manager.model.persistence.*
 import org.thehellnet.lanparty.manager.repository.*
 import spock.lang.Shared
@@ -55,8 +56,8 @@ abstract class ContextSpecification extends Specification {
             "bind 4 \"+smoke\"\n" +
             "bind H \"say Google\""
 
-    protected final static String GAME_TAG = "cod4"
-    protected final static String GAME_TAG_NEW = "cod2"
+    protected final static String GAME_TAG = Tags.GAME_COD4
+    protected final static String GAME_TAG_NEW = Tags.GAME_COD2
 
     protected final static String SEAT_ADDRESS = "1.2.3.4"
     protected final static String SEAT_NAME = "Test seat"
@@ -75,6 +76,11 @@ abstract class ContextSpecification extends Specification {
 
     protected final static String CFG_NEW = "unbindall\n" +
             "bind P \"say mosche\""
+
+    protected final static String SERVER_ADDRESS = "4.3.2.1"
+    protected final static int SERVER_PORT = 28960
+    protected final static String SERVER_TAG = "test"
+    protected final static String SERVER_GAME_TAG = Tags.GAME_COD4
 
     @Autowired
     protected WebApplicationContext webApplicationContext
@@ -103,6 +109,9 @@ abstract class ContextSpecification extends Specification {
     @Autowired
     protected CfgRepository cfgRepository
 
+    @Autowired
+    protected ServerRepository serverRepository
+
     @Shared
     private GreenMail greenMail
 
@@ -118,7 +127,6 @@ abstract class ContextSpecification extends Specification {
         greenMail.stop()
     }
 
-    @Transactional
     protected AppUser createAppUser() {
         AppUser appUser = appUserRepository.findByEnabledTrueAndEmail(APPUSER_EMAIL)
         if (appUser == null) {
@@ -128,7 +136,6 @@ abstract class ContextSpecification extends Specification {
         return appUser
     }
 
-    @Transactional
     protected Tournament createTournament() {
         Tournament tournament = tournamentRepository.findByName(TOURNAMENT_NAME)
         if (tournament == null) {
@@ -139,7 +146,6 @@ abstract class ContextSpecification extends Specification {
         return tournament
     }
 
-    @Transactional
     protected Seat createSeat() {
         Seat seat = seatRepository.findByIpAddress(SEAT_ADDRESS)
         if (seat == null) {
@@ -150,7 +156,6 @@ abstract class ContextSpecification extends Specification {
         return seat
     }
 
-    @Transactional
     protected Seat createSeat2() {
         Seat seat = seatRepository.findByIpAddress(SEAT_ADDRESS_2)
         if (seat == null) {
@@ -161,7 +166,6 @@ abstract class ContextSpecification extends Specification {
         return seat
     }
 
-    @Transactional
     protected Team createTeam() {
         Team team = teamRepository.findByName(TEAM_NAME)
         if (team == null) {
@@ -172,17 +176,14 @@ abstract class ContextSpecification extends Specification {
         return team
     }
 
-    @Transactional
     protected Player createPlayer() {
         return createPlayer(PLAYER_NICKNAME)
     }
 
-    @Transactional
     protected Player createNewPlayer() {
         return createPlayer(PLAYER_NICKNAME_NEW)
     }
 
-    @Transactional
     protected Cfg createCfg() {
         Player player = createPlayer()
         Game game = gameRepository.findByTag(GAME_TAG)
@@ -194,7 +195,6 @@ abstract class ContextSpecification extends Specification {
         return cfg
     }
 
-    @Transactional
     protected Player createPlayer(String playerName) {
         Player player = playerRepository.findByNickname(playerName)
         if (player == null) {
@@ -206,7 +206,16 @@ abstract class ContextSpecification extends Specification {
         return player
     }
 
-    @Transactional(readOnly = true)
+    protected Server createServer() {
+        Server server = serverRepository.findByAddressAndPort(SERVER_ADDRESS, SERVER_PORT);
+        if (server == null) {
+            Game game = gameRepository.findByTag(SERVER_GAME_TAG)
+            server = new Server(SERVER_TAG, game, SERVER_ADDRESS, SERVER_PORT)
+            server = serverRepository.save(server)
+        }
+        return server
+    }
+
     protected boolean "Player is in one seat only"(Player player) {
         return seatRepository.findAllByPlayer(player).size() == 1
     }

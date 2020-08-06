@@ -3,6 +3,7 @@ package org.thehellnet.lanparty.manager.model.constant;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum TournamentStatus {
+
     SCHEDULED("Scheduled"),
     PLAYING("Playing now"),
     FINISHED("Finished");

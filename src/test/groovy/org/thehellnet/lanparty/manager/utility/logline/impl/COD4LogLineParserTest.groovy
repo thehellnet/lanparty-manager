@@ -87,6 +87,8 @@ class COD4LogLineParserTest extends Specification {
         expected.params.put("sv_pure", "1")
         expected.params.put("sv_voice", "0")
         expected.params.put("ui_maxclients", "32")
+        expected.gametypeTag = "dm"
+        expected.mapTag = "mp_carentan"
 
         when:
         LogLine actual = logLineParser.parse(dateTime)

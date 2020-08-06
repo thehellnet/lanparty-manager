@@ -19,4 +19,11 @@ public interface GametypeRepository extends JpaRepository<Gametype, Long> {
             "  JOIN GameGametype ggt ON gt = ggt.gametype " +
             "WHERE ggt.game = :game")
     List<Gametype> findByGame(@Param("game") Game game);
+
+    @Query("SELECT gt " +
+            "FROM Gametype gt " +
+            "  JOIN GameGametype ggt ON gt = ggt.gametype " +
+            "WHERE ggt.game = :game " +
+            "  AND ggt.tag = :tag")
+    Gametype findByGameAndTag(@Param("game") Game game, @Param("tag") String tag);
 }

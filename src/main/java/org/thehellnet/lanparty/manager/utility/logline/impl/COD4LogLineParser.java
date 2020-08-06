@@ -42,6 +42,9 @@ public class COD4LogLineParser extends AbstractLogLineParser {
             logLine.getParams().put(key, value);
         }
 
+        logLine.setGametypeTag((String) logLine.getParams().getOrDefault("g_gametype", null));
+        logLine.setMapTag((String) logLine.getParams().getOrDefault("mapname", null));
+
         return logLine;
     }
 

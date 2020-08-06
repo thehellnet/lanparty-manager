@@ -12,12 +12,31 @@ public class InitGameLogLine extends LogLine {
 
     private final Map<String, Object> params = new HashMap<>();
 
+    private String gametypeTag;
+    private String mapTag;
+
     public InitGameLogLine(DateTime dateTime, int uptime) {
         super(dateTime, uptime);
     }
 
     public Map<String, Object> getParams() {
         return params;
+    }
+
+    public String getGametypeTag() {
+        return gametypeTag;
+    }
+
+    public void setGametypeTag(String gametypeTag) {
+        this.gametypeTag = gametypeTag;
+    }
+
+    public String getMapTag() {
+        return mapTag;
+    }
+
+    public void setMapTag(String mapTag) {
+        this.mapTag = mapTag;
     }
 
     @Override

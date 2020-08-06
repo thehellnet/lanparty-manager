@@ -1,8 +1,12 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.joda.time.DateTime;
 import org.thehellnet.lanparty.manager.model.constant.MatchStatus;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -29,12 +33,39 @@ public class Match extends AbstractEntity {
     private MatchStatus status = MatchStatus.SCHEDULED;
 
     @Basic
+    @Column(name = "scheduled_start_ts")
+    private DateTime scheduledStartTs;
+
+    @Basic
+    @Column(name = "scheduled_end_ts")
+    private DateTime scheduledEndTs;
+
+    @Basic
+    @Column(name = "start_ts")
+    private DateTime startTs;
+
+    @Basic
+    @Column(name = "end_ts")
+    private DateTime endTs;
+
+    @Basic
     @Column(name = "play_order", nullable = false)
     private Integer playOrder = 0;
+
+    @Basic
+    @Column(name = "level", nullable = false)
+    private Integer level = 0;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "match", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<MatchParent> matchParents = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "server_id")
     private Server server;
+
+    @OneToOne(mappedBy = "match")
+    private ServerMatch serverMatch;
 
     @ManyToOne
     @JoinColumn(name = "gamemap_id")
@@ -81,7 +112,7 @@ public class Match extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        Id = id;
     }
 
     public String getName() {
@@ -108,6 +139,38 @@ public class Match extends AbstractEntity {
         this.status = status;
     }
 
+    public DateTime getScheduledStartTs() {
+        return scheduledStartTs;
+    }
+
+    public void setScheduledStartTs(DateTime scheduledStartTs) {
+        this.scheduledStartTs = scheduledStartTs;
+    }
+
+    public DateTime getScheduledEndTs() {
+        return scheduledEndTs;
+    }
+
+    public void setScheduledEndTs(DateTime scheduledEndTs) {
+        this.scheduledEndTs = scheduledEndTs;
+    }
+
+    public DateTime getStartTs() {
+        return startTs;
+    }
+
+    public void setStartTs(DateTime startTs) {
+        this.startTs = startTs;
+    }
+
+    public DateTime getEndTs() {
+        return endTs;
+    }
+
+    public void setEndTs(DateTime endTs) {
+        this.endTs = endTs;
+    }
+
     public Integer getPlayOrder() {
         return playOrder;
     }
@@ -116,12 +179,36 @@ public class Match extends AbstractEntity {
         this.playOrder = playOrder;
     }
 
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public List<MatchParent> getMatchParents() {
+        return matchParents;
+    }
+
+    public void setMatchParents(List<MatchParent> matchParents) {
+        this.matchParents = matchParents;
+    }
+
     public Server getServer() {
         return server;
     }
 
     public void setServer(Server server) {
         this.server = server;
+    }
+
+    public ServerMatch getServerMatch() {
+        return serverMatch;
+    }
+
+    public void setServerMatch(ServerMatch match) {
+        this.serverMatch = match;
     }
 
     public GameMap getGameMap() {
@@ -160,13 +247,18 @@ public class Match extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         Match match = (Match) o;
         return Id.equals(match.Id) &&
                 name.equals(match.name) &&
                 tournament.equals(match.tournament) &&
                 status == match.status &&
+                Objects.equals(scheduledStartTs, match.scheduledStartTs) &&
+                Objects.equals(scheduledEndTs, match.scheduledEndTs) &&
+                Objects.equals(startTs, match.startTs) &&
+                Objects.equals(endTs, match.endTs) &&
                 playOrder.equals(match.playOrder) &&
+                level.equals(match.level) &&
+                matchParents.equals(match.matchParents) &&
                 Objects.equals(server, match.server) &&
                 Objects.equals(gameMap, match.gameMap) &&
                 Objects.equals(gametype, match.gametype) &&
@@ -176,7 +268,7 @@ public class Match extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(Id);
     }
 
     @Override

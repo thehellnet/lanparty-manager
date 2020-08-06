@@ -2,6 +2,7 @@ package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.joda.time.DateTime;
+import org.thehellnet.lanparty.manager.model.constant.TournamentMode;
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus;
 
 import javax.persistence.*;
@@ -50,6 +51,11 @@ public class Tournament extends AbstractEntity {
     @Basic
     @Column(name = "end_registration_ts", nullable = false)
     private DateTime endRegistrationTs = DateTime.now();
+
+    @Basic
+    @Column(name = "mode", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TournamentMode mode = TournamentMode.SINGLE_ELIMINATION;
 
     @Basic
     @Column(name = "status", nullable = false)
@@ -158,6 +164,14 @@ public class Tournament extends AbstractEntity {
         this.endRegistrationTs = endRegistrationTs;
     }
 
+    public TournamentMode getMode() {
+        return mode;
+    }
+
+    public void setMode(TournamentMode mode) {
+        this.mode = mode;
+    }
+
     public TournamentStatus getStatus() {
         return status;
     }
@@ -213,6 +227,7 @@ public class Tournament extends AbstractEntity {
                 registrationEnabled.equals(that.registrationEnabled) &&
                 startRegistrationTs.equals(that.startRegistrationTs) &&
                 endRegistrationTs.equals(that.endRegistrationTs) &&
+                mode == that.mode &&
                 status == that.status &&
                 cfg.equals(that.cfg) &&
                 seats.equals(that.seats) &&
