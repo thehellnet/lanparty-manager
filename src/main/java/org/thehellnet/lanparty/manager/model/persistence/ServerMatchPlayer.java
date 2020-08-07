@@ -39,6 +39,14 @@ public class ServerMatchPlayer extends AbstractEntity {
     @Column(name = "quit_ts")
     private DateTime quitTs;
 
+    @Basic
+    @Column(name = "kills")
+    private Integer kills = 0;
+
+    @Basic
+    @Column(name = "deaths")
+    private Integer deaths = 0;
+
     public ServerMatchPlayer() {
     }
 
@@ -108,6 +116,30 @@ public class ServerMatchPlayer extends AbstractEntity {
         this.quitTs = quitTs;
     }
 
+    public Integer getKills() {
+        return kills;
+    }
+
+    public void setKills(Integer kills) {
+        this.kills = kills;
+    }
+
+    public Integer getDeaths() {
+        return deaths;
+    }
+
+    public void setDeaths(Integer deaths) {
+        this.deaths = deaths;
+    }
+
+    public void addKill() {
+        kills += 1;
+    }
+
+    public void addDeath() {
+        deaths += 1;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -119,7 +151,9 @@ public class ServerMatchPlayer extends AbstractEntity {
                 Objects.equals(num, that.num) &&
                 Objects.equals(guid, that.guid) &&
                 Objects.equals(joinTs, that.joinTs) &&
-                Objects.equals(quitTs, that.quitTs);
+                Objects.equals(quitTs, that.quitTs) &&
+                kills.equals(that.kills) &&
+                deaths.equals(that.deaths);
     }
 
     @Override

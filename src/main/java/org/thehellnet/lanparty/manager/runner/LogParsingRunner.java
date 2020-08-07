@@ -27,6 +27,7 @@ public class LogParsingRunner extends AbstractRunner {
     private final ConnectionFactory connectionFactory;
 
     private final Map<Server, LogTailer> logTailers = new HashMap<>();
+    private final Map<Server, String> lastLines = new HashMap<>();
 
     private JmsTemplate jmsTemplate;
 
@@ -83,9 +84,19 @@ public class LogParsingRunner extends AbstractRunner {
         jmsTemplate.setDefaultDestinationName(JmsSettings.JMS_PATH_LOG_PARSING);
     }
 
-    private void sendServerLogLineMessage(Server thnOlgServer, String line) {
-        logger.debug("New line from {}: {}", thnOlgServer, line);
-        final ServerLogLine serverLogLine = new ServerLogLine(thnOlgServer, line);
+    private void sendServerLogLineMessage(Server server, String line) {
+        logger.debug("New line from {}: {}", server, line);
+
+        if (lastLines.containsKey(server)) {
+            String lastLine = lastLines.get(server);
+            if (lastLine.equals(line)) {
+                logger.debug("Duplicated log line for server {}", server);
+                return;
+            }
+        }
+
+        lastLines.put(server, line);
+        final ServerLogLine serverLogLine = new ServerLogLine(server, line);
         jmsTemplate.send(session -> session.createObjectMessage(serverLogLine));
     }
 }

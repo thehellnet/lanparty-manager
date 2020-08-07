@@ -31,7 +31,7 @@ public class LogParsingService {
     private final GametypeRepository gametypeRepository;
     private final GameMapRepository gameMapRepository;
 
-    private final ServerMatchPlayerService serverMatchPlayerService;
+    private final ServerMatchService serverMatchService;
 
     @Autowired
     public LogParsingService(ServerRepository serverRepository,
@@ -39,15 +39,16 @@ public class LogParsingService {
                              ServerMatchPlayerRepository serverMatchPlayerRepository,
                              GametypeRepository gametypeRepository,
                              GameMapRepository gameMapRepository,
-                             ServerMatchPlayerService serverMatchPlayerService) {
+                             ServerMatchService serverMatchService) {
         this.serverRepository = serverRepository;
         this.serverMatchRepository = serverMatchRepository;
         this.serverMatchPlayerRepository = serverMatchPlayerRepository;
         this.gametypeRepository = gametypeRepository;
         this.gameMapRepository = gameMapRepository;
-        this.serverMatchPlayerService = serverMatchPlayerService;
+        this.serverMatchService = serverMatchService;
     }
 
+    @Transactional
     @JmsListener(destination = JmsSettings.JMS_PATH_LOG_PARSING)
     public void parseLogLine(final Message<ServerLogLine> message) {
         ServerLogLine serverLogLine = message.getPayload();
@@ -65,13 +66,129 @@ public class LogParsingService {
         try {
             logLine = logLineParser.parse(dateTime);
         } catch (LanPartyException e) {
-            logger.warn("Unable to parse log line: {}", rawLogLine, e);
+            logger.warn("Unable to parse log line: {}", rawLogLine);
             return;
         }
 
         logger.debug("New server logLine from {}, {}", server, logLine);
 
-        parseLogLineEvent(server, logLine);
+        if (logLine instanceof InitGameLogLine) {
+            InitGameLogLine initGameLogLine = (InitGameLogLine) logLine;
+            parseInitGameLogLine(server, initGameLogLine);
+            return;
+        }
+
+        ServerMatch serverMatch = serverMatchRepository.findFirstByServerAndEndTsNullOrderByStartTsDesc(server);
+        if (serverMatch == null) {
+            logger.warn("New LogLine received but no ServerMatch found for server {}", server);
+            return;
+        }
+
+        if (logLine instanceof ShutdownGameLogLine) {
+            ShutdownGameLogLine shutdownGameLogLine = (ShutdownGameLogLine) logLine;
+            parseShutdownGameLogLine(serverMatch, server, shutdownGameLogLine);
+        } else if (logLine instanceof JoinLogLine) {
+            JoinLogLine joinLogLine = (JoinLogLine) logLine;
+            parseJoinLogLine(serverMatch, server, joinLogLine);
+        } else if (logLine instanceof QuitLogLine) {
+            QuitLogLine quitLogLine = (QuitLogLine) logLine;
+            parseQuitLogLine(serverMatch, server, quitLogLine);
+        } else if (logLine instanceof DamageLogLine) {
+            DamageLogLine damageLogLine = (DamageLogLine) logLine;
+            parseDamageLogLine(serverMatch, server, damageLogLine);
+        } else if (logLine instanceof KillLogLine) {
+            KillLogLine killLogLine = (KillLogLine) logLine;
+            parseKillLogLine(serverMatch, server, killLogLine);
+        } else if (logLine instanceof SayLogLine) {
+            SayLogLine sayLogLine = (SayLogLine) logLine;
+            parseSayLogLine(serverMatch, server, sayLogLine);
+        } else if (logLine instanceof WeaponLogLine) {
+            WeaponLogLine weaponLogLine = (WeaponLogLine) logLine;
+            parseWeaponLogLine(serverMatch, server, weaponLogLine);
+        } else {
+            logger.warn("Can't parse logline {}, parser not implemented", logLine);
+        }
+    }
+
+    @Transactional
+    public void parseInitGameLogLine(Server server, InitGameLogLine initGameLogLine) {
+        closeRunningServerMatch(server);
+        ServerMatch serverMatch = createNewServerMatch(server, initGameLogLine);
+        logger.debug("New ServerMatch created at {}: {}", initGameLogLine.getUptime(), serverMatch);
+    }
+
+    @Transactional
+    public void parseShutdownGameLogLine(ServerMatch serverMatch, Server server, ShutdownGameLogLine shutdownGameLogLine) {
+        serverMatchService.close(serverMatch);
+        logger.debug("ServerMatch finished at {}: {}", shutdownGameLogLine.getUptime(), serverMatch);
+    }
+
+    @Transactional
+    public void parseJoinLogLine(ServerMatch serverMatch, Server server, JoinLogLine joinLogLine) {
+        String guid = joinLogLine.getGuid();
+        int num = joinLogLine.getNum();
+
+        ServerMatchPlayer serverMatchPlayer = serverMatchPlayerRepository.findByServerMatchAndGuidAndNum(serverMatch, guid, num);
+        if (serverMatchPlayer == null) {
+            serverMatchPlayer = new ServerMatchPlayer(serverMatch, guid, num);
+        }
+
+        serverMatchPlayer.setJoinTs(joinLogLine.getDateTime());
+        serverMatchPlayer.setQuitTs(null);
+        serverMatchPlayer = serverMatchPlayerRepository.save(serverMatchPlayer);
+
+        logger.debug("ServerMatchPlayer {} joined at {}", serverMatchPlayer, serverMatchPlayer.getJoinTs());
+    }
+
+    @Transactional
+    public void parseQuitLogLine(ServerMatch serverMatch, Server server, QuitLogLine quitLogLine) {
+        String guid = quitLogLine.getGuid();
+        int num = quitLogLine.getNum();
+
+        ServerMatchPlayer serverMatchPlayer = serverMatchPlayerRepository.findByServerMatchAndGuidAndNum(serverMatch, guid, num);
+        if (serverMatchPlayer == null) {
+            logger.warn("Quit event received but no ServerMatchPlayer found on match {}", serverMatch);
+            return;
+        }
+
+        serverMatchPlayer.setQuitTs(quitLogLine.getDateTime());
+        serverMatchPlayer = serverMatchPlayerRepository.save(serverMatchPlayer);
+
+        logger.debug("ServerMatchPlayer {} quit at {}", serverMatchPlayer, serverMatchPlayer.getQuitTs());
+    }
+
+    private void parseDamageLogLine(ServerMatch serverMatch, Server server, DamageLogLine damageLogLine) {
+        throw new UnsupportedOperationException();
+    }
+
+    private void parseKillLogLine(ServerMatch serverMatch, Server server, KillLogLine killLogLine) {
+        ServerMatchPlayer affectedPlayer = serverMatchPlayerRepository.findByServerMatchAndGuidAndNum(serverMatch, killLogLine.getAffectedGuid(), killLogLine.getAffectedNum());
+        if (affectedPlayer == null) {
+            logger.warn("Affected player NULL!");
+            return;
+        }
+
+        ServerMatchPlayer offendingPlayer = serverMatchPlayerRepository.findByServerMatchAndGuidAndNum(serverMatch, killLogLine.getOffendingGuid(), killLogLine.getOffendingNum());
+        if (offendingPlayer == null) {
+            logger.warn("Offending player NULL!");
+            return;
+        }
+
+        affectedPlayer.addDeath();
+        offendingPlayer.addKill();
+
+        serverMatchPlayerRepository.save(affectedPlayer);
+        serverMatchPlayerRepository.save(offendingPlayer);
+
+        logger.debug("{} kills {}", offendingPlayer, affectedPlayer);
+    }
+
+    private void parseSayLogLine(ServerMatch serverMatch, Server server, SayLogLine sayLogLine) {
+        throw new UnsupportedOperationException();
+    }
+
+    private void parseWeaponLogLine(ServerMatch serverMatch, Server server, WeaponLogLine weaponLogLine) {
+        throw new UnsupportedOperationException();
     }
 
     @Transactional
@@ -102,90 +219,5 @@ public class LogParsingService {
 
         serverMatch = serverMatchRepository.save(serverMatch);
         return serverMatch;
-    }
-
-    private void parseLogLineEvent(Server server, LogLine logLine) {
-        if (logLine instanceof InitGameLogLine) {
-            InitGameLogLine initGameLogLine = (InitGameLogLine) logLine;
-            parseInitGameLogLine(server, initGameLogLine);
-        } else if (logLine instanceof ShutdownGameLogLine) {
-            ShutdownGameLogLine shutdownGameLogLine = (ShutdownGameLogLine) logLine;
-            parseShutdownGameLogLine(server, shutdownGameLogLine);
-        } else if (logLine instanceof JoinLogLine) {
-            JoinLogLine joinLogLine = (JoinLogLine) logLine;
-            parseJoinLogLine(server, joinLogLine);
-        } else if (logLine instanceof QuitLogLine) {
-            QuitLogLine quitLogLine = (QuitLogLine) logLine;
-            parseQuitLogLine(server, quitLogLine);
-        } else if (logLine instanceof DamageLogLine) {
-            DamageLogLine damageLogLine = (DamageLogLine) logLine;
-            parseDamageLogLine(server, damageLogLine);
-        } else if (logLine instanceof KillLogLine) {
-            KillLogLine killLogLine = (KillLogLine) logLine;
-            parseKillLogLine(server, killLogLine);
-        } else if (logLine instanceof SayLogLine) {
-            SayLogLine sayLogLine = (SayLogLine) logLine;
-            parseSayLogLine(server, sayLogLine);
-        } else if (logLine instanceof WeaponLogLine) {
-            WeaponLogLine weaponLogLine = (WeaponLogLine) logLine;
-            parseWeaponLogLine(server, weaponLogLine);
-        } else {
-            logger.warn("Can't parse logline {}, parser not implemented", logLine);
-        }
-    }
-
-    private void parseInitGameLogLine(Server server, InitGameLogLine initGameLogLine) {
-        closeRunningServerMatch(server);
-        ServerMatch serverMatch = createNewServerMatch(server, initGameLogLine);
-        logger.debug("New ServerMatch created at {}: {}", initGameLogLine.getUptime(), serverMatch);
-    }
-
-    private void parseShutdownGameLogLine(Server server, ShutdownGameLogLine shutdownGameLogLine) {
-        ServerMatch serverMatch = serverMatchRepository.findFirstByServerAndEndTsNullOrderByStartTsDesc(server);
-        if (serverMatch != null) {
-            serverMatch.close();
-            serverMatch = serverMatchRepository.save(serverMatch);
-        }
-        logger.debug("ServerMatch finished at {}: {}", shutdownGameLogLine.getUptime(), serverMatch);
-    }
-
-    private void parseJoinLogLine(Server server, JoinLogLine joinLogLine) {
-        ServerMatch serverMatch = serverMatchRepository.findFirstByServerAndEndTsNullOrderByStartTsDesc(server);
-        ServerMatchPlayer serverMatchPlayer = serverMatchPlayerService.ensureServerMatchPlayerExists(serverMatch, joinLogLine);
-
-        serverMatchPlayer.setJoinTs(joinLogLine.getDateTime());
-        serverMatchPlayer = serverMatchPlayerRepository.save(serverMatchPlayer);
-
-        logger.debug("ServerMatchPlayer {} joined at {}", serverMatchPlayer, serverMatchPlayer.getJoinTs());
-    }
-
-    private void parseQuitLogLine(Server server, QuitLogLine quitLogLine) {
-        ServerMatch serverMatch = serverMatchRepository.findFirstByServerAndEndTsNullOrderByStartTsDesc(server);
-
-        ServerMatchPlayer serverMatchPlayer = serverMatchPlayerRepository.findByServerMatchAndGuidAndNum(serverMatch, quitLogLine.getGuid(), quitLogLine.getNum());
-        if (serverMatchPlayer == null) {
-            return;
-        }
-
-        serverMatchPlayer.setQuitTs(quitLogLine.getDateTime());
-        serverMatchPlayer = serverMatchPlayerRepository.save(serverMatchPlayer);
-
-        logger.debug("ServerMatchPlayer {} quit at {}", serverMatchPlayer, serverMatchPlayer.getQuitTs());
-    }
-
-    private void parseDamageLogLine(Server server, DamageLogLine damageLogLine) {
-        throw new UnsupportedOperationException();
-    }
-
-    private void parseKillLogLine(Server server, KillLogLine killLogLine) {
-        throw new UnsupportedOperationException();
-    }
-
-    private void parseSayLogLine(Server server, SayLogLine sayLogLine) {
-        throw new UnsupportedOperationException();
-    }
-
-    private void parseWeaponLogLine(Server server, WeaponLogLine weaponLogLine) {
-        throw new UnsupportedOperationException();
     }
 }
