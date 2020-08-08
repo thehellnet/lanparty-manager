@@ -5,6 +5,7 @@ import org.thehellnet.lanparty.manager.exception.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.logline.LogLineParserException;
 import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 import org.thehellnet.lanparty.manager.model.logline.line.LogLine;
+import org.thehellnet.lanparty.manager.model.logline.line.UnusefulLogLine;
 import org.thehellnet.utility.StringUtility;
 
 import java.util.List;
@@ -59,6 +60,8 @@ public abstract class AbstractLogLineParser implements LogLineParser {
                 return parseSay(items);
             case WEAPON:
                 return parseWeapon(items);
+            case UNUSEFUL:
+                return new UnusefulLogLine(lineDateTime, lineTime);
         }
 
         throw new InvalidDataException("Line tag not supported by parser");
@@ -100,7 +103,7 @@ public abstract class AbstractLogLineParser implements LogLineParser {
 
     LineEvent parseEvent(String lineTag) {
         if (lineTag == null) {
-            throw new InvalidDataException("Invalid Line tagr");
+            throw new InvalidDataException("Invalid Line tag");
         }
 
         Map<String, LineEvent> lineTags = getLineTags();

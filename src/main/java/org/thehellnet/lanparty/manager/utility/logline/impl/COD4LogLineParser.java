@@ -27,6 +27,8 @@ public class COD4LogLineParser extends AbstractLogLineParser {
         lineEventHashMap.put("K", LineEvent.KILL);
         lineEventHashMap.put("W", LineEvent.WEAPON);
         lineEventHashMap.put("say", LineEvent.SAY);
+        lineEventHashMap.put("ExitLevel", LineEvent.UNUSEFUL);
+        lineEventHashMap.put("------------------------------------------------------------", LineEvent.UNUSEFUL);
         return lineEventHashMap;
     }
 

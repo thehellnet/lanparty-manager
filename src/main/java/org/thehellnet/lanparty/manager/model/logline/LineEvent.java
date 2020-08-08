@@ -9,7 +9,8 @@ public enum LineEvent {
     DAMAGE("Player inflict damage"),
     KILL("Player kills"),
     SAY("Player says"),
-    WEAPON("Weapon");
+    WEAPON("Weapon"),
+    UNUSEFUL("Unuseful line");
 
     private final String description;
 

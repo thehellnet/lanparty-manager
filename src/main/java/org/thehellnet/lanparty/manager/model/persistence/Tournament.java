@@ -28,7 +28,7 @@ public class Tournament extends AbstractEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
@@ -53,7 +53,7 @@ public class Tournament extends AbstractEntity {
     private DateTime endRegistrationTs = DateTime.now();
 
     @Basic
-    @Column(name = "mode", nullable = false)
+    @Column(name = "tournament_mode", nullable = false)
     @Enumerated(EnumType.STRING)
     private TournamentMode mode = TournamentMode.SINGLE_ELIMINATION;
 

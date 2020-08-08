@@ -131,9 +131,9 @@ public class LogParsingService {
         ServerMatchPlayer serverMatchPlayer = serverMatchPlayerRepository.findByServerMatchAndGuidAndNum(serverMatch, guid, num);
         if (serverMatchPlayer == null) {
             serverMatchPlayer = new ServerMatchPlayer(serverMatch, guid, num);
+            serverMatchPlayer.setJoinTs(joinLogLine.getDateTime());
         }
 
-        serverMatchPlayer.setJoinTs(joinLogLine.getDateTime());
         serverMatchPlayer.setQuitTs(null);
         serverMatchPlayer = serverMatchPlayerRepository.save(serverMatchPlayer);
 
@@ -158,7 +158,7 @@ public class LogParsingService {
     }
 
     private void parseDamageLogLine(ServerMatch serverMatch, Server server, DamageLogLine damageLogLine) {
-        throw new UnsupportedOperationException();
+        logger.debug("In ServerMatch \"{}\" player {} damages {}", serverMatch, damageLogLine.getOffendingNum(), damageLogLine.getAffectedNum());
     }
 
     private void parseKillLogLine(ServerMatch serverMatch, Server server, KillLogLine killLogLine) {
@@ -168,27 +168,36 @@ public class LogParsingService {
             return;
         }
 
-        ServerMatchPlayer offendingPlayer = serverMatchPlayerRepository.findByServerMatchAndGuidAndNum(serverMatch, killLogLine.getOffendingGuid(), killLogLine.getOffendingNum());
-        if (offendingPlayer == null) {
-            logger.warn("Offending player NULL!");
-            return;
-        }
+        ServerMatchPlayer offendingPlayer;
 
-        affectedPlayer.addDeath();
-        offendingPlayer.addKill();
+        boolean selfKill = killLogLine.getOffendingNum() == -1 && (killLogLine.getOffendingGuid() == null || (killLogLine.getOffendingGuid().equals(killLogLine.getAffectedGuid())));
+
+        if (selfKill) {
+            offendingPlayer = affectedPlayer;
+            affectedPlayer.addDeath();
+        } else {
+            offendingPlayer = serverMatchPlayerRepository.findByServerMatchAndGuidAndNum(serverMatch, killLogLine.getOffendingGuid(), killLogLine.getOffendingNum());
+            if (offendingPlayer == null) {
+                logger.warn("Offending player NULL!");
+                return;
+            }
+
+            affectedPlayer.addDeath();
+            offendingPlayer.addKill();
+        }
 
         serverMatchPlayerRepository.save(affectedPlayer);
         serverMatchPlayerRepository.save(offendingPlayer);
 
-        logger.debug("{} kills {}", offendingPlayer, affectedPlayer);
+        logger.debug("In ServerMatch \"{}\" player {} kills {}{}", serverMatch, offendingPlayer, affectedPlayer, selfKill ? " - self-kill" : "");
     }
 
     private void parseSayLogLine(ServerMatch serverMatch, Server server, SayLogLine sayLogLine) {
-        throw new UnsupportedOperationException();
+        logger.debug("In ServerMatch \"{}\" player {} says \"{}\"", serverMatch, sayLogLine.getNum(), sayLogLine.getMessage());
     }
 
     private void parseWeaponLogLine(ServerMatch serverMatch, Server server, WeaponLogLine weaponLogLine) {
-        throw new UnsupportedOperationException();
+        logger.debug("In ServerMatch \"{}\" player {} drops {}", serverMatch, weaponLogLine.getNum(), weaponLogLine.getWeapon());
     }
 
     @Transactional

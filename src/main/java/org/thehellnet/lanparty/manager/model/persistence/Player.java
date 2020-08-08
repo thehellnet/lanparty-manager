@@ -1,5 +1,7 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ public class Player extends AbstractEntity {
     @JoinColumn(name = "appuser_id")
     private AppUser appUser;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "player", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Cfg> cfgs = new ArrayList<>();
 

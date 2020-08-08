@@ -32,10 +32,10 @@ public class DevController {
     private static final String TOURNAMENT_3_NAME = "League of Legends - 1v1";
 
     private static final String SEAT_1_NAME = "Test seat 1";
-    private static final String SEAT_1_ADDRESS = "0.0.0.0";
+    private static final String SEAT_1_ADDRESS = "1.2.3.4";
 
     private static final String SEAT_2_NAME = "Test seat 2";
-    private static final String SEAT_2_ADDRESS = "1.2.3.4";
+    private static final String SEAT_2_ADDRESS = "2.3.4.5";
 
     private static final String TEAM_1_NAME = "Test team 1";
     private static final String TEAM_2_NAME = "Test team 2";
@@ -94,6 +94,12 @@ public class DevController {
     private static final String SHOWCASE_3_NAME = "Showcase single match";
     private static final String SHOWCASE_3_TAG = "showcase3";
 
+    private static final String SERVER_TAG = "testserver";
+    private static final String SERVER_ADDRESS = "127.0.0.1";
+    private static final int SERVER_PORT = 28960;
+    private static final String SERVER_LOGFILE_PATH = "${user.home}/.callofduty4/main/games_mp.log";
+    private static final String SERVER_RCON_PASSWORD = "test";
+
     private final AppUserRepository appUserRepository;
     private final GameRepository gameRepository;
     private final TournamentRepository tournamentRepository;
@@ -102,6 +108,7 @@ public class DevController {
     private final PlayerRepository playerRepository;
     private final MatchRepository matchRepository;
     private final ShowcaseRepository showcaseRepository;
+    private final ServerRepository serverRepository;
 
     public DevController(AppUserRepository appUserRepository,
                          GameRepository gameRepository,
@@ -110,7 +117,8 @@ public class DevController {
                          TeamRepository teamRepository,
                          PlayerRepository playerRepository,
                          MatchRepository matchRepository,
-                         ShowcaseRepository showcaseRepository) {
+                         ShowcaseRepository showcaseRepository,
+                         ServerRepository serverRepository) {
         this.appUserRepository = appUserRepository;
         this.gameRepository = gameRepository;
         this.tournamentRepository = tournamentRepository;
@@ -119,6 +127,7 @@ public class DevController {
         this.playerRepository = playerRepository;
         this.matchRepository = matchRepository;
         this.showcaseRepository = showcaseRepository;
+        this.serverRepository = serverRepository;
     }
 
     @Transactional
@@ -136,13 +145,13 @@ public class DevController {
         AppUser appUser2 = prepareAppUser(APPUSER_2_EMAIL, APPUSER_2_PASSWORD);
         data.put("appUser2", appUser2);
 
-        Game codGame = gameRepository.findByTag(GAME_TAG_COD4);
-        data.put("codGame", codGame);
+        Game cod4Game = gameRepository.findByTag(GAME_TAG_COD4);
+        data.put("cod4Game", cod4Game);
 
         Game lolGame = gameRepository.findByTag(GAME_TAG_LOL);
         data.put("lolGame", lolGame);
 
-        Tournament tournament1 = prepareTournament(TOURNAMENT_1_NAME, codGame, TOURNAMENT_CFG);
+        Tournament tournament1 = prepareTournament(TOURNAMENT_1_NAME, cod4Game, TOURNAMENT_CFG);
         data.put("tournament1", tournament1);
 
         Tournament tournament2 = prepareTournament(TOURNAMENT_2_NAME, lolGame, null);
@@ -181,6 +190,9 @@ public class DevController {
         Showcase showcase3 = prepareShowcase(SHOWCASE_3_TAG, SHOWCASE_3_NAME);
         data.put("showcase3", showcase3);
 
+        Server server = prepareServer(SERVER_TAG, cod4Game, SERVER_ADDRESS, SERVER_PORT, SERVER_LOGFILE_PATH, SERVER_RCON_PASSWORD);
+        data.put("server", server);
+
         return ResponseEntity.ok(data.toString());
     }
 
@@ -214,13 +226,10 @@ public class DevController {
     }
 
     private Seat prepareSeat(Tournament tournament, String address, String name) {
-        Seat seat = seatRepository.findByIpAddress(address);
+        Seat seat = seatRepository.findByNameAndTournament(name, tournament);
         if (seat == null) {
-            seat = new Seat();
+            seat = new Seat(name, address, tournament);
         }
-        seat.setIpAddress(address);
-        seat.setName(name);
-        seat.setTournament(tournament);
         return seatRepository.save(seat);
     }
 
@@ -265,5 +274,19 @@ public class DevController {
         showcase.setTag(tag);
         showcase.setName(name);
         return showcaseRepository.save(showcase);
+    }
+
+    private Server prepareServer(String tag, Game game, String address, int port, String logFile, String rconPassword) {
+        Server server = serverRepository.findByAddressAndPort(SERVER_ADDRESS, SERVER_PORT);
+        if (server == null) {
+            server = new Server();
+        }
+        server.setTag(tag);
+        server.setGame(game);
+        server.setAddress(address);
+        server.setPort(port);
+        server.setLogParsingEnabled(logFile != null);
+        server.setRconPassword(rconPassword);
+        return serverRepository.save(server);
     }
 }

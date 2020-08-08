@@ -1,7 +1,6 @@
 package org.thehellnet.lanparty.manager.utility.logline.impl
 
 import org.joda.time.DateTime
-import org.thehellnet.lanparty.manager.exception.InvalidDataException
 import org.thehellnet.lanparty.manager.exception.logline.LogLineParserException
 import org.thehellnet.lanparty.manager.model.logline.line.*
 import spock.lang.Specification
@@ -38,23 +37,6 @@ class COD4LogLineParserTest extends Specification {
         null  | _
         ""    | _
         " "   | _
-    }
-
-    @Unroll
-    def "logLineParser with \"#input\" input throws InvalidDataException"(String input) {
-        given:
-        COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-
-        when:
-        logLineParser.parse()
-
-        then:
-        thrown InvalidDataException
-
-        where:
-        input               | _
-        LOG_LINE_EXIT_LEVEL | _
-        LOG_LINE_SEPARATOR  | _
     }
 
     def "logLineParser with valid InitGame line"() {
@@ -341,6 +323,50 @@ class COD4LogLineParserTest extends Specification {
 
         when:
         SayLogLine logLine = (SayLogLine) actual
+
+        then:
+        logLine == expected
+    }
+
+    def "logLineParser with valid unuseful ExitLevel line"() {
+        given:
+        String input = LOG_LINE_EXIT_LEVEL
+        COD4LogLineParser logLineParser = new COD4LogLineParser(input)
+        DateTime dateTime = DateTime.now()
+
+        UnusefulLogLine expected = new UnusefulLogLine(dateTime, 2000 * 60 + 39)
+
+        when:
+        LogLine actual = logLineParser.parse(dateTime)
+
+        then:
+        noExceptionThrown()
+        actual instanceof UnusefulLogLine
+
+        when:
+        UnusefulLogLine logLine = (UnusefulLogLine) actual
+
+        then:
+        logLine == expected
+    }
+
+    def "logLineParser with valid unuseful separator line"() {
+        given:
+        String input = LOG_LINE_SEPARATOR
+        COD4LogLineParser logLineParser = new COD4LogLineParser(input)
+        DateTime dateTime = DateTime.now()
+
+        UnusefulLogLine expected = new UnusefulLogLine(dateTime, 2000 * 60 + 39)
+
+        when:
+        LogLine actual = logLineParser.parse(dateTime)
+
+        then:
+        noExceptionThrown()
+        actual instanceof UnusefulLogLine
+
+        when:
+        UnusefulLogLine logLine = (UnusefulLogLine) actual
 
         then:
         logLine == expected

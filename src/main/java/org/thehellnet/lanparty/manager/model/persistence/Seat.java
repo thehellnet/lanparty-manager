@@ -29,7 +29,7 @@ public class Seat extends AbstractEntity {
     @Column(name = "ip_address", nullable = false)
     private String ipAddress;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
 
@@ -37,7 +37,7 @@ public class Seat extends AbstractEntity {
     @Column(name = "last_contact", nullable = false)
     private DateTime lastContact = new DateTime();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
     private Player player;
 

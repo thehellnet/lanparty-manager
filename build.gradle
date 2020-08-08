@@ -5,6 +5,7 @@ plugins {
     id "war"
     id "jacoco"
     id "org.sonarqube" version "3.0"
+    id "org.liquibase.gradle" version "2.0.3"
 }
 
 group "org.thehellnet.lanparty"
@@ -179,5 +180,4 @@ dependencies {
     testImplementation group: "org.springframework.security", name: "spring-security-test", version: VERSIONS["spring-security"]
 
     testImplementation group: "com.icegreen", name: "greenmail", version: VERSIONS["greenmail"]
-
 }

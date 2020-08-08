@@ -40,7 +40,7 @@ public class PersistenceConfiguration implements TestAwareConfiguration {
     @Bean("dataSource")
     public DataSource getDataSource() {
         logger.info("Init dataSource Bean");
-        logger.debug("Database server: URL: {} - Username: {} - Hbm2ddlhi: {}",
+        logger.debug("Database server: URL: {} - Username: {} - Hbm2ddl: {}",
                 params.getJdbcUrl(), params.getUsername(), params.getHbm2ddl());
 
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
@@ -85,7 +85,7 @@ public class PersistenceConfiguration implements TestAwareConfiguration {
 
     @Bean("auditDateTimeProvider")
     public DateTimeProvider getAuditDateTimeProvider() {
-        return () -> Optional.of(LocalDateTime.now(Clock.systemUTC()));
+        return () -> Optional.of(LocalDateTime.now());
     }
 
     @Bean("auditorProvider")

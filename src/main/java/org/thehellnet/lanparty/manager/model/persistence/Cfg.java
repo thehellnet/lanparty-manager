@@ -13,11 +13,11 @@ public class Cfg extends AbstractEntity {
     @SequenceGenerator(name = "cfg_id_seq", sequenceName = "cfg_id_seq")
     private Long Id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id", nullable = false)
     private Player player;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
