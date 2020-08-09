@@ -6,6 +6,8 @@ import spock.lang.Unroll
 
 class ParsedCfgCommandParserTest extends Specification {
 
+    private ParsedCfgCommandUtility<String, List<ParsedCfgCommand>> utility = new ParsedCfgCommandParser()
+
     @Unroll
     def "parseCommand with \"#input\""(String input, ParsedCfgCommand expected) {
         when:
@@ -102,7 +104,7 @@ class ParsedCfgCommandParserTest extends Specification {
         List<ParsedCfgCommand> expected = []
 
         when:
-        List<ParsedCfgCommand> actual = new ParsedCfgCommandParser(input).parse()
+        List<ParsedCfgCommand> actual = utility.elaborate(input)
 
         then:
         actual == expected
@@ -114,7 +116,7 @@ class ParsedCfgCommandParserTest extends Specification {
         List<ParsedCfgCommand> expected = []
 
         when:
-        List<ParsedCfgCommand> actual = new ParsedCfgCommandParser(input).parse()
+        List<ParsedCfgCommand> actual = utility.elaborate(input)
 
         then:
         actual == expected
@@ -126,7 +128,7 @@ class ParsedCfgCommandParserTest extends Specification {
         List<ParsedCfgCommand> expected = []
 
         when:
-        List<ParsedCfgCommand> actual = new ParsedCfgCommandParser(input).parse()
+        List<ParsedCfgCommand> actual = utility.elaborate(input)
 
         then:
         actual == expected
@@ -135,12 +137,10 @@ class ParsedCfgCommandParserTest extends Specification {
     def "parse with single line"() {
         given:
         String input = "unbindall"
-        List<ParsedCfgCommand> expected = [
-                new ParsedCfgCommand("unbindall")
-        ]
+        List<ParsedCfgCommand> expected = [new ParsedCfgCommand("unbindall")]
 
         when:
-        List<ParsedCfgCommand> actual = new ParsedCfgCommandParser(input).parse()
+        List<ParsedCfgCommand> actual = utility.elaborate(input)
 
         then:
         actual == expected
@@ -150,13 +150,14 @@ class ParsedCfgCommandParserTest extends Specification {
         given:
         String input = "unbindall\n" +
                 "say ciao ciao"
+
         List<ParsedCfgCommand> expected = [
                 new ParsedCfgCommand("unbindall"),
                 new ParsedCfgCommand("say", null, "ciao ciao"),
         ]
 
         when:
-        List<ParsedCfgCommand> actual = new ParsedCfgCommandParser(input).parse()
+        List<ParsedCfgCommand> actual = utility.elaborate(input)
 
         then:
         actual == expected
@@ -167,13 +168,14 @@ class ParsedCfgCommandParserTest extends Specification {
         String input = "unbindall\n" +
                 "say ciao ciao\n" +
                 "say ciao ciao\n"
+
         List<ParsedCfgCommand> expected = [
                 new ParsedCfgCommand("unbindall"),
                 new ParsedCfgCommand("say", null, "ciao ciao"),
         ]
 
         when:
-        List<ParsedCfgCommand> actual = new ParsedCfgCommandParser(input).parse()
+        List<ParsedCfgCommand> actual = utility.elaborate(input)
 
         then:
         actual == expected

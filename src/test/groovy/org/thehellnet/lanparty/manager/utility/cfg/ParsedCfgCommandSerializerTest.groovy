@@ -1,10 +1,13 @@
 package org.thehellnet.lanparty.manager.utility.cfg
 
+import org.thehellnet.lanparty.manager.exception.InvalidDataException
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class ParsedCfgCommandSerializerTest extends Specification {
+
+    private ParsedCfgCommandUtility<List<ParsedCfgCommand>, String> utility = new ParsedCfgCommandSerializer()
 
     @Unroll
     def "serializeCommand with \"#input\""(ParsedCfgCommand input, String expected) {
@@ -42,7 +45,7 @@ class ParsedCfgCommandSerializerTest extends Specification {
         ParsedCfgCommandSerializer.serializeCommand(input)
 
         then:
-        thrown InvalidModelDataException
+        thrown InvalidDataException
     }
 
     def "serializeCommand with null param command"() {
@@ -53,7 +56,7 @@ class ParsedCfgCommandSerializerTest extends Specification {
         ParsedCfgCommandSerializer.serializeCommand(input)
 
         then:
-        thrown InvalidModelDataException
+        thrown InvalidDataException
     }
 
     def "serialize with null input"() {
@@ -62,7 +65,7 @@ class ParsedCfgCommandSerializerTest extends Specification {
         String expected = ""
 
         when:
-        String actual = new ParsedCfgCommandSerializer(input).serialize()
+        String actual = utility.elaborate(input)
 
         then:
         actual == expected
@@ -74,7 +77,7 @@ class ParsedCfgCommandSerializerTest extends Specification {
         String expected = ""
 
         when:
-        String actual = new ParsedCfgCommandSerializer(input).serialize()
+        String actual = utility.elaborate(input)
 
         then:
         actual == expected
@@ -88,7 +91,7 @@ class ParsedCfgCommandSerializerTest extends Specification {
         String expected = "unbindall"
 
         when:
-        String actual = new ParsedCfgCommandSerializer(input).serialize()
+        String actual = utility.elaborate(input)
 
         then:
         actual == expected
@@ -105,10 +108,9 @@ class ParsedCfgCommandSerializerTest extends Specification {
                 "say \"ciao ciao\""
 
         when:
-        String actual = new ParsedCfgCommandSerializer(input).serialize()
+        String actual = utility.elaborate(input)
 
         then:
         actual == expected
     }
-
 }

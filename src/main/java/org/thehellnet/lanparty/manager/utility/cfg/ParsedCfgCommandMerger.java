@@ -5,31 +5,50 @@ import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParsedCfgCommandMerger {
+public class ParsedCfgCommandMerger extends AbstractParsedCfgCommandUtility<ParsedCfgCommandMerger.MergeDTO, List<ParsedCfgCommand>> {
 
-    private final List<ParsedCfgCommand> cfgCommands;
+    public static final class MergeDTO {
 
-    public ParsedCfgCommandMerger(List<ParsedCfgCommand> cfgCommands) {
-        this.cfgCommands = cfgCommands;
+        private final List<ParsedCfgCommand> tournamentCfgCommands;
+        private final List<ParsedCfgCommand> playerCfgCommands;
+        private final List<ParsedCfgCommand> overrideCfgCommands;
+
+        public MergeDTO(List<ParsedCfgCommand> tournamentCfgCommands,
+                        List<ParsedCfgCommand> playerCfgCommands,
+                        List<ParsedCfgCommand> overrideCfgCommands) {
+            this.tournamentCfgCommands = tournamentCfgCommands;
+            this.playerCfgCommands = playerCfgCommands;
+            this.overrideCfgCommands = overrideCfgCommands;
+        }
     }
 
-    public List<ParsedCfgCommand> mergeWithTournamentCfg(List<ParsedCfgCommand> tournamentCfgCommands) {
-        List<ParsedCfgCommand> outputCfgCommands = new ArrayList<>();
+    @Override
+    protected void elaborate() {
+        output = new ArrayList<>();
 
-        if (tournamentCfgCommands != null) {
-            for (ParsedCfgCommand tournamentCfgCommand : tournamentCfgCommands) {
-                ParsedCfgCommand cfgCommand = tournamentCfgCommand;
-
-                for (ParsedCfgCommand playerCfgCommand : cfgCommands) {
-                    if (playerCfgCommand.same(tournamentCfgCommand)) {
-                        cfgCommand = playerCfgCommand;
-                    }
-                }
-
-                outputCfgCommands.add(cfgCommand);
-            }
+        if (input == null
+                || input.tournamentCfgCommands == null
+                || input.playerCfgCommands == null
+                || input.overrideCfgCommands == null) {
+            return;
         }
 
-        return outputCfgCommands;
+        for (ParsedCfgCommand tournamentCfgCommand : input.tournamentCfgCommands) {
+            ParsedCfgCommand parsedCfgCommand = tournamentCfgCommand;
+
+            for (ParsedCfgCommand userCfgCommand : input.playerCfgCommands) {
+                if (parsedCfgCommand.same(userCfgCommand)) {
+                    parsedCfgCommand = userCfgCommand;
+                }
+            }
+
+            for (ParsedCfgCommand overrideCfgCommand : input.overrideCfgCommands) {
+                if (parsedCfgCommand.same(overrideCfgCommand)) {
+                    parsedCfgCommand = overrideCfgCommand;
+                }
+            }
+
+            output.add(parsedCfgCommand);
+        }
     }
 }

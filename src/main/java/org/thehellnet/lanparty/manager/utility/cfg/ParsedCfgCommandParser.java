@@ -3,40 +3,35 @@ package org.thehellnet.lanparty.manager.utility.cfg;
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.utility.StringUtility;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand.ONE_PARAMS_ACTIONS;
 import static org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand.TWO_PARAMS_ACTIONS;
 
-public class ParsedCfgCommandParser {
+public class ParsedCfgCommandParser extends AbstractParsedCfgCommandUtility<String, List<ParsedCfgCommand>> {
 
-    private final String cfg;
-
-    public ParsedCfgCommandParser(String cfg) {
-        this.cfg = cfg;
-    }
-
-    public List<ParsedCfgCommand> parse() {
+    @Override
+    protected void elaborate() {
         Map<Integer, ParsedCfgCommand> parsedCfgCommands = new LinkedHashMap<>();
 
-        List<String> cfgLines = StringUtility.splitLines(cfg);
+        List<String> cfgLines = StringUtility.splitLines(input);
 
-        if (cfgLines != null) {
-            for (String cfgLine : cfgLines) {
-                ParsedCfgCommand parsedCfgCommand = parseCommand(cfgLine);
-                if (parsedCfgCommand != null) {
-                    parsedCfgCommands.put(parsedCfgCommand.hashCode(), parsedCfgCommand);
-                }
+        if (cfgLines == null) {
+            output = Collections.emptyList();
+            return;
+        }
+
+        for (String cfgLine : cfgLines) {
+            ParsedCfgCommand parsedCfgCommand = parseCommand(cfgLine);
+            if (parsedCfgCommand != null) {
+                parsedCfgCommands.put(parsedCfgCommand.hashCode(), parsedCfgCommand);
             }
         }
 
-        return new ArrayList<>(parsedCfgCommands.values());
+        output = new ArrayList<>(parsedCfgCommands.values());
     }
 
-    public static ParsedCfgCommand parseCommand(String command) {
+    static ParsedCfgCommand parseCommand(String command) {
         if (command == null || command.length() == 0) {
             return null;
         }
@@ -46,7 +41,7 @@ public class ParsedCfgCommandParser {
         }
 
         List<String> items = StringUtility.splitSpaces(command);
-        if (items.size() == 0) {
+        if (items.isEmpty()) {
             return null;
         }
 

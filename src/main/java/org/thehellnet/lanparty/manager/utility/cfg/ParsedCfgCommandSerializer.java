@@ -10,33 +10,25 @@ import java.util.List;
 import static org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand.ONE_PARAMS_ACTIONS;
 import static org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand.TWO_PARAMS_ACTIONS;
 
-public class ParsedCfgCommandSerializer {
+public class ParsedCfgCommandSerializer extends AbstractParsedCfgCommandUtility<List<ParsedCfgCommand>, String> {
 
-    private final List<ParsedCfgCommand> cfgCommands;
-
-    public ParsedCfgCommandSerializer(List<ParsedCfgCommand> cfgCommands) {
-        this.cfgCommands = cfgCommands;
-    }
-
-    public String serialize() {
-        return StringUtility.joinLines(serializeLines());
-    }
-
-    public List<String> serializeLines() {
-        if (cfgCommands == null) {
-            return new ArrayList<>();
+    @Override
+    protected void elaborate() {
+        if (input == null) {
+            output = "";
+            return;
         }
 
         List<String> cfgLines = new ArrayList<>();
 
-        for (ParsedCfgCommand parsedCfgCommand : cfgCommands) {
+        for (ParsedCfgCommand parsedCfgCommand : input) {
             String cfgCommand = serializeCommand(parsedCfgCommand);
             if (cfgCommand != null) {
                 cfgLines.add(cfgCommand);
             }
         }
 
-        return cfgLines;
+        output = StringUtility.joinLines(cfgLines);
     }
 
     public static String serializeCommand(ParsedCfgCommand parsedCfgCommand) {

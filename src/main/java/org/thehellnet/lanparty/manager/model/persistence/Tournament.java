@@ -66,6 +66,10 @@ public class Tournament extends AbstractEntity {
     @Column(name = "cfg", nullable = false, length = 1048576)
     private String cfg = "";
 
+    @Basic
+    @Column(name = "override_cfg", nullable = false, length = 1048576)
+    private String overrideCfg = "";
+
     @JsonIgnore
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Seat> seats = new ArrayList<>();
@@ -188,6 +192,14 @@ public class Tournament extends AbstractEntity {
         this.cfg = cfg != null ? cfg : "";
     }
 
+    public String getOverrideCfg() {
+        return overrideCfg;
+    }
+
+    public void setOverrideCfg(String overrideCfg) {
+        this.overrideCfg = overrideCfg;
+    }
+
     public List<Seat> getSeats() {
         return seats;
     }
@@ -230,6 +242,7 @@ public class Tournament extends AbstractEntity {
                 mode == that.mode &&
                 status == that.status &&
                 cfg.equals(that.cfg) &&
+                overrideCfg.equals(that.overrideCfg) &&
                 seats.equals(that.seats) &&
                 matches.equals(that.matches) &&
                 teams.equals(that.teams);

@@ -12,10 +12,7 @@ import org.thehellnet.lanparty.manager.repository.AppUserRepository;
 import org.thehellnet.lanparty.manager.repository.CfgRepository;
 import org.thehellnet.lanparty.manager.repository.PlayerRepository;
 import org.thehellnet.lanparty.manager.repository.SeatRepository;
-import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandMerger;
-import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandParser;
-import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandSanitizer;
-import org.thehellnet.utility.StringUtility;
+import org.thehellnet.lanparty.manager.utility.cfg.*;
 
 import java.util.List;
 
@@ -23,6 +20,12 @@ import java.util.List;
 public class CfgService extends AbstractService {
 
     private final CfgRepository cfgRepository;
+
+    private final ParsedCfgCommandUtility<String, List<ParsedCfgCommand>> parser = new ParsedCfgCommandParser();
+    private final ParsedCfgCommandUtility<List<ParsedCfgCommand>, String> serializer = new ParsedCfgCommandSerializer();
+    private final ParsedCfgCommandUtility<List<ParsedCfgCommand>, List<ParsedCfgCommand>> specialRemover = new ParsedCfgCommandSpecialRemover();
+    private final ParsedCfgCommandUtility<List<ParsedCfgCommand>, List<ParsedCfgCommand>> specialEnsurer = new ParsedCfgCommandSpecialEnsurer();
+    private final ParsedCfgCommandUtility<ParsedCfgCommandMerger.MergeDTO, List<ParsedCfgCommand>> merger = new ParsedCfgCommandMerger();
 
     @Autowired
     public CfgService(SeatRepository seatRepository,
@@ -45,21 +48,24 @@ public class CfgService extends AbstractService {
         Player player = tokenData.getPlayer();
 
         String tournamentCfg = tournament.getCfg();
-        List<ParsedCfgCommand> tournamentCfgCommands = new ParsedCfgCommandParser(tournamentCfg).parse();
-        tournamentCfgCommands = new ParsedCfgCommandSanitizer(tournamentCfgCommands).removeSpecials();
+        List<ParsedCfgCommand> tournamentCfgCommands = parseAndRemoveSpecials(tournamentCfg);
 
-        String playerCfgContent = "";
+        String playerCfg = "";
 
         Cfg cfg = cfgRepository.findByPlayerAndGame(player, tournament.getGame());
         if (cfg != null) {
-            playerCfgContent = cfg.getCfgContent();
+            playerCfg = cfg.getCfgContent();
         }
 
-        List<ParsedCfgCommand> playerCfgCommands = new ParsedCfgCommandParser(playerCfgContent).parse();
-        playerCfgCommands = new ParsedCfgCommandSanitizer(playerCfgCommands).removeSpecials();
+        List<ParsedCfgCommand> playerCfgCommands = parseAndRemoveSpecials(playerCfg);
 
-        List<ParsedCfgCommand> seatCfgCommands = new ParsedCfgCommandMerger(playerCfgCommands).mergeWithTournamentCfg(tournamentCfgCommands);
-        seatCfgCommands = new ParsedCfgCommandSanitizer(seatCfgCommands).ensureMinimals();
+        String overrideCfg = tournament.getOverrideCfg();
+        List<ParsedCfgCommand> overrideCfgCommands = parseAndRemoveSpecials(overrideCfg);
+
+        ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands);
+        List<ParsedCfgCommand> seatCfgCommands = merger.elaborate(mergeDTO);
+
+        seatCfgCommands = specialEnsurer.elaborate(seatCfgCommands);
 
         seatCfgCommands.add(ParsedCfgCommand.prepareName(player.getNickname()));
 
@@ -67,10 +73,10 @@ public class CfgService extends AbstractService {
     }
 
     @Transactional
-    public void saveCfg(String remoteAddress, String barcode, List<String> newCfg) {
+    public void saveCfg(String remoteAddress, String barcode, List<ParsedCfgCommand> parsedCfgCommands) {
         if (remoteAddress == null || remoteAddress.length() == 0
                 || barcode == null || barcode.length() == 0
-                || newCfg == null) {
+                || parsedCfgCommands == null) {
             throw new InvalidDataException("Invalid remote address or barcode");
         }
 
@@ -83,7 +89,14 @@ public class CfgService extends AbstractService {
             cfg = new Cfg(player, tournament.getGame());
         }
 
-        cfg.setCfgContent(StringUtility.joinLines(newCfg));
+        String cfgContent = serializer.elaborate(parsedCfgCommands);
+
+        cfg.setCfgContent(cfgContent);
         cfgRepository.save(cfg);
+    }
+
+    private List<ParsedCfgCommand> parseAndRemoveSpecials(String cfg) {
+        List<ParsedCfgCommand> parsedCfgCommands = parser.elaborate(cfg);
+        return specialRemover.elaborate(parsedCfgCommands);
     }
 }

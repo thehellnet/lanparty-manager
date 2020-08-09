@@ -13,7 +13,10 @@ import org.thehellnet.lanparty.manager.model.dto.request.tool.SaveCfgToolRequest
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 import org.thehellnet.lanparty.manager.service.CfgService;
 import org.thehellnet.lanparty.manager.service.SeatService;
+import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandParser;
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandSerializer;
+import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandUtility;
+import org.thehellnet.utility.StringUtility;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -30,6 +33,9 @@ public class ToolController {
 
     private final SeatService seatService;
     private final CfgService cfgService;
+
+    private final ParsedCfgCommandUtility<List<ParsedCfgCommand>, String> parsedCfgCommandSerializer = new ParsedCfgCommandSerializer();
+    private final ParsedCfgCommandUtility<String, List<ParsedCfgCommand>> parsedCfgCommandParser = new ParsedCfgCommandParser();
 
     public ToolController(SeatService seatService, CfgService cfgService) {
         this.seatService = seatService;
@@ -59,8 +65,10 @@ public class ToolController {
         seatService.updateLastContact(remoteAddress);
         seatService.updatePlayerInSeats(remoteAddress, dto.barcode);
 
-        List<ParsedCfgCommand> cfgCommands = cfgService.computeCfg(remoteAddress, dto.barcode);
-        List<String> cfgLines = new ParsedCfgCommandSerializer(cfgCommands).serializeLines();
+        List<ParsedCfgCommand> parsedCfgCommands = cfgService.computeCfg(remoteAddress, dto.barcode);
+        String cfg = parsedCfgCommandSerializer.elaborate(parsedCfgCommands);
+
+        List<String> cfgLines = StringUtility.splitLines(cfg);
         return ResponseEntity.ok(cfgLines);
     }
 
@@ -69,7 +77,12 @@ public class ToolController {
         String remoteAddress = request.getRemoteAddr();
         logger.info("saveCfg from tool at {} with barcode {} and {} lines in cfg", remoteAddress, dto.barcode, dto.cfgLines.size());
 
-        cfgService.saveCfg(remoteAddress, dto.barcode, dto.cfgLines);
+        seatService.updateLastContact(remoteAddress);
+
+        String cfg = StringUtility.joinLines(dto.cfgLines);
+        List<ParsedCfgCommand> parsedCfgCommands = parsedCfgCommandParser.elaborate(cfg);
+
+        cfgService.saveCfg(remoteAddress, dto.barcode, parsedCfgCommands);
         return ResponseEntity.ok(new Object());
     }
 }
