@@ -21,7 +21,7 @@ public class LogTailer {
         tailer = new Tailer(logFile, prepareTailerListener(), DELAY_MILLIS, true);
     }
 
-    public void start() {
+    public synchronized void start() {
         logger.debug("Starting logTailer for {}", tailer.getFile());
 
         thread = new Thread(tailer);
@@ -29,7 +29,7 @@ public class LogTailer {
         thread.start();
     }
 
-    public void stop() {
+    public synchronized void stop() {
         logger.debug("Stopping logTailer for {}", tailer.getFile());
 
         tailer.stop();
@@ -38,6 +38,10 @@ public class LogTailer {
     }
 
     public void join() {
+        if (thread == null) {
+            return;
+        }
+
         try {
             thread.join();
         } catch (InterruptedException ignored) {
