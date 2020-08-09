@@ -15,5 +15,7 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     Seat findByNameAndTournament(String name, Tournament tournament);
 
+    Seat findByGuidAndTournament(String guid, Tournament tournament);
+
     List<Seat> findAllByPlayer(Player player);
 }

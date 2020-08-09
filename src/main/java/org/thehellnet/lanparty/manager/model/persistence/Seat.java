@@ -10,6 +10,7 @@ import java.util.Objects;
         name = "seat",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"name", "tournament_id"}),
+                @UniqueConstraint(columnNames = {"guid", "tournament_id"}),
                 @UniqueConstraint(columnNames = {"ip_address"})
         }
 )
@@ -28,6 +29,10 @@ public class Seat extends AbstractEntity {
     @Basic
     @Column(name = "ip_address", nullable = false)
     private String ipAddress;
+
+    @Basic
+    @Column(name = "guid")
+    private String guid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id", nullable = false)
@@ -84,6 +89,14 @@ public class Seat extends AbstractEntity {
         this.ipAddress = ipAddress;
     }
 
+    public String getGuid() {
+        return guid;
+    }
+
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
+
     public Tournament getTournament() {
         return tournament;
     }
@@ -120,6 +133,7 @@ public class Seat extends AbstractEntity {
         Seat seat = (Seat) o;
         return Id.equals(seat.Id) &&
                 name.equals(seat.name) &&
+                Objects.equals(guid, seat.guid) &&
                 ipAddress.equals(seat.ipAddress) &&
                 tournament.equals(seat.tournament) &&
                 lastContact.equals(seat.lastContact) &&
