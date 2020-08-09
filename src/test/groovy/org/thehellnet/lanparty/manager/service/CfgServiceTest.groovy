@@ -13,6 +13,8 @@ import spock.lang.Unroll
 
 class CfgServiceTest extends ServiceSpecification {
 
+    private ParsedCfgCommandParser parsedCfgCommandParser = new ParsedCfgCommandParser()
+
     @Autowired
     private CfgService cfgService
 
@@ -66,7 +68,7 @@ class CfgServiceTest extends ServiceSpecification {
 
         List<ParsedCfgCommand> expected = new ArrayList<>()
         expected.addAll(CfgSettings.INITIALS)
-        expected.addAll(new ParsedCfgCommandParser(tournament.getCfg()).parse())
+        expected.addAll(parsedCfgCommandParser.elaborate(tournament.cfg))
         expected.addAll(CfgSettings.FINALS)
         expected.addAll(ParsedCfgCommand.prepareName(player.nickname))
 
@@ -98,8 +100,10 @@ class CfgServiceTest extends ServiceSpecification {
         Tournament tournament = createTournament()
         Cfg cfg = createCfg()
 
-        List<ParsedCfgCommand> playerCfg = new ParsedCfgCommandParser(cfg.cfgContent).parse()
-        List<ParsedCfgCommand> tournamentCfg = new ParsedCfgCommandParser(tournament.cfg).parse()
+        ParsedCfgCommandParser utility = new ParsedCfgCommandParser()
+
+        List<ParsedCfgCommand> playerCfg = utility.elaborate(cfg.cfgContent)
+        List<ParsedCfgCommand> tournamentCfg = parsedCfgCommandParser.elaborate(tournament.cfg)
 
         when:
         List<ParsedCfgCommand> actual = cfgService.computeCfg(remoteAddress, barcode)
@@ -108,7 +112,7 @@ class CfgServiceTest extends ServiceSpecification {
         actual.size() >= tournamentCfg.size()
         actual != playerCfg
     }
-//
+
 //    def "test saveCfg"() {
 //        given:
 //

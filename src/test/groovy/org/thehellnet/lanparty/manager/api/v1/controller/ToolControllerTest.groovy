@@ -17,7 +17,6 @@ class ToolControllerTest extends ControllerSpecification {
             "bind SPACE \"+gostand\"\n" +
             "bind 4 \"+smoke\"\n" +
             "bind H \"say Ciao\"\n" +
-            "bind P \"quit\"\n" +
             "bind . \"exec lanpartytool\"\n" +
             "bind , \"writeconfig lanpartydump\"\n" +
             "name \"Testplayer\""
