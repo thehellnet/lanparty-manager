@@ -107,6 +107,18 @@ public class Match extends AbstractEntity {
         this.guestTeam = guestTeam;
     }
 
+    public Match(Tournament tournament, Team localTeam, Team guestTeam, int level) {
+        this.tournament = tournament;
+        this.localTeam = localTeam;
+        this.guestTeam = guestTeam;
+        this.level = level;
+    }
+
+    public Match(Tournament tournament, int level) {
+        this.tournament = tournament;
+        this.level = level;
+    }
+
     public Long getId() {
         return Id;
     }
@@ -241,6 +253,10 @@ public class Match extends AbstractEntity {
 
     public void setGuestTeam(Team guestTeam) {
         this.guestTeam = guestTeam;
+    }
+
+    public void computeName() {
+        name = String.format("%s - %s vs %s", tournament, localTeam, guestTeam);
     }
 
     @Override

@@ -7,7 +7,8 @@ public enum TournamentMode {
     SINGLE_ELIMINATION("Single elimination"),
     ROUND_ROBIN("Round-Robin"),
     DOUBLE_ROUND_ROBIN("Double Round-Robin"),
-    DOUBLE_ROUND_ROBIN_ELIMINATION("Double Round-Robin with elimination");
+    DOUBLE_ROUND_ROBIN_ELIMINATION("Double Round-Robin with elimination"),
+    TEAMS_DOUBLE_ROUND_ROBIN_ELIMINATION("Teams Double Round-Robin with final elimination");
 
     private final String description;
 
