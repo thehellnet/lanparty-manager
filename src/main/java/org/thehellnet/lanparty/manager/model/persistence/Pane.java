@@ -6,7 +6,11 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "pane")
+@Table(name = "pane",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"showcase_id", "mode", "tournament_id"}),
+                @UniqueConstraint(columnNames = {"showcase_id", "mode", "match_id"})
+        })
 public class Pane extends AbstractEntity {
 
     @Id
@@ -18,10 +22,6 @@ public class Pane extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "showcase_id", nullable = false)
     private Showcase showcase;
-
-    @Basic
-    @Column(name = "name", nullable = false)
-    private String name;
 
     @Basic
     @Column(name = "mode", nullable = false)
@@ -39,6 +39,12 @@ public class Pane extends AbstractEntity {
     public Pane() {
     }
 
+    public Pane(Showcase showcase, PaneMode mode, Tournament tournament) {
+        this.showcase = showcase;
+        this.mode = mode;
+        this.tournament = tournament;
+    }
+
     public Long getId() {
         return Id;
     }
@@ -53,14 +59,6 @@ public class Pane extends AbstractEntity {
 
     public void setShowcase(Showcase showcase) {
         this.showcase = showcase;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public PaneMode getMode() {
@@ -104,10 +102,5 @@ public class Pane extends AbstractEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), Id);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

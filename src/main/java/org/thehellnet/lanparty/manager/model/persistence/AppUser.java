@@ -37,10 +37,6 @@ public class AppUser extends AbstractEntity {
     private String password;
 
     @Basic
-    @Column(name = "name")
-    private String name;
-
-    @Basic
     @Column(name = "nickname", unique = true)
     private String nickname;
 
@@ -139,14 +135,6 @@ public class AppUser extends AbstractEntity {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getNickname() {
         return nickname;
     }
@@ -228,7 +216,6 @@ public class AppUser extends AbstractEntity {
                 Objects.equals(confirmCode, appUser.confirmCode) &&
                 email.equals(appUser.email) &&
                 password.equals(appUser.password) &&
-                Objects.equals(name, appUser.name) &&
                 Objects.equals(nickname, appUser.nickname) &&
                 registerTs.equals(appUser.registerTs) &&
                 Objects.equals(confirmTs, appUser.confirmTs) &&
@@ -245,6 +232,6 @@ public class AppUser extends AbstractEntity {
 
     @Override
     public String toString() {
-        return name != null && name.length() > 0 ? name : email;
+        return name.length() > 0 ? name : email;
     }
 }

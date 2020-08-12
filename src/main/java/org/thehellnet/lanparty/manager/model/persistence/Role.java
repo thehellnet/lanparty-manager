@@ -15,10 +15,6 @@ public class Role extends AbstractEntity {
     @SequenceGenerator(name = "role_id_seq", sequenceName = "role_id_seq")
     private Long Id;
 
-    @Basic
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @ManyToMany(mappedBy = "roles")
     private List<AppUser> appUsers = new ArrayList<>();
 
@@ -35,14 +31,6 @@ public class Role extends AbstractEntity {
 
     public void setId(Long id) {
         Id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public List<AppUser> getAppUsers() {
@@ -67,10 +55,5 @@ public class Role extends AbstractEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), Id);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

@@ -23,10 +23,6 @@ public class Seat extends AbstractEntity {
     private Long Id;
 
     @Basic
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @Basic
     @Column(name = "ip_address", nullable = false)
     private String ipAddress;
 
@@ -71,14 +67,6 @@ public class Seat extends AbstractEntity {
 
     public void setId(Long id) {
         this.Id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getIpAddress() {
@@ -143,10 +131,5 @@ public class Seat extends AbstractEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), Id);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

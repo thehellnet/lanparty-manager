@@ -24,10 +24,6 @@ public class Tournament extends AbstractEntity {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled = true;
 
-    @Basic
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
@@ -110,14 +106,6 @@ public class Tournament extends AbstractEntity {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Game getGame() {
@@ -251,10 +239,5 @@ public class Tournament extends AbstractEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), Id);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

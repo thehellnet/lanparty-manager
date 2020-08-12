@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "platform")
+@Table(name = "platform",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"name"})
+        })
 public class Platform extends AbstractEntity {
 
     @Id
@@ -19,10 +22,6 @@ public class Platform extends AbstractEntity {
     @Basic
     @Column(name = "tag", nullable = false, unique = true)
     private String tag;
-
-    @Basic
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
 
     @OneToMany(mappedBy = "platform", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Game> games = new ArrayList<>();
@@ -82,10 +81,5 @@ public class Platform extends AbstractEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), Id);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

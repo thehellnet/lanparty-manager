@@ -19,10 +19,6 @@ public class Game extends AbstractEntity {
     @Column(name = "tag", nullable = false, unique = true)
     private String tag;
 
-    @Basic
-    @Column(name = "name")
-    private String name;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "platform_id", nullable = false)
     private Platform platform;
@@ -59,14 +55,6 @@ public class Game extends AbstractEntity {
 
     public void setTag(String tag) {
         this.tag = tag;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Platform getPlatform() {
@@ -114,6 +102,6 @@ public class Game extends AbstractEntity {
 
     @Override
     public String toString() {
-        return name != null ? name : tag;
+        return name.length() > 0 ? name : tag;
     }
 }

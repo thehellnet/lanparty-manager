@@ -19,10 +19,6 @@ public class Match extends AbstractEntity {
     @SequenceGenerator(name = "match_id_seq", sequenceName = "match_id_seq")
     private Long Id;
 
-    @Basic
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @ManyToOne
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
@@ -125,14 +121,6 @@ public class Match extends AbstractEntity {
 
     public void setId(Long id) {
         Id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Tournament getTournament() {
@@ -263,6 +251,7 @@ public class Match extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Match match = (Match) o;
         return Id.equals(match.Id) &&
                 name.equals(match.name) &&
@@ -285,10 +274,5 @@ public class Match extends AbstractEntity {
     @Override
     public int hashCode() {
         return Objects.hash(Id);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

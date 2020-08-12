@@ -144,6 +144,7 @@ public class ServerMatchPlayer extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         ServerMatchPlayer that = (ServerMatchPlayer) o;
         return Id.equals(that.Id) &&
                 serverMatch.equals(that.serverMatch) &&

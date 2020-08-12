@@ -18,7 +18,7 @@ public class Player extends AbstractEntity {
     private Long Id;
 
     @Basic
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname", nullable = false, unique = true)
     private String nickname;
 
     @ManyToOne(fetch = FetchType.LAZY)

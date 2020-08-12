@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "gametype")
+@Table(name = "gametype",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"name"})
+        })
 public class Gametype extends AbstractEntity {
 
     @Id
@@ -67,10 +70,5 @@ public class Gametype extends AbstractEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), Id);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

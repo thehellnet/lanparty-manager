@@ -19,10 +19,6 @@ public class Team extends AbstractEntity {
     @SequenceGenerator(name = "team_id_seq", sequenceName = "team_id_seq")
     private Long Id;
 
-    @Basic
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @ManyToOne
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
@@ -54,14 +50,6 @@ public class Team extends AbstractEntity {
 
     public void setId(Long id) {
         this.Id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Tournament getTournament() {
@@ -113,10 +101,5 @@ public class Team extends AbstractEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), Id);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

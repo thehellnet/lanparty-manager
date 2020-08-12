@@ -87,6 +87,7 @@ public class GameFile extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         GameFile gameFile = (GameFile) o;
         return Id.equals(gameFile.Id) &&
                 game.equals(gameFile.game) &&

@@ -22,10 +22,6 @@ public class Showcase extends AbstractEntity {
     private String tag;
 
     @Basic
-    @Column(name = "name")
-    private String name;
-
-    @Basic
     @Column(name = "connected", nullable = false)
     private Boolean connected = Boolean.FALSE;
 
@@ -61,14 +57,6 @@ public class Showcase extends AbstractEntity {
 
     public void setTag(String tag) {
         this.tag = tag;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Boolean getConnected() {
@@ -125,10 +113,5 @@ public class Showcase extends AbstractEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), Id);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

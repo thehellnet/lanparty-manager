@@ -11,6 +11,7 @@ import org.thehellnet.lanparty.manager.model.persistence.annotation.Hidden;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @MappedSuperclass
 @Audited
@@ -46,6 +47,10 @@ public abstract class AbstractEntity implements Serializable {
     @Column(name = "active", nullable = false)
     protected Boolean active = Boolean.TRUE;
 
+    @Basic
+    @Column(name = "name", nullable = false)
+    protected String name = "";
+
     @Hidden
     @Transient
     protected String friendlyName;
@@ -58,6 +63,14 @@ public abstract class AbstractEntity implements Serializable {
         this.active = active;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getFriendlyName() {
         return friendlyName;
     }
@@ -66,8 +79,36 @@ public abstract class AbstractEntity implements Serializable {
         this.friendlyName = friendlyName;
     }
 
+    public void updateName() {
+        name = "";
+    }
+
     @PostLoad
     protected void postLoad() {
         this.friendlyName = this.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractEntity that = (AbstractEntity) o;
+        return Objects.equals(createdTs, that.createdTs) &&
+                Objects.equals(createdBy, that.createdBy) &&
+                Objects.equals(lastModifiedTs, that.lastModifiedTs) &&
+                Objects.equals(lastModifiedBy, that.lastModifiedBy) &&
+                active.equals(that.active) &&
+                name.equals(that.name) &&
+                Objects.equals(friendlyName, that.friendlyName);
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
