@@ -40,6 +40,10 @@ public class Pane extends AbstractEntity {
     @Column(name = "display_order", nullable = false)
     private Integer displayOrder = 0;
 
+    @Basic
+    @Column(name = "duration", nullable = false)
+    private Integer duration = 10;
+
     public Pane() {
     }
 
@@ -54,7 +58,7 @@ public class Pane extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        id = id;
+        this.id = id;
     }
 
     public Showcase getShowcase() {
@@ -97,6 +101,14 @@ public class Pane extends AbstractEntity {
         this.displayOrder = displayOrder;
     }
 
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
     @Override
     public void updateName() {
         name = String.format("%s - %s: %s", tournament, mode, name);
@@ -114,7 +126,8 @@ public class Pane extends AbstractEntity {
                 mode == pane.mode &&
                 Objects.equals(tournament, pane.tournament) &&
                 Objects.equals(match, pane.match) &&
-                displayOrder.equals(pane.displayOrder);
+                displayOrder.equals(pane.displayOrder) &&
+                duration.equals(pane.duration);
     }
 
     @Override

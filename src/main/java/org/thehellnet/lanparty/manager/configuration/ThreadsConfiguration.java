@@ -1,34 +1,33 @@
 package org.thehellnet.lanparty.manager.configuration;
 
+import org.quartz.spi.JobFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import org.thehellnet.lanparty.manager.configuration.mixin.TestAwareConfiguration;
 
-import java.util.concurrent.Executor;
-
 @Configuration
-@EnableScheduling
 @EnableAsync
+@EnableScheduling
 public class ThreadsConfiguration implements TestAwareConfiguration {
 
     @Bean
-    public TaskScheduler taskScheduler() {
-        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-
-        scheduler.setPoolSize(2);
-        scheduler.setThreadNamePrefix("scheduled-task-");
-        scheduler.setDaemon(true);
-
-        return scheduler;
+    public JobFactory jobFactory(ApplicationContext applicationContext) {
+        SpringBeanJobFactory jobFactory = new SpringBeanJobFactory();
+        jobFactory.setApplicationContext(applicationContext);
+        return jobFactory;
     }
 
-    @Bean(name = "threadPoolTaskExecutor")
-    public Executor threadPoolTaskExecutor() {
-        return new ThreadPoolTaskExecutor();
+    @Bean
+    public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory) {
+        SchedulerFactoryBean factory = new SchedulerFactoryBean();
+        factory.setOverwriteExistingJobs(true);
+        factory.setAutoStartup(true);
+        factory.setJobFactory(jobFactory);
+        return factory;
     }
 }

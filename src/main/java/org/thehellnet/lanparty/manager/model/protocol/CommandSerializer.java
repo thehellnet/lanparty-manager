@@ -10,10 +10,13 @@ public class CommandSerializer {
         this.command = command;
     }
 
+    public static String serialize(Command command) {
+        return new CommandSerializer(command).serialize();
+    }
+
     public String serialize() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("noun", command.getNoun().getCmd());
-        jsonObject.put("verb", command.getVerb().getCmd());
+        jsonObject.put("action", command.getAction().getName());
         jsonObject.put("args", command.getArgs());
         return jsonObject.toString();
     }

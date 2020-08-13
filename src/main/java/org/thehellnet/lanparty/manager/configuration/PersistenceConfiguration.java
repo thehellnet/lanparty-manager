@@ -61,19 +61,20 @@ public class PersistenceConfiguration implements TestAwareConfiguration {
     }
 
     @Bean("entityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean getLocalContainerEntityManagerFactoryBean() {
+    public LocalContainerEntityManagerFactoryBean getLocalContainerEntityManagerFactoryBean(DataSource dataSource,
+                                                                                            HibernateJpaVendorAdapter hibernateJpaAutoConfiguration) {
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setPackagesToScan("org.thehellnet.lanparty.manager.model.persistence");
-        entityManagerFactory.setDataSource(getDataSource());
-        entityManagerFactory.setJpaVendorAdapter(getHibernateJpaVendorAdapter());
+        entityManagerFactory.setDataSource(dataSource);
+        entityManagerFactory.setJpaVendorAdapter(hibernateJpaAutoConfiguration);
         entityManagerFactory.setJpaProperties(getHibernateProperties());
         return entityManagerFactory;
     }
 
     @Bean("transactionManager")
-    public JpaTransactionManager getJpaTransactionManager() {
+    public JpaTransactionManager getJpaTransactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(getLocalContainerEntityManagerFactoryBean().getObject());
+        transactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
         return transactionManager;
     }
 

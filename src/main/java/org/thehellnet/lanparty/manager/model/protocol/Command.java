@@ -4,33 +4,27 @@ import org.json.JSONObject;
 
 public final class Command {
 
-    private final ShowcaseNoun noun;
-    private final ShowcaseVerb verb;
-    private final JSONObject args;
+    private final Action action;
 
-    public Command(Command command, JSONObject args) {
-        this(command.noun, command.verb, args);
+    private JSONObject args = new JSONObject();
+
+    public Command(Action action) {
+        this.action = action;
     }
 
-    public Command(ShowcaseNoun noun, ShowcaseVerb verb) {
-        this(noun, verb, new JSONObject());
-    }
-
-    public Command(ShowcaseNoun noun, ShowcaseVerb verb, JSONObject args) {
-        this.noun = noun;
-        this.verb = verb;
-        this.args = args;
-    }
-
-    public ShowcaseNoun getNoun() {
-        return noun;
-    }
-
-    public ShowcaseVerb getVerb() {
-        return verb;
+    public Action getAction() {
+        return action;
     }
 
     public JSONObject getArgs() {
         return args;
+    }
+
+    public void setArgs(JSONObject args) {
+        if (args == null) {
+            this.args = new JSONObject();
+        }
+
+        this.args = args;
     }
 }

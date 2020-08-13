@@ -30,7 +30,7 @@ public class Role extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        id = id;
+        this.id = id;
     }
 
     public List<AppUser> getAppUsers() {

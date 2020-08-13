@@ -3,6 +3,7 @@ package org.thehellnet.lanparty.manager.configuration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -18,6 +19,7 @@ import javax.servlet.ServletRegistration;
 @ComponentScan(basePackages = "org.thehellnet.lanparty.manager")
 @EnableWebMvc
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAsync
 public class SpringConfiguration implements TestAwareConfiguration, WebApplicationInitializer {
 
     @Override

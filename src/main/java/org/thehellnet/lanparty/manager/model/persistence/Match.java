@@ -120,7 +120,7 @@ public class Match extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        id = id;
+        this.id = id;
     }
 
     public Tournament getTournament() {

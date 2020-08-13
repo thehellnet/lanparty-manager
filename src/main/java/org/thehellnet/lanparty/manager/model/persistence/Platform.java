@@ -39,7 +39,7 @@ public class Platform extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        id = id;
+        this.id = id;
     }
 
     public String getTag() {

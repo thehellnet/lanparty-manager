@@ -60,7 +60,7 @@ public class ServerMatch extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        id = id;
+        this.id = id;
     }
 
     public Server getServer() {

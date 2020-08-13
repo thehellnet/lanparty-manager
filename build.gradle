@@ -79,6 +79,7 @@ def VERSIONS = [
         "commons-io"          : "2.7",
         "commons-lang"        : "3.11",
         "thymeleaf"           : "3.0.11.RELEASE",
+        "quartz"              : "2.3.2",
         "joda-time"           : "2.10.6",
         "joda-time-hibernate" : "1.4",
         "joda-convert"        : "2.2.1",
@@ -157,6 +158,9 @@ dependencies {
     implementation group: "org.apache.commons", name: "commons-lang3", version: VERSIONS["commons-lang"]
 
     implementation group: "org.thymeleaf", name: "thymeleaf", version: VERSIONS["thymeleaf"]
+
+    implementation group: "org.quartz-scheduler", name: "quartz", version: VERSIONS["quartz"]
+    implementation group: "org.quartz-scheduler", name: "quartz-jobs", version: VERSIONS["quartz"]
 
     implementation group: "joda-time", name: "joda-time", version: VERSIONS["joda-time"]
     implementation group: "joda-time", name: "joda-time-hibernate", version: VERSIONS["joda-time-hibernate"]

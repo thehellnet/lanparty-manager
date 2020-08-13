@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.LanPartyException;
 import org.thehellnet.lanparty.manager.model.logline.line.*;
-import org.thehellnet.lanparty.manager.model.message.ServerLogLine;
+import org.thehellnet.lanparty.manager.model.message.jms.ServerLogLine;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.lanparty.manager.settings.JmsSettings;
@@ -49,7 +49,7 @@ public class LogParsingService {
     }
 
     @Transactional
-    @JmsListener(destination = JmsSettings.JMS_PATH_LOG_PARSING)
+    @JmsListener(destination = JmsSettings.LOG_PARSING)
     public void parseLogLine(final Message<ServerLogLine> message) {
         ServerLogLine serverLogLine = message.getPayload();
 

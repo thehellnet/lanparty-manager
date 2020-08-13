@@ -5,5 +5,6 @@ public final class JmsSettings {
     private JmsSettings() {
     }
 
-    public static final String JMS_PATH_LOG_PARSING = "log-parsing";
+    public static final String LOG_PARSING = "log-parsing";
+    public static final String SHOWCASE_EVENT = "showcase-event";
 }

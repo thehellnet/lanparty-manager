@@ -48,7 +48,7 @@ public class GameFile extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        id = id;
+        this.id = id;
     }
 
     public Game getGame() {

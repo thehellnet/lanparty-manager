@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.model.message;
+package org.thehellnet.lanparty.manager.model.message.jms;
 
 import org.joda.time.DateTime;
 import org.thehellnet.lanparty.manager.model.persistence.Server;

@@ -29,7 +29,7 @@ public class MatchParent extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        id = id;
+        this.id = id;
     }
 
     public Match getMatch() {

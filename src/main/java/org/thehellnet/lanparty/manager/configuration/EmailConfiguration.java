@@ -15,33 +15,31 @@ import java.util.Properties;
 @Configuration
 public class EmailConfiguration implements TestAwareConfiguration {
 
-    private static final MailParams MAIL_PARAMS = YmlUtility.getInstance("configuration/mail.yml", MailParams.class).loadFromResources(runningTest);
-
     private static final Logger logger = LoggerFactory.getLogger(EmailConfiguration.class);
 
     @Bean
-    public JavaMailSender getJavaMailSender() {
+    public JavaMailSender getJavaMailSender(MailParams mailParams) {
         logger.info("Init javaMailSender Bean");
-        logger.debug("Mail server: Host: {} - Port: {}", MAIL_PARAMS.getHost(), MAIL_PARAMS.getPort());
+        logger.debug("Mail server: Host: {} - Port: {}", mailParams.getHost(), mailParams.getPort());
 
         JavaMailSenderImpl javaMailSenderImpl = new JavaMailSenderImpl();
-        javaMailSenderImpl.setHost(MAIL_PARAMS.getHost());
-        javaMailSenderImpl.setPort(MAIL_PARAMS.getPort());
-        javaMailSenderImpl.setUsername(MAIL_PARAMS.getUsername());
-        javaMailSenderImpl.setPassword(MAIL_PARAMS.getPassword());
+        javaMailSenderImpl.setHost(mailParams.getHost());
+        javaMailSenderImpl.setPort(mailParams.getPort());
+        javaMailSenderImpl.setUsername(mailParams.getUsername());
+        javaMailSenderImpl.setPassword(mailParams.getPassword());
 
         Properties properties = javaMailSenderImpl.getJavaMailProperties();
-        properties.put("mail.smtp.from", MAIL_PARAMS.getFrom());
-        properties.put("mail.transport.protocol", MAIL_PARAMS.isEnableSsl() ? "smtps" : "smtp");
-        properties.put("mail.smtp.auth", MAIL_PARAMS.isEnableAuth() ? "true" : "false");
-        properties.put("mail.smtp.starttls.enable", MAIL_PARAMS.isEnableTls() ? "true" : "false");
-        properties.put("mail.debug", MAIL_PARAMS.isEnableDebug() ? "true" : "false");
+        properties.put("mail.smtp.from", mailParams.getFrom());
+        properties.put("mail.transport.protocol", mailParams.isEnableSsl() ? "smtps" : "smtp");
+        properties.put("mail.smtp.auth", mailParams.isEnableAuth() ? "true" : "false");
+        properties.put("mail.smtp.starttls.enable", mailParams.isEnableTls() ? "true" : "false");
+        properties.put("mail.debug", mailParams.isEnableDebug() ? "true" : "false");
 
         return javaMailSenderImpl;
     }
 
     @Bean("mailParams")
     public MailParams getMailParams() {
-        return MAIL_PARAMS;
+        return YmlUtility.getInstance("configuration/mail.yml", MailParams.class).loadFromResources(runningTest);
     }
 }

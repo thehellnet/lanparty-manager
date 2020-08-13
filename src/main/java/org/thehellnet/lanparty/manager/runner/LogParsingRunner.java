@@ -5,10 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
-import org.thehellnet.lanparty.manager.model.message.ServerLogLine;
+import org.thehellnet.lanparty.manager.model.message.jms.ServerLogLine;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
 import org.thehellnet.lanparty.manager.service.ServerService;
 import org.thehellnet.lanparty.manager.settings.JmsSettings;
+import org.thehellnet.lanparty.manager.utility.JmsUtility;
 import org.thehellnet.utility.log.LogTailer;
 
 import javax.jms.ConnectionFactory;
@@ -29,14 +30,15 @@ public class LogParsingRunner extends AbstractRunner {
     private final Map<Server, LogTailer> logTailers = new HashMap<>();
     private final Map<Server, String> lastLines = new HashMap<>();
 
-    private JmsTemplate jmsTemplate;
+    private final JmsTemplate jmsTemplate;
 
     @Autowired
-    public LogParsingRunner(ServerService serverService, ConnectionFactory connectionFactory) {
+    public LogParsingRunner(ServerService serverService,
+                            ConnectionFactory connectionFactory) {
         this.serverService = serverService;
         this.connectionFactory = connectionFactory;
 
-        initJmsTemplate();
+        this.jmsTemplate = JmsUtility.prepareJmsTemplate(this.connectionFactory, JmsSettings.LOG_PARSING);
     }
 
     @Override
@@ -77,11 +79,6 @@ public class LogParsingRunner extends AbstractRunner {
             logger.debug("Removing LogTailer for server {}", thnOlgServer);
             logTailers.remove(thnOlgServer);
         }
-    }
-
-    private void initJmsTemplate() {
-        jmsTemplate = new JmsTemplate(this.connectionFactory);
-        jmsTemplate.setDefaultDestinationName(JmsSettings.JMS_PATH_LOG_PARSING);
     }
 
     private void sendServerLogLineMessage(Server server, String line) {

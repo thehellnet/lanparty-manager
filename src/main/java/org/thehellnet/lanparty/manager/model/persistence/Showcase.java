@@ -48,7 +48,7 @@ public class Showcase extends AbstractEntity {
     }
 
     public void setId(Long id) {
-        id = id;
+        this.id = id;
     }
 
     public String getTag() {
