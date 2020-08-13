@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.service;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,16 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.thehellnet.lanparty.manager.exception.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.NotFoundException;
 import org.thehellnet.lanparty.manager.model.persistence.Pane;
 import org.thehellnet.lanparty.manager.model.persistence.Showcase;
-import org.thehellnet.lanparty.manager.model.protocol.Command;
-import org.thehellnet.lanparty.manager.model.protocol.CommandParser;
-import org.thehellnet.lanparty.manager.model.protocol.ShowcaseNoun;
-import org.thehellnet.lanparty.manager.repository.AppUserRepository;
-import org.thehellnet.lanparty.manager.repository.PlayerRepository;
-import org.thehellnet.lanparty.manager.repository.SeatRepository;
-import org.thehellnet.lanparty.manager.repository.ShowcaseRepository;
+import org.thehellnet.lanparty.manager.model.protocol.*;
+import org.thehellnet.lanparty.manager.repository.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -34,6 +31,7 @@ public class ShowcaseService extends AbstractService {
     private final Object SYNC = new Object();
 
     private final ShowcaseRepository showcaseRepository;
+    private final PaneRepository paneRepository;
 
     private final Map<Long, WebSocketSession> sessions = new HashMap<>();
 
@@ -41,9 +39,11 @@ public class ShowcaseService extends AbstractService {
     public ShowcaseService(SeatRepository seatRepository,
                            PlayerRepository playerRepository,
                            AppUserRepository appUserRepository,
-                           ShowcaseRepository showcaseRepository) {
+                           ShowcaseRepository showcaseRepository,
+                           PaneRepository paneRepository) {
         super(seatRepository, playerRepository, appUserRepository);
         this.showcaseRepository = showcaseRepository;
+        this.paneRepository = paneRepository;
     }
 
     @Transactional(readOnly = true)
@@ -116,41 +116,37 @@ public class ShowcaseService extends AbstractService {
         parseCommand(showcase, command);
     }
 
-    public void parseCommand(Showcase showcase, Command command) {
+    private void parseCommand(Showcase showcase, Command command) {
         showcase = showcaseRepository.findById(showcase.getId()).orElseThrow();
 
-        JSONObject response;
+        JSONObject args = new JSONObject();
 
         if (command.getNoun() == ShowcaseNoun.TEST) {
-            switch (command.getVerb()) {
-                case PING:
-                    response = new JSONObject();
-                    response.put("ping", "pong");
-                    send(showcase, response);
-                    break;
-
-                case TEXT:
-                    response = new JSONObject();
-                    response.put("text", command.getArgs().getString("text"));
-                    send(showcase, response);
-                    break;
+            if (command.getVerb() == ShowcaseVerb.PING) {
+                handleTestPing(args);
+            } else if (command.getVerb() == ShowcaseVerb.TEXT) {
+                handleTestText(command, args);
+            } else if (command.getVerb() == ShowcaseVerb.GET) {
             }
 
         } else if (command.getNoun() == ShowcaseNoun.PANE) {
-            switch (command.getVerb()) {
-                case GET:
-                    List<Pane> panes = showcase.getPanes();
-                    response = new JSONObject();
-                    response.put("panes", panes);
-                    send(showcase, response);
-                    break;
+            if (command.getVerb() == ShowcaseVerb.GET) {
+                if (command.getArgs().isEmpty()) {
+                    handlePaneGet(showcase, args);
+                } else {
+                    handlePaneGetId(showcase, command.getArgs(), args);
+                }
             }
         }
+
+        Command responseCommand = new Command(command, args);
+        send(showcase, responseCommand);
     }
 
-    private void send(Showcase showcase, JSONObject response) {
+    private void send(Showcase showcase, Command responseCommand) {
         WebSocketSession webSocketSession = sessions.get(showcase.getId());
-        String message = response.toString();
+        CommandSerializer commandSerializer = new CommandSerializer(responseCommand);
+        String message = commandSerializer.serialize();
         TextMessage textMessage = new TextMessage(message);
 
         try {
@@ -158,5 +154,34 @@ public class ShowcaseService extends AbstractService {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private void handleTestPing(JSONObject args) {
+        args.put("ping", "pong");
+    }
+
+    private void handleTestText(Command command, JSONObject args) {
+        args.put("text", command.getArgs().getString("text"));
+    }
+
+    private void handlePaneGet(Showcase showcase, JSONObject args) {
+        List<Pane> panes = paneRepository.findAllByShowcaseOrderByDisplayOrderDesc(showcase);
+        JSONArray panesArray = new JSONArray();
+        for (Pane pane : panes) {
+            panesArray.put(pane.getId());
+        }
+
+        args.put("count", panes.size());
+        args.put("panes", panesArray);
+    }
+
+    private void handlePaneGetId(Showcase showcase, JSONObject commandArgs, JSONObject args) {
+        if (!commandArgs.has("id")) {
+            throw new InvalidDataException();
+        }
+
+        Long paneId = commandArgs.getLong("id");
+        Pane pane = paneRepository.findByShowcaseAndId(showcase, paneId);
+        args.put("pane", pane);
     }
 }
