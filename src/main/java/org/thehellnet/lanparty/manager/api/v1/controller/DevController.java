@@ -9,8 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thehellnet.lanparty.manager.model.constant.PaneMode;
+import org.thehellnet.lanparty.manager.model.constant.TournamentMode;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
+import org.thehellnet.lanparty.manager.service.TournamentService;
 import org.thehellnet.utility.PasswordUtility;
 
 @Controller
@@ -39,6 +42,8 @@ public class DevController {
 
     private static final String TEAM_1_NAME = "Test team 1";
     private static final String TEAM_2_NAME = "Test team 2";
+    private static final String TEAM_3_NAME = "Test team 3";
+    private static final String TEAM_4_NAME = "Test team 4";
 
     private static final String PLAYER_1_NICKNAME = "player1";
     private static final String PLAYER_2_NICKNAME = "player2";
@@ -109,6 +114,9 @@ public class DevController {
     private final MatchRepository matchRepository;
     private final ShowcaseRepository showcaseRepository;
     private final ServerRepository serverRepository;
+    private final PaneRepository paneRepository;
+
+    private final TournamentService tournamentService;
 
     public DevController(AppUserRepository appUserRepository,
                          GameRepository gameRepository,
@@ -118,7 +126,8 @@ public class DevController {
                          PlayerRepository playerRepository,
                          MatchRepository matchRepository,
                          ShowcaseRepository showcaseRepository,
-                         ServerRepository serverRepository) {
+                         ServerRepository serverRepository,
+                         PaneRepository paneRepository, TournamentService tournamentService) {
         this.appUserRepository = appUserRepository;
         this.gameRepository = gameRepository;
         this.tournamentRepository = tournamentRepository;
@@ -128,6 +137,8 @@ public class DevController {
         this.matchRepository = matchRepository;
         this.showcaseRepository = showcaseRepository;
         this.serverRepository = serverRepository;
+        this.paneRepository = paneRepository;
+        this.tournamentService = tournamentService;
     }
 
     @Transactional
@@ -170,16 +181,19 @@ public class DevController {
         data.put("team1", team1);
 
         Team team2 = prepareTeam(TEAM_2_NAME, tournament1);
-        data.put("team2", team1);
+        data.put("team2", team2);
+
+        Team team3 = prepareTeam(TEAM_3_NAME, tournament1);
+        data.put("team3", team3);
+
+        Team team4 = prepareTeam(TEAM_4_NAME, tournament1);
+        data.put("team4", team4);
 
         Player player1 = preparePlayer(appUser1, team1, PLAYER_1_NICKNAME);
         data.put("player1", player1);
 
         Player player2 = preparePlayer(appUser2, team2, PLAYER_2_NICKNAME);
         data.put("player2", player2);
-
-        Match match = prepareMatch(MATCH_NAME, tournament1, team1, team2);
-        data.put("match", match);
 
         Showcase showcase1 = prepareShowcase(SHOWCASE_1_TAG, SHOWCASE_1_NAME);
         data.put("showcase1", showcase1);
@@ -190,8 +204,21 @@ public class DevController {
         Showcase showcase3 = prepareShowcase(SHOWCASE_3_TAG, SHOWCASE_3_NAME);
         data.put("showcase3", showcase3);
 
+        Pane pane1 = preparePane(showcase1, PaneMode.MATCHES, tournament1);
+        data.put("pane1", pane1);
+
+        Pane pane2 = preparePane(showcase1, PaneMode.SCORES, tournament1);
+        data.put("pane1", pane2);
+
         Server server = prepareServer(SERVER_TAG, cod4Game, SERVER_ADDRESS, SERVER_PORT, SERVER_LOGFILE_PATH, SERVER_RCON_PASSWORD);
         data.put("server", server);
+
+        tournament1.setMode(TournamentMode.TEAMS_DOUBLE_ROUND_ROBIN_ELIMINATION);
+        tournament1 = tournamentRepository.save(tournament1);
+        tournamentService.generateMatchesTeamsDoubleRoundRobinElimination(tournament1);
+
+        tournament1 = tournamentRepository.findById(tournament1.getId()).orElseThrow();
+        data.put("tournament1", tournament1);
 
         return ResponseEntity.ok(data.toString());
     }
@@ -288,5 +315,14 @@ public class DevController {
         server.setLogParsingEnabled(logFile != null);
         server.setRconPassword(rconPassword);
         return serverRepository.save(server);
+    }
+
+    private Pane preparePane(Showcase showcase, PaneMode mode, Tournament tournament) {
+        Pane pane = paneRepository.findByShowcaseAndModeAndTournament(showcase, mode, tournament);
+        if (pane == null) {
+            pane = new Pane(showcase, mode, tournament);
+        }
+        pane.updateName();
+        return paneRepository.save(pane);
     }
 }
