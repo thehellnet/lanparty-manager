@@ -20,7 +20,7 @@ public class Seat extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seat_id_seq")
     @SequenceGenerator(name = "seat_id_seq", sequenceName = "seat_id_seq")
-    private Long Id;
+    private Long id;
 
     @Basic
     @Column(name = "ip_address", nullable = false)
@@ -62,11 +62,11 @@ public class Seat extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public String getIpAddress() {
@@ -119,7 +119,7 @@ public class Seat extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Seat seat = (Seat) o;
-        return Id.equals(seat.Id) &&
+        return id.equals(seat.id) &&
                 name.equals(seat.name) &&
                 Objects.equals(guid, seat.guid) &&
                 ipAddress.equals(seat.ipAddress) &&
@@ -130,6 +130,6 @@ public class Seat extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 }

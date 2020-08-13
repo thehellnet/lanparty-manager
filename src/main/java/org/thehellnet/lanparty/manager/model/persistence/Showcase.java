@@ -15,7 +15,7 @@ public class Showcase extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "showcase_id_seq")
     @SequenceGenerator(name = "showcase_id_seq", sequenceName = "showcase_id_seq")
-    private Long Id;
+    private Long id;
 
     @Basic
     @Column(name = "tag", nullable = false, unique = true)
@@ -44,11 +44,11 @@ public class Showcase extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        id = id;
     }
 
     public String getTag() {
@@ -101,7 +101,7 @@ public class Showcase extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Showcase showcase = (Showcase) o;
-        return Id.equals(showcase.Id) &&
+        return id.equals(showcase.id) &&
                 tag.equals(showcase.tag) &&
                 Objects.equals(name, showcase.name) &&
                 connected.equals(showcase.connected) &&
@@ -112,6 +112,6 @@ public class Showcase extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 }

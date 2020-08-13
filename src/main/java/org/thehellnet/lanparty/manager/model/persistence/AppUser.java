@@ -16,7 +16,7 @@ public class AppUser extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
     @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq")
-    private Long Id;
+    private Long id;
 
     @Basic
     @Column(name = "enabled", nullable = false)
@@ -96,11 +96,11 @@ public class AppUser extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public Boolean getEnabled() {
@@ -211,7 +211,7 @@ public class AppUser extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         AppUser appUser = (AppUser) o;
-        return Id.equals(appUser.Id) &&
+        return id.equals(appUser.id) &&
                 enabled.equals(appUser.enabled) &&
                 Objects.equals(confirmCode, appUser.confirmCode) &&
                 email.equals(appUser.email) &&
@@ -227,7 +227,7 @@ public class AppUser extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 
     @Override

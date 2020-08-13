@@ -14,11 +14,11 @@ import java.util.Objects;
 )
 public class GameFileHash extends AbstractEntity {
 
-    @javax.persistence.Id
+    @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "game_file_hash_id_seq")
     @SequenceGenerator(name = "game_file_hash_id_seq", sequenceName = "game_file_hash_id_seq")
-    private Long Id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gamefile_id", nullable = false)
@@ -43,11 +43,11 @@ public class GameFileHash extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        id = id;
     }
 
     public GameFile getGameFile() {
@@ -80,7 +80,7 @@ public class GameFileHash extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         GameFileHash that = (GameFileHash) o;
-        return Id.equals(that.Id) &&
+        return id.equals(that.id) &&
                 gameFile.equals(that.gameFile) &&
                 fileHash == that.fileHash &&
                 hashValue.equals(that.hashValue);
@@ -88,7 +88,7 @@ public class GameFileHash extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(id);
     }
 
     @Override

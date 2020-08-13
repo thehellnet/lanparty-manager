@@ -17,7 +17,7 @@ public class Pane extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pane_id_seq")
     @SequenceGenerator(name = "pane_id_seq", sequenceName = "pane_id_seq")
-    private Long Id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "showcase_id", nullable = false)
@@ -36,6 +36,10 @@ public class Pane extends AbstractEntity {
     @JoinColumn(name = "match_id")
     private Match match;
 
+    @Basic
+    @Column(name = "display_order", nullable = false)
+    private Integer displayOrder = 0;
+
     public Pane() {
     }
 
@@ -46,11 +50,11 @@ public class Pane extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        id = id;
     }
 
     public Showcase getShowcase() {
@@ -85,22 +89,36 @@ public class Pane extends AbstractEntity {
         this.match = match;
     }
 
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
+    }
+
+    @Override
+    public void updateName() {
+        name = String.format("%s - %s: %s", tournament, mode, name);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Pane pane = (Pane) o;
-        return Id.equals(pane.Id) &&
+        return id.equals(pane.id) &&
                 showcase.equals(pane.showcase) &&
                 name.equals(pane.name) &&
                 mode == pane.mode &&
                 Objects.equals(tournament, pane.tournament) &&
-                Objects.equals(match, pane.match);
+                Objects.equals(match, pane.match) &&
+                displayOrder.equals(pane.displayOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 }

@@ -17,7 +17,7 @@ public class Platform extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pane_id_seq")
     @SequenceGenerator(name = "pane_id_seq", sequenceName = "pane_id_seq")
-    private Long Id;
+    private Long id;
 
     @Basic
     @Column(name = "tag", nullable = false, unique = true)
@@ -35,11 +35,11 @@ public class Platform extends AbstractEntity {
 
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        id = id;
     }
 
     public String getTag() {
@@ -72,7 +72,7 @@ public class Platform extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Platform platform = (Platform) o;
-        return Id.equals(platform.Id) &&
+        return id.equals(platform.id) &&
                 tag.equals(platform.tag) &&
                 name.equals(platform.name) &&
                 games.equals(platform.games);
@@ -80,6 +80,6 @@ public class Platform extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 }

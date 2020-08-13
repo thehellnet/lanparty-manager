@@ -13,7 +13,7 @@ public class Game extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "game_id_seq")
     @SequenceGenerator(name = "game_id_seq", sequenceName = "game_id_seq")
-    private Long Id;
+    private Long id;
 
     @Basic
     @Column(name = "tag", nullable = false, unique = true)
@@ -42,11 +42,11 @@ public class Game extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public String getTag() {
@@ -87,7 +87,7 @@ public class Game extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Game game = (Game) o;
-        return Id.equals(game.Id) &&
+        return id.equals(game.id) &&
                 tag.equals(game.tag) &&
                 Objects.equals(name, game.name) &&
                 platform.equals(game.platform) &&
@@ -97,7 +97,7 @@ public class Game extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ServerMatch extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "server_match_id_seq")
     @SequenceGenerator(name = "server_match_id_seq", sequenceName = "server_match_id_seq")
-    private Long Id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "server_id", nullable = false)
@@ -56,11 +56,11 @@ public class ServerMatch extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        id = id;
     }
 
     public Server getServer() {
@@ -129,7 +129,7 @@ public class ServerMatch extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         ServerMatch that = (ServerMatch) o;
-        return Id.equals(that.Id) &&
+        return id.equals(that.id) &&
                 server.equals(that.server) &&
                 gametype.equals(that.gametype) &&
                 gameMap.equals(that.gameMap) &&
@@ -141,7 +141,7 @@ public class ServerMatch extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id);
+        return Objects.hash(id);
     }
 
     @Override

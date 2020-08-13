@@ -14,7 +14,7 @@ public class GameMap extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gamemap_id_seq")
     @SequenceGenerator(name = "gamemap_id_seq", sequenceName = "gamemap_id_seq")
-    private Long Id;
+    private Long id;
 
     @Basic
     @Column(name = "tag", nullable = false)
@@ -54,11 +54,11 @@ public class GameMap extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public String getTag() {
@@ -91,7 +91,7 @@ public class GameMap extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         GameMap gameMap = (GameMap) o;
-        return Id.equals(gameMap.Id) &&
+        return id.equals(gameMap.id) &&
                 tag.equals(gameMap.tag) &&
                 Objects.equals(name, gameMap.name) &&
                 game.equals(gameMap.game) &&
@@ -100,7 +100,7 @@ public class GameMap extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 
     @Override

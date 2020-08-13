@@ -18,7 +18,7 @@ public class Tournament extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tournament_id_seq")
     @SequenceGenerator(name = "tournament_id_seq", sequenceName = "tournament_id_seq")
-    private Long Id;
+    private Long id;
 
     @Basic
     @Column(name = "enabled", nullable = false)
@@ -93,11 +93,11 @@ public class Tournament extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public Boolean getEnabled() {
@@ -218,7 +218,7 @@ public class Tournament extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Tournament that = (Tournament) o;
-        return Id.equals(that.Id) &&
+        return id.equals(that.id) &&
                 enabled.equals(that.enabled) &&
                 name.equals(that.name) &&
                 game.equals(that.game) &&
@@ -238,6 +238,6 @@ public class Tournament extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 }

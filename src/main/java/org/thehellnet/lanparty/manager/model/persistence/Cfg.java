@@ -11,7 +11,7 @@ public class Cfg extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cfg_id_seq")
     @SequenceGenerator(name = "cfg_id_seq", sequenceName = "cfg_id_seq")
-    private Long Id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id", nullable = false)
@@ -40,11 +40,11 @@ public class Cfg extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public Player getPlayer() {
@@ -77,7 +77,7 @@ public class Cfg extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Cfg cfg = (Cfg) o;
-        return Id.equals(cfg.Id) &&
+        return id.equals(cfg.id) &&
                 player.equals(cfg.player) &&
                 game.equals(cfg.game) &&
                 cfgContent.equals(cfg.cfgContent);
@@ -85,7 +85,7 @@ public class Cfg extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 
     @Override

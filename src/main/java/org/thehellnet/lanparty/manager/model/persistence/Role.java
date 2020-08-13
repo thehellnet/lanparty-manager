@@ -13,7 +13,7 @@ public class Role extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_id_seq")
     @SequenceGenerator(name = "role_id_seq", sequenceName = "role_id_seq")
-    private Long Id;
+    private Long id;
 
     @ManyToMany(mappedBy = "roles")
     private List<AppUser> appUsers = new ArrayList<>();
@@ -26,11 +26,11 @@ public class Role extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        id = id;
     }
 
     public List<AppUser> getAppUsers() {
@@ -47,13 +47,13 @@ public class Role extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Role role = (Role) o;
-        return Id.equals(role.Id) &&
+        return id.equals(role.id) &&
                 name.equals(role.name) &&
                 appUsers.equals(role.appUsers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 }

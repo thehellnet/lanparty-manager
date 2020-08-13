@@ -14,7 +14,7 @@ public class AppUserToken extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appuser_token_id_seq")
     @SequenceGenerator(name = "appuser_token_id_seq", sequenceName = "appuser_token_id_seq")
-    private Long Id;
+    private Long id;
 
     @Basic
     @Column(name = "token", nullable = false, unique = true)
@@ -43,11 +43,11 @@ public class AppUserToken extends AbstractEntity {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public String getToken() {
@@ -88,7 +88,7 @@ public class AppUserToken extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         AppUserToken that = (AppUserToken) o;
-        return Id.equals(that.Id) &&
+        return id.equals(that.id) &&
                 token.equals(that.token) &&
                 appUser.equals(that.appUser) &&
                 creationDateTime.equals(that.creationDateTime) &&
@@ -97,7 +97,7 @@ public class AppUserToken extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Id);
+        return Objects.hash(super.hashCode(), id);
     }
 
     @Override
