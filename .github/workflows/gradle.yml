@@ -9,7 +9,8 @@ jobs:
     name: Build, Tests, and send results to CodeCoverage and SonarQube
     runs-on: ubuntu-latest
     env:
-      SONAR_TOKEN: 7e488b421d40d7ec49ef00804e7dca46046e40e3
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     services:
       postgres:
         image: postgres
