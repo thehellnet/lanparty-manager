@@ -10,6 +10,7 @@ import org.thehellnet.lanparty.manager.model.persistence.Match;
 import org.thehellnet.lanparty.manager.model.persistence.Team;
 import org.thehellnet.lanparty.manager.model.persistence.Tournament;
 import org.thehellnet.lanparty.manager.repository.MatchRepository;
+import org.thehellnet.lanparty.manager.repository.TeamRepository;
 import org.thehellnet.lanparty.manager.repository.TournamentRepository;
 
 import java.util.List;
@@ -23,12 +24,15 @@ public class TournamentService {
 
     private final TournamentRepository tournamentRepository;
     private final MatchRepository matchRepository;
+    private final TeamRepository teamRepository;
 
     @Autowired
     public TournamentService(TournamentRepository tournamentRepository,
-                             MatchRepository matchRepository) {
+                             MatchRepository matchRepository,
+                             TeamRepository teamRepository) {
         this.tournamentRepository = tournamentRepository;
         this.matchRepository = matchRepository;
+        this.teamRepository = teamRepository;
     }
 
     @Transactional
@@ -41,7 +45,7 @@ public class TournamentService {
             throw new InvalidDataException("Tournament mode is not valid");
         }
 
-        List<Team> teams = tournament.getTeams();
+        List<Team> teams = teamRepository.findAllByTournament(tournament);
         if (teams.size() != 4) {
             throw new InvalidDataException("Teams count for this tournament mode must be 4");
         }
@@ -73,8 +77,8 @@ public class TournamentService {
         ensureEliminationMatchExists(tournament, 2, 12, "Half-final 1");
         ensureEliminationMatchExists(tournament, 2, 13, "Half-final 2");
 
-        ensureEliminationMatchExists(tournament, 3, 14, "Final");
-        ensureEliminationMatchExists(tournament, 3, 15, "Third and Fourth");
+        ensureEliminationMatchExists(tournament, 3, 14, "Third and Fourth");
+        ensureEliminationMatchExists(tournament, 3, 15, "Final");
 
         tournamentRepository.save(tournament);
     }
