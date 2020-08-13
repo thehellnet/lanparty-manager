@@ -2,7 +2,7 @@ package org.thehellnet.lanparty.manager.service;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
-import org.thehellnet.lanparty.manager.model.message.ServerLogLine;
+import org.thehellnet.lanparty.manager.model.message.jms.ServerLogLine;
 
 public class TestMessageBuilder<T> {
 

@@ -4,7 +4,7 @@ import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.Message
 import org.thehellnet.lanparty.manager.model.logline.line.InitGameLogLine
-import org.thehellnet.lanparty.manager.model.message.ServerLogLine
+import org.thehellnet.lanparty.manager.model.message.jms.ServerLogLine
 import org.thehellnet.lanparty.manager.model.persistence.*
 
 class LogParsingServiceTest extends ServiceSpecification {
