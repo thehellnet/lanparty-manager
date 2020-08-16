@@ -49,6 +49,8 @@ public class SpectatorClient extends StoppableThread {
     }
 
     public synchronized void sendCommand(SpectatorCommand command) {
+        logger.debug("Sending command {}", command);
+
         String rawCommand = SpectatorCommandSerializer.serialize(command);
         byte[] rawBytes = rawCommand.getBytes();
 

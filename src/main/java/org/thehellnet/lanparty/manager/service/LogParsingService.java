@@ -13,6 +13,7 @@ import org.thehellnet.lanparty.manager.model.logline.line.*;
 import org.thehellnet.lanparty.manager.model.message.jms.ServerLogLine;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
+import org.thehellnet.lanparty.manager.runner.SpectatorRunner;
 import org.thehellnet.lanparty.manager.settings.JmsSettings;
 import org.thehellnet.lanparty.manager.utility.logline.LogLineParser;
 import org.thehellnet.lanparty.manager.utility.logline.LogLineParserFactory;
@@ -32,7 +33,8 @@ public class LogParsingService {
     private final GameMapRepository gameMapRepository;
 
     private final ServerMatchService serverMatchService;
-    private final SpectatorService spectatorService;
+
+    private final SpectatorRunner spectatorRunner;
 
     @Autowired
     public LogParsingService(ServerRepository serverRepository,
@@ -41,14 +43,14 @@ public class LogParsingService {
                              GametypeRepository gametypeRepository,
                              GameMapRepository gameMapRepository,
                              ServerMatchService serverMatchService,
-                             SpectatorService spectatorService) {
+                             SpectatorRunner spectatorRunner) {
         this.serverRepository = serverRepository;
         this.serverMatchRepository = serverMatchRepository;
         this.serverMatchPlayerRepository = serverMatchPlayerRepository;
         this.gametypeRepository = gametypeRepository;
         this.gameMapRepository = gameMapRepository;
         this.serverMatchService = serverMatchService;
-        this.spectatorService = spectatorService;
+        this.spectatorRunner = spectatorRunner;
     }
 
     @Transactional
@@ -117,7 +119,7 @@ public class LogParsingService {
     public void parseInitGameLogLine(Server server, InitGameLogLine initGameLogLine) {
         closeRunningServerMatch(server);
         ServerMatch serverMatch = createNewServerMatch(server, initGameLogLine);
-        spectatorService.joinSpectator(server);
+        spectatorRunner.joinSpectator(server);
         logger.debug("New ServerMatch created at {}: {}", initGameLogLine.getUptime(), serverMatch);
     }
 

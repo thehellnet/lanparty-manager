@@ -33,12 +33,8 @@ public abstract class StoppableThread {
             return;
         }
 
-        keepRunning = true;
-
-        try {
-            thread.join();
-        } catch (InterruptedException ignored) {
-        }
+        keepRunning = false;
+        thread.interrupt();
     }
 
     public void join() {
