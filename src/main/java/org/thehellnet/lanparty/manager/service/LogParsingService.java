@@ -32,6 +32,7 @@ public class LogParsingService {
     private final GameMapRepository gameMapRepository;
 
     private final ServerMatchService serverMatchService;
+    private final SpectatorService spectatorService;
 
     @Autowired
     public LogParsingService(ServerRepository serverRepository,
@@ -39,13 +40,15 @@ public class LogParsingService {
                              ServerMatchPlayerRepository serverMatchPlayerRepository,
                              GametypeRepository gametypeRepository,
                              GameMapRepository gameMapRepository,
-                             ServerMatchService serverMatchService) {
+                             ServerMatchService serverMatchService,
+                             SpectatorService spectatorService) {
         this.serverRepository = serverRepository;
         this.serverMatchRepository = serverMatchRepository;
         this.serverMatchPlayerRepository = serverMatchPlayerRepository;
         this.gametypeRepository = gametypeRepository;
         this.gameMapRepository = gameMapRepository;
         this.serverMatchService = serverMatchService;
+        this.spectatorService = spectatorService;
     }
 
     @Transactional
@@ -114,6 +117,7 @@ public class LogParsingService {
     public void parseInitGameLogLine(Server server, InitGameLogLine initGameLogLine) {
         closeRunningServerMatch(server);
         ServerMatch serverMatch = createNewServerMatch(server, initGameLogLine);
+        spectatorService.joinSpectator(server);
         logger.debug("New ServerMatch created at {}: {}", initGameLogLine.getUptime(), serverMatch);
     }
 
