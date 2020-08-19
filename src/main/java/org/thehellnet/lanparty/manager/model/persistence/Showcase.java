@@ -1,6 +1,8 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.joda.time.DateTime;
+import org.springframework.data.rest.core.annotation.Description;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,31 +11,40 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "showcase")
+@Description("Showcase")
 public class Showcase extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "showcase_id_seq")
-    @SequenceGenerator(name = "showcase_id_seq", sequenceName = "showcase_id_seq")
+    @SequenceGenerator(name = "showcase_id_seq", sequenceName = "showcase_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('showcase_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @Basic
     @Column(name = "tag", nullable = false, unique = true)
+    @Description("Unique tag")
     private String tag;
 
     @Basic
     @Column(name = "connected", nullable = false)
+    @ColumnDefault("FALSE")
+    @Description("If showcase is connected or not")
     private Boolean connected = Boolean.FALSE;
 
     @Basic
     @Column(name = "last_address")
+    @Description("Last IP Addresses")
     private String lastAddress;
 
     @Basic
     @Column(name = "last_contact")
+    @Description("Date & Time of last contact")
     private DateTime lastContact;
 
     @OneToMany(mappedBy = "showcase", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Panes for this Showcase")
     private List<Pane> panes = new ArrayList<>();
 
     public Showcase() {

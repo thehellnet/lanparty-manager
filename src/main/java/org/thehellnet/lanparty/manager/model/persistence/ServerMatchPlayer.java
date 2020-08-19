@@ -1,50 +1,65 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.joda.time.DateTime;
+import org.springframework.data.rest.core.annotation.Description;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "server_match_player")
+@Description("Player of the server match")
 public class ServerMatchPlayer extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "server_match_id_seq")
-    @SequenceGenerator(name = "server_match_id_seq", sequenceName = "server_match_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "server_match_player_id_seq")
+    @SequenceGenerator(name = "server_match_player_id_seq", sequenceName = "server_match_player_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('server_match_player_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_match_id", nullable = false)
+    @Description("Related Server Match")
     private ServerMatch serverMatch;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
+    @Description("Related player")
     private Player player;
 
     @Basic
     @Column(name = "num")
+    @Description("Progressive number in server")
     private Integer num;
 
     @Basic
     @Column(name = "guid")
+    @Description("Player GUID")
     private String guid;
 
     @Basic
     @Column(name = "join_ts")
+    @Description("Date & Time of first join")
     private DateTime joinTs;
 
     @Basic
     @Column(name = "quit_ts")
+    @Description("Date & Time of quit")
     private DateTime quitTs;
 
     @Basic
-    @Column(name = "kills")
+    @Column(name = "kills", nullable = false)
+    @ColumnDefault("0")
+    @Description("Number of kills")
     private Integer kills = 0;
 
     @Basic
-    @Column(name = "deaths")
+    @Column(name = "deaths", nullable = false)
+    @ColumnDefault("0")
+    @Description("Number of deaths")
     private Integer deaths = 0;
 
     public ServerMatchPlayer() {

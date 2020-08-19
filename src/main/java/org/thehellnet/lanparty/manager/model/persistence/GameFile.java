@@ -1,5 +1,8 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,32 +10,40 @@ import java.util.Objects;
 
 @Entity
 @Table(
-        name = "gamefile",
+        name = "game_file",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"game_id", "filename"})
+                @UniqueConstraint(name = "game_filename_uniq", columnNames = {"game_id", "filename"})
         }
 )
+@Description("Game file")
 public class GameFile extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "game_file_id_seq")
-    @SequenceGenerator(name = "game_file_id_seq", sequenceName = "game_file_id_seq")
+    @SequenceGenerator(name = "game_file_id_seq", sequenceName = "game_file_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('game_file_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
+    @Description("Related game")
     private Game game;
 
     @Basic
     @Column(name = "filename", nullable = false)
+    @Description("File name and path (relative to game root)")
     private String filename;
 
     @Basic
     @Column(name = "required", nullable = false)
+    @ColumnDefault("TRUE")
+    @Description("If file is required or not")
     private Boolean required = Boolean.TRUE;
 
     @OneToMany(mappedBy = "gameFile", cascade = CascadeType.ALL)
+    @Description("File hashes and checksums")
     private List<GameFileHash> gameFileHashes = new ArrayList<>();
 
     public GameFile() {

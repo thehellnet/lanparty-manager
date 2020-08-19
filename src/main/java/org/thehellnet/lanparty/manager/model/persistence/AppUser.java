@@ -1,6 +1,7 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.ColumnDefault;
 import org.joda.time.DateTime;
 import org.springframework.data.rest.core.annotation.Description;
 import org.thehellnet.utility.ConfirmCodeUtility;
@@ -9,62 +10,77 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "appuser")
+@Table(name = "app_user")
+@Description("Physical user for Lan Party")
 public class AppUser extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
-    @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_user_id_seq")
+    @SequenceGenerator(name = "app_user_id_seq", sequenceName = "app_user_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('app_user_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @Basic
     @Column(name = "enabled", nullable = false)
+    @ColumnDefault("FALSE")
     @Description("User enabled or not")
     private Boolean enabled = Boolean.FALSE;
 
     @Basic
     @Column(name = "confirm_code")
+    @Description("Confirmation code")
     private String confirmCode;
 
     @Basic
     @Column(name = "email", nullable = false, unique = true)
+    @Description("User e-mail address (used for login)")
     private String email;
 
     @JsonIgnore
     @Basic
     @Column(name = "password", nullable = false)
+    @Description("User password")
     private String password;
 
     @Basic
     @Column(name = "nickname", unique = true)
+    @Description("User default nickname")
     private String nickname;
 
     @Basic
     @Column(name = "register_ts", nullable = false)
+    @ColumnDefault("now()")
+    @Description("Date & time of registration")
     private DateTime registerTs = DateTime.now();
 
     @Basic
     @Column(name = "confirm_ts")
+    @Description("Date & time of account confirmation")
     private DateTime confirmTs;
 
     @Basic
     @Column(name = "last_login_ts")
+    @Description("Date & time of last login")
     private DateTime lastLoginTs;
 
     @Basic
     @Column(name = "barcode", unique = true)
+    @Description("Contactless barcode")
     private String barcode;
 
     @JsonIgnore
     @OneToMany(mappedBy = "appUser", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("User tokens")
     private Set<AppUserToken> appUserTokens = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "appuser_role",
             joinColumns = @JoinColumn(name = "appuser_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
+    @Description("Associated roles")
     private List<Role> roles = new ArrayList<>();
 
     public AppUser() {

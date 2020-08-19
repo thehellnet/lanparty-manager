@@ -1,7 +1,9 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.ColumnDefault;
 import org.joda.time.DateTime;
+import org.springframework.data.rest.core.annotation.Description;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,40 +12,51 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "server_match")
+@Description("Match in server")
 public class ServerMatch extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "server_match_id_seq")
-    @SequenceGenerator(name = "server_match_id_seq", sequenceName = "server_match_id_seq")
+    @SequenceGenerator(name = "server_match_id_seq", sequenceName = "server_match_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('server_match_id_seq')")
+    @Description("Primary key")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_id", nullable = false)
+    @Description("Related server")
     private Server server;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gametype_id", nullable = false)
+    @Description("Gametype")
     private Gametype gametype;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gamemap_id", nullable = false)
+    @Description("Map")
     private GameMap gameMap;
 
     @Basic
     @Column(name = "start_ts", nullable = false)
+    @ColumnDefault("now()")
+    @Description("Date & Time of start")
     private DateTime startTs = DateTime.now();
 
     @Basic
     @Column(name = "end_ts")
+    @Description("Date & Time of enf")
     private DateTime endTs;
 
     @OneToOne
     @JoinColumn(name = "match_id")
+    @Description("Related match")
     private Match match;
 
     @JsonIgnore
     @OneToMany(mappedBy = "serverMatch", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Match Players")
     private List<ServerMatchPlayer> serverMatchPlayers = new ArrayList<>();
 
     public ServerMatch() {

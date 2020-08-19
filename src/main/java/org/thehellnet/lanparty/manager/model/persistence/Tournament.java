@@ -1,7 +1,9 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.ColumnDefault;
 import org.joda.time.DateTime;
+import org.springframework.data.rest.core.annotation.Description;
 import org.thehellnet.lanparty.manager.model.constant.TournamentMode;
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus;
 
@@ -12,70 +14,95 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tournament")
+@Description("Tournament")
 public class Tournament extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tournament_id_seq")
-    @SequenceGenerator(name = "tournament_id_seq", sequenceName = "tournament_id_seq")
+    @SequenceGenerator(name = "tournament_id_seq", sequenceName = "tournament_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('tournament_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @Basic
     @Column(name = "enabled", nullable = false)
+    @Description("Enabled")
     private Boolean enabled = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
+    @Description("Related game")
     private Game game;
 
     @Basic
     @Column(name = "start_ts", nullable = false)
+    @ColumnDefault("now()")
+    @Description("Date & Time of start")
     private DateTime startTs = DateTime.now();
 
     @Basic
     @Column(name = "end_ts", nullable = false)
+    @ColumnDefault("now()")
+    @Description("Date & Time of end")
     private DateTime endTs = DateTime.now();
 
     @Basic
     @Column(name = "registration_enabled", nullable = false)
+    @Description("Enable registration")
     private Boolean registrationEnabled = true;
 
     @Basic
     @Column(name = "start_registration_ts", nullable = false)
+    @ColumnDefault("now()")
+    @Description("Date & Time of start of registration period")
     private DateTime startRegistrationTs = DateTime.now();
 
     @Basic
     @Column(name = "end_registration_ts", nullable = false)
+    @ColumnDefault("now()")
+    @Description("Date & Time of end of registration period")
     private DateTime endRegistrationTs = DateTime.now();
 
     @Basic
     @Column(name = "tournament_mode", nullable = false)
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'SINGLE_ELIMINATION'")
+    @Description("Tournament mode")
     private TournamentMode mode = TournamentMode.SINGLE_ELIMINATION;
 
     @Basic
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'SCHEDULED'")
+    @Description("Tournament status")
     private TournamentStatus status = TournamentStatus.SCHEDULED;
 
     @Basic
     @Column(name = "cfg", nullable = false, length = 1048576)
+    @ColumnDefault("''")
+    @Description("Tournament CFG")
     private String cfg = "";
 
     @Basic
     @Column(name = "override_cfg", nullable = false, length = 1048576)
+    @ColumnDefault("''")
+    @Description("CFG overrides")
     private String overrideCfg = "";
 
     @JsonIgnore
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Related seats")
     private List<Seat> seats = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Related matches")
     private List<Match> matches = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "tournament", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Related teams")
     private List<Team> teams = new ArrayList<>();
 
     public Tournament() {

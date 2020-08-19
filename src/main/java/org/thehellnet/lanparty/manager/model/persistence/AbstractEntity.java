@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.rest.core.annotation.Description;
 import org.thehellnet.lanparty.manager.model.persistence.annotation.Hidden;
 
 import javax.persistence.*;
@@ -22,37 +23,44 @@ public abstract class AbstractEntity implements Serializable {
     @Basic
     @Column(name = "created_ts")
     @CreatedDate
+    @Description("Date & Time of record creation")
     protected DateTime createdTs;
 
     @Hidden
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     @CreatedBy
+    @Description("User which creates record")
     protected AppUser createdBy;
 
     @Hidden
     @Basic
     @Column(name = "last_modified_ts")
     @LastModifiedDate
+    @Description("Date & Time of last modification")
     protected DateTime lastModifiedTs;
 
     @Hidden
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "last_modified_by")
     @LastModifiedBy
+    @Description("User which applyies last modification")
     protected AppUser lastModifiedBy;
 
     @Hidden
     @Basic
     @Column(name = "active", nullable = false)
+    @Description("Record active")
     protected Boolean active = Boolean.TRUE;
 
     @Basic
     @Column(name = "name", nullable = false)
+    @Description("Name")
     protected String name = "";
 
     @Hidden
     @Transient
+    @Description("Friendly name")
     protected String friendlyName;
 
     public Boolean getActive() {

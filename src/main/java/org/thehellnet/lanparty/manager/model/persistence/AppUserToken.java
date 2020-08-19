@@ -1,35 +1,45 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.joda.time.DateTime;
+import org.springframework.data.rest.core.annotation.Description;
 import org.thehellnet.utility.TokenUtility;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "appuser_token")
+@Table(name = "app_user_token")
+@Description("User token")
 public class AppUserToken extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appuser_token_id_seq")
-    @SequenceGenerator(name = "appuser_token_id_seq", sequenceName = "appuser_token_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_user_token_id_seq")
+    @SequenceGenerator(name = "app_user_token_id_seq", sequenceName = "app_user_token_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('app_user_token_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @Basic
     @Column(name = "token", nullable = false, unique = true)
+    @Description("Token")
     private String token;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appuser_id", nullable = false)
+    @Description("Related user")
     private AppUser appUser;
 
     @Basic
     @Column(name = "creation_datetime", nullable = false)
+    @ColumnDefault("now()")
+    @Description("Date & Time of creation")
     private DateTime creationDateTime = new DateTime();
 
     @Basic
     @Column(name = "expiration_datetime")
+    @Description("Date & Time of expiration")
     private DateTime expirationDateTime;
 
     public AppUserToken() {

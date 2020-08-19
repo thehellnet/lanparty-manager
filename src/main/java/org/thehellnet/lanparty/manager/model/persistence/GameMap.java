@@ -1,32 +1,42 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "gamemap",
+@Table(name = "game_map",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"tag", "game_id"})
+                @UniqueConstraint(name = "game_tag_uniq", columnNames = {"game_id", "tag"})
         })
+@Description("Game map")
 public class GameMap extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gamemap_id_seq")
-    @SequenceGenerator(name = "gamemap_id_seq", sequenceName = "gamemap_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "game_map_id_seq")
+    @SequenceGenerator(name = "game_map_id_seq", sequenceName = "game_map_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('game_map_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @Basic
     @Column(name = "tag", nullable = false)
+    @Description("Map tag")
     private String tag;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
+    @Description("Related game")
     private Game game;
 
     @Basic
-    @Column(name = "stock")
-    private Boolean stock = false;
+    @Column(name = "stock", nullable = false)
+    @ColumnDefault("FALSE")
+    @Description("If map is stock or user-added")
+    private Boolean stock = Boolean.FALSE;
 
     public GameMap() {
     }

@@ -1,5 +1,8 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,26 +10,33 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "game")
+@Description("Game")
 public class Game extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "game_id_seq")
-    @SequenceGenerator(name = "game_id_seq", sequenceName = "game_id_seq")
+    @SequenceGenerator(name = "game_id_seq", sequenceName = "game_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('game_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @Basic
     @Column(name = "tag", nullable = false, unique = true)
+    @Description("Game unique tag")
     private String tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "platform_id", nullable = false)
+    @Description("Related platform")
     private Platform platform;
 
     @OneToMany(mappedBy = "game", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Available gametypes")
     private List<GameGametype> gameGametypes = new ArrayList<>();
 
     @OneToMany(mappedBy = "game", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Available maps")
     private List<GameMap> gameMaps = new ArrayList<>();
 
     public Game() {

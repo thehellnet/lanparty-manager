@@ -1,28 +1,38 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "cfg")
+@Description("CFG")
 public class Cfg extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cfg_id_seq")
-    @SequenceGenerator(name = "cfg_id_seq", sequenceName = "cfg_id_seq")
+    @SequenceGenerator(name = "cfg_id_seq", sequenceName = "cfg_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('cfg_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id", nullable = false)
+    @Description("Related player")
     private Player player;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
+    @Description("Related game")
     private Game game;
 
     @Basic
     @Column(name = "cfg_content", nullable = false, length = 1048576)
+    @ColumnDefault("''")
+    @Description("Cfg content")
     private String cfgContent = "";
 
     public Cfg() {

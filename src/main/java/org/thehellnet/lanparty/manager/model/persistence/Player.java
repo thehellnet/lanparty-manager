@@ -1,36 +1,37 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "player")
+@Description("Player in team")
 public class Player extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_id_seq")
-    @SequenceGenerator(name = "team_id_seq", sequenceName = "team_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "player_id_seq")
+    @SequenceGenerator(name = "player_id_seq", sequenceName = "player_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('player_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @Basic
     @Column(name = "nickname", nullable = false, unique = true)
+    @Description("Nickname")
     private String nickname;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appuser_id")
+    @Description("Related user")
     private AppUser appUser;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "player", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    private List<Cfg> cfgs = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = false)
+    @Description("Related team")
     private Team team;
 
     public Player() {
@@ -75,14 +76,6 @@ public class Player extends AbstractEntity {
         this.appUser = appUser;
     }
 
-    public List<Cfg> getCfgs() {
-        return cfgs;
-    }
-
-    public void setCfgs(List<Cfg> cfgs) {
-        this.cfgs = cfgs;
-    }
-
     public Team getTeam() {
         return team;
     }
@@ -100,7 +93,6 @@ public class Player extends AbstractEntity {
         return id.equals(player.id) &&
                 nickname.equals(player.nickname) &&
                 Objects.equals(appUser, player.appUser) &&
-                cfgs.equals(player.cfgs) &&
                 team.equals(player.team);
     }
 

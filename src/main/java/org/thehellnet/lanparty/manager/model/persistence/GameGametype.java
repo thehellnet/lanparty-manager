@@ -1,31 +1,40 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "game_gametype",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"game_id", "gametype_id"})
+                @UniqueConstraint(name = "game_gametype_uniq", columnNames = {"game_id", "gametype_id"})
         })
+@Description("Implementation of gametype in game")
 public class GameGametype extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "game_gametype_id_seq")
-    @SequenceGenerator(name = "game_gametype_id_seq", sequenceName = "game_gametype_id_seq")
+    @SequenceGenerator(name = "game_gametype_id_seq", sequenceName = "game_gametype_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('game_gametype_id_seq')")
+    @Description("Primary key")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
+    @Description("Related game")
     private Game game;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gametype_id", nullable = false)
+    @Description("Related gametype")
     private Gametype gametype;
 
     @Basic
     @Column(name = "tag", nullable = false)
+    @Description("Gametype tag used on cfg")
     private String tag;
 
     public GameGametype() {

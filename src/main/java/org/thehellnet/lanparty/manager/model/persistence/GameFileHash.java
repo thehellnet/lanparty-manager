@@ -1,5 +1,7 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
 import org.thehellnet.lanparty.manager.model.constant.FileHash;
 
 import javax.persistence.*;
@@ -7,30 +9,37 @@ import java.util.Objects;
 
 @Entity
 @Table(
-        name = "gamefilehash",
+        name = "game_file_hash",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"gamefile_id", "filehash"})
+                @UniqueConstraint(name = "game_file_file_hash_uniq", columnNames = {"game_file_id", "file_hash"})
         }
 )
+@Description("Game file hash")
 public class GameFileHash extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "game_file_hash_id_seq")
-    @SequenceGenerator(name = "game_file_hash_id_seq", sequenceName = "game_file_hash_id_seq")
+    @SequenceGenerator(name = "game_file_hash_id_seq", sequenceName = "game_file_hash_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('game_file_hash_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gamefile_id", nullable = false)
+    @JoinColumn(name = "game_file_id", nullable = false)
+    @Description("Related file")
     private GameFile gameFile;
 
     @Basic
-    @Column(name = "filehash", nullable = false)
+    @Column(name = "file_hash", nullable = false)
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'SHA256'")
+    @Description("Hash algorithm")
     private FileHash fileHash = FileHash.SHA256;
 
     @Basic
     @Column(name = "hash_value", nullable = false)
+    @Description("Hash value")
     private String hashValue;
 
     public GameFileHash() {

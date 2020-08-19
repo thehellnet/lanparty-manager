@@ -1,7 +1,9 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.ColumnDefault;
 import org.joda.time.DateTime;
+import org.springframework.data.rest.core.annotation.Description;
 import org.thehellnet.lanparty.manager.model.constant.MatchStatus;
 
 import javax.persistence.*;
@@ -11,72 +13,93 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "match")
+@Description("Match of tournament")
 public class Match extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "match_id_seq")
-    @SequenceGenerator(name = "match_id_seq", sequenceName = "match_id_seq")
+    @SequenceGenerator(name = "match_id_seq", sequenceName = "match_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('match_id_seq')")
+    @Description("Primary key")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id", nullable = false)
+    @Description("Related tournament")
     private Tournament tournament;
 
     @Basic
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'SCHEDULED'")
+    @Description("Match status")
     private MatchStatus status = MatchStatus.SCHEDULED;
 
     @Basic
     @Column(name = "scheduled_start_ts")
+    @Description("Scheduled date & time of start")
     private DateTime scheduledStartTs;
 
     @Basic
     @Column(name = "scheduled_end_ts")
+    @Description("Scheduled date & time of end")
     private DateTime scheduledEndTs;
 
     @Basic
     @Column(name = "start_ts")
+    @Description("Real date & time of start")
     private DateTime startTs;
 
     @Basic
     @Column(name = "end_ts")
+    @Description("Real date & time of end")
     private DateTime endTs;
 
     @Basic
     @Column(name = "play_order", nullable = false)
+    @ColumnDefault("0")
+    @Description("Play order (lower first)")
     private Integer playOrder = 0;
 
     @Basic
     @Column(name = "level", nullable = false)
+    @ColumnDefault("0")
+    @Description("Level of nesting (in elimination or double round-robin, lower first)")
     private Integer level = 0;
 
     @JsonIgnore
     @OneToMany(mappedBy = "match", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Parent matches (for elimination mode)")
     private List<MatchParent> matchParents = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_id")
+    @Description("Server in which this match is played")
     private Server server;
 
     @OneToOne(mappedBy = "match")
+    @Description("Related Server match")
     private ServerMatch serverMatch;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gamemap_id")
+    @Description("Map of the match")
     private GameMap gameMap;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gametype_id")
+    @Description("Gametype of the match")
     private Gametype gametype;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "local_team_id")
+    @Description("Local team")
     private Team localTeam;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "guest_team_id")
+    @Description("Guest team")
     private Team guestTeam;
 
     public Match() {

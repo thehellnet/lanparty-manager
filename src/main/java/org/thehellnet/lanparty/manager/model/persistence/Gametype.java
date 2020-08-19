@@ -1,5 +1,8 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,21 +11,21 @@ import java.util.Objects;
 @Entity
 @Table(name = "gametype",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"name"})
+                @UniqueConstraint(name = "name_uniq", columnNames = {"name"})
         })
+@Description("Gametype")
 public class Gametype extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gametype_id_seq")
-    @SequenceGenerator(name = "gametype_id_seq", sequenceName = "gametype_id_seq")
+    @SequenceGenerator(name = "gametype_id_seq", sequenceName = "gametype_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('gametype_id_seq')")
+    @Description("Primary key")
     private Long id;
 
-    @Basic
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
-
     @OneToMany(mappedBy = "gametype", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Related games")
     private List<GameGametype> gameGametypes = new ArrayList<>();
 
     public Gametype() {
@@ -40,14 +43,6 @@ public class Gametype extends AbstractEntity {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public List<GameGametype> getGameGametypes() {
         return gameGametypes;
     }
@@ -63,7 +58,6 @@ public class Gametype extends AbstractEntity {
         if (!super.equals(o)) return false;
         Gametype gametype = (Gametype) o;
         return id.equals(gametype.id) &&
-                name.equals(gametype.name) &&
                 gameGametypes.equals(gametype.gameGametypes);
     }
 

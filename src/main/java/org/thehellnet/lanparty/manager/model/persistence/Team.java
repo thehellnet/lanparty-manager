@@ -1,5 +1,8 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,27 +12,34 @@ import java.util.Objects;
 @Entity
 @Table(name = "team",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"name"})
+                @UniqueConstraint(name = "name_uniq", columnNames = {"name"})
         })
+@Description("Tournament team")
 public class Team extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_id_seq")
-    @SequenceGenerator(name = "team_id_seq", sequenceName = "team_id_seq")
+    @SequenceGenerator(name = "team_id_seq", sequenceName = "team_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('team_id_seq')")
+    @Description("Primary key")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id", nullable = false)
+    @Description("Related Tournament")
     private Tournament tournament;
 
     @OneToMany(mappedBy = "team", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Related Players")
     private List<Player> players = new ArrayList<>();
 
     @OneToMany(mappedBy = "localTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Related teams as locals")
     private List<Match> localMatches = new ArrayList<>();
 
     @OneToMany(mappedBy = "guestTeam", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Related teams as guests")
     private List<Match> guestMatches = new ArrayList<>();
 
     public Team() {

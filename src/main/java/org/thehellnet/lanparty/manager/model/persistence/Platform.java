@@ -1,6 +1,9 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,21 +12,26 @@ import java.util.Objects;
 @Entity
 @Table(name = "platform",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"name"})
+                @UniqueConstraint(name = "name_uniq", columnNames = {"name"})
         })
+@Description("Gaming platform")
 public class Platform extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pane_id_seq")
-    @SequenceGenerator(name = "pane_id_seq", sequenceName = "pane_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "platform_id_seq")
+    @SequenceGenerator(name = "platform_id_seq", sequenceName = "platform_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('platform_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @Basic
     @Column(name = "tag", nullable = false, unique = true)
+    @Description("Platform unique tag")
     private String tag;
 
     @OneToMany(mappedBy = "platform", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Description("Available games")
     private List<Game> games = new ArrayList<>();
 
     public Platform() {
@@ -50,14 +58,6 @@ public class Platform extends AbstractEntity {
         this.tag = tag;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public List<Game> getGames() {
         return games;
     }
@@ -74,7 +74,6 @@ public class Platform extends AbstractEntity {
         Platform platform = (Platform) o;
         return id.equals(platform.id) &&
                 tag.equals(platform.tag) &&
-                name.equals(platform.name) &&
                 games.equals(platform.games);
     }
 

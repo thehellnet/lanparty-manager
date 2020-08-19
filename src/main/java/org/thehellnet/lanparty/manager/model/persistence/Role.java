@@ -1,5 +1,8 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.rest.core.annotation.Description;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,15 +10,19 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "role")
+@Description("User role")
 public class Role extends AbstractEntity {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_id_seq")
-    @SequenceGenerator(name = "role_id_seq", sequenceName = "role_id_seq")
+    @SequenceGenerator(name = "role_id_seq", sequenceName = "role_id_seq", allocationSize = 1)
+    @ColumnDefault("nextval('role_id_seq')")
+    @Description("Primary key")
     private Long id;
 
     @ManyToMany(mappedBy = "roles")
+    @Description("Users whit this role")
     private List<AppUser> appUsers = new ArrayList<>();
 
     public Role() {
@@ -48,7 +55,6 @@ public class Role extends AbstractEntity {
         if (!super.equals(o)) return false;
         Role role = (Role) o;
         return id.equals(role.id) &&
-                name.equals(role.name) &&
                 appUsers.equals(role.appUsers);
     }
 
