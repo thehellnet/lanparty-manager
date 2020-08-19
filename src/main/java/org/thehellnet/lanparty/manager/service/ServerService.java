@@ -27,6 +27,6 @@ public class ServerService extends AbstractService {
 
     @Transactional(readOnly = true)
     public List<Server> getLogEnabledServers() {
-        return serverRepository.findByLogParsingEnabledIsTrue();
+        return serverRepository.findAllByLogParsingEnabledIsTrue();
     }
 }

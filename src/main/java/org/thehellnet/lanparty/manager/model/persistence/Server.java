@@ -44,6 +44,18 @@ public class Server extends AbstractEntity {
     @Column(name = "log_parsing_enabled", nullable = false)
     private Boolean logParsingEnabled = false;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "server_binary_id")
+    private ServerBinary serverBinary;
+
+    @Basic
+    @Column(name = "server_binary_enabled", nullable = false)
+    private Boolean serverBinaryEnabled = false;
+
+    @Basic
+    @Column(name = "server_binary_extra_commands", nullable = false, length = 1048576)
+    private String serverBinaryExtraCommands = "";
+
     public Server() {
     }
 
@@ -129,6 +141,30 @@ public class Server extends AbstractEntity {
         this.logParsingEnabled = logParsingEnabled;
     }
 
+    public ServerBinary getServerBinary() {
+        return serverBinary;
+    }
+
+    public void setServerBinary(ServerBinary serverBinary) {
+        this.serverBinary = serverBinary;
+    }
+
+    public Boolean getServerBinaryEnabled() {
+        return serverBinaryEnabled;
+    }
+
+    public void setServerBinaryEnabled(Boolean serverBinaryEnabled) {
+        this.serverBinaryEnabled = serverBinaryEnabled;
+    }
+
+    public String getServerBinaryExtraCommands() {
+        return serverBinaryExtraCommands;
+    }
+
+    public void setServerBinaryExtraCommands(String serverBinaryExtraCommands) {
+        this.serverBinaryExtraCommands = serverBinaryExtraCommands;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -143,6 +179,9 @@ public class Server extends AbstractEntity {
                 port.equals(server.port) &&
                 Objects.equals(rconPassword, server.rconPassword) &&
                 Objects.equals(logFile, server.logFile) &&
+                Objects.equals(serverBinary, server.serverBinary) &&
+                serverBinaryEnabled.equals(server.serverBinaryEnabled) &&
+                serverBinaryExtraCommands.equals(server.serverBinaryExtraCommands) &&
                 logParsingEnabled.equals(server.logParsingEnabled);
     }
 

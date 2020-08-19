@@ -26,4 +26,12 @@ public final class PathUtility {
 
         return finalPath;
     }
+
+    public static String absolute(File directory, String file) {
+        return new File(directory, file).getAbsolutePath();
+    }
+
+    public static String absolute(String directory, String file) {
+        return new File(directory, file).getAbsolutePath();
+    }
 }

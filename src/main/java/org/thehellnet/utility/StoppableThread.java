@@ -1,6 +1,11 @@
 package org.thehellnet.utility;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class StoppableThread {
+
+    private static final Logger logger = LoggerFactory.getLogger(StoppableThread.class);
 
     private Thread thread;
     private boolean keepRunning = false;
@@ -23,9 +28,13 @@ public abstract class StoppableThread {
             return;
         }
 
+        preStart();
+
         thread = new Thread(this::loop);
         keepRunning = true;
         thread.start();
+
+        postStart();
     }
 
     public synchronized void stop() {
@@ -33,8 +42,12 @@ public abstract class StoppableThread {
             return;
         }
 
+        preStop();
+
         keepRunning = false;
         thread.interrupt();
+
+        postStop();
     }
 
     public void join() {
@@ -50,18 +63,34 @@ public abstract class StoppableThread {
 
     private void loop() {
         while (keepRunning) {
-            job();
+            try {
+                job();
+            } catch (Throwable throwable) {
+                logger.error("Error executing loop job", throwable);
+                break;
+            }
 
             if (loopInterval > 0) {
                 try {
                     //noinspection BusyWait
                     Thread.sleep(loopInterval);
                 } catch (InterruptedException ignored) {
-                    break;
                 }
             }
         }
     }
 
-    protected abstract void job();
+    protected void preStart() {
+    }
+
+    protected void postStart() {
+    }
+
+    protected void preStop() {
+    }
+
+    protected void postStop() {
+    }
+
+    protected abstract void job() throws Throwable;
 }

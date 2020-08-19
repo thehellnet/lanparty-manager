@@ -8,7 +8,7 @@ import org.thehellnet.lanparty.manager.init.InitializedEvent;
 @Component
 public abstract class AbstractRunner {
 
-    private final Object SYNC = new Object();
+    private final Object sync = new Object();
 
     private boolean running = false;
 
@@ -23,7 +23,7 @@ public abstract class AbstractRunner {
     }
 
     public void start() {
-        synchronized (SYNC) {
+        synchronized (sync) {
             if (running) {
                 return;
             }
@@ -34,7 +34,7 @@ public abstract class AbstractRunner {
     }
 
     public void stop() {
-        synchronized (SYNC) {
+        synchronized (sync) {
             if (!running) {
                 return;
             }
