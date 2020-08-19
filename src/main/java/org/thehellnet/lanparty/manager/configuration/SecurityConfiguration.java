@@ -28,6 +28,8 @@ import java.util.List;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter implements TestAwareConfiguration {
 
+    private static final String REST_URL = "/api/public/rest/**";
+
     private final AuthenticationFilter authenticationFilter;
 
     public SecurityConfiguration(AuthenticationFilter authenticationFilter) {
@@ -51,12 +53,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
                 .antMatchers("/api/public/v1/**").permitAll();
 
         http.authorizeRequests()
-                .antMatchers("/api/public/rest/**").fullyAuthenticated()
-                .antMatchers(HttpMethod.GET, "/api/public/rest/**").hasRole(RoleName.USER.name())
-                .antMatchers(HttpMethod.POST, "/api/public/rest/**").hasRole(RoleName.ADMIN.name())
-                .antMatchers(HttpMethod.PUT, "/api/public/rest/**").hasRole(RoleName.ADMIN.name())
-                .antMatchers(HttpMethod.PATCH, "/api/public/rest/**").hasRole(RoleName.ADMIN.name())
-                .antMatchers(HttpMethod.DELETE, "/api/public/rest/**").hasRole(RoleName.ADMIN.name());
+                .antMatchers(REST_URL).fullyAuthenticated()
+                .antMatchers(HttpMethod.GET, REST_URL).hasRole(RoleName.USER.name())
+                .antMatchers(HttpMethod.POST, REST_URL).hasRole(RoleName.ADMIN.name())
+                .antMatchers(HttpMethod.PUT, REST_URL).hasRole(RoleName.ADMIN.name())
+                .antMatchers(HttpMethod.PATCH, REST_URL).hasRole(RoleName.ADMIN.name())
+                .antMatchers(HttpMethod.DELETE, REST_URL).hasRole(RoleName.ADMIN.name());
 
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }

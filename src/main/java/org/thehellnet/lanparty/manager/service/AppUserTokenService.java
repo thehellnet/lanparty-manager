@@ -11,6 +11,7 @@ import org.thehellnet.lanparty.manager.repository.SeatRepository;
 import org.thehellnet.utility.TokenUtility;
 
 @Service
+@Transactional
 public class AppUserTokenService extends AbstractService {
 
     private final AppUserTokenRepository appUserTokenRepository;
@@ -37,6 +38,11 @@ public class AppUserTokenService extends AbstractService {
             return null;
         }
 
-        return appUserToken.getAppUser();
+        AppUser appUser = appUserToken.getAppUser();
+
+        //noinspection ResultOfMethodCallIgnored
+        appUser.getAppUserTokens().size();
+
+        return appUser;
     }
 }
