@@ -1,10 +1,10 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.joda.time.DateTime;
 import org.springframework.data.rest.core.annotation.Description;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -46,7 +46,7 @@ public class Seat extends AbstractEntity {
     @Column(name = "last_contact", nullable = false)
     @ColumnDefault("now()")
     @Description("Date & Time of last contact")
-    private DateTime lastContact = new DateTime();
+    private LocalDateTime lastContact = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
@@ -104,11 +104,11 @@ public class Seat extends AbstractEntity {
         this.tournament = tournament;
     }
 
-    public DateTime getLastContact() {
+    public LocalDateTime getLastContact() {
         return lastContact;
     }
 
-    public void setLastContact(DateTime lastContact) {
+    public void setLastContact(LocalDateTime lastContact) {
         this.lastContact = lastContact;
     }
 
@@ -121,7 +121,7 @@ public class Seat extends AbstractEntity {
     }
 
     public void updateLastContact() {
-        lastContact = DateTime.now();
+        lastContact = LocalDateTime.now();
     }
 
     @Override

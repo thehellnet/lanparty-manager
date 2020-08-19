@@ -105,7 +105,7 @@ public class AuthService extends AbstractService {
         LoginAuthResponseDTO responseDTO = new LoginAuthResponseDTO();
         responseDTO.id = appUserToken.getId();
         responseDTO.token = appUserToken.getToken();
-        responseDTO.expiration = appUserToken.getExpirationDateTime();
+        responseDTO.expiration = appUserToken.getExpirationTs();
         return responseDTO;
     }
 

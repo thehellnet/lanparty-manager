@@ -12,6 +12,9 @@ import org.thehellnet.lanparty.manager.model.persistence.AppUser
 import org.thehellnet.utility.PasswordUtility
 import spock.lang.Unroll
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+
 class AuthServiceTest extends ServiceSpecification {
 
     @Autowired
@@ -230,7 +233,7 @@ class AuthServiceTest extends ServiceSpecification {
 
         then:
         noExceptionThrown()
-        responseDTO.expiration.isAfterNow()
+        responseDTO.expiration.isAfter(LocalDateTime.now())
     }
 
     def "login with new created user"() {
@@ -263,7 +266,7 @@ class AuthServiceTest extends ServiceSpecification {
 
         then:
         noExceptionThrown()
-        responseDTO.expiration.isAfterNow()
+        responseDTO.expiration.isAfter(LocalDateTime.now())
     }
 
     def "register new user"() {
@@ -336,6 +339,6 @@ class AuthServiceTest extends ServiceSpecification {
         then:
         appUser.enabled
         appUser.confirmCode == null
-        appUser.confirmTs != null && appUser.confirmTs.isBeforeNow()
+        appUser.confirmTs != null && appUser.confirmTs.isBefore(LocalDateTime.now())
     }
 }

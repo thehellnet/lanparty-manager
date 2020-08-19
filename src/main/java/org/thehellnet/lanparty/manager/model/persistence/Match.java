@@ -2,11 +2,11 @@ package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
-import org.joda.time.DateTime;
 import org.springframework.data.rest.core.annotation.Description;
 import org.thehellnet.lanparty.manager.model.constant.MatchStatus;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,22 +39,22 @@ public class Match extends AbstractEntity {
     @Basic
     @Column(name = "scheduled_start_ts")
     @Description("Scheduled date & time of start")
-    private DateTime scheduledStartTs;
+    private LocalDateTime scheduledStartTs;
 
     @Basic
     @Column(name = "scheduled_end_ts")
     @Description("Scheduled date & time of end")
-    private DateTime scheduledEndTs;
+    private LocalDateTime scheduledEndTs;
 
     @Basic
     @Column(name = "start_ts")
     @Description("Real date & time of start")
-    private DateTime startTs;
+    private LocalDateTime startTs;
 
     @Basic
     @Column(name = "end_ts")
     @Description("Real date & time of end")
-    private DateTime endTs;
+    private LocalDateTime endTs;
 
     @Basic
     @Column(name = "play_order", nullable = false)
@@ -162,35 +162,35 @@ public class Match extends AbstractEntity {
         this.status = status;
     }
 
-    public DateTime getScheduledStartTs() {
+    public LocalDateTime getScheduledStartTs() {
         return scheduledStartTs;
     }
 
-    public void setScheduledStartTs(DateTime scheduledStartTs) {
+    public void setScheduledStartTs(LocalDateTime scheduledStartTs) {
         this.scheduledStartTs = scheduledStartTs;
     }
 
-    public DateTime getScheduledEndTs() {
+    public LocalDateTime getScheduledEndTs() {
         return scheduledEndTs;
     }
 
-    public void setScheduledEndTs(DateTime scheduledEndTs) {
+    public void setScheduledEndTs(LocalDateTime scheduledEndTs) {
         this.scheduledEndTs = scheduledEndTs;
     }
 
-    public DateTime getStartTs() {
+    public LocalDateTime getStartTs() {
         return startTs;
     }
 
-    public void setStartTs(DateTime startTs) {
+    public void setStartTs(LocalDateTime startTs) {
         this.startTs = startTs;
     }
 
-    public DateTime getEndTs() {
+    public LocalDateTime getEndTs() {
         return endTs;
     }
 
-    public void setEndTs(DateTime endTs) {
+    public void setEndTs(LocalDateTime endTs) {
         this.endTs = endTs;
     }
 

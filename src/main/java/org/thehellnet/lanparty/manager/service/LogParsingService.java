@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.service;
 
-import org.joda.time.DateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.thehellnet.lanparty.manager.settings.JmsSettings;
 import org.thehellnet.lanparty.manager.utility.logline.LogLineParser;
 import org.thehellnet.lanparty.manager.utility.logline.LogLineParserFactory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -63,7 +64,7 @@ public class LogParsingService {
         Server server = serverRepository.findById(serverLogLine.getThnOlgServer().getId()).orElseThrow();
         Game game = server.getGame();
 
-        DateTime dateTime = DateTime.now();
+        LocalDateTime dateTime = LocalDateTime.now();
 
         LogLineParser logLineParser = LogLineParserFactory.getLogLineParser(game, rawLogLine);
         LogLine logLine;

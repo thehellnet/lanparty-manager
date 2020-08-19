@@ -2,10 +2,10 @@ package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
-import org.joda.time.DateTime;
 import org.springframework.data.rest.core.annotation.Description;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,12 +42,12 @@ public class ServerMatch extends AbstractEntity {
     @Column(name = "start_ts", nullable = false)
     @ColumnDefault("now()")
     @Description("Date & Time of start")
-    private DateTime startTs = DateTime.now();
+    private LocalDateTime startTs = LocalDateTime.now();
 
     @Basic
     @Column(name = "end_ts")
     @Description("Date & Time of enf")
-    private DateTime endTs;
+    private LocalDateTime endTs;
 
     @OneToOne
     @JoinColumn(name = "match_id")
@@ -100,19 +100,19 @@ public class ServerMatch extends AbstractEntity {
         this.gameMap = gameMap;
     }
 
-    public DateTime getStartTs() {
+    public LocalDateTime getStartTs() {
         return startTs;
     }
 
-    public void setStartTs(DateTime startTs) {
+    public void setStartTs(LocalDateTime startTs) {
         this.startTs = startTs;
     }
 
-    public DateTime getEndTs() {
+    public LocalDateTime getEndTs() {
         return endTs;
     }
 
-    public void setEndTs(DateTime endTs) {
+    public void setEndTs(LocalDateTime endTs) {
         this.endTs = endTs;
     }
 
@@ -133,7 +133,7 @@ public class ServerMatch extends AbstractEntity {
     }
 
     public void close() {
-        this.endTs = DateTime.now();
+        this.endTs = LocalDateTime.now();
     }
 
     @Override

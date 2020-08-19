@@ -1,6 +1,7 @@
 package org.thehellnet.utility;
 
-import org.joda.time.DateTime;
+
+import java.time.LocalDateTime;
 
 public final class TokenUtility {
 
@@ -17,11 +18,11 @@ public final class TokenUtility {
         return StringUtility.randomString(SEED, OFFSET, LENGTH);
     }
 
-    public static DateTime generateExpiration(DateTime creationDateTime) {
+    public static LocalDateTime generateExpiration(LocalDateTime creationDateTime) {
         return creationDateTime.plusDays(EXIPRATION_DAYS);
     }
 
-    public static boolean validateExpiration(DateTime expirationDateTime) {
-        return expirationDateTime.isAfterNow();
+    public static boolean validateExpiration(LocalDateTime expirationDateTime) {
+        return expirationDateTime.isAfter(LocalDateTime.now());
     }
 }

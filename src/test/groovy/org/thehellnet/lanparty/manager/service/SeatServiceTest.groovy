@@ -1,11 +1,12 @@
 package org.thehellnet.lanparty.manager.service
 
-import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.thehellnet.lanparty.manager.exception.NotFoundException
 import org.thehellnet.lanparty.manager.model.persistence.Player
 import org.thehellnet.lanparty.manager.model.persistence.Seat
 import spock.lang.Unroll
+
+import java.time.LocalDateTime
 
 class SeatServiceTest extends ServiceSpecification {
 
@@ -58,7 +59,7 @@ class SeatServiceTest extends ServiceSpecification {
     def "updateLastContact existing address"() {
         given:
         String address = seat.ipAddress
-        DateTime lastContact = seat.lastContact
+        LocalDateTime lastContact = seat.lastContact
 
         when:
         seatService.updateLastContact(address)

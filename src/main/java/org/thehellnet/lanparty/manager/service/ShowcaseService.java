@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.service;
 
-import org.joda.time.DateTime;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.quartz.*;
@@ -21,8 +21,10 @@ import org.thehellnet.lanparty.manager.model.protocol.Action;
 import org.thehellnet.lanparty.manager.model.protocol.Command;
 import org.thehellnet.lanparty.manager.model.protocol.CommandSerializer;
 import org.thehellnet.lanparty.manager.repository.*;
+import org.thehellnet.utility.LocalDateTimeUtility;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -171,7 +173,7 @@ public class ShowcaseService extends AbstractService {
 
     private void scheduleNextCall(Showcase showcase, int duration) {
         logger.debug("Scheduling next call for showcase {} after {} seconds", showcase, duration);
-        DateTime executionDateTime = DateTime.now().plusSeconds(duration);
+        LocalDateTime executionDateTime = LocalDateTime.now().plusSeconds(duration);
         scheduleJob(showcase, executionDateTime);
     }
 
@@ -187,7 +189,7 @@ public class ShowcaseService extends AbstractService {
         }
     }
 
-    private void scheduleJob(Showcase showcase, DateTime executionDateTime) {
+    private void scheduleJob(Showcase showcase, LocalDateTime executionDateTime) {
         logger.info("Scheduling Job for {}", showcase);
 
         JobKey jobKey = prepareJobKey(showcase);
@@ -232,10 +234,10 @@ public class ShowcaseService extends AbstractService {
         JSONObject matchData = new JSONObject();
         matchData.put("id", match.getId());
         matchData.put("status", match.getStatus());
-        matchData.put("scheduledStartTs", match.getScheduledStartTs() != null ? match.getScheduledStartTs().getMillis() : JSONObject.NULL);
-        matchData.put("scheduledEndTs", match.getScheduledEndTs() != null ? match.getScheduledEndTs().getMillis() : JSONObject.NULL);
-        matchData.put("startTs", match.getStartTs() != null ? match.getStartTs().getMillis() : JSONObject.NULL);
-        matchData.put("endTs", match.getEndTs() != null ? match.getEndTs().getMillis() : JSONObject.NULL);
+        matchData.put("scheduledStartTs", match.getScheduledStartTs() != null ? LocalDateTimeUtility.getMillis(match.getScheduledStartTs()) : JSONObject.NULL);
+        matchData.put("scheduledEndTs", match.getScheduledEndTs() != null ? LocalDateTimeUtility.getMillis(match.getScheduledEndTs()) : JSONObject.NULL);
+        matchData.put("startTs", match.getStartTs() != null ? LocalDateTimeUtility.getMillis(match.getStartTs()) : JSONObject.NULL);
+        matchData.put("endTs", match.getEndTs() != null ? LocalDateTimeUtility.getMillis(match.getEndTs()) : JSONObject.NULL);
         matchData.put("playOrder", match.getPlayOrder());
         matchData.put("level", match.getLevel());
         matchData.put("gameMap", match.getGameMap() != null ? match.getGameMap().getName() : JSONObject.NULL);
@@ -245,9 +247,9 @@ public class ShowcaseService extends AbstractService {
         return matchData;
     }
 
-    private static Trigger prepareTrigger(DateTime executionDateTime, JobDetail jobDetail) {
+    private static Trigger prepareTrigger(LocalDateTime executionDateTime, JobDetail jobDetail) {
         return TriggerBuilder.newTrigger()
-                .startAt(executionDateTime.toDate())
+                .startAt(LocalDateTimeUtility.toDate(executionDateTime))
                 .forJob(jobDetail)
                 .build();
     }

@@ -1,12 +1,13 @@
 package org.thehellnet.lanparty.manager.service
 
-import org.joda.time.DateTime
 import org.thehellnet.lanparty.manager.ContextSpecification
 import org.thehellnet.lanparty.manager.model.persistence.*
 
+import java.time.LocalDateTime
+
 abstract class ServiceSpecification extends ContextSpecification {
 
-    protected ServerMatch generateServerMatch(boolean closed = false, DateTime startTs = DateTime.now()) {
+    protected ServerMatch generateServerMatch(boolean closed = false, LocalDateTime startTs = LocalDateTime.now()) {
         Server server = createServer()
         Game game = gameRepository.findByTag(GAME_TAG)
         Gametype gametype = gametypeRepository.findByGameAndTag(game, GAMETYPE_TAG)

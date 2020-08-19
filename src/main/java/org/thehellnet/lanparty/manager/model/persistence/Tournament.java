@@ -2,12 +2,13 @@ package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
-import org.joda.time.DateTime;
+
 import org.springframework.data.rest.core.annotation.Description;
 import org.thehellnet.lanparty.manager.model.constant.TournamentMode;
 import org.thehellnet.lanparty.manager.model.constant.TournamentStatus;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,13 +40,13 @@ public class Tournament extends AbstractEntity {
     @Column(name = "start_ts", nullable = false)
     @ColumnDefault("now()")
     @Description("Date & Time of start")
-    private DateTime startTs = DateTime.now();
+    private LocalDateTime startTs = LocalDateTime.now();
 
     @Basic
     @Column(name = "end_ts", nullable = false)
     @ColumnDefault("now()")
     @Description("Date & Time of end")
-    private DateTime endTs = DateTime.now();
+    private LocalDateTime endTs = LocalDateTime.now();
 
     @Basic
     @Column(name = "registration_enabled", nullable = false)
@@ -56,13 +57,13 @@ public class Tournament extends AbstractEntity {
     @Column(name = "start_registration_ts", nullable = false)
     @ColumnDefault("now()")
     @Description("Date & Time of start of registration period")
-    private DateTime startRegistrationTs = DateTime.now();
+    private LocalDateTime startRegistrationTs = LocalDateTime.now();
 
     @Basic
     @Column(name = "end_registration_ts", nullable = false)
     @ColumnDefault("now()")
     @Description("Date & Time of end of registration period")
-    private DateTime endRegistrationTs = DateTime.now();
+    private LocalDateTime endRegistrationTs = LocalDateTime.now();
 
     @Basic
     @Column(name = "tournament_mode", nullable = false)
@@ -143,19 +144,19 @@ public class Tournament extends AbstractEntity {
         this.game = game;
     }
 
-    public DateTime getStartTs() {
+    public LocalDateTime getStartTs() {
         return startTs;
     }
 
-    public void setStartTs(DateTime startTs) {
+    public void setStartTs(LocalDateTime startTs) {
         this.startTs = startTs;
     }
 
-    public DateTime getEndTs() {
+    public LocalDateTime getEndTs() {
         return endTs;
     }
 
-    public void setEndTs(DateTime endTs) {
+    public void setEndTs(LocalDateTime endTs) {
         this.endTs = endTs;
     }
 
@@ -167,19 +168,19 @@ public class Tournament extends AbstractEntity {
         this.registrationEnabled = registrationEnabled;
     }
 
-    public DateTime getStartRegistrationTs() {
+    public LocalDateTime getStartRegistrationTs() {
         return startRegistrationTs;
     }
 
-    public void setStartRegistrationTs(DateTime startRegistrationTs) {
+    public void setStartRegistrationTs(LocalDateTime startRegistrationTs) {
         this.startRegistrationTs = startRegistrationTs;
     }
 
-    public DateTime getEndRegistrationTs() {
+    public LocalDateTime getEndRegistrationTs() {
         return endRegistrationTs;
     }
 
-    public void setEndRegistrationTs(DateTime endRegistrationTs) {
+    public void setEndRegistrationTs(LocalDateTime endRegistrationTs) {
         this.endRegistrationTs = endRegistrationTs;
     }
 

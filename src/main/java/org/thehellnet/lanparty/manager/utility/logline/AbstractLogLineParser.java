@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.utility.logline;
 
-import org.joda.time.DateTime;
+
 import org.thehellnet.lanparty.manager.exception.InvalidDataException;
 import org.thehellnet.lanparty.manager.exception.logline.LogLineParserException;
 import org.thehellnet.lanparty.manager.model.logline.LineEvent;
@@ -8,6 +8,7 @@ import org.thehellnet.lanparty.manager.model.logline.line.LogLine;
 import org.thehellnet.lanparty.manager.model.logline.line.UnusefulLogLine;
 import org.thehellnet.utility.StringUtility;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public abstract class AbstractLogLineParser implements LogLineParser {
 
     protected final String rawLogLine;
 
-    protected DateTime lineDateTime;
+    protected LocalDateTime lineDateTime;
     protected int lineTime;
 
     public AbstractLogLineParser(String rawLogLine) {
@@ -25,7 +26,7 @@ public abstract class AbstractLogLineParser implements LogLineParser {
     }
 
     @Override
-    public LogLine parse(DateTime dateTime) {
+    public LogLine parse(LocalDateTime dateTime) {
         validate(rawLogLine);
 
         List<String> mainItems = StringUtility.splitSpaces(rawLogLine);

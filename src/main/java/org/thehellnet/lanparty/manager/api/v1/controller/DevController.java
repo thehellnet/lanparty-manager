@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.api.v1.controller;
 
-import org.joda.time.DateTime;
+
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,8 @@ import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.lanparty.manager.service.TournamentService;
 import org.thehellnet.utility.PasswordUtility;
+
+import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping(path = "/dev")
@@ -243,7 +245,7 @@ public class DevController {
         tournament.setGame(game);
         tournament.setCfg(cfg);
 
-        DateTime now = DateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         tournament.setStartRegistrationTs(now);
         tournament.setEndRegistrationTs(now.plusHours(1));
         tournament.setStartTs(now.plusHours(1).plusMinutes(15));

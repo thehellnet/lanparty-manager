@@ -1,7 +1,6 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import org.hibernate.envers.Audited;
-import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -12,6 +11,7 @@ import org.thehellnet.lanparty.manager.model.persistence.annotation.Hidden;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @MappedSuperclass
@@ -24,7 +24,7 @@ public abstract class AbstractEntity implements Serializable {
     @Column(name = "created_ts")
     @CreatedDate
     @Description("Date & Time of record creation")
-    protected DateTime createdTs;
+    protected LocalDateTime createdTs;
 
     @Hidden
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,7 +38,7 @@ public abstract class AbstractEntity implements Serializable {
     @Column(name = "last_modified_ts")
     @LastModifiedDate
     @Description("Date & Time of last modification")
-    protected DateTime lastModifiedTs;
+    protected LocalDateTime lastModifiedTs;
 
     @Hidden
     @ManyToOne(fetch = FetchType.LAZY)

@@ -3,7 +3,6 @@ package org.thehellnet.lanparty.manager.configuration;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -28,8 +27,6 @@ public class JacksonConfiguration implements TestAwareConfiguration, WebMvcConfi
 
     private MappingJackson2HttpMessageConverter prepareJacksonConverter() {
         ObjectMapper objectMapper = new ObjectMapper();
-
-        objectMapper.registerModule(new JodaModule());
 
         objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);

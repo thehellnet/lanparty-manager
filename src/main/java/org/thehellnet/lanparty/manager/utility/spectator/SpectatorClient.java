@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.utility.spectator;
 
-import org.joda.time.DateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thehellnet.lanparty.manager.model.spectator.SpectatorCommand;
@@ -11,6 +11,7 @@ import org.thehellnet.utility.StoppableThread;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.time.LocalDateTime;
 
 public class SpectatorClient extends StoppableThread {
 
@@ -23,7 +24,7 @@ public class SpectatorClient extends StoppableThread {
 
     private boolean enableNextPlayer = true;
     private int nextPlayerInterval = 10;
-    private DateTime lastNextPlayer = DateTime.now();
+    private LocalDateTime lastNextPlayer = LocalDateTime.now();
 
     public SpectatorClient(String address, int port) {
         super(LOOP_INTERVAL);
@@ -87,13 +88,13 @@ public class SpectatorClient extends StoppableThread {
             return;
         }
 
-        DateTime now = DateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         if (lastNextPlayer.plusSeconds(nextPlayerInterval).isAfter(now)) {
             return;
         }
 
         SpectatorCommand command = new SpectatorCommand(SpectatorCommandAction.NEXT_PLAYER);
         sendCommand(command);
-        lastNextPlayer = DateTime.now();
+        lastNextPlayer = LocalDateTime.now();
     }
 }

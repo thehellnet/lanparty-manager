@@ -1,8 +1,9 @@
 package org.thehellnet.lanparty.manager.model.logline.line;
 
-import org.joda.time.DateTime;
+
 import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @LineEventType(LineEvent.KILL)
@@ -21,7 +22,7 @@ public class KillLogLine extends LogLine {
     private String bullet;
     private String zone;
 
-    public KillLogLine(DateTime dateTime, int uptime) {
+    public KillLogLine(LocalDateTime dateTime, int uptime) {
         super(dateTime, uptime);
     }
 

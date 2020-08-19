@@ -1,11 +1,12 @@
 package org.thehellnet.lanparty.manager.service
 
-import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.Message
 import org.thehellnet.lanparty.manager.model.logline.line.InitGameLogLine
 import org.thehellnet.lanparty.manager.model.message.jms.ServerLogLine
 import org.thehellnet.lanparty.manager.model.persistence.*
+
+import java.time.LocalDateTime
 
 class LogParsingServiceTest extends ServiceSpecification {
 
@@ -21,7 +22,7 @@ class LogParsingServiceTest extends ServiceSpecification {
     private Gametype gametype
     private GameMap gameMap
 
-    private DateTime logLineStartTs
+    private LocalDateTime logLineStartTs
 
     @SuppressWarnings("unused")
     def setup() {
@@ -30,7 +31,7 @@ class LogParsingServiceTest extends ServiceSpecification {
         gametype = gametypeRepository.findByGameAndTag(game, GAMETYPE_TAG)
         gameMap = gameMapRepository.findByTagAndGame(GAMEMAP_TAG, game)
 
-        logLineStartTs = DateTime.now()
+        logLineStartTs = LocalDateTime.now()
     }
 
     def "closeRunningServerMatch with no matches"() {
@@ -47,7 +48,7 @@ class LogParsingServiceTest extends ServiceSpecification {
     def "closeRunningServerMatch with one match opened"() {
         given:
         ServerMatch serverMatch = new ServerMatch(server, gametype, gameMap)
-        serverMatch.startTs = DateTime.now().minusSeconds(1)
+        serverMatch.startTs = LocalDateTime.now().minusSeconds(1)
         serverMatch = serverMatchRepository.save(serverMatch)
 
         when:
@@ -80,7 +81,7 @@ class LogParsingServiceTest extends ServiceSpecification {
     def "closeRunningServerMatch with one match already closed"() {
         given:
         ServerMatch serverMatch = new ServerMatch(server, gametype, gameMap)
-        serverMatch.startTs = DateTime.now().minusSeconds(1)
+        serverMatch.startTs = LocalDateTime.now().minusSeconds(1)
         serverMatch.close()
         serverMatch = serverMatchRepository.save(serverMatch)
 
@@ -113,15 +114,15 @@ class LogParsingServiceTest extends ServiceSpecification {
 
     def "closeRunningServerMatch with two matches, one open one closed"() {
         given:
-        DateTime now = DateTime.now().minusSeconds(1)
+        LocalDateTime now = LocalDateTime.now().minusSeconds(1)
 
         ServerMatch serverMatch1 = new ServerMatch(server, gametype, gameMap)
-        serverMatch1.startTs = now.plusMillis(1)
+        serverMatch1.startTs = now.plusNanos(1000)
         serverMatch1.close()
         serverMatch1 = serverMatchRepository.save(serverMatch1)
 
         ServerMatch serverMatch2 = new ServerMatch(server, gametype, gameMap)
-        serverMatch2.startTs = now.plusMillis(2)
+        serverMatch2.startTs = now.plusNanos(2)
         serverMatch2 = serverMatchRepository.save(serverMatch2)
 
         when:
@@ -157,15 +158,15 @@ class LogParsingServiceTest extends ServiceSpecification {
 
     def "closeRunningServerMatch with two closed matches"() {
         given:
-        DateTime now = DateTime.now().minusSeconds(1)
+        LocalDateTime now = LocalDateTime.now().minusSeconds(1)
 
         ServerMatch serverMatch1 = new ServerMatch(server, gametype, gameMap)
-        serverMatch1.startTs = now.plusMillis(1)
+        serverMatch1.startTs = now.plusNanos(1000)
         serverMatch1.close()
         serverMatch1 = serverMatchRepository.save(serverMatch1)
 
         ServerMatch serverMatch2 = new ServerMatch(server, gametype, gameMap)
-        serverMatch2.startTs = now.plusMillis(2)
+        serverMatch2.startTs = now.plusNanos(2000)
         serverMatch2.close()
         serverMatch2 = serverMatchRepository.save(serverMatch2)
 
@@ -425,14 +426,14 @@ class LogParsingServiceTest extends ServiceSpecification {
         given:
         String input = "1654:38 ShutdownGame:"
 
-        DateTime now = DateTime.now().minusSeconds(1)
+        LocalDateTime now = LocalDateTime.now().minusSeconds(1)
 
         ServerLogLine serverLogLine = new ServerLogLine(server, input)
         Message<ServerLogLine> message = TestMessageBuilder.generateMessage(serverLogLine) as Message<ServerLogLine>
 
         when:
-        generateServerMatch(true, now.plusMillis(1))
-        generateServerMatch(false, now.plusMillis(2))
+        generateServerMatch(true, now.plusNanos(1000))
+        generateServerMatch(false, now.plusNanos(2000))
 
         List<ServerMatch> serverMatches = serverMatchRepository.findAllByServerOrderByStartTsDesc(server)
 

@@ -1,8 +1,9 @@
 package org.thehellnet.lanparty.manager.model.logline.line;
 
-import org.joda.time.DateTime;
+
 import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -15,7 +16,7 @@ public class InitGameLogLine extends LogLine {
     private String gametypeTag;
     private String mapTag;
 
-    public InitGameLogLine(DateTime dateTime, int uptime) {
+    public InitGameLogLine(LocalDateTime dateTime, int uptime) {
         super(dateTime, uptime);
     }
 

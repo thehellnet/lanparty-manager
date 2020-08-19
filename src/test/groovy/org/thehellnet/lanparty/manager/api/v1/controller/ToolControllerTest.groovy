@@ -1,6 +1,5 @@
 package org.thehellnet.lanparty.manager.api.v1.controller
 
-import org.joda.time.DateTime
 import org.json.JSONArray
 import org.json.JSONObject
 import org.springframework.http.HttpStatus
@@ -8,6 +7,8 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.CustomMockMvcRequestBuilders
 import org.thehellnet.lanparty.manager.model.persistence.*
 import org.thehellnet.utility.StringUtility
+
+import java.time.LocalDateTime
 
 class ToolControllerTest extends ControllerSpecification {
 
@@ -103,7 +104,7 @@ class ToolControllerTest extends ControllerSpecification {
 
     def "welcome with existing seat"() {
         given:
-        DateTime lastContact = seat.lastContact
+        LocalDateTime lastContact = seat.lastContact
 
         when:
         def rawResponse = mockMvc
@@ -207,7 +208,7 @@ class ToolControllerTest extends ControllerSpecification {
         AppUser appUser = appUserRepository.findByBarcode(APPUSER_BARCODE)
         Tournament tournament = createTournament()
         Player player = playerRepository.findByAppUserAndTournament(appUser, tournament)
-        DateTime lastContact = seat.lastContact
+        LocalDateTime lastContact = seat.lastContact
 
         JSONObject requestBody = new JSONObject()
         requestBody.put("barcode", appUser.barcode)

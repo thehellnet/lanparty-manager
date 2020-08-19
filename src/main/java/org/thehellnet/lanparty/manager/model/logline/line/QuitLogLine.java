@@ -1,8 +1,9 @@
 package org.thehellnet.lanparty.manager.model.logline.line;
 
-import org.joda.time.DateTime;
+
 import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @LineEventType(LineEvent.QUIT)
@@ -12,7 +13,7 @@ public class QuitLogLine extends LogLine {
     private int num;
     private String nick;
 
-    public QuitLogLine(DateTime dateTime, int uptime) {
+    public QuitLogLine(LocalDateTime dateTime, int uptime) {
         super(dateTime, uptime);
     }
 

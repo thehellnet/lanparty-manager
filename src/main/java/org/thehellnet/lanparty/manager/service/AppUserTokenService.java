@@ -34,7 +34,7 @@ public class AppUserTokenService extends AbstractService {
         if (appUserToken == null) {
             return null;
         }
-        if (!TokenUtility.validateExpiration(appUserToken.getExpirationDateTime())) {
+        if (!TokenUtility.validateExpiration(appUserToken.getExpirationTs())) {
             return null;
         }
 

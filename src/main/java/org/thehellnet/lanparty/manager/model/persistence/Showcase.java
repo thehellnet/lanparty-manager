@@ -1,10 +1,11 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.joda.time.DateTime;
+
 import org.springframework.data.rest.core.annotation.Description;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +42,7 @@ public class Showcase extends AbstractEntity {
     @Basic
     @Column(name = "last_contact")
     @Description("Date & Time of last contact")
-    private DateTime lastContact;
+    private LocalDateTime lastContact;
 
     @OneToMany(mappedBy = "showcase", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @Description("Panes for this Showcase")
@@ -86,11 +87,11 @@ public class Showcase extends AbstractEntity {
         this.lastAddress = lastAddress;
     }
 
-    public DateTime getLastContact() {
+    public LocalDateTime getLastContact() {
         return lastContact;
     }
 
-    public void setLastContact(DateTime lastContact) {
+    public void setLastContact(LocalDateTime lastContact) {
         this.lastContact = lastContact;
     }
 
@@ -103,7 +104,7 @@ public class Showcase extends AbstractEntity {
     }
 
     public void updateLastContact() {
-        lastContact = DateTime.now();
+        lastContact = LocalDateTime.now();
     }
 
     @Override

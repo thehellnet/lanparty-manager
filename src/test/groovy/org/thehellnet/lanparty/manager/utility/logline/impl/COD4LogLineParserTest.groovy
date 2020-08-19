@@ -1,10 +1,11 @@
 package org.thehellnet.lanparty.manager.utility.logline.impl
 
-import org.joda.time.DateTime
 import org.thehellnet.lanparty.manager.exception.logline.LogLineParserException
 import org.thehellnet.lanparty.manager.model.logline.line.*
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import java.time.LocalDateTime
 
 class COD4LogLineParserTest extends Specification {
 
@@ -43,7 +44,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_INIT_GAME
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         InitGameLogLine expected = new InitGameLogLine(dateTime, 1981 * 60 + 27)
         expected.params.put("_Admin", "[hnt]^5theory")
@@ -90,7 +91,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_SHUTDOWN_GAME
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         ShutdownGameLogLine expected = new ShutdownGameLogLine(dateTime, 2000 * 60 + 39)
 
@@ -112,7 +113,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_JOIN
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         JoinLogLine expected = new JoinLogLine(dateTime, 1981 * 60 + 34)
         expected.guid = "4ae423d8025cecb67a2decac0e7cbcd2"
@@ -137,7 +138,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_QUIT
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         QuitLogLine expected = new QuitLogLine(dateTime, 2000 * 60 + 16)
         expected.guid = "54cb46597ab3d2032c359353277c62ca"
@@ -162,7 +163,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_DAMAGE
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         DamageLogLine expected = new DamageLogLine(dateTime, 1982 * 60 + 3)
         expected.affectedGuid = "63d91658d55799f50f45e43cf13df80c"
@@ -196,7 +197,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_KILL
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         KillLogLine expected = new KillLogLine(dateTime, 1982 * 60 + 12)
         expected.affectedGuid = "63d91658d55799f50f45e43cf13df80c"
@@ -228,7 +229,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_WEAPON
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         WeaponLogLine expected = new WeaponLogLine(dateTime, 1615 * 60 + 51)
         expected.guid = "51f393127bd69a6317ba9c374a222cc1"
@@ -254,7 +255,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_SAY_NORMAL
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         SayLogLine expected = new SayLogLine(dateTime, 1984 * 60 + 12)
         expected.guid = "63d91658d55799f50f45e43cf13df80c"
@@ -280,7 +281,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_SAY_EXTRA_CHAR1
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         SayLogLine expected = new SayLogLine(dateTime, 1984 * 60 + 31)
         expected.guid = "4ae423d8025cecb67a2decac0e7cbcd2"
@@ -306,7 +307,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_SAY_EXTRA_CHAR2
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         SayLogLine expected = new SayLogLine(dateTime, 1984 * 60 + 37)
         expected.guid = "4ae423d8025cecb67a2decac0e7cbcd2"
@@ -332,7 +333,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_EXIT_LEVEL
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         UnusefulLogLine expected = new UnusefulLogLine(dateTime, 2000 * 60 + 39)
 
@@ -354,7 +355,7 @@ class COD4LogLineParserTest extends Specification {
         given:
         String input = LOG_LINE_SEPARATOR
         COD4LogLineParser logLineParser = new COD4LogLineParser(input)
-        DateTime dateTime = DateTime.now()
+        LocalDateTime dateTime = LocalDateTime.now()
 
         UnusefulLogLine expected = new UnusefulLogLine(dateTime, 2000 * 60 + 39)
 

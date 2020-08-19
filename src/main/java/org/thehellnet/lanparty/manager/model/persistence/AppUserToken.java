@@ -1,11 +1,12 @@
 package org.thehellnet.lanparty.manager.model.persistence;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.joda.time.DateTime;
+
 import org.springframework.data.rest.core.annotation.Description;
 import org.thehellnet.utility.TokenUtility;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -35,15 +36,15 @@ public class AppUserToken extends AbstractEntity {
     @Column(name = "creation_datetime", nullable = false)
     @ColumnDefault("now()")
     @Description("Date & Time of creation")
-    private DateTime creationDateTime = new DateTime();
+    private LocalDateTime creationTs = LocalDateTime.now();
 
     @Basic
     @Column(name = "expiration_datetime")
     @Description("Date & Time of expiration")
-    private DateTime expirationDateTime;
+    private LocalDateTime expirationTs;
 
     public AppUserToken() {
-        expirationDateTime = TokenUtility.generateExpiration(creationDateTime);
+        expirationTs = TokenUtility.generateExpiration(creationTs);
     }
 
     public AppUserToken(String token, AppUser appUser) {
@@ -76,20 +77,20 @@ public class AppUserToken extends AbstractEntity {
         this.appUser = appUser;
     }
 
-    public DateTime getCreationDateTime() {
-        return creationDateTime;
+    public LocalDateTime getCreationTs() {
+        return creationTs;
     }
 
-    public void setCreationDateTime(DateTime creationDatetime) {
-        this.creationDateTime = creationDatetime;
+    public void setCreationTs(LocalDateTime creationDatetime) {
+        this.creationTs = creationDatetime;
     }
 
-    public DateTime getExpirationDateTime() {
-        return expirationDateTime;
+    public LocalDateTime getExpirationTs() {
+        return expirationTs;
     }
 
-    public void setExpirationDateTime(DateTime expirationDateTime) {
-        this.expirationDateTime = expirationDateTime;
+    public void setExpirationTs(LocalDateTime expirationDateTime) {
+        this.expirationTs = expirationDateTime;
     }
 
     @Override
@@ -101,8 +102,8 @@ public class AppUserToken extends AbstractEntity {
         return id.equals(that.id) &&
                 token.equals(that.token) &&
                 appUser.equals(that.appUser) &&
-                creationDateTime.equals(that.creationDateTime) &&
-                Objects.equals(expirationDateTime, that.expirationDateTime);
+                creationTs.equals(that.creationTs) &&
+                Objects.equals(expirationTs, that.expirationTs);
     }
 
     @Override

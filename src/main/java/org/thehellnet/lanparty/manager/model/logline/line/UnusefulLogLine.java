@@ -1,12 +1,14 @@
 package org.thehellnet.lanparty.manager.model.logline.line;
 
-import org.joda.time.DateTime;
+
 import org.thehellnet.lanparty.manager.model.logline.LineEvent;
+
+import java.time.LocalDateTime;
 
 @LineEventType(LineEvent.UNUSEFUL)
 public class UnusefulLogLine extends LogLine {
 
-    public UnusefulLogLine(DateTime dateTime, int uptime) {
+    public UnusefulLogLine(LocalDateTime dateTime, int uptime) {
         super(dateTime, uptime);
     }
 }

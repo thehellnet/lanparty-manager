@@ -1,20 +1,20 @@
 package org.thehellnet.lanparty.manager.model.logline.line;
 
-import org.joda.time.DateTime;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract class LogLine {
 
-    protected final DateTime dateTime;
+    protected final LocalDateTime dateTime;
     protected final int uptime;
 
-    public LogLine(DateTime dateTime, int uptime) {
+    public LogLine(LocalDateTime dateTime, int uptime) {
         this.dateTime = dateTime;
         this.uptime = uptime;
     }
 
-    public DateTime getDateTime() {
+    public LocalDateTime getDateTime() {
         return dateTime;
     }
 

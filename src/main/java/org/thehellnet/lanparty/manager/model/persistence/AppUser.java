@@ -2,11 +2,11 @@ package org.thehellnet.lanparty.manager.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.ColumnDefault;
-import org.joda.time.DateTime;
 import org.springframework.data.rest.core.annotation.Description;
 import org.thehellnet.utility.ConfirmCodeUtility;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -53,17 +53,17 @@ public class AppUser extends AbstractEntity {
     @Column(name = "register_ts", nullable = false)
     @ColumnDefault("now()")
     @Description("Date & time of registration")
-    private DateTime registerTs = DateTime.now();
+    private LocalDateTime registerTs = LocalDateTime.now();
 
     @Basic
     @Column(name = "confirm_ts")
     @Description("Date & time of account confirmation")
-    private DateTime confirmTs;
+    private LocalDateTime confirmTs;
 
     @Basic
     @Column(name = "last_login_ts")
     @Description("Date & time of last login")
-    private DateTime lastLoginTs;
+    private LocalDateTime lastLoginTs;
 
     @Basic
     @Column(name = "barcode", unique = true)
@@ -159,27 +159,27 @@ public class AppUser extends AbstractEntity {
         this.nickname = nickname;
     }
 
-    public DateTime getRegisterTs() {
+    public LocalDateTime getRegisterTs() {
         return registerTs;
     }
 
-    public void setRegisterTs(DateTime registerTs) {
+    public void setRegisterTs(LocalDateTime registerTs) {
         this.registerTs = registerTs;
     }
 
-    public DateTime getConfirmTs() {
+    public LocalDateTime getConfirmTs() {
         return confirmTs;
     }
 
-    public void setConfirmTs(DateTime confirmTs) {
+    public void setConfirmTs(LocalDateTime confirmTs) {
         this.confirmTs = confirmTs;
     }
 
-    public DateTime getLastLoginTs() {
+    public LocalDateTime getLastLoginTs() {
         return lastLoginTs;
     }
 
-    public void setLastLoginTs(DateTime lastLoginTs) {
+    public void setLastLoginTs(LocalDateTime lastLoginTs) {
         this.lastLoginTs = lastLoginTs;
     }
 
@@ -208,7 +208,7 @@ public class AppUser extends AbstractEntity {
     }
 
     public void updateLastLogin() {
-        lastLoginTs = DateTime.now();
+        lastLoginTs = LocalDateTime.now();
     }
 
     public void generateConfirmCode() {
@@ -218,7 +218,7 @@ public class AppUser extends AbstractEntity {
     public void confirm() {
         enabled = true;
         confirmCode = null;
-        confirmTs = DateTime.now();
+        confirmTs = LocalDateTime.now();
     }
 
     @Override

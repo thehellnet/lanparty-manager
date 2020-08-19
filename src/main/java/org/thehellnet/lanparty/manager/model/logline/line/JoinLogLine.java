@@ -1,8 +1,9 @@
 package org.thehellnet.lanparty.manager.model.logline.line;
 
-import org.joda.time.DateTime;
+
 import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @LineEventType(LineEvent.JOIN)
@@ -12,7 +13,7 @@ public class JoinLogLine extends LogLine {
     private int num;
     private String nick;
 
-    public JoinLogLine(DateTime dateTime, int uptime) {
+    public JoinLogLine(LocalDateTime dateTime, int uptime) {
         super(dateTime, uptime);
     }
 

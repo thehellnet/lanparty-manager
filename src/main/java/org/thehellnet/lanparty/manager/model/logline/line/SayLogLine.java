@@ -1,8 +1,9 @@
 package org.thehellnet.lanparty.manager.model.logline.line;
 
-import org.joda.time.DateTime;
+
 import org.thehellnet.lanparty.manager.model.logline.LineEvent;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @LineEventType(LineEvent.SAY)
@@ -13,7 +14,7 @@ public class SayLogLine extends LogLine {
     private String nick;
     private String message;
 
-    public SayLogLine(DateTime dateTime, int uptime) {
+    public SayLogLine(LocalDateTime dateTime, int uptime) {
         super(dateTime, uptime);
     }
 

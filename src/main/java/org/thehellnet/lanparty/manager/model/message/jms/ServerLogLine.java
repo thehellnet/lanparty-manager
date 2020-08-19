@@ -1,14 +1,15 @@
 package org.thehellnet.lanparty.manager.model.message.jms;
 
-import org.joda.time.DateTime;
+
 import org.thehellnet.lanparty.manager.model.persistence.Server;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class ServerLogLine implements Serializable {
 
-    private final DateTime dateTime = DateTime.now();
+    private final LocalDateTime dateTime = LocalDateTime.now();
     private final Server thnOlgServer;
     private final String line;
 
@@ -17,7 +18,7 @@ public class ServerLogLine implements Serializable {
         this.line = line;
     }
 
-    public DateTime getDateTime() {
+    public LocalDateTime getDateTime() {
         return dateTime;
     }
 

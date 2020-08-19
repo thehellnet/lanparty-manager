@@ -1,10 +1,11 @@
 package org.thehellnet.lanparty.manager.model.dto.response.auth;
 
-import org.joda.time.DateTime;
+
+import java.time.LocalDateTime;
 
 public class LoginAuthResponseDTO extends AuthResponseDTO {
 
     public Long id;
     public String token;
-    public DateTime expiration;
+    public LocalDateTime expiration;
 }
