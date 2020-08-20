@@ -8,6 +8,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.thehellnet.lanparty.manager.constant.SettingConstant;
 import org.thehellnet.lanparty.manager.model.constant.FileHash;
 import org.thehellnet.lanparty.manager.model.constant.RoleName;
 import org.thehellnet.lanparty.manager.model.persistence.*;
@@ -26,6 +27,9 @@ public class Initialization {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    private boolean alreadyRun = Boolean.FALSE;
+    private final Object sync = new Object();
+
     private final RoleRepository roleRepository;
     private final PlatformRepository platformRepository;
     private final GameRepository gameRepository;
@@ -34,8 +38,7 @@ public class Initialization {
     private final GameGametypeRepository gameGametypeRepository;
     private final GameMapRepository gameMapRepository;
     private final AppUserRepository appUserRepository;
-
-    private boolean alreadyRun = false;
+    private final SettingRepository settingRepository;
 
     @Autowired
     public Initialization(ApplicationEventPublisher applicationEventPublisher,
@@ -46,7 +49,8 @@ public class Initialization {
                           GametypeRepository gametypeRepository,
                           GameGametypeRepository gameGametypeRepository,
                           GameMapRepository gameMapRepository,
-                          AppUserRepository appUserRepository) {
+                          AppUserRepository appUserRepository,
+                          SettingRepository settingRepository) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.roleRepository = roleRepository;
         this.platformRepository = platformRepository;
@@ -56,18 +60,30 @@ public class Initialization {
         this.gameGametypeRepository = gameGametypeRepository;
         this.gameMapRepository = gameMapRepository;
         this.appUserRepository = appUserRepository;
+        this.settingRepository = settingRepository;
     }
 
     @Transactional
     @EventListener(ContextRefreshedEvent.class)
     public void onContextRefreshed() {
-        if (alreadyRun) {
-            return;
+        synchronized (sync) {
+            if (alreadyRun) {
+                return;
+            }
+
+            alreadyRun = true;
         }
 
-        alreadyRun = true;
+        init();
 
+        InitializedEvent initializedEvent = new InitializedEvent(this);
+        applicationEventPublisher.publishEvent(initializedEvent);
+    }
+
+    private void init() {
         logger.info("Initializing database data");
+
+        checkSettings();
 
         checkRoles();
         checkAppUsers();
@@ -80,9 +96,6 @@ public class Initialization {
         checkGameMaps();
 
         logger.info("Database data initialization complete");
-
-        InitializedEvent initializedEvent = new InitializedEvent(this);
-        applicationEventPublisher.publishEvent(initializedEvent);
     }
 
     private void checkRoles() {
@@ -805,6 +818,12 @@ public class Initialization {
         persistGameMap(GAME_CODWAW, "mp_suburban", "Upheaval", true);
     }
 
+    public void checkSettings() {
+        persistSetting(SettingConstant.AUTOSTART_LOG_PARSING, false);
+        persistSetting(SettingConstant.AUTOSTART_SERVER_RUNNER, false);
+        persistSetting(SettingConstant.AUTOSTART_SPECTATOR_RUNNER, false);
+    }
+
     private void persistRole(RoleName roleName) {
         logger.debug("Persist Role '{}'", roleName);
 
@@ -901,5 +920,14 @@ public class Initialization {
         gameMap.setGame(game);
         gameMap.setStock(stock);
         gameMapRepository.save(gameMap);
+    }
+
+    private void persistSetting(String param, Object value) {
+        Setting setting = settingRepository.findByParam(param);
+        if (setting == null) {
+            setting = new Setting(param);
+            setting.setValue(String.valueOf(value));
+            settingRepository.save(setting);
+        }
     }
 }

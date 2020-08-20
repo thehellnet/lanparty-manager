@@ -1,8 +1,8 @@
-package org.thehellnet.lanparty.manager.settings;
+package org.thehellnet.lanparty.manager.constant;
 
-public final class JmsSettings {
+public final class JmsConstant {
 
-    private JmsSettings() {
+    private JmsConstant() {
     }
 
     public static final String LOG_PARSING = "log-parsing";

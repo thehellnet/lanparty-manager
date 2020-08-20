@@ -1,4 +1,4 @@
-package org.thehellnet.lanparty.manager.settings;
+package org.thehellnet.lanparty.manager.constant;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.ArrayUtils;
@@ -6,9 +6,9 @@ import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
 
 import java.util.List;
 
-public class CfgSettings {
+public class CfgConstant {
 
-    private CfgSettings() {
+    private CfgConstant() {
     }
 
     public static final ParsedCfgCommand UNBINDALL = new ParsedCfgCommand("unbindall");
