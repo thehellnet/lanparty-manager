@@ -72,24 +72,13 @@ public class ServerBinaryRunner extends StoppableThread {
         writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
     }
 
-//    @Override
-//    protected void preStop() {
-//        super.preStop();
-//
-//        try {
-//            reader.close();
-//        } catch (IOException ignored) {
-//        }
-//
-//        reader = null;
-//
-//        try {
-//            writer.close();
-//        } catch (IOException ignored) {
-//        }
-//
-//        writer = null;
-//    }
+    @Override
+    protected void preStop() {
+        super.preStop();
+
+        reader = null;
+        writer = null;
+    }
 
     @Override
     protected void postStop() {
