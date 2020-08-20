@@ -5,10 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
+import org.thehellnet.lanparty.manager.constant.JmsConstant;
+import org.thehellnet.lanparty.manager.constant.SettingConstant;
 import org.thehellnet.lanparty.manager.model.message.jms.ServerLogLine;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
 import org.thehellnet.lanparty.manager.service.ServerService;
-import org.thehellnet.lanparty.manager.settings.JmsSettings;
+import org.thehellnet.lanparty.manager.service.SettingService;
 import org.thehellnet.lanparty.manager.utility.JmsUtility;
 import org.thehellnet.utility.log.LogTailer;
 
@@ -24,8 +26,10 @@ public class LogParsingRunner extends AbstractRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(LogParsingRunner.class);
 
-    private final ServerService serverService;
     private final ConnectionFactory connectionFactory;
+
+    private final SettingService settingService;
+    private final ServerService serverService;
 
     private final Map<Server, LogTailer> logTailers = new HashMap<>();
     private final Map<Server, String> lastLines = new HashMap<>();
@@ -33,12 +37,19 @@ public class LogParsingRunner extends AbstractRunner {
     private final JmsTemplate jmsTemplate;
 
     @Autowired
-    public LogParsingRunner(ServerService serverService,
-                            ConnectionFactory connectionFactory) {
-        this.serverService = serverService;
+    public LogParsingRunner(ConnectionFactory connectionFactory,
+                            SettingService settingService,
+                            ServerService serverService) {
         this.connectionFactory = connectionFactory;
+        this.settingService = settingService;
+        this.serverService = serverService;
 
-        this.jmsTemplate = JmsUtility.prepareJmsTemplate(this.connectionFactory, JmsSettings.LOG_PARSING);
+        this.jmsTemplate = JmsUtility.prepareJmsTemplate(this.connectionFactory, JmsConstant.LOG_PARSING);
+    }
+
+    @Override
+    protected boolean autostart() {
+        return settingService.getBoolean(SettingConstant.AUTOSTART_LOG_PARSING);
     }
 
     @Override

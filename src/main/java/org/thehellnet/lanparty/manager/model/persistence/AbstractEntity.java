@@ -63,6 +63,9 @@ public abstract class AbstractEntity implements Serializable {
     @Description("Friendly name")
     protected String friendlyName;
 
+    public AbstractEntity() {
+    }
+
     public Boolean getActive() {
         return active;
     }

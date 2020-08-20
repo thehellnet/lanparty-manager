@@ -1,6 +1,6 @@
 package org.thehellnet.lanparty.manager.utility.cfg;
 
-import org.thehellnet.lanparty.manager.settings.CfgSettings;
+import org.thehellnet.lanparty.manager.constant.CfgConstant;
 
 import java.util.ArrayList;
 
@@ -10,8 +10,8 @@ public class ParsedCfgCommandSpecialEnsurer extends AbstractParsedCfgCommandMani
     protected void elaborate() {
         output = new ArrayList<>();
 
-        output.addAll(CfgSettings.INITIALS);
+        output.addAll(CfgConstant.INITIALS);
         copyInputToOutputExcludeMinimals();
-        output.addAll(CfgSettings.FINALS);
+        output.addAll(CfgConstant.FINALS);
     }
 }

@@ -1,7 +1,7 @@
 package org.thehellnet.lanparty.manager.utility.cfg;
 
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand;
-import org.thehellnet.lanparty.manager.settings.CfgSettings;
+import org.thehellnet.lanparty.manager.constant.CfgConstant;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public abstract class AbstractParsedCfgCommandManipulator extends AbstractParsed
 
         for (ParsedCfgCommand inputCfgCommand : input) {
             boolean includeCommand = true;
-            for (ParsedCfgCommand minimalCfgCommand : CfgSettings.SPECIALS) {
+            for (ParsedCfgCommand minimalCfgCommand : CfgConstant.SPECIALS) {
                 if (inputCfgCommand.same(minimalCfgCommand)) {
                     includeCommand = false;
                 }

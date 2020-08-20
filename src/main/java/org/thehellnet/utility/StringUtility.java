@@ -8,6 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -77,7 +78,7 @@ public final class StringUtility {
 
     private static List<String> getStrings(String rawText, String regex) {
         if (rawText == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<String> lines = new ArrayList<>();
@@ -97,7 +98,7 @@ public final class StringUtility {
 
     private static String getString(List<String> lines, String delimiter) {
         if (lines == null) {
-            return null;
+            return "";
         }
 
         if (lines.isEmpty()) {

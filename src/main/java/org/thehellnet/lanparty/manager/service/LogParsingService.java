@@ -14,7 +14,7 @@ import org.thehellnet.lanparty.manager.model.message.jms.ServerLogLine;
 import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.repository.*;
 import org.thehellnet.lanparty.manager.runner.SpectatorRunner;
-import org.thehellnet.lanparty.manager.settings.JmsSettings;
+import org.thehellnet.lanparty.manager.constant.JmsConstant;
 import org.thehellnet.lanparty.manager.utility.logline.LogLineParser;
 import org.thehellnet.lanparty.manager.utility.logline.LogLineParserFactory;
 
@@ -55,7 +55,7 @@ public class LogParsingService {
     }
 
     @Transactional
-    @JmsListener(destination = JmsSettings.LOG_PARSING)
+    @JmsListener(destination = JmsConstant.LOG_PARSING)
     public void parseLogLine(final Message<ServerLogLine> message) {
         ServerLogLine serverLogLine = message.getPayload();
 

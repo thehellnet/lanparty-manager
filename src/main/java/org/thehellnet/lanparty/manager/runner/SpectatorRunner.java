@@ -5,12 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.thehellnet.lanparty.manager.constant.SettingConstant;
 import org.thehellnet.lanparty.manager.model.persistence.Server;
 import org.thehellnet.lanparty.manager.model.persistence.Spectator;
 import org.thehellnet.lanparty.manager.model.spectator.SpectatorCommand;
 import org.thehellnet.lanparty.manager.model.spectator.SpectatorCommandAction;
 import org.thehellnet.lanparty.manager.repository.ServerRepository;
 import org.thehellnet.lanparty.manager.repository.SpectatorRepository;
+import org.thehellnet.lanparty.manager.service.SettingService;
 import org.thehellnet.lanparty.manager.service.SpectatorService;
 import org.thehellnet.lanparty.manager.utility.spectator.SpectatorClient;
 
@@ -29,6 +31,7 @@ public class SpectatorRunner extends AbstractRunner {
     private final ServerRepository serverRepository;
     private final SpectatorRepository spectatorRepository;
 
+    private final SettingService settingService;
     private final SpectatorService spectatorService;
 
     private final Map<Long, SpectatorClient> spectatorClients = new HashMap<>();
@@ -36,10 +39,11 @@ public class SpectatorRunner extends AbstractRunner {
     public SpectatorRunner(TaskExecutor taskExecutor,
                            ServerRepository serverRepository,
                            SpectatorRepository spectatorRepository,
-                           SpectatorService spectatorService) {
+                           SettingService settingService, SpectatorService spectatorService) {
         this.taskExecutor = taskExecutor;
         this.serverRepository = serverRepository;
         this.spectatorRepository = spectatorRepository;
+        this.settingService = settingService;
         this.spectatorService = spectatorService;
     }
 
@@ -53,36 +57,9 @@ public class SpectatorRunner extends AbstractRunner {
         }
     }
 
-    private void joinAndSetReady(Spectator spectator) {
-        try {
-            Thread.sleep(spectator.getTimeoutJoinSpectate() * 1000);
-            joinSpectate(spectator.getId());
-            Thread.sleep(spectator.getTimeoutSetReady() * 1000);
-            setReady(spectator.getId());
-        } catch (InterruptedException ignored) {
-        }
-    }
-
-    private void joinSpectate(Long id) {
-        SpectatorCommand command = new SpectatorCommand(SpectatorCommandAction.JOIN_SPECTATE);
-
-        if (!spectatorClients.containsKey(id)) {
-            return;
-        }
-
-        SpectatorClient spectatorClient = spectatorClients.get(id);
-        spectatorClient.sendCommand(command);
-    }
-
-    private void setReady(Long id) {
-        SpectatorCommand command = new SpectatorCommand(SpectatorCommandAction.SET_READY);
-
-        if (!spectatorClients.containsKey(id)) {
-            return;
-        }
-
-        SpectatorClient spectatorClient = spectatorClients.get(id);
-        spectatorClient.sendCommand(command);
+    @Override
+    protected boolean autostart() {
+        return settingService.getBoolean(SettingConstant.AUTOSTART_SPECTATOR_RUNNER);
     }
 
     @Override
@@ -117,5 +94,37 @@ public class SpectatorRunner extends AbstractRunner {
             logger.debug("Removing SpectatorClient for spectator {}", spectatorClient);
             spectatorClients.remove(key);
         }
+    }
+
+    private void joinAndSetReady(Spectator spectator) {
+        try {
+            Thread.sleep(spectator.getTimeoutJoinSpectate() * 1000);
+            joinSpectate(spectator.getId());
+            Thread.sleep(spectator.getTimeoutSetReady() * 1000);
+            setReady(spectator.getId());
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    private void joinSpectate(Long id) {
+        SpectatorCommand command = new SpectatorCommand(SpectatorCommandAction.JOIN_SPECTATE);
+
+        if (!spectatorClients.containsKey(id)) {
+            return;
+        }
+
+        SpectatorClient spectatorClient = spectatorClients.get(id);
+        spectatorClient.sendCommand(command);
+    }
+
+    private void setReady(Long id) {
+        SpectatorCommand command = new SpectatorCommand(SpectatorCommandAction.SET_READY);
+
+        if (!spectatorClients.containsKey(id)) {
+            return;
+        }
+
+        SpectatorClient spectatorClient = spectatorClients.get(id);
+        spectatorClient.sendCommand(command);
     }
 }
