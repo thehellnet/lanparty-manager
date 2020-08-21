@@ -1,5 +1,6 @@
 package org.thehellnet.lanparty.manager.configuration;
 
+import org.reflections.Reflections;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.thehellnet.lanparty.manager.configuration.mixin.TestAwareConfiguration;
+import org.thehellnet.lanparty.manager.model.persistence.AbstractEntity;
+
+import java.util.Set;
 
 @Configuration
 @Import(RepositoryRestMvcConfiguration.class)
@@ -26,7 +30,8 @@ public class RestConfiguration extends RepositoryRestMvcConfiguration implements
     @Override
     public RepositoryRestConfiguration repositoryRestConfiguration() {
         return super.repositoryRestConfiguration()
-                .setBasePath(API_BASE_PATH);
+                .setBasePath(API_BASE_PATH)
+                .exposeIdsFor(getEntityClasses());
     }
 
     @Bean
@@ -45,5 +50,11 @@ public class RestConfiguration extends RepositoryRestMvcConfiguration implements
         source.registerCorsConfiguration("/**", config);
 
         return new CorsFilter(source);
+    }
+
+    private Class<?>[] getEntityClasses() {
+        Reflections reflections = new Reflections("org.thehellnet.lanparty.manager.model.persistence");
+        Set<Class<? extends AbstractEntity>> classes = reflections.getSubTypesOf(AbstractEntity.class);
+        return classes.toArray(new Class[0]);
     }
 }
