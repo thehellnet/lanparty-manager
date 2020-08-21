@@ -20,6 +20,7 @@ import spock.lang.Specification
 @ContextConfiguration(
         loader = AnnotationConfigWebContextLoader,
         classes = [
+                ActiveMQConfiguration,
                 EmailConfiguration,
                 JacksonConfiguration,
                 MvcConfiguration,
@@ -28,6 +29,7 @@ import spock.lang.Specification
                 SecurityConfiguration,
                 SpringConfiguration,
                 ThreadsConfiguration,
+                WebMvcConfiguration,
                 WebSocketConfiguration
         ]
 )
