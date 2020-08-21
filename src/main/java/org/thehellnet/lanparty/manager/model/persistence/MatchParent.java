@@ -25,10 +25,18 @@ public class MatchParent extends AbstractEntity {
     private Match match;
 
     @Basic
-    @Column(name = "order", nullable = false)
+    @Column(name = "match_order", nullable = false)
     @ColumnDefault("0")
     @Description("Order")
     private Integer order = 0;
+
+    public MatchParent() {
+    }
+
+    public MatchParent(Match match, Integer order) {
+        this.match = match;
+        this.order = order;
+    }
 
     public Long getId() {
         return id;

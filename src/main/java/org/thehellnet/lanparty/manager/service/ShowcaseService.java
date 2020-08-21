@@ -21,10 +21,10 @@ import org.thehellnet.lanparty.manager.model.protocol.Action;
 import org.thehellnet.lanparty.manager.model.protocol.Command;
 import org.thehellnet.lanparty.manager.model.protocol.CommandSerializer;
 import org.thehellnet.lanparty.manager.repository.*;
-import org.thehellnet.utility.LocalDateTimeUtility;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -233,11 +233,12 @@ public class ShowcaseService extends AbstractService {
     private static JSONObject prepareMatchData(Match match) {
         JSONObject matchData = new JSONObject();
         matchData.put("id", match.getId());
+        matchData.put("name", match.getName());
         matchData.put("status", match.getStatus());
-        matchData.put("scheduledStartTs", match.getScheduledStartTs() != null ? LocalDateTimeUtility.getMillis(match.getScheduledStartTs()) : JSONObject.NULL);
-        matchData.put("scheduledEndTs", match.getScheduledEndTs() != null ? LocalDateTimeUtility.getMillis(match.getScheduledEndTs()) : JSONObject.NULL);
-        matchData.put("startTs", match.getStartTs() != null ? LocalDateTimeUtility.getMillis(match.getStartTs()) : JSONObject.NULL);
-        matchData.put("endTs", match.getEndTs() != null ? LocalDateTimeUtility.getMillis(match.getEndTs()) : JSONObject.NULL);
+        matchData.put("scheduledStartTs", match.getScheduledStartTs() != null ? match.getScheduledStartTs() : JSONObject.NULL);
+        matchData.put("scheduledEndTs", match.getScheduledEndTs() != null ? match.getScheduledEndTs() : JSONObject.NULL);
+        matchData.put("startTs", match.getStartTs() != null ? match.getStartTs() : JSONObject.NULL);
+        matchData.put("endTs", match.getEndTs() != null ? match.getEndTs() : JSONObject.NULL);
         matchData.put("playOrder", match.getPlayOrder());
         matchData.put("level", match.getLevel());
         matchData.put("gameMap", match.getGameMap() != null ? match.getGameMap().getName() : JSONObject.NULL);
@@ -249,7 +250,7 @@ public class ShowcaseService extends AbstractService {
 
     private static Trigger prepareTrigger(LocalDateTime executionDateTime, JobDetail jobDetail) {
         return TriggerBuilder.newTrigger()
-                .startAt(LocalDateTimeUtility.toDate(executionDateTime))
+                .startAt(Date.from(executionDateTime.atZone(ZoneId.systemDefault()).toInstant()))
                 .forJob(jobDetail)
                 .build();
     }

@@ -24,5 +24,5 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     Match findByTournamentAndLocalTeamAndGuestTeamAndLevel(Tournament tournament, Team localTeam, Team guestTeam, int level);
 
-    Match findByTournamentAndLevel(Tournament tournament, int level);
+    Match findByTournamentAndLevelAndName(Tournament tournament, int level, String name);
 }
