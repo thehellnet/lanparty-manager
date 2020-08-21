@@ -1,7 +1,7 @@
 package org.thehellnet.lanparty.manager.utility.cfg
 
 import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand
-import org.thehellnet.lanparty.manager.settings.CfgSettings
+import org.thehellnet.lanparty.manager.constant.CfgConstant
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -43,10 +43,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with empty player"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> playerCfgCommands = []
         List<ParsedCfgCommand> overrideCfgCommands = []
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -58,10 +58,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with forbidden commands"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> playerCfgCommands = [BIND_TEST_TEST]
         List<ParsedCfgCommand> overrideCfgCommands = []
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -73,10 +73,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with equals commands"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> playerCfgCommands = [BIND_TEST_RETEST]
         List<ParsedCfgCommand> overrideCfgCommands = []
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, BIND_TEST_RETEST, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, BIND_TEST_RETEST, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -88,10 +88,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with same cfg"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
-        List<ParsedCfgCommand> playerCfgCommands = [CfgSettings.UNBINDALL, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
+        List<ParsedCfgCommand> playerCfgCommands = [CfgConstant.UNBINDALL, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> overrideCfgCommands = []
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -103,10 +103,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with both forbidden and equals commands"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, CfgSettings.BIND_EXEC, BIND_TEST_TEST]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, CfgConstant.BIND_EXEC, BIND_TEST_TEST]
         List<ParsedCfgCommand> playerCfgCommands = [TEST, BIND_TEST_TEST]
         List<ParsedCfgCommand> overrideCfgCommands = []
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, CfgSettings.BIND_EXEC, BIND_TEST_TEST]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, CfgConstant.BIND_EXEC, BIND_TEST_TEST]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -118,10 +118,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with same commands"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> playerCfgCommands = [BIND_TEST_RETEST]
         List<ParsedCfgCommand> overrideCfgCommands = []
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, BIND_TEST_RETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, BIND_TEST_RETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -133,10 +133,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with same cfg with same commands"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
-        List<ParsedCfgCommand> playerCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_RETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
+        List<ParsedCfgCommand> playerCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_RETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> overrideCfgCommands = []
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, BIND_TEST_RETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, BIND_TEST_RETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -148,10 +148,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with multiple same commands"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> playerCfgCommands = [BIND_TEST_RETEST, BIND_TEST_RERETEST]
         List<ParsedCfgCommand> overrideCfgCommands = []
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, BIND_TEST_RERETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, BIND_TEST_RERETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -163,10 +163,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with same cfg with same commands and extra override"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
-        List<ParsedCfgCommand> playerCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_RETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
+        List<ParsedCfgCommand> playerCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_RETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> overrideCfgCommands = [TEST]
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, BIND_TEST_RETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, BIND_TEST_RETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -178,10 +178,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with same cfg with same commands and same override"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
-        List<ParsedCfgCommand> playerCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_RETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
+        List<ParsedCfgCommand> playerCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_RETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> overrideCfgCommands = [BIND_TEST_RERETEST]
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, BIND_TEST_RERETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, BIND_TEST_RERETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -193,10 +193,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with same cfg with same commands and override equals to tournament"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
-        List<ParsedCfgCommand> playerCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_RETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
+        List<ParsedCfgCommand> playerCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_RETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> overrideCfgCommands = [BIND_TEST_TEST]
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -208,10 +208,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with same cfg with same commands and override with multiple equals"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
-        List<ParsedCfgCommand> playerCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_RETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
+        List<ParsedCfgCommand> playerCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_RETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> overrideCfgCommands = [BIND_TEST_TEST, BIND_TEST_TEST]
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)
@@ -223,10 +223,10 @@ class ParsedCfgCommandMergerTest extends Specification {
 
     def "with same cfg with same commands and override with multiple should take last"() {
         given:
-        List<ParsedCfgCommand> tournamentCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_TEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
-        List<ParsedCfgCommand> playerCfgCommands = [CfgSettings.UNBINDALL, BIND_TEST_RETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> tournamentCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_TEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
+        List<ParsedCfgCommand> playerCfgCommands = [CfgConstant.UNBINDALL, BIND_TEST_RETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
         List<ParsedCfgCommand> overrideCfgCommands = [BIND_TEST_TEST, BIND_TEST_RERETEST]
-        List<ParsedCfgCommand> expected = [CfgSettings.UNBINDALL, BIND_TEST_RERETEST, CfgSettings.BIND_EXEC, CfgSettings.BIND_DUMP]
+        List<ParsedCfgCommand> expected = [CfgConstant.UNBINDALL, BIND_TEST_RERETEST, CfgConstant.BIND_EXEC, CfgConstant.BIND_DUMP]
 
         when:
         ParsedCfgCommandMerger.MergeDTO mergeDTO = new ParsedCfgCommandMerger.MergeDTO(tournamentCfgCommands, playerCfgCommands, overrideCfgCommands)

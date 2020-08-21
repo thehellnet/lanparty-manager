@@ -7,7 +7,7 @@ import org.thehellnet.lanparty.manager.model.helper.ParsedCfgCommand
 import org.thehellnet.lanparty.manager.model.persistence.Cfg
 import org.thehellnet.lanparty.manager.model.persistence.Player
 import org.thehellnet.lanparty.manager.model.persistence.Tournament
-import org.thehellnet.lanparty.manager.settings.CfgSettings
+import org.thehellnet.lanparty.manager.constant.CfgConstant
 import org.thehellnet.lanparty.manager.utility.cfg.ParsedCfgCommandParser
 import spock.lang.Unroll
 
@@ -67,9 +67,9 @@ class CfgServiceTest extends ServiceSpecification {
         String barcode = APPUSER_BARCODE
 
         List<ParsedCfgCommand> expected = new ArrayList<>()
-        expected.addAll(CfgSettings.INITIALS)
+        expected.addAll(CfgConstant.INITIALS)
         expected.addAll(parsedCfgCommandParser.elaborate(tournament.cfg))
-        expected.addAll(CfgSettings.FINALS)
+        expected.addAll(CfgConstant.FINALS)
         expected.addAll(ParsedCfgCommand.prepareName(player.nickname))
 
         when:

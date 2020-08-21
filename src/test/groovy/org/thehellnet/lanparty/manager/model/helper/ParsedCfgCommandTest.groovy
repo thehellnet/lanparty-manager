@@ -1,7 +1,7 @@
 package org.thehellnet.lanparty.manager.model.helper
 
+import org.thehellnet.lanparty.manager.constant.CfgConstant
 import org.thehellnet.lanparty.manager.exception.InvalidDataException
-import org.thehellnet.lanparty.manager.settings.CfgSettings
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -23,27 +23,27 @@ class ParsedCfgCommandTest extends Specification {
 
         where:
         first                                                             | second                                                              | expected
-        CfgSettings.UNBINDALL                                             | CfgSettings.UNBINDALL                                               | true
-        CfgSettings.UNBINDALL.replaceParam("param")                       | CfgSettings.UNBINDALL.replaceParam("param")                         | true
-        CfgSettings.UNBINDALL.replaceParam("param")                       | CfgSettings.UNBINDALL.replaceParam("param2")                        | true
-        CfgSettings.UNBINDALL.replaceParam("param").replaceArgs("action") | CfgSettings.UNBINDALL.replaceParam("param").replaceArgs("action")   | true
-        CfgSettings.UNBINDALL.replaceParam("param").replaceArgs("action") | CfgSettings.UNBINDALL.replaceParam("param").replaceArgs("action2")  | true
-        CfgSettings.UNBINDALL.replaceParam("param").replaceArgs("action") | CfgSettings.UNBINDALL.replaceParam("param2").replaceArgs("action")  | true
-        CfgSettings.UNBINDALL.replaceParam("param").replaceArgs("action") | CfgSettings.UNBINDALL.replaceParam("param2").replaceArgs("action2") | true
-        CfgSettings.BIND_EXEC                                             | CfgSettings.BIND_EXEC                                               | true
-        CfgSettings.BIND_EXEC.replaceParam("param")                       | CfgSettings.BIND_EXEC.replaceParam("param")                         | true
-        CfgSettings.BIND_EXEC.replaceParam("param")                       | CfgSettings.BIND_EXEC.replaceParam("param2")                        | false
-        CfgSettings.BIND_EXEC.replaceParam("param").replaceArgs("action") | CfgSettings.BIND_EXEC.replaceParam("param").replaceArgs("action")   | true
-        CfgSettings.BIND_EXEC.replaceParam("param").replaceArgs("action") | CfgSettings.BIND_EXEC.replaceParam("param").replaceArgs("action2")  | true
-        CfgSettings.BIND_EXEC.replaceParam("param").replaceArgs("action") | CfgSettings.BIND_EXEC.replaceParam("param2").replaceArgs("action")  | false
-        CfgSettings.BIND_EXEC.replaceParam("param").replaceArgs("action") | CfgSettings.BIND_EXEC.replaceParam("param2").replaceArgs("action2") | false
-        CfgSettings.BIND_DUMP                                             | CfgSettings.BIND_DUMP                                               | true
-        CfgSettings.BIND_DUMP.replaceParam("param")                       | CfgSettings.BIND_DUMP.replaceParam("param")                         | true
-        CfgSettings.BIND_DUMP.replaceParam("param")                       | CfgSettings.BIND_DUMP.replaceParam("param2")                        | false
-        CfgSettings.BIND_DUMP.replaceParam("param").replaceArgs("action") | CfgSettings.BIND_DUMP.replaceParam("param").replaceArgs("action")   | true
-        CfgSettings.BIND_DUMP.replaceParam("param").replaceArgs("action") | CfgSettings.BIND_DUMP.replaceParam("param").replaceArgs("action2")  | true
-        CfgSettings.BIND_DUMP.replaceParam("param").replaceArgs("action") | CfgSettings.BIND_DUMP.replaceParam("param2").replaceArgs("action")  | false
-        CfgSettings.BIND_DUMP.replaceParam("param").replaceArgs("action") | CfgSettings.BIND_DUMP.replaceParam("param2").replaceArgs("action2") | false
+        CfgConstant.UNBINDALL                                             | CfgConstant.UNBINDALL                                               | true
+        CfgConstant.UNBINDALL.replaceParam("param")                       | CfgConstant.UNBINDALL.replaceParam("param")                         | true
+        CfgConstant.UNBINDALL.replaceParam("param")                       | CfgConstant.UNBINDALL.replaceParam("param2")                        | true
+        CfgConstant.UNBINDALL.replaceParam("param").replaceArgs("action") | CfgConstant.UNBINDALL.replaceParam("param").replaceArgs("action")   | true
+        CfgConstant.UNBINDALL.replaceParam("param").replaceArgs("action") | CfgConstant.UNBINDALL.replaceParam("param").replaceArgs("action2")  | true
+        CfgConstant.UNBINDALL.replaceParam("param").replaceArgs("action") | CfgConstant.UNBINDALL.replaceParam("param2").replaceArgs("action")  | true
+        CfgConstant.UNBINDALL.replaceParam("param").replaceArgs("action") | CfgConstant.UNBINDALL.replaceParam("param2").replaceArgs("action2") | true
+        CfgConstant.BIND_EXEC                                             | CfgConstant.BIND_EXEC                                               | true
+        CfgConstant.BIND_EXEC.replaceParam("param")                       | CfgConstant.BIND_EXEC.replaceParam("param")                         | true
+        CfgConstant.BIND_EXEC.replaceParam("param")                       | CfgConstant.BIND_EXEC.replaceParam("param2")                        | false
+        CfgConstant.BIND_EXEC.replaceParam("param").replaceArgs("action") | CfgConstant.BIND_EXEC.replaceParam("param").replaceArgs("action")   | true
+        CfgConstant.BIND_EXEC.replaceParam("param").replaceArgs("action") | CfgConstant.BIND_EXEC.replaceParam("param").replaceArgs("action2")  | true
+        CfgConstant.BIND_EXEC.replaceParam("param").replaceArgs("action") | CfgConstant.BIND_EXEC.replaceParam("param2").replaceArgs("action")  | false
+        CfgConstant.BIND_EXEC.replaceParam("param").replaceArgs("action") | CfgConstant.BIND_EXEC.replaceParam("param2").replaceArgs("action2") | false
+        CfgConstant.BIND_DUMP                                             | CfgConstant.BIND_DUMP                                               | true
+        CfgConstant.BIND_DUMP.replaceParam("param")                       | CfgConstant.BIND_DUMP.replaceParam("param")                         | true
+        CfgConstant.BIND_DUMP.replaceParam("param")                       | CfgConstant.BIND_DUMP.replaceParam("param2")                        | false
+        CfgConstant.BIND_DUMP.replaceParam("param").replaceArgs("action") | CfgConstant.BIND_DUMP.replaceParam("param").replaceArgs("action")   | true
+        CfgConstant.BIND_DUMP.replaceParam("param").replaceArgs("action") | CfgConstant.BIND_DUMP.replaceParam("param").replaceArgs("action2")  | true
+        CfgConstant.BIND_DUMP.replaceParam("param").replaceArgs("action") | CfgConstant.BIND_DUMP.replaceParam("param2").replaceArgs("action")  | false
+        CfgConstant.BIND_DUMP.replaceParam("param").replaceArgs("action") | CfgConstant.BIND_DUMP.replaceParam("param2").replaceArgs("action2") | false
         ParsedCfgCommand.prepareName(PLAYER_NAME)                         | ParsedCfgCommand.prepareName(PLAYER_NAME)                           | true
         ParsedCfgCommand.prepareName(PLAYER_NAME).replaceArgs("action")   | ParsedCfgCommand.prepareName(PLAYER_NAME).replaceArgs("action")     | true
         ParsedCfgCommand.prepareName(PLAYER_NAME).replaceArgs("action")   | ParsedCfgCommand.prepareName(PLAYER_NAME).replaceArgs("action2")    | true
