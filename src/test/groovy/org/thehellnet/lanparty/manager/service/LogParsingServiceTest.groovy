@@ -122,7 +122,7 @@ class LogParsingServiceTest extends ServiceSpecification {
         serverMatch1 = serverMatchRepository.save(serverMatch1)
 
         ServerMatch serverMatch2 = new ServerMatch(server, gametype, gameMap)
-        serverMatch2.startTs = now.plusNanos(2)
+        serverMatch2.startTs = now.plusNanos(2000)
         serverMatch2 = serverMatchRepository.save(serverMatch2)
 
         when:
