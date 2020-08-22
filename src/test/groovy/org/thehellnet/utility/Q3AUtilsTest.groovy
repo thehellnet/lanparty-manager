@@ -6,7 +6,7 @@ import spock.lang.Unroll
 class Q3AUtilsTest extends Specification {
 
     @Unroll
-    def "removeColorCodes: \"#input\" - \"#expected\""(String input, String expected) {
+    def "removeColorCodes: \"#input\" -> \"#expected\""(String input, String expected) {
         given:
         String actual = Q3AUtils.removeColorCodes(input)
 
@@ -15,6 +15,9 @@ class Q3AUtilsTest extends Specification {
 
         where:
         input                                   | expected
+        null                                    | null
+        ""                                      | ""
+        "dm^7"                                  | "dm"
         "dm^7"                                  | "dm"
         "^7"                                    | ""
         "^7^7"                                  | ""
@@ -39,34 +42,7 @@ class Q3AUtilsTest extends Specification {
     }
 
     @Unroll
-    def "tagToColor: \"#input\" - \"#expected\""(String input, String expected) {
-        given:
-        String actual = Q3AUtils.tagToColor(input)
-
-        expect:
-        actual == expected
-
-        where:
-        input                          | expected
-        "[hnt]\${cyan}theory"          | "[hnt]^5theory"
-        "[hnt]\${cyan}theory\${white}" | "[hnt]^5theory^7"
-    }
-
-    @Unroll
-    def "colorToTag: \"#input\" - \"#expected\""(String input, String expected) {
-        given:
-        String actual = Q3AUtils.colorToTag(input)
-
-        expect:
-        actual == expected
-
-        where:
-        input             | expected
-        "[hnt]^5theory^7" | "[hnt]\${cyan}theory\${white}"
-    }
-
-    @Unroll
-    def "clearString: \"#input\" - \"#expected\""(String input, String expected) {
+    def "clearString: \"#input\" -> \"#expected\""(String input, String expected) {
         given:
         String actual = Q3AUtils.clearString(input)
 
@@ -75,19 +51,86 @@ class Q3AUtilsTest extends Specification {
 
         where:
         input             | expected
+        null              | null
+        ""                | ""
         "[hnt]^5theory^7" | "[hnt]^5theory"
     }
 
     @Unroll
-    def "pingToInteger: \"#input\" - \"#expected\""(String input, String expected) {
+    def "removeDoubleQuotes: \"#input\" -> \"#expected\""(String input, String expected) {
         given:
-        String actual = Q3AUtils.pingToInteger(input)
+        String actual = Q3AUtils.removeDoubleQuotes(input)
+
+        expect:
+        actual == expected
+
+        where:
+        input              | expected
+        null               | null
+        ""                 | ""
+        " "                | " "
+        "'"                | "'"
+        "''"               | "''"
+        "\""               | ""
+        " \""              | ""
+        "\" "              | ""
+        " \" "             | ""
+        "\"\""             | ""
+        " \"\""            | ""
+        "\"\" "            | ""
+        " \"\" "           | ""
+        "\"test\""         | "test"
+        " \"test\""        | "test"
+        "\"test\" "        | "test"
+        " \"test\" "       | "test"
+        "test\"test\""     | "test\"test"
+        "\"test\"test"     | "test\"test"
+        "test\"test\"test" | "test\"test\"test"
+    }
+
+    @Unroll
+    def "tagToColor: \"#input\" -> \"#expected\""(String input, String expected) {
+        given:
+        String actual = Q3AUtils.tagToColor(input)
+
+        expect:
+        actual == expected
+
+        where:
+        input                          | expected
+        null                           | null
+        ""                             | ""
+        "[hnt]\${cyan}theory"          | "[hnt]^5theory"
+        "[hnt]\${cyan}theory\${white}" | "[hnt]^5theory^7"
+    }
+
+    @Unroll
+    def "colorToTag: \"#input\" -> \"#expected\""(String input, String expected) {
+        given:
+        String actual = Q3AUtils.colorToTag(input)
+
+        expect:
+        actual == expected
+
+        where:
+        input             | expected
+        null              | null
+        ""                | ""
+        "[hnt]^5theory^7" | "[hnt]\${cyan}theory\${white}"
+    }
+
+    @Unroll
+    def "pingToInteger: \"#input\" -> \"#expected\""(String input, int expected) {
+        given:
+        int actual = Q3AUtils.pingToInteger(input)
 
         expect:
         actual == expected
 
         where:
         input  | expected
+        null   | -1
+        ""     | -1
         "0"    | 0
         "1"    | 1
         "10"   | 10
@@ -99,7 +142,7 @@ class Q3AUtilsTest extends Specification {
     }
 
     @Unroll
-    def "cleanIpAddress: \"#input\" - \"#expected\""(String input, String expected) {
+    def "cleanIpAddress: \"#input\" -> \"#expected\""(String input, String expected) {
         given:
         String actual = Q3AUtils.cleanIpAddress(input)
 
@@ -108,6 +151,8 @@ class Q3AUtilsTest extends Specification {
 
         where:
         input                   | expected
+        null                    | null
+        ""                      | ""
         "1.2.3.4:12345"         | "1.2.3.4"
         "100.200.300.400:12345" | "100.200.300.400"
         "1.2.3.4:"              | "1.2.3.4"

@@ -11,18 +11,31 @@ public final class Q3AUtils {
     }
 
     public static String removeColorCodes(String input) {
+        if (input == null || input.strip().length() == 0) {
+            return input;
+        }
         return input.trim().replaceAll("(\\^[0-9])+", "");
     }
 
     public static String clearString(String input) {
+        if (input == null || input.strip().length() == 0) {
+            return input;
+        }
         return input.trim().replaceAll("\\^([0-9])+$", "");
     }
 
     public static String removeDoubleQuotes(String input) {
-        return input.replaceAll("(^\")|(\"$)", "");
+        if (input == null || input.strip().length() == 0) {
+            return input;
+        }
+        return input.strip().replaceAll("(^\")|(\"$)", "");
     }
 
     public static String tagToColor(String message) {
+        if (message == null || message.strip().length() == 0) {
+            return message;
+        }
+
         Pattern pattern = Pattern.compile("\\$\\{/?[a-z]+}");
         Matcher matcher = pattern.matcher(message.trim());
         StringBuffer stringBuffer = new StringBuffer();
@@ -62,6 +75,10 @@ public final class Q3AUtils {
     }
 
     public static String colorToTag(String message) {
+        if (message == null || message.strip().length() == 0) {
+            return message;
+        }
+
         Pattern pattern = Pattern.compile("\\^[0-9]+");
         Matcher matcher = pattern.matcher(message.trim());
         StringBuffer stringBuffer = new StringBuffer();
@@ -112,6 +129,9 @@ public final class Q3AUtils {
     }
 
     public static String cleanIpAddress(String ipAddress) {
+        if (ipAddress == null || ipAddress.strip().length() == 0) {
+            return ipAddress;
+        }
         return ipAddress.split(":")[0];
     }
 }
