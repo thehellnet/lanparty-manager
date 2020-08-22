@@ -28,7 +28,7 @@ public class TemplateService {
         Context context = template.toContext();
 
         String templatePath = String.format("templates/%s/%s.html", category, name);
-        String rawContent = ResourceUtility.getInstance(templatePath).getResourceContent();
+        String rawContent = ResourceUtility.getResourceContent(templatePath);
         if (rawContent == null) {
             return null;
         }

@@ -16,21 +16,14 @@ public final class ResourceUtility {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceUtility.class);
 
-    private final String path;
-
-    private ResourceUtility(String path) {
-        this.path = path;
+    private ResourceUtility() {
     }
 
-    public static ResourceUtility getInstance(String path) {
-        return new ResourceUtility(path);
+    public static InputStream getResource(String path) {
+        return getResource(path, false);
     }
 
-    public InputStream getResource() {
-        return getResource(false);
-    }
-
-    public InputStream getResource(boolean internalOnly) {
+    public static InputStream getResource(String path, boolean internalOnly) {
         if (path == null || path.length() == 0) {
             return null;
         }
@@ -64,12 +57,16 @@ public final class ResourceUtility {
         return inputStream;
     }
 
-    public String getResourceContent() {
+    public static String getResourceContent(String path) {
+        return getResourceContent(path, false);
+    }
+
+    public static String getResourceContent(String path, boolean internalOnly) {
         if (path == null || path.length() == 0) {
             return null;
         }
 
-        InputStream inputStream = getResource();
+        InputStream inputStream = getResource(path, internalOnly);
         if (inputStream == null) {
             logger.error("Resource {} not found", path);
             return null;

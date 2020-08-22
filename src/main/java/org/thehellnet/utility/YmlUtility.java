@@ -28,7 +28,7 @@ public final class YmlUtility<T> {
             throw new InvalidPathException(String.format("Path \"%s\" not valid", path));
         }
 
-        InputStream inputStream = ResourceUtility.getInstance(path).getResource(internalOnly);
+        InputStream inputStream = ResourceUtility.getResource(path, internalOnly);
 
         Yaml yaml = new Yaml();
         return yaml.loadAs(inputStream, type);
