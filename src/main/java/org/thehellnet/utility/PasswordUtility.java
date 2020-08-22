@@ -2,8 +2,7 @@ package org.thehellnet.utility;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.thehellnet.utility.exception.InvalidValueException;
 
 public final class PasswordUtility {
 
@@ -23,7 +22,7 @@ public final class PasswordUtility {
 
     public String hash(String password) {
         if (password == null || password.length() == 0) {
-            return null;
+            throw new InvalidValueException("Null or empty password");
         }
 
         char[] passwd = password.toCharArray();
@@ -35,11 +34,15 @@ public final class PasswordUtility {
     }
 
     public boolean verify(String hash, String password) {
-        if (hash == null || hash.length() == 0
-                || password == null || password.length() == 0) {
-            return false;
+        if (hash == null || hash.length() == 0) {
+            throw new InvalidValueException("Hash null or empty");
         }
 
-        return argon2.verify(hash, password.toCharArray());
+        if (password == null || password.length() == 0) {
+            throw new InvalidValueException("Password null or empty");
+        }
+
+        char[] passwd = password.toCharArray();
+        return argon2.verify(hash, passwd);
     }
 }
