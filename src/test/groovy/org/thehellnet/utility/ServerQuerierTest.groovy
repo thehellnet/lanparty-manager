@@ -5,51 +5,64 @@ import spock.lang.Specification
 
 class ServerQuerierTest extends Specification {
 
+    private static final class UdpEchoListener extends StoppableThread {
+
+        private DatagramSocket datagramSocket
+
+        @Override
+        protected void preStart() {
+            super.preStart()
+            datagramSocket = new DatagramSocket(SERVER_PORT)
+        }
+
+        @Override
+        protected void preStop() {
+            super.preStop()
+            datagramSocket.close()
+        }
+
+        @Override
+        protected void job() throws Throwable {
+            byte[] rxBuffer = new byte[8192]
+            DatagramPacket rxPacket = new DatagramPacket(rxBuffer, rxBuffer.length)
+            datagramSocket.receive(rxPacket)
+
+            byte[] txBuffer = rxPacket.data
+            DatagramPacket txPacket = new DatagramPacket(txBuffer, 0, rxPacket.length, rxPacket.address, rxPacket.port)
+            datagramSocket.send(txPacket)
+        }
+    }
+
     private static final String SERVER_ADDRESS = "127.0.0.1"
     private static final int SERVER_PORT = 28960
     private static final String SERVER_RCONPASSWORD = "test"
 
-    private static DatagramSocket datagramSocket
-    private static Thread socketThread
-    private static boolean socketKeepRunning
-
+    private UdpEchoListener udpEchoListener
     private ServerQuerier serverQuerier
 
-    def setupSpec() {
-        datagramSocket = new DatagramSocket(SERVER_PORT)
-
-        socketKeepRunning = true
-
-        socketThread = new Thread(() -> {
-            try {
-                while (socketKeepRunning) {
-                    byte[] rxBuffer = new byte[8192]
-                    DatagramPacket rxPacket = new DatagramPacket(rxBuffer, rxBuffer.length)
-                    datagramSocket.receive(rxPacket)
-
-                    byte[] txBuffer = rxPacket.data
-                    DatagramPacket txPacket = new DatagramPacket(txBuffer, 0, rxPacket.length, rxPacket.address, rxPacket.port)
-                    datagramSocket.send(txPacket)
-                }
-            } catch (SocketException ignored) {
-            }
-        })
-        socketThread.start()
-    }
-
-    def cleanupSpec() {
-        socketKeepRunning = false
-        datagramSocket.close()
-        socketThread.interrupt()
-        socketThread.join()
-    }
-
     def setup() {
+        udpEchoListener = new UdpEchoListener()
         serverQuerier = new ServerQuerier(SERVER_ADDRESS, SERVER_PORT, SERVER_RCONPASSWORD)
     }
 
     def cleanup() {
         serverQuerier.close()
+        udpEchoListener.stop()
+    }
+
+    def "open with wrong address"() {
+        given:
+        String inputAddress = "#####";
+        int inputPort = 28960
+        String inputRconPassword = "rconPassword"
+
+        ServerQuerier querier = new ServerQuerier(inputAddress, inputPort, inputRconPassword)
+
+        when:
+        querier.open()
+
+        then:
+        thrown ServerQuerierException
     }
 
     def "status without open"() {
@@ -62,8 +75,10 @@ class ServerQuerierTest extends Specification {
 
     def "status closed"() {
         given:
+        udpEchoListener.start()
         serverQuerier.open()
         serverQuerier.close()
+        udpEchoListener.stop()
 
         when:
         serverQuerier.status()
@@ -74,6 +89,7 @@ class ServerQuerierTest extends Specification {
 
     def "status opened"() {
         given:
+        udpEchoListener.start()
         serverQuerier.open()
 
         when:
