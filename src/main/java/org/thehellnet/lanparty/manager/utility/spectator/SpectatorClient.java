@@ -70,14 +70,14 @@ public class SpectatorClient extends StoppableThread {
         if (outputStream != null) {
             try {
                 outputStream.close();
-            } catch (IOException ignored) {
+            } catch (IOException ignored) { //NOSONAR
             }
         }
 
         if (socket != null) {
             try {
                 socket.close();
-            } catch (IOException ignored) {
+            } catch (IOException ignored) { //NOSONAR
             }
         }
     }
