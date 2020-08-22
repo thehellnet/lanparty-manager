@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@PreAuthorize("permitAll()")
 @RequestMapping(
         path = "/api/public/v1/tool",
         consumes = MediaType.APPLICATION_JSON_VALUE,
