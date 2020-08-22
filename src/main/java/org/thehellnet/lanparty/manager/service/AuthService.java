@@ -99,25 +99,25 @@ public class AuthService extends AbstractService {
 
     @Transactional
     public LoginAuthResponseDTO login(LoginAuthRequestDTO requestDTO) {
-        AppUser appUser = findByEnabledTrueAndEmailAndPassword(requestDTO.email, requestDTO.password);
+        AppUser appUser = findByEnabledTrueAndEmailAndPassword(requestDTO.getEmail(), requestDTO.getPassword());
         AppUserToken appUserToken = newToken(appUser);
 
         LoginAuthResponseDTO responseDTO = new LoginAuthResponseDTO();
-        responseDTO.id = appUserToken.getId();
-        responseDTO.token = appUserToken.getToken();
-        responseDTO.expiration = appUserToken.getExpirationTs();
+        responseDTO.setId(appUserToken.getId());
+        responseDTO.setToken(appUserToken.getToken());
+        responseDTO.setExpiration(appUserToken.getExpirationTs());
         return responseDTO;
     }
 
     @Transactional
     public RegisterAuthResponseDTO register(RegisterAuthRequestDTO requestDTO) {
-        AppUser appUser = appUserRepository.findByEnabledTrueAndEmail(requestDTO.email);
+        AppUser appUser = appUserRepository.findByEnabledTrueAndEmail(requestDTO.getEmail());
         if (appUser != null) {
             throw new AlreadyPresentException();
         }
 
-        String hashedPassword = PasswordUtility.newInstance().hash(requestDTO.password);
-        appUser = new AppUser(requestDTO.email, hashedPassword, requestDTO.name, requestDTO.nickname);
+        String hashedPassword = PasswordUtility.newInstance().hash(requestDTO.getPassword());
+        appUser = new AppUser(requestDTO.getEmail(), hashedPassword, requestDTO.getName(), requestDTO.getNickname());
 
         Role publicRole = roleRepository.findByRoleName(RoleName.PUBLIC);
         appUser.getRoles().add(publicRole);
@@ -135,16 +135,16 @@ public class AuthService extends AbstractService {
         mailService.sendHtml(appUser.getEmail(), "Conferma registrazione", mailBody);
 
         RegisterAuthResponseDTO responseDTO = new RegisterAuthResponseDTO();
-        responseDTO.email = appUser.getEmail();
-        responseDTO.name = appUser.getName();
-        responseDTO.nickname = appUser.getNickname();
+        responseDTO.setEmail(appUser.getEmail());
+        responseDTO.setName(appUser.getName());
+        responseDTO.setNickname(appUser.getNickname());
 
         return responseDTO;
     }
 
     @Transactional
     public void confirm(ConfirmAuthRequestDTO requestDTO) {
-        AppUser appUser = appUserRepository.findByEnabledFalseAndEmailAndConfirmCode(requestDTO.email, requestDTO.confirmCode);
+        AppUser appUser = appUserRepository.findByEnabledFalseAndEmailAndConfirmCode(requestDTO.getEmail(), requestDTO.getConfirmCode());
         if (appUser == null) {
             throw new NotFoundException();
         }

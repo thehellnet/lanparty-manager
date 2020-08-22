@@ -57,7 +57,7 @@ public abstract class StoppableThread {
 
         try {
             thread.join();
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException ignored) { //NOSONAR
         }
     }
 
@@ -74,7 +74,7 @@ public abstract class StoppableThread {
                 try {
                     //noinspection BusyWait
                     Thread.sleep(loopInterval);
-                } catch (InterruptedException ignored) {
+                } catch (InterruptedException ignored) { //NOSONAR
                 }
             }
         }
@@ -92,5 +92,5 @@ public abstract class StoppableThread {
     protected void postStop() {
     }
 
-    protected abstract void job() throws Throwable;
+    protected abstract void job() throws Throwable; //NOSONAR
 }

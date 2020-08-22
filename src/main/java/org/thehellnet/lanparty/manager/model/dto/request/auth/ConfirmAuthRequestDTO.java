@@ -7,8 +7,24 @@ public class ConfirmAuthRequestDTO extends AuthRequestDTO {
 
     @NotEmpty
     @Email
-    public String email;
+    protected String email;
 
     @NotEmpty
-    public String confirmCode;
+    protected String confirmCode;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getConfirmCode() {
+        return confirmCode;
+    }
+
+    public void setConfirmCode(String confirmCode) {
+        this.confirmCode = confirmCode;
+    }
 }

@@ -23,7 +23,7 @@ public class ServerBinaryRunner extends StoppableThread {
     private Process process = null;
 
     private BufferedReader reader;
-    private BufferedWriter writer;
+    private BufferedWriter writer; //NOSONAR
 
     public ServerBinaryRunner(Server server) {
         this.server = server;
@@ -54,7 +54,8 @@ public class ServerBinaryRunner extends StoppableThread {
             command.addAll(items);
         }
 
-        logger.debug("Starting server with command: \"{}\"", StringUtility.joinSpaces(command));
+        String fullCommand = StringUtility.joinSpaces(command);
+        logger.debug("Starting server with command: \"{}\"", fullCommand);
 
         ProcessBuilder processBuilder = new ProcessBuilder(command)
                 .directory(workingDirectory)
@@ -88,7 +89,7 @@ public class ServerBinaryRunner extends StoppableThread {
 
         try {
             process.waitFor();
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException ignored) { //NOSONAR
         }
 
         process = null;

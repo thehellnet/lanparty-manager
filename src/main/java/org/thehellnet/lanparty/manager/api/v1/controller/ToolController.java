@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,12 +60,12 @@ public class ToolController {
     @PostMapping(path = "/getCfg")
     public ResponseEntity<List<String>> getCfg(HttpServletRequest request, @RequestBody BarcodeToolRequestDTO dto) {
         String remoteAddress = request.getRemoteAddr();
-        logger.info("getCfg from tool at {} with barcode {}", remoteAddress, dto.barcode);
+        logger.info("getCfg from tool at {} with barcode {}", remoteAddress, dto.getBarcode());
 
         seatService.updateLastContact(remoteAddress);
-        seatService.updatePlayerInSeats(remoteAddress, dto.barcode);
+        seatService.updatePlayerInSeats(remoteAddress, dto.getBarcode());
 
-        List<ParsedCfgCommand> parsedCfgCommands = cfgService.computeCfg(remoteAddress, dto.barcode);
+        List<ParsedCfgCommand> parsedCfgCommands = cfgService.computeCfg(remoteAddress, dto.getBarcode());
         String cfg = parsedCfgCommandSerializer.elaborate(parsedCfgCommands);
 
         List<String> cfgLines = StringUtility.splitLines(cfg);
@@ -76,14 +75,14 @@ public class ToolController {
     @PostMapping(path = "/saveCfg")
     public ResponseEntity<Object> saveCfg(HttpServletRequest request, @RequestBody SaveCfgToolRequestDTO dto) {
         String remoteAddress = request.getRemoteAddr();
-        logger.info("saveCfg from tool at {} with barcode {} and {} lines in cfg", remoteAddress, dto.barcode, dto.cfgLines.size());
+        logger.info("saveCfg from tool at {} with barcode {} and {} lines in cfg", remoteAddress, dto.getBarcode(), dto.getCfgLines().size());
 
         seatService.updateLastContact(remoteAddress);
 
-        String cfg = StringUtility.joinLines(dto.cfgLines);
+        String cfg = StringUtility.joinLines(dto.getCfgLines());
         List<ParsedCfgCommand> parsedCfgCommands = parsedCfgCommandParser.elaborate(cfg);
 
-        cfgService.saveCfg(remoteAddress, dto.barcode, parsedCfgCommands);
+        cfgService.saveCfg(remoteAddress, dto.getBarcode(), parsedCfgCommands);
         return ResponseEntity.ok(new Object());
     }
 }

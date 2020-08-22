@@ -4,5 +4,13 @@ import java.util.List;
 
 public class SaveCfgToolRequestDTO extends BarcodeToolRequestDTO {
 
-    public List<String> cfgLines;
+    protected List<String> cfgLines;
+
+    public List<String> getCfgLines() {
+        return cfgLines;
+    }
+
+    public void setCfgLines(List<String> cfgLines) {
+        this.cfgLines = cfgLines;
+    }
 }

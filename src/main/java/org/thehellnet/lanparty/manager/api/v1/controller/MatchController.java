@@ -34,8 +34,8 @@ public class MatchController {
 
     @PostMapping(path = "/assign-server-match")
     public ResponseEntity<Object> assignServerMatch(@RequestBody @Valid AssignServerMatchMatchRequestDTO requestDTO) {
-        logger.info("assignServerMatch {} to match {}", requestDTO.serverMatchId, requestDTO.matchId);
-        matchService.assignServerMatch(requestDTO.matchId, requestDTO.serverMatchId);
+        logger.info("assignServerMatch {} to match {}", requestDTO.getServerMatchId(), requestDTO.getMatchId());
+        matchService.assignServerMatch(requestDTO.getMatchId(), requestDTO.getServerMatchId());
         return ResponseEntity.noContent().build();
     }
 }

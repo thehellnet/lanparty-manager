@@ -97,12 +97,15 @@ public class SpectatorRunner extends AbstractRunner {
     }
 
     private void joinAndSetReady(Spectator spectator) {
+        long timeoutJoinSpectate = spectator.getTimeoutJoinSpectate() * 1000L;
+        long timeoutSetReady = spectator.getTimeoutSetReady() * 1000L;
+
         try {
-            Thread.sleep(spectator.getTimeoutJoinSpectate() * 1000);
+            Thread.sleep(timeoutJoinSpectate);
             joinSpectate(spectator.getId());
-            Thread.sleep(spectator.getTimeoutSetReady() * 1000);
+            Thread.sleep(timeoutSetReady);
             setReady(spectator.getId());
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException ignored) { //NOSONAR
         }
     }
 
