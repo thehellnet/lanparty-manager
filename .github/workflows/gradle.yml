@@ -1,9 +1,9 @@
 name: Check
 on:
   push:
-    branches: [ master, dev ]
+    branches: [ master, staging, dev ]
   pull_request:
-    branches: [ master, dev ]
+    branches: [ master, staging, dev ]
 jobs:
   check:
     name: Build, Tests, and send results to CodeCoverage and SonarQube
