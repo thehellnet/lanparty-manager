@@ -40,3 +40,8 @@ jobs:
         run: ./gradlew sonarqube
       - name: Send reports to CodeCov
         run: bash <(curl -s https://codecov.io/bash)
+      - name: Upload WAR artifact
+          uses: actions/upload-artifact@v2
+          with:
+            name: lanparty-manager.war
+            path: build/libs/lanparty-manager.war
