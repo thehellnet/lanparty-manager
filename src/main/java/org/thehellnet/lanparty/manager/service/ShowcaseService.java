@@ -14,9 +14,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.thehellnet.lanparty.manager.exception.NotFoundException;
 import org.thehellnet.lanparty.manager.job.ShowcaseNextPaneJob;
 import org.thehellnet.lanparty.manager.model.constant.PaneMode;
-import org.thehellnet.lanparty.manager.model.persistence.Match;
-import org.thehellnet.lanparty.manager.model.persistence.Pane;
-import org.thehellnet.lanparty.manager.model.persistence.Showcase;
+import org.thehellnet.lanparty.manager.model.persistence.*;
 import org.thehellnet.lanparty.manager.model.protocol.Action;
 import org.thehellnet.lanparty.manager.model.protocol.Command;
 import org.thehellnet.lanparty.manager.model.protocol.CommandSerializer;
@@ -38,6 +36,7 @@ public class ShowcaseService extends AbstractService {
     private final ShowcaseRepository showcaseRepository;
     private final PaneRepository paneRepository;
     private final MatchRepository matchRepository;
+    private final TeamRepository teamRepository;
 
     private final Scheduler scheduler;
 
@@ -51,11 +50,12 @@ public class ShowcaseService extends AbstractService {
                            ShowcaseRepository showcaseRepository,
                            PaneRepository paneRepository,
                            MatchRepository matchRepository,
-                           Scheduler scheduler) {
+                           TeamRepository teamRepository, Scheduler scheduler) {
         super(seatRepository, playerRepository, appUserRepository);
         this.showcaseRepository = showcaseRepository;
         this.paneRepository = paneRepository;
         this.matchRepository = matchRepository;
+        this.teamRepository = teamRepository;
         this.scheduler = scheduler;
     }
 
@@ -207,26 +207,47 @@ public class ShowcaseService extends AbstractService {
     }
 
     private Command generateDisplayPaneCommand(Pane pane) {
-        Command command = new Command(Action.DISPLAY_PANE);
-
         JSONObject args = new JSONObject();
-        args.put("mode", pane.getMode());
-        args.put("gameTag", pane.getTournament().getGame().getTag());
 
-        JSONArray matchesData = new JSONArray();
+        PaneMode paneMode = pane.getMode();
+        args.put("mode", paneMode);
+        args.put("preScroll", 500);
+        args.put("scrollDuration", 8000);
 
-        if (pane.getMode() == PaneMode.MATCHES) {
-            List<Match> matches = matchRepository.findAllByTournament(pane.getTournament());
+        if (paneMode == PaneMode.MATCHES) {
+            Tournament tournament = pane.getTournament();
+            List<Match> matches = matchRepository.findAllByTournament(tournament);
+
+            JSONArray matchesData = new JSONArray();
             for (Match match : matches) {
                 JSONObject matchData = prepareMatchData(match);
                 matchesData.put(matchData);
             }
+            args.put("matches", matchesData);
+
+            Game game = tournament.getGame();
+            args.put("gameTag", game.getTag());
+
+            args.put("title", "Matches in Tournament");
+        } else if (paneMode == PaneMode.SCORES) {
+            Tournament tournament = pane.getTournament();
+            List<Team> teams = teamRepository.findAllByTournament(tournament);
+
+            JSONArray teamsData = new JSONArray();
+            for (Team team : teams) {
+                JSONObject teamData = prepareTeamData(team);
+                teamsData.put(teamData);
+            }
+            args.put("teams", teamsData);
+
+            Game game = tournament.getGame();
+            args.put("gameTag", game.getTag());
+
+            args.put("title", "Teams scores");
         }
 
-        args.put("matches", matchesData);
-
+        Command command = new Command(Action.DISPLAY_PANE);
         command.setArgs(args);
-
         return command;
     }
 
@@ -246,6 +267,13 @@ public class ShowcaseService extends AbstractService {
         matchData.put("localTeam", match.getLocalTeam() != null ? match.getLocalTeam().getName() : JSONObject.NULL);
         matchData.put("guestTeam", match.getGuestTeam() != null ? match.getGuestTeam().getName() : JSONObject.NULL);
         return matchData;
+    }
+
+    private static JSONObject prepareTeamData(Team team) {
+        JSONObject teamData = new JSONObject();
+        teamData.put("id", team.getId());
+        teamData.put("name", team.getName());
+        return teamData;
     }
 
     private static Trigger prepareTrigger(LocalDateTime executionDateTime, JobDetail jobDetail) {
