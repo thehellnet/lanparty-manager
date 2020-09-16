@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thehellnet.lanparty.manager.exception.InvalidDataException;
+import org.thehellnet.lanparty.manager.model.dto.response.registration.GetRegistrableTournamentsResponseDTO;
 import org.thehellnet.lanparty.manager.model.persistence.Match;
 import org.thehellnet.lanparty.manager.model.persistence.MatchParent;
 import org.thehellnet.lanparty.manager.model.persistence.Team;
@@ -40,6 +41,27 @@ public class TournamentService {
         this.matchRepository = matchRepository;
         this.matchParentRepository = matchParentRepository;
         this.teamRepository = teamRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public GetRegistrableTournamentsResponseDTO getRegistrableTournaments() {
+        List<GetRegistrableTournamentsResponseDTO.TournamentDTO> tournamentDTOList = new ArrayList<>();
+
+        List<Tournament> tournaments = tournamentRepository.findRegistrables();
+        for (Tournament tournament : tournaments) {
+            GetRegistrableTournamentsResponseDTO.TournamentDTO tournamentDTO = new GetRegistrableTournamentsResponseDTO.TournamentDTO(
+                    tournament.getId(),
+                    tournament.getFriendlyName(),
+                    tournament.getGame().getFriendlyName(),
+                    tournament.getStartTs(),
+                    tournament.getEndTs(),
+                    tournament.getStartRegistrationTs(),
+                    tournament.getEndRegistrationTs()
+            );
+            tournamentDTOList.add(tournamentDTO);
+        }
+
+        return new GetRegistrableTournamentsResponseDTO(tournamentDTOList);
     }
 
     @Transactional

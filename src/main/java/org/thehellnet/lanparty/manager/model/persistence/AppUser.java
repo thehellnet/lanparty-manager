@@ -50,6 +50,11 @@ public class AppUser extends AbstractEntity {
     private String nickname;
 
     @Basic
+    @Column(name = "phone")
+    @Description("User phone")
+    private String phone;
+
+    @Basic
     @Column(name = "register_ts", nullable = false)
     @ColumnDefault("now()")
     @Description("Date & time of registration")
@@ -159,6 +164,14 @@ public class AppUser extends AbstractEntity {
         this.nickname = nickname;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public LocalDateTime getRegisterTs() {
         return registerTs;
     }
@@ -233,6 +246,7 @@ public class AppUser extends AbstractEntity {
                 email.equals(appUser.email) &&
                 password.equals(appUser.password) &&
                 Objects.equals(nickname, appUser.nickname) &&
+                Objects.equals(phone, appUser.phone) &&
                 registerTs.equals(appUser.registerTs) &&
                 Objects.equals(confirmTs, appUser.confirmTs) &&
                 Objects.equals(lastLoginTs, appUser.lastLoginTs) &&

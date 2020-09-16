@@ -15,4 +15,6 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     @Query("SELECT p FROM Player p WHERE p.appUser = :appUser AND p.team.tournament = :tournament")
     Player findByAppUserAndTournament(@Param("appUser") AppUser appUser, @Param("tournament") Tournament tournament);
+
+    Player findByTeamTournamentAndNickname(Tournament tournament, String nickname);
 }
